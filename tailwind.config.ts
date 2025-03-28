@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,22 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				quantum: {
+					primary: '#9b87f5',
+					secondary: '#7E69AB',
+					tertiary: '#6E59A5',
+					dark: '#1A1F2C',
+					light: '#D6BCFA',
+					softgreen: '#F2FCE2',
+					softyellow: '#FEF7CD',
+					softorange: '#FEC6A1',
+					softpurple: '#E5DEFF',
+					softpink: '#FFDEE2',
+					softpeach: '#FDE1D3',
+					softblue: '#D3E4FD',
+					softgray: '#F1F0FB',
+					vividpurple: '#8B5CF6',
 				}
 			},
 			borderRadius: {
@@ -84,11 +101,42 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' },
+				},
+				'pulse-soft': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.7' },
+				},
+				'spin-slow': {
+					from: { transform: 'rotate(0deg)' },
+					to: { transform: 'rotate(360deg)' },
+				},
+				'wave': {
+					'0%': { transform: 'scale(0)', opacity: '1' },
+					'100%': { transform: 'scale(1)', opacity: '0' },
+				},
+				'shimmer': {
+					'0%': { backgroundPosition: '-500px 0' },
+					'100%': { backgroundPosition: '500px 0' },
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'float': 'float 3s ease-in-out infinite',
+				'pulse-soft': 'pulse-soft 3s ease-in-out infinite',
+				'spin-slow': 'spin-slow 8s linear infinite',
+				'wave': 'wave 2s ease-out infinite',
+				'shimmer': 'shimmer 2s infinite linear',
+			},
+			backgroundImage: {
+				'quantum-gradient': 'linear-gradient(135deg, #9b87f5 0%, #6E59A5 100%)',
+				'quantum-gradient-soft': 'linear-gradient(135deg, rgba(155, 135, 245, 0.2) 0%, rgba(110, 89, 165, 0.2) 100%)',
+				'quantum-radial': 'radial-gradient(circle, #9b87f5 0%, #1A1F2C 100%)',
+				'quantum-energy': 'url("/energy-bg.svg")',
 			}
 		}
 	},
