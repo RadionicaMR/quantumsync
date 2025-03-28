@@ -8,20 +8,20 @@ import { Card } from '@/components/ui/card';
 const About = () => {
   const values = [
     {
-      title: "Innovation",
-      description: "We constantly push boundaries to create cutting-edge solutions that bridge science and spirituality."
+      title: "Innovación",
+      description: "Constantemente empujamos los límites para crear soluciones de vanguardia que unen ciencia y espiritualidad."
     },
     {
-      title: "Trust",
-      description: "We build trust through transparency, reliability, and a deep commitment to our users' well-being."
+      title: "Confianza",
+      description: "Construimos confianza a través de la transparencia, la fiabilidad y un profundo compromiso con el bienestar de nuestros usuarios."
     },
     {
-      title: "Sustainability",
-      description: "Our practices and products are designed with environmental and social responsibility in mind."
+      title: "Sostenibilidad",
+      description: "Nuestras prácticas y productos están diseñados con responsabilidad ambiental y social en mente."
     },
     {
-      title: "Positive Impact",
-      description: "Everything we do aims to create positive change in individual lives and in the world as a whole."
+      title: "Impacto Positivo",
+      description: "Todo lo que hacemos tiene como objetivo crear un cambio positivo en la vida de las personas y en el mundo en general."
     }
   ];
 
@@ -43,8 +43,8 @@ const About = () => {
   return (
     <Layout>
       <HeroSection
-        title="Our Mission & Vision"
-        subtitle="At QuantumSync, we're dedicated to making energetic well-being accessible to everyone through innovative technology."
+        title="Nuestra Misión y Visión"
+        subtitle="En QuantumSync, estamos dedicados a hacer que el bienestar energético sea accesible para todos a través de tecnología innovadora."
         align="center"
       />
 
@@ -53,16 +53,16 @@ const About = () => {
         <div className="container mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-bold mb-4">The QuantumSync Story</h2>
+              <h2 className="text-3xl font-bold mb-4">La Historia de QuantumSync</h2>
               <div className="quantum-divider w-24 my-4"></div>
               <p className="text-muted-foreground mb-6">
-                QuantumSync is more than a technology company; we're a team committed to making well-being accessible to all. We combine cutting-edge innovation with spiritual principles to create solutions that positively impact people's lives.
+                QuantumSync es más que una empresa tecnológica; somos un equipo comprometido con hacer que el bienestar sea accesible para todos. Combinamos innovación de vanguardia con principios espirituales para crear soluciones que impacten positivamente en la vida de las personas.
               </p>
               <p className="text-muted-foreground mb-6">
-                Our essence lies in integrating advanced technology with traditional and modern knowledge about energy and vibrations. We know that energy is the foundation of everything in the universe, and QuantumSync gives you the chance to connect with it in a practical and effective way.
+                Nuestra esencia radica en integrar tecnología avanzada con conocimientos tradicionales y modernos sobre energía y vibraciones. Sabemos que la energía es la base de todo en el universo, y QuantumSync te da la oportunidad de conectarte con ella de manera práctica y efectiva.
               </p>
               <p className="text-muted-foreground mb-6">
-                With a global vision, we seek to bring our wellness proposition to millions of people worldwide. Our commitment is to offer technological tools that are easy to use, scientifically backed, and, above all, useful for anyone, regardless of their level of prior knowledge.
+                Con una visión global, buscamos llevar nuestra propuesta de bienestar a millones de personas en todo el mundo. Nuestro compromiso es ofrecer herramientas tecnológicas fáciles de usar, respaldadas científicamente y, sobre todo, útiles para cualquier persona, independientemente de su nivel de conocimiento previo.
               </p>
             </div>
             <div className="relative">
@@ -70,7 +70,7 @@ const About = () => {
               <div className="relative z-10 bg-white dark:bg-card p-4 rounded-xl shadow-xl">
                 <img 
                   src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
-                  alt="QuantumSync technology" 
+                  alt="Tecnología QuantumSync" 
                   className="rounded-lg w-full h-auto"
                 />
               </div>
@@ -84,23 +84,23 @@ const About = () => {
         <div className="container mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div className="quantum-card p-8">
-              <h2 className="text-2xl font-bold mb-4">Our Mission</h2>
+              <h2 className="text-2xl font-bold mb-4">Nuestra Misión</h2>
               <div className="quantum-divider w-16 my-4"></div>
               <p className="text-muted-foreground mb-6">
-                The mission of QuantumSync is clear: to make energetic balance and personal well-being accessible through advanced and easy-to-use technology. We want anyone, from anywhere in the world, to be able to access tools that were previously exclusive to specialists.
+                La misión de QuantumSync es clara: hacer que el equilibrio energético y el bienestar personal sean accesibles a través de tecnología avanzada y fácil de usar. Queremos que cualquier persona, desde cualquier lugar del mundo, pueda acceder a herramientas que antes eran exclusivas de especialistas.
               </p>
               <p className="text-muted-foreground">
-                We believe that energy tools should be democratized, allowing everyone to take control of their own well-being without requiring years of specialized training.
+                Creemos que las herramientas energéticas deben democratizarse, permitiendo a todos tomar el control de su propio bienestar sin requerir años de entrenamiento especializado.
               </p>
             </div>
             <div className="quantum-card p-8">
-              <h2 className="text-2xl font-bold mb-4">Our Vision</h2>
+              <h2 className="text-2xl font-bold mb-4">Nuestra Visión</h2>
               <div className="quantum-divider w-16 my-4"></div>
               <p className="text-muted-foreground mb-6">
-                Our vision is to become global leaders in digital solutions for energetic well-being. This means not only creating an innovative application but also developing a global community that values the positive impact of energy in their lives.
+                Nuestra visión es convertirnos en líderes globales en soluciones digitales para el bienestar energético. Esto significa no solo crear una aplicación innovadora, sino también desarrollar una comunidad global que valore el impacto positivo de la energía en sus vidas.
               </p>
               <p className="text-muted-foreground">
-                We envision a world where energetic tools are as common as fitness apps, where people routinely maintain their energetic health alongside their physical and mental well-being.
+                Visualizamos un mundo donde las herramientas energéticas sean tan comunes como las aplicaciones de fitness, donde las personas mantengan rutinariamente su salud energética junto con su bienestar físico y mental.
               </p>
             </div>
           </div>
@@ -111,9 +111,9 @@ const About = () => {
       <section className="py-16 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Our Core Values</h2>
+            <h2 className="text-3xl font-bold mb-4">Nuestros Valores Fundamentales</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              These principles guide everything we do at QuantumSync, from product development to customer interactions.
+              Estos principios guían todo lo que hacemos en QuantumSync, desde el desarrollo de productos hasta las interacciones con los clientes.
             </p>
           </div>
           
@@ -147,37 +147,37 @@ const About = () => {
                   <div className="relative z-10 bg-white dark:bg-card p-4 rounded-xl shadow-xl">
                     <img 
                       src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
-                      alt="Mauricio Ramos - Founder" 
+                      alt="Mauricio Ramos - Fundador" 
                       className="rounded-lg w-full h-auto"
                     />
                   </div>
                 </div>
                 <div className="text-center mt-6">
                   <h3 className="text-2xl font-bold">Mauricio Ramos</h3>
-                  <p className="text-muted-foreground">Founder & CEO</p>
+                  <p className="text-muted-foreground">Fundador & CEO</p>
                 </div>
               </div>
             </div>
             <div className="lg:col-span-2">
-              <h2 className="text-3xl font-bold mb-4">Our Founder's Journey</h2>
+              <h2 className="text-3xl font-bold mb-4">El Viaje de Nuestro Fundador</h2>
               <div className="quantum-divider w-24 my-4"></div>
               <p className="text-muted-foreground mb-6">
-                Behind every great idea is a creative and visionary mind. At QuantumSync, that mind belongs to Mauricio Ramos, a psychologist and expert in interpersonal communication and wellness technologies.
+                Detrás de cada gran idea hay una mente creativa y visionaria. En QuantumSync, esa mente pertenece a Mauricio Ramos, un psicólogo y experto en comunicación interpersonal y tecnologías de bienestar.
               </p>
               <p className="text-muted-foreground mb-6">
-                Mauricio has dedicated his career to understanding how energy and intention can transform lives. For many years, he studied and manufactured classic radionic equipment, introducing modifications and improvements to each design he created and built.
+                Mauricio ha dedicado su carrera a entender cómo la energía y la intención pueden transformar vidas. Durante muchos años, estudió y fabricó equipos radiónicos clásicos, introduciendo modificaciones y mejoras en cada diseño que creó y construyó.
               </p>
               <p className="text-muted-foreground mb-6">
-                The idea for QuantumSync was born from his desire to unite science, technology, and spirituality in a practical and accessible solution. Mauricio saw the opportunity to leverage radionics and vibrational frequencies to create a tool that anyone could use, regardless of their experience level.
+                La idea de QuantumSync nació de su deseo de unir ciencia, tecnología y espiritualidad en una solución práctica y accesible. Mauricio vio la oportunidad de aprovechar la radiónica y las frecuencias vibracionales para crear una herramienta que cualquiera pudiera usar, independientemente de su nivel de experiencia.
               </p>
               <p className="text-muted-foreground mb-6">
-                With a combination of knowledge in psychology, alternative or energetic therapies, and personal development, Mauricio has led QuantumSync with a clear vision: to empower people to take control of their energetic well-being. His commitment to innovation and accessibility has been the foundation of every strategic decision in the company.
+                Con una combinación de conocimientos en psicología, terapias alternativas o energéticas y desarrollo personal, Mauricio ha liderado QuantumSync con una visión clara: empoderar a las personas para que tomen el control de su bienestar energético. Su compromiso con la innovación y la accesibilidad ha sido la base de cada decisión estratégica en la empresa.
               </p>
               <p className="text-muted-foreground mb-6">
-                Mauricio is not just the founder of QuantumSync; he's also a passionate user of the application, which ensures that each feature is tested and perfected from the perspective of those who need it most.
+                Mauricio no es solo el fundador de QuantumSync; también es un apasionado usuario de la aplicación, lo que garantiza que cada característica sea probada y perfeccionada desde la perspectiva de quienes más la necesitan.
               </p>
               <blockquote className="border-l-4 border-quantum-primary pl-4 italic text-muted-foreground my-8">
-                "I believe that everyone deserves access to tools that can enhance their well-being. Technology should serve humanity by making powerful solutions accessible to all, not just to specialists or the privileged few."
+                "Creo que todos merecen acceso a herramientas que puedan mejorar su bienestar. La tecnología debe servir a la humanidad haciendo que soluciones poderosas sean accesibles para todos, no solo para especialistas o unos pocos privilegiados."
                 <footer className="text-foreground font-medium mt-2">— Mauricio Ramos</footer>
               </blockquote>
             </div>
@@ -188,11 +188,11 @@ const About = () => {
       {/* CTA */}
       <section className="py-16 px-4">
         <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">Join Our Mission</h2>
+          <h2 className="text-3xl font-bold mb-4">Únete a Nuestra Misión</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
-            Be part of our community and help us spread the benefits of energetic well-being to the world.
+            Sé parte de nuestra comunidad y ayúdanos a difundir los beneficios del bienestar energético al mundo.
           </p>
-          <QuantumButton size="lg">Download QuantumSync Today</QuantumButton>
+          <QuantumButton size="lg">Descarga QuantumSync Hoy</QuantumButton>
         </div>
       </section>
     </Layout>

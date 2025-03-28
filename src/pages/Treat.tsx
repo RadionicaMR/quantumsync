@@ -24,12 +24,12 @@ const Treat = () => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const presets = [
-    { id: 'sleep', name: 'Improve Sleep', frequency: 396, description: 'Delta waves to promote deep, restorative sleep', duration: 45 },
-    { id: 'stress', name: 'Reduce Stress', frequency: 639, description: 'Theta frequencies for relaxation and anxiety relief', duration: 20 },
-    { id: 'focus', name: 'Enhance Focus', frequency: 852, description: 'Beta waves to improve concentration and mental clarity', duration: 15 },
-    { id: 'energy', name: 'Boost Energy', frequency: 528, description: 'The "miracle frequency" for vitality and DNA repair', duration: 10 },
-    { id: 'harmony', name: 'Emotional Balance', frequency: 741, description: 'Helps release negative emotions and promote harmony', duration: 15 },
-    { id: 'manifest', name: 'Manifestation', frequency: 963, description: 'Connect to spiritual awareness and manifestation power', duration: 30 },
+    { id: 'sleep', name: 'Mejorar el Sueño', frequency: 396, description: 'Ondas Delta para promover un sueño profundo y reparador', duration: 45 },
+    { id: 'stress', name: 'Reducir el Estrés', frequency: 639, description: 'Frecuencias Theta para relajación y alivio de la ansiedad', duration: 20 },
+    { id: 'focus', name: 'Mejorar la Concentración', frequency: 852, description: 'Ondas Beta para mejorar la concentración y claridad mental', duration: 15 },
+    { id: 'energy', name: 'Aumentar Energía', frequency: 528, description: 'La "frecuencia milagrosa" para vitalidad y reparación del ADN', duration: 10 },
+    { id: 'harmony', name: 'Equilibrio Emocional', frequency: 741, description: 'Ayuda a liberar emociones negativas y promover la armonía', duration: 15 },
+    { id: 'manifest', name: 'Manifestación', frequency: 963, description: 'Conecta con la conciencia espiritual y el poder de manifestación', duration: 30 },
   ];
 
   const formatTime = (minutes: number) => {
@@ -89,8 +89,8 @@ const Treat = () => {
       
       setIsPlaying(true);
     } catch (error) {
-      console.error("Error starting audio treatment:", error);
-      alert("Could not start audio treatment. Please ensure your device supports Web Audio API.");
+      console.error("Error al iniciar el tratamiento de audio:", error);
+      alert("No se pudo iniciar el tratamiento de audio. Por favor, asegúrate de que tu dispositivo admite la API Web Audio.");
     }
   };
 
@@ -128,23 +128,23 @@ const Treat = () => {
   return (
     <Layout>
       <HeroSection
-        title="Vibrational Treatment"
-        subtitle="Apply targeted frequency patterns to restore balance and enhance your well-being."
+        title="Tratamiento Vibracional"
+        subtitle="Aplica patrones de frecuencia dirigidos para restaurar el equilibrio y mejorar tu bienestar."
       />
 
       <section className="py-12 px-4">
         <div className="container mx-auto">
           <Tabs defaultValue="presets" className="w-full">
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
-              <TabsTrigger value="presets">Frequency Presets</TabsTrigger>
-              <TabsTrigger value="custom">Custom Treatment</TabsTrigger>
+              <TabsTrigger value="presets">Preajustes de Frecuencia</TabsTrigger>
+              <TabsTrigger value="custom">Tratamiento Personalizado</TabsTrigger>
             </TabsList>
             
             <TabsContent value="presets" className="w-full">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-1">
                   <Card className="quantum-card p-6">
-                    <h3 className="text-xl font-semibold mb-4">Select Treatment</h3>
+                    <h3 className="text-xl font-semibold mb-4">Seleccionar Tratamiento</h3>
                     <div className="space-y-2">
                       {presets.map((preset) => (
                         <button
@@ -169,7 +169,7 @@ const Treat = () => {
                 
                 <div className="lg:col-span-2">
                   <Card className="quantum-card p-6 h-full">
-                    <h3 className="text-xl font-semibold mb-4">Treatment Control</h3>
+                    <h3 className="text-xl font-semibold mb-4">Control de Tratamiento</h3>
                     
                     {selectedPreset ? (
                       <div className="space-y-6">
@@ -183,7 +183,7 @@ const Treat = () => {
                         </div>
                         
                         <div>
-                          <h4 className="font-medium mb-2">Frequency: {frequency[0]} Hz</h4>
+                          <h4 className="font-medium mb-2">Frecuencia: {frequency[0]} Hz</h4>
                           <Slider
                             defaultValue={frequency}
                             min={20}
@@ -195,7 +195,7 @@ const Treat = () => {
                             className="mb-4"
                           />
                           
-                          <h4 className="font-medium mb-2">Duration: {duration[0]} minutes</h4>
+                          <h4 className="font-medium mb-2">Duración: {duration[0]} minutos</h4>
                           <Slider
                             defaultValue={duration}
                             min={1}
@@ -207,7 +207,7 @@ const Treat = () => {
                             className="mb-4"
                           />
                           
-                          <h4 className="font-medium mb-2">Intensity: {intensity[0]}%</h4>
+                          <h4 className="font-medium mb-2">Intensidad: {intensity[0]}%</h4>
                           <Slider
                             defaultValue={intensity}
                             min={10}
@@ -227,7 +227,7 @@ const Treat = () => {
                               onCheckedChange={setUseHeadphones}
                               disabled={isPlaying}
                             />
-                            <Label htmlFor="headphones">Use headphones (recommended)</Label>
+                            <Label htmlFor="headphones">Usar auriculares (recomendado)</Label>
                           </div>
                           
                           <div className="flex items-center gap-2">
@@ -237,7 +237,7 @@ const Treat = () => {
                               onCheckedChange={setVisualFeedback}
                               disabled={isPlaying}
                             />
-                            <Label htmlFor="visual">Show visual entrainment</Label>
+                            <Label htmlFor="visual">Mostrar entrenamiento visual</Label>
                           </div>
                         </div>
                         
@@ -245,24 +245,24 @@ const Treat = () => {
                           {isPlaying ? (
                             <>
                               <div className="text-quantum-primary font-medium">
-                                Treatment in progress: {formatTime(timeRemaining)} remaining
+                                Tratamiento en progreso: {formatTime(timeRemaining)} restante
                               </div>
                               <QuantumButton 
                                 variant="outline"
                                 onClick={stopTreatment}
                               >
-                                Stop Treatment
+                                Detener Tratamiento
                               </QuantumButton>
                             </>
                           ) : (
                             <>
                               <div className="text-muted-foreground">
-                                Ready to start treatment
+                                Listo para iniciar tratamiento
                               </div>
                               <QuantumButton 
                                 onClick={startTreatment}
                               >
-                                Start Treatment
+                                Iniciar Tratamiento
                               </QuantumButton>
                             </>
                           )}
@@ -276,7 +276,7 @@ const Treat = () => {
                               <div className="w-24 h-24 bg-quantum-primary/5 rounded-full animate-ping" style={{ animationDelay: '0.4s' }}></div>
                             </div>
                             <div className="absolute bottom-4 left-4 text-xs text-muted-foreground">
-                              Frequency: {frequency[0]} Hz · Intensity: {intensity[0]}%
+                              Frecuencia: {frequency[0]} Hz · Intensidad: {intensity[0]}%
                             </div>
                           </div>
                         )}
@@ -288,8 +288,8 @@ const Treat = () => {
                             <path d="M3 12H7L10 20L14 4L17 12H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
                         </div>
-                        <p className="mb-4">Select a frequency preset to begin treatment</p>
-                        <p className="text-sm">Our presets are designed for specific wellness outcomes</p>
+                        <p className="mb-4">Selecciona un preajuste de frecuencia para comenzar el tratamiento</p>
+                        <p className="text-sm">Nuestros preajustes están diseñados para resultados específicos de bienestar</p>
                       </div>
                     )}
                   </Card>
@@ -300,9 +300,9 @@ const Treat = () => {
             <TabsContent value="custom" className="w-full">
               <Card className="quantum-card p-6">
                 <div className="text-center">
-                  <h3 className="text-xl font-semibold mb-4">Custom Frequency Designer</h3>
+                  <h3 className="text-xl font-semibold mb-4">Diseñador de Frecuencias Personalizadas</h3>
                   <p className="text-muted-foreground mb-8">
-                    Create your own frequency combinations for personalized treatment protocols.
+                    Crea tus propias combinaciones de frecuencias para protocolos de tratamiento personalizados.
                   </p>
                   
                   <div className="relative w-64 h-64 mx-auto mb-8">
@@ -310,15 +310,15 @@ const Treat = () => {
                     <div className="absolute inset-8 rounded-full border-4 border-dashed border-quantum-primary/40 animate-spin-slow" style={{ animationDirection: 'reverse' }}></div>
                     <div className="absolute inset-16 rounded-full border-4 border-dashed border-quantum-primary/60 animate-spin-slow"></div>
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-quantum-primary font-bold text-lg">Coming Soon</div>
+                      <div className="text-quantum-primary font-bold text-lg">Próximamente</div>
                     </div>
                   </div>
                   
                   <p className="text-muted-foreground mb-4">
-                    Our advanced custom frequency designer is currently in development.
+                    Nuestro diseñador de frecuencias personalizadas avanzado está actualmente en desarrollo.
                   </p>
                   
-                  <QuantumButton disabled>Get Notified When Available</QuantumButton>
+                  <QuantumButton disabled>Recibir Notificación Cuando esté Disponible</QuantumButton>
                 </div>
               </Card>
             </TabsContent>
@@ -329,9 +329,9 @@ const Treat = () => {
       <section className="py-12 px-4 bg-quantum-gradient-soft">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">How Frequency Treatment Works</h2>
+            <h2 className="text-3xl font-bold mb-4">Cómo Funciona el Tratamiento con Frecuencias</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              QuantumSync uses principles of resonance and entrainment to help balance your energy field.
+              QuantumSync utiliza principios de resonancia y entrenamiento para ayudar a equilibrar tu campo energético.
             </p>
           </div>
           
@@ -340,9 +340,9 @@ const Treat = () => {
               <div className="w-12 h-12 rounded-full bg-quantum-gradient-soft text-quantum-primary flex items-center justify-center mb-4 mx-auto">
                 1
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-center">Frequency Emission</h3>
+              <h3 className="text-xl font-semibold mb-2 text-center">Emisión de Frecuencia</h3>
               <p className="text-muted-foreground text-center">
-                Your device emits precise vibrational frequencies calibrated to specific wellness outcomes.
+                Tu dispositivo emite frecuencias vibracionales precisas calibradas para resultados específicos de bienestar.
               </p>
             </Card>
             
@@ -350,9 +350,9 @@ const Treat = () => {
               <div className="w-12 h-12 rounded-full bg-quantum-gradient-soft text-quantum-primary flex items-center justify-center mb-4 mx-auto">
                 2
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-center">Energetic Resonance</h3>
+              <h3 className="text-xl font-semibold mb-2 text-center">Resonancia Energética</h3>
               <p className="text-muted-foreground text-center">
-                These frequencies resonate with your body's energy field, encouraging harmonization and balance.
+                Estas frecuencias resuenan con el campo energético de tu cuerpo, fomentando la armonización y el equilibrio.
               </p>
             </Card>
             
@@ -360,9 +360,9 @@ const Treat = () => {
               <div className="w-12 h-12 rounded-full bg-quantum-gradient-soft text-quantum-primary flex items-center justify-center mb-4 mx-auto">
                 3
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-center">Energy Field Balancing</h3>
+              <h3 className="text-xl font-semibold mb-2 text-center">Equilibrio del Campo Energético</h3>
               <p className="text-muted-foreground text-center">
-                With regular use, your energy systems adjust to optimal functioning, enhancing overall well-being.
+                Con el uso regular, tus sistemas energéticos se ajustan a un funcionamiento óptimo, mejorando el bienestar general.
               </p>
             </Card>
           </div>
@@ -371,11 +371,11 @@ const Treat = () => {
 
       <section className="py-12 px-4">
         <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Manifest Your Goals?</h2>
+          <h2 className="text-3xl font-bold mb-4">¿Listo para Manifestar tus Objetivos?</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
-            After treating energetic imbalances, use our manifestation tools to attract what you desire.
+            Después de tratar los desequilibrios energéticos, utiliza nuestras herramientas de manifestación para atraer lo que deseas.
           </p>
-          <QuantumButton>Explore Manifestation Tools</QuantumButton>
+          <QuantumButton>Explorar Herramientas de Manifestación</QuantumButton>
         </div>
       </section>
     </Layout>

@@ -23,19 +23,19 @@ const Manifest = () => {
   const [useVisualization, setUseVisualization] = useState(true);
 
   const patterns = [
-    { id: 1, name: 'Abundance Grid', description: 'Attract prosperity and abundance' },
-    { id: 2, name: 'Health Matrix', description: 'Enhance vitality and well-being' },
-    { id: 3, name: 'Relationship Harmony', description: 'Improve connections with others' },
-    { id: 4, name: 'Career Success', description: 'Accelerate professional growth' },
-    { id: 5, name: 'Creative Flow', description: 'Enhance artistic expression' },
-    { id: 6, name: 'Inner Peace', description: 'Develop spiritual harmony' },
+    { id: 1, name: 'Cuadrícula de Abundancia', description: 'Atrae prosperidad y abundancia' },
+    { id: 2, name: 'Matriz de Salud', description: 'Mejora la vitalidad y el bienestar' },
+    { id: 3, name: 'Armonía en Relaciones', description: 'Mejora las conexiones con otros' },
+    { id: 4, name: 'Éxito Profesional', description: 'Acelera el crecimiento profesional' },
+    { id: 5, name: 'Flujo Creativo', description: 'Potencia la expresión artística' },
+    { id: 6, name: 'Paz Interior', description: 'Desarrolla armonía espiritual' },
   ];
 
   const activateManifest = () => {
     if (!goal.trim()) {
       toast({
-        title: "Goal is required",
-        description: "Please enter a clear intention for your manifestation.",
+        title: "El objetivo es obligatorio",
+        description: "Por favor, ingresa una intención clara para tu manifestación.",
         variant: "destructive",
       });
       return;
@@ -43,8 +43,8 @@ const Manifest = () => {
 
     if (selectedPattern === null) {
       toast({
-        title: "Select a pattern",
-        description: "Please select a radionic pattern for your manifestation.",
+        title: "Selecciona un patrón",
+        description: "Por favor, selecciona un patrón radiónico para tu manifestación.",
         variant: "destructive",
       });
       return;
@@ -52,24 +52,24 @@ const Manifest = () => {
 
     setIsActive(true);
     toast({
-      title: "Manifestation Activated",
-      description: "Your intention is now being amplified through quantum radionic patterns.",
+      title: "Manifestación Activada",
+      description: "Tu intención ahora está siendo amplificada a través de patrones radiónicos cuánticos.",
     });
   };
 
   const deactivateManifest = () => {
     setIsActive(false);
     toast({
-      title: "Manifestation Deactivated",
-      description: "Your intention has been saved but is no longer active.",
+      title: "Manifestación Desactivada",
+      description: "Tu intención ha sido guardada pero ya no está activa.",
     });
   };
 
   return (
     <Layout>
       <HeroSection
-        title="Manifest Your Intentions"
-        subtitle="Use quantum radionic patterns to amplify your intentions and attract what you desire."
+        title="Manifiesta tus Intenciones"
+        subtitle="Usa patrones radiónicos cuánticos para amplificar tus intenciones y atraer lo que deseas."
       />
 
       <section className="py-12 px-4">
@@ -77,14 +77,14 @@ const Manifest = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-1">
               <Card className="quantum-card p-6 mb-6">
-                <h3 className="text-xl font-semibold mb-4">Set Your Intention</h3>
+                <h3 className="text-xl font-semibold mb-4">Establece tu Intención</h3>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="goal">Your Goal</Label>
+                    <Label htmlFor="goal">Tu Objetivo</Label>
                     <Input 
                       id="goal" 
                       className="quantum-input mt-1" 
-                      placeholder="What do you want to manifest?"
+                      placeholder="¿Qué quieres manifestar?"
                       value={goal}
                       onChange={(e) => setGoal(e.target.value)}
                       disabled={isActive}
@@ -92,11 +92,11 @@ const Manifest = () => {
                   </div>
                   
                   <div>
-                    <Label htmlFor="description">Description (Optional)</Label>
+                    <Label htmlFor="description">Descripción (Opcional)</Label>
                     <Textarea 
                       id="description" 
                       className="quantum-input mt-1" 
-                      placeholder="Describe your intention in detail..."
+                      placeholder="Describe tu intención en detalle..."
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       disabled={isActive}
@@ -104,7 +104,7 @@ const Manifest = () => {
                   </div>
                   
                   <div>
-                    <Label htmlFor="strength">Intention Strength: {intentionStrength[0]}%</Label>
+                    <Label htmlFor="strength">Fuerza de Intención: {intentionStrength[0]}%</Label>
                     <Slider
                       id="strength"
                       defaultValue={intentionStrength}
@@ -120,10 +120,10 @@ const Manifest = () => {
               </Card>
               
               <Card className="quantum-card p-6">
-                <h3 className="text-xl font-semibold mb-4">Settings</h3>
+                <h3 className="text-xl font-semibold mb-4">Configuración</h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="reminder">Daily Reminder</Label>
+                    <Label htmlFor="reminder">Recordatorio Diario</Label>
                     <Switch 
                       id="reminder" 
                       checked={useReminder}
@@ -133,7 +133,7 @@ const Manifest = () => {
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="visualization">Visual Entrainment</Label>
+                    <Label htmlFor="visualization">Entrenamiento Visual</Label>
                     <Switch 
                       id="visualization" 
                       checked={useVisualization}
@@ -147,7 +147,7 @@ const Manifest = () => {
                         onClick={activateManifest}
                         className="w-full"
                       >
-                        Activate Manifestation
+                        Activar Manifestación
                       </QuantumButton>
                     ) : (
                       <QuantumButton 
@@ -155,7 +155,7 @@ const Manifest = () => {
                         onClick={deactivateManifest}
                         className="w-full"
                       >
-                        Deactivate
+                        Desactivar
                       </QuantumButton>
                     )}
                   </div>
@@ -165,7 +165,7 @@ const Manifest = () => {
             
             <div className="lg:col-span-2">
               <Card className="quantum-card p-6 h-full">
-                <h3 className="text-xl font-semibold mb-4">Select Radionic Pattern</h3>
+                <h3 className="text-xl font-semibold mb-4">Seleccionar Patrón Radiónico</h3>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                   {patterns.map((pattern) => (
@@ -307,10 +307,10 @@ const Manifest = () => {
                     {isActive && (
                       <div className="mt-4 text-center">
                         <div className="text-sm text-quantum-primary">
-                          Intention Active • Strength: {intentionStrength[0]}%
+                          Intención Activa • Fuerza: {intentionStrength[0]}%
                         </div>
                         <div className="text-xs text-muted-foreground mt-1">
-                          Your manifestation is currently being amplified through quantum fields
+                          Tu manifestación está siendo amplificada actualmente a través de campos cuánticos
                         </div>
                       </div>
                     )}
@@ -327,8 +327,8 @@ const Manifest = () => {
                           <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </div>
-                      <p className="mb-2">Select a radionic pattern</p>
-                      <p className="text-sm">Choose the pattern that best aligns with your manifestation goal</p>
+                      <p className="mb-2">Selecciona un patrón radiónico</p>
+                      <p className="text-sm">Elige el patrón que mejor se alinee con tu objetivo de manifestación</p>
                     </div>
                   </div>
                 )}
@@ -341,9 +341,9 @@ const Manifest = () => {
       <section className="py-12 px-4 bg-quantum-gradient-soft">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">How Manifestation Works</h2>
+            <h2 className="text-3xl font-bold mb-4">Cómo Funciona la Manifestación</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              QuantumSync combines intention setting with radionic amplification to help manifest your desires.
+              QuantumSync combina el establecimiento de intenciones con amplificación radiónica para ayudar a manifestar tus deseos.
             </p>
           </div>
           
@@ -352,9 +352,9 @@ const Manifest = () => {
               <div className="w-12 h-12 rounded-full bg-quantum-gradient-soft text-quantum-primary flex items-center justify-center mb-4 mx-auto">
                 1
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-center">Set Clear Intention</h3>
+              <h3 className="text-xl font-semibold mb-2 text-center">Establece una Intención Clara</h3>
               <p className="text-muted-foreground text-center">
-                Define exactly what you want to manifest with clarity and positive framing.
+                Define exactamente lo que quieres manifestar con claridad y formulación positiva.
               </p>
             </Card>
             
@@ -362,9 +362,9 @@ const Manifest = () => {
               <div className="w-12 h-12 rounded-full bg-quantum-gradient-soft text-quantum-primary flex items-center justify-center mb-4 mx-auto">
                 2
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-center">Energetic Amplification</h3>
+              <h3 className="text-xl font-semibold mb-2 text-center">Amplificación Energética</h3>
               <p className="text-muted-foreground text-center">
-                Our radionic patterns amplify your intention through quantum resonance fields.
+                Nuestros patrones radiónicos amplifican tu intención a través de campos de resonancia cuántica.
               </p>
             </Card>
             
@@ -372,9 +372,9 @@ const Manifest = () => {
               <div className="w-12 h-12 rounded-full bg-quantum-gradient-soft text-quantum-primary flex items-center justify-center mb-4 mx-auto">
                 3
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-center">Align with Attraction</h3>
+              <h3 className="text-xl font-semibold mb-2 text-center">Alineación con la Atracción</h3>
               <p className="text-muted-foreground text-center">
-                As you align energetically with your goal, you naturally attract corresponding experiences.
+                A medida que te alineas energéticamente con tu objetivo, naturalmente atraes experiencias correspondientes.
               </p>
             </Card>
           </div>
@@ -383,11 +383,11 @@ const Manifest = () => {
 
       <section className="py-12 px-4">
         <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">Join Our Community</h2>
+          <h2 className="text-3xl font-bold mb-4">Únete a Nuestra Comunidad</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
-            Connect with others on their manifestation journey and share experiences.
+            Conéctate con otros en su viaje de manifestación y comparte experiencias.
           </p>
-          <QuantumButton>Join Our Community</QuantumButton>
+          <QuantumButton>Únete a Nuestra Comunidad</QuantumButton>
         </div>
       </section>
     </Layout>
