@@ -13,20 +13,20 @@ const Index = () => {
   const testimonials = [
     {
       name: "Sarah Johnson",
-      role: "Yoga Instructor",
-      content: "QuantumSync has transformed my approach to energy healing. My clients notice the difference immediately after incorporating these frequencies.",
+      role: "Instructora de Yoga",
+      content: "QuantumSync ha transformado mi enfoque de la sanación energética. Mis clientes notan la diferencia inmediatamente después de incorporar estas frecuencias.",
       image: "https://randomuser.me/api/portraits/women/32.jpg"
     },
     {
       name: "Michael Chen",
-      role: "Holistic Therapist",
-      content: "As someone who's been practicing energy work for years, QuantumSync has added a new dimension to my practice. It's intuitive and surprisingly powerful.",
+      role: "Terapeuta Holístico",
+      content: "Como alguien que ha estado practicando trabajo energético durante años, QuantumSync ha añadido una nueva dimensión a mi práctica. Es intuitivo y sorprendentemente poderoso.",
       image: "https://randomuser.me/api/portraits/men/46.jpg"
     },
     {
-      name: "Elena Rodriguez",
-      role: "Wellness Coach",
-      content: "I was skeptical at first, but after just two weeks of using QuantumSync, I've experienced deeper meditation and better sleep. My clients love it too!",
+      name: "Elena Rodríguez",
+      role: "Coach de Bienestar",
+      content: "Al principio era escéptica, pero después de solo dos semanas usando QuantumSync, he experimentado meditaciones más profundas y mejor sueño. ¡A mis clientes también les encanta!",
       image: "https://randomuser.me/api/portraits/women/68.jpg"
     }
   ];
@@ -46,8 +46,8 @@ const Index = () => {
           <path d="M19.07 4.93L17.66 6.34" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      title: "Energy Diagnosis",
-      description: "Identify energetic imbalances using our virtual pendulum and intuitive interface."
+      title: "Diagnóstico Energético",
+      description: "Identifica desequilibrios energéticos usando nuestro péndulo virtual e interfaz intuitiva."
     },
     {
       icon: (
@@ -55,8 +55,8 @@ const Index = () => {
           <path d="M3 12H7L10 20L14 4L17 12H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      title: "Vibrational Treatment",
-      description: "Apply precise frequency patterns to balance and harmonize your energy field."
+      title: "Tratamiento Vibracional",
+      description: "Aplica patrones de frecuencia precisos para equilibrar y armonizar tu campo energético."
     },
     {
       icon: (
@@ -66,8 +66,8 @@ const Index = () => {
           <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      title: "Goal Manifestation",
-      description: "Set clear intentions with our radionic tools to attract what you truly desire."
+      title: "Manifestación de Objetivos",
+      description: "Establece intenciones claras con nuestras herramientas radiónicas para atraer lo que realmente deseas."
     },
     {
       icon: (
@@ -80,35 +80,35 @@ const Index = () => {
           <path d="M3 18H3.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      title: "Personalized Programs",
-      description: "Create custom protocols for sleep, stress, focus, and more to fit your unique needs."
+      title: "Programas Personalizados",
+      description: "Crea protocolos personalizados para el sueño, estrés, concentración y más, adaptados a tus necesidades únicas."
     }
   ];
 
   const benefitItems = [
     {
-      title: "Sleep Better",
-      description: "Delta frequencies help you achieve deeper, more restorative sleep."
+      title: "Duerme Mejor",
+      description: "Las frecuencias Delta te ayudan a lograr un sueño más profundo y reparador."
     },
     {
-      title: "Reduce Stress",
-      description: "Theta waves induce calm and serenity, melting away anxiety."
+      title: "Reduce el Estrés",
+      description: "Las ondas Theta inducen calma y serenidad, disolviendo la ansiedad."
     },
     {
-      title: "Improve Focus",
-      description: "Beta frequencies enhance concentration and mental clarity."
+      title: "Mejora la Concentración",
+      description: "Las frecuencias Beta mejoran la concentración y la claridad mental."
     },
     {
-      title: "Balance Emotions",
-      description: "Targeted vibrations help stabilize emotional responses."
+      title: "Equilibra las Emociones",
+      description: "Las vibraciones dirigidas ayudan a estabilizar las respuestas emocionales."
     },
     {
-      title: "Boost Energy",
-      description: "Revitalize your body and mind with specific energy patterns."
+      title: "Aumenta la Energía",
+      description: "Revitaliza tu cuerpo y mente con patrones energéticos específicos."
     },
     {
-      title: "Clear Spaces",
-      description: "Remove negative energy from your home or workspace."
+      title: "Limpia Espacios",
+      description: "Elimina la energía negativa de tu hogar o espacio de trabajo."
     }
   ];
 
@@ -131,12 +131,12 @@ const Index = () => {
     <Layout>
       {/* Hero Section */}
       <HeroSection
-        title="Transform Your Life Through Quantum Frequency Technology"
-        subtitle="QuantumSync combines science, technology, and wellness to help you balance your energy and achieve your goals."
+        title="Transforma Tu Vida a Través de la Tecnología de Frecuencia Cuántica"
+        subtitle="QuantumSync combina ciencia, tecnología y bienestar para ayudarte a equilibrar tu energía y alcanzar tus objetivos."
       >
         <div className="flex flex-col sm:flex-row gap-4 mt-4">
-          <QuantumButton size="lg">Get Started</QuantumButton>
-          <QuantumButton variant="outline" size="lg">Learn More</QuantumButton>
+          <QuantumButton size="lg">Comenzar</QuantumButton>
+          <QuantumButton variant="outline" size="lg">Saber Más</QuantumButton>
         </div>
       </HeroSection>
 
@@ -144,9 +144,9 @@ const Index = () => {
       <section className="py-16 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Powerful Tools at Your Fingertips</h2>
+            <h2 className="text-3xl font-bold mb-4">Potentes Herramientas a Tu Alcance</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              QuantumSync offers advanced radionic technology that was once only available to specialists, now accessible through your mobile device.
+              QuantumSync ofrece tecnología radiónica avanzada que antes solo estaba disponible para especialistas, ahora accesible a través de tu dispositivo móvil.
             </p>
           </div>
           
@@ -175,22 +175,22 @@ const Index = () => {
         <div className="container mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-bold mb-4">About QuantumSync</h2>
+              <h2 className="text-3xl font-bold mb-4">Acerca de QuantumSync</h2>
               <div className="quantum-divider w-24 my-4"></div>
               <p className="text-muted-foreground mb-6">
-                QuantumSync is more than a technology company; we're a team committed to making well-being accessible to all. We combine cutting-edge innovation with spiritual principles to create solutions that positively impact people's lives.
+                QuantumSync es más que una empresa de tecnología; somos un equipo comprometido con hacer que el bienestar sea accesible para todos. Combinamos innovación de vanguardia con principios espirituales para crear soluciones que impacten positivamente en la vida de las personas.
               </p>
               <p className="text-muted-foreground mb-6">
-                Our essence lies in integrating advanced technology with traditional and modern knowledge about energy and vibrations. We know that energy is the foundation of everything in the universe, and QuantumSync gives you the chance to connect with it in a practical and effective way.
+                Nuestra esencia radica en integrar tecnología avanzada con conocimientos tradicionales y modernos sobre energía y vibraciones. Sabemos que la energía es la base de todo en el universo, y QuantumSync te da la oportunidad de conectarte con ella de manera práctica y efectiva.
               </p>
-              <QuantumButton>Learn About Our Mission</QuantumButton>
+              <QuantumButton>Conoce Nuestra Misión</QuantumButton>
             </div>
             <div className="relative">
               <div className="absolute inset-0 bg-quantum-primary/10 rounded-full animate-pulse-soft"></div>
               <div className="relative z-10 bg-white dark:bg-card p-4 rounded-xl shadow-xl">
                 <img 
                   src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
-                  alt="People using QuantumSync" 
+                  alt="Personas usando QuantumSync" 
                   className="rounded-lg w-full h-auto"
                 />
               </div>
@@ -203,9 +203,9 @@ const Index = () => {
       <section className="py-16 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Experience Real Benefits</h2>
+            <h2 className="text-3xl font-bold mb-4">Experimenta Beneficios Reales</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              QuantumSync offers tangible improvements across multiple areas of your life.
+              QuantumSync ofrece mejoras tangibles en múltiples áreas de tu vida.
             </p>
           </div>
           
@@ -229,22 +229,22 @@ const Index = () => {
               <div className="relative z-10 bg-white dark:bg-card p-4 rounded-xl shadow-xl">
                 <img 
                   src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
-                  alt="Mauricio Ramos - Founder" 
+                  alt="Mauricio Ramos - Fundador" 
                   className="rounded-lg w-full h-auto"
                 />
               </div>
             </div>
             <div className="order-1 lg:order-2">
-              <h2 className="text-3xl font-bold mb-4">Meet Our Founder</h2>
+              <h2 className="text-3xl font-bold mb-4">Conoce a Nuestro Fundador</h2>
               <div className="quantum-divider w-24 my-4"></div>
               <p className="text-muted-foreground mb-6">
-                Behind every great idea is a creative and visionary mind. At QuantumSync, that mind belongs to Mauricio Ramos, a psychologist and expert in interpersonal communication and wellness technologies.
+                Detrás de cada gran idea hay una mente creativa y visionaria. En QuantumSync, esa mente pertenece a Mauricio Ramos, un estudioso de las terapias energéticas, sobre todo de la radiónica, y experto en comunicación interpersonal y tecnologías de bienestar.
               </p>
               <p className="text-muted-foreground mb-6">
-                Mauricio has dedicated his career to understanding how energy and intention can transform lives. For many years, he studied and manufactured classic radionic equipment, introducing modifications and improvements to each design he created and built.
+                Mauricio ha dedicado su carrera a entender cómo la energía y la intención pueden transformar vidas. Durante muchos años, estudió y fabricó equipos radiónicos clásicos, introduciendo modificaciones y mejoras en cada diseño que creó y construyó.
               </p>
               <p className="text-muted-foreground mb-6">
-                The idea for QuantumSync was born from his desire to unite science, technology, and spirituality in a practical and accessible solution. Mauricio saw the opportunity to leverage radionics and vibrational frequencies to create a tool that anyone could use, regardless of their experience level.
+                La idea de QuantumSync nació de su deseo de unir ciencia, tecnología y espiritualidad en una solución práctica y accesible. Mauricio vio la oportunidad de aprovechar la radiónica y las frecuencias vibracionales para crear una herramienta que cualquiera pudiera usar, independientemente de su nivel de experiencia.
               </p>
             </div>
           </div>
@@ -255,9 +255,9 @@ const Index = () => {
       <section className="py-16 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">What Our Users Say</h2>
+            <h2 className="text-3xl font-bold mb-4">Lo Que Dicen Nuestros Usuarios</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Discover how QuantumSync is transforming lives around the world.
+              Descubre cómo QuantumSync está transformando vidas en todo el mundo.
             </p>
           </div>
           
@@ -309,40 +309,40 @@ const Index = () => {
         <div className="container mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-bold mb-4">Join Our Affiliate Program</h2>
+              <h2 className="text-3xl font-bold mb-4">Únete a Nuestro Programa de Afiliados</h2>
               <div className="quantum-divider w-24 my-4"></div>
               <p className="text-muted-foreground mb-6">
-                QuantumSync is not just a tool to transform your life, but also an opportunity to generate income. Our compensation plan is designed to reward your efforts in promoting the application, creating a fair and scalable model.
+                QuantumSync no es solo una herramienta para transformar tu vida, sino también una oportunidad para generar ingresos. Nuestro plan de compensación está diseñado para recompensar tus esfuerzos en la promoción de la aplicación, creando un modelo justo y escalable.
               </p>
               <p className="text-muted-foreground mb-6">
-                As a direct user, you earn $4 for each sale you make. For each affiliate you invite, you receive $3 for each sale they make. Plus, you earn $2 for each sale from second-level affiliates and $1 for each sale from the third level.
+                Como usuario directo, ganas $4 por cada venta que realices. Por cada afiliado que invites, recibes $3 por cada venta que ellos realicen. Además, ganas $2 por cada venta de afiliados de segundo nivel y $1 por cada venta de tercer nivel.
               </p>
-              <QuantumButton>Become an Affiliate</QuantumButton>
+              <QuantumButton>Conviértete en Afiliado</QuantumButton>
             </div>
             <div className="relative">
               <div className="absolute inset-0 bg-quantum-primary/10 rounded-full animate-pulse-soft"></div>
               <div className="relative z-10 bg-white dark:bg-card p-6 rounded-xl shadow-xl">
-                <h3 className="text-xl font-semibold mb-4">Example Monthly Income</h3>
+                <h3 className="text-xl font-semibold mb-4">Ejemplo de Ingresos Mensuales</h3>
                 <ul className="space-y-4">
                   <li className="flex items-start gap-2">
                     <div className="w-6 h-6 rounded-full bg-quantum-primary text-white flex items-center justify-center flex-shrink-0 mt-0.5">1</div>
                     <div>
-                      <p className="font-medium">First Month: $1,020</p>
-                      <p className="text-sm text-muted-foreground">30 direct sales ($120) + 10 affiliates with 30 sales each ($900)</p>
+                      <p className="font-medium">Primer Mes: $1,020</p>
+                      <p className="text-sm text-muted-foreground">30 ventas directas ($120) + 10 afiliados con 30 ventas cada uno ($900)</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-2">
                     <div className="w-6 h-6 rounded-full bg-quantum-primary text-white flex items-center justify-center flex-shrink-0 mt-0.5">2</div>
                     <div>
-                      <p className="font-medium">Second Month: $7,020</p>
-                      <p className="text-sm text-muted-foreground">Continued first month income + 100 second-level affiliates with 30 sales each ($6,000)</p>
+                      <p className="font-medium">Segundo Mes: $7,020</p>
+                      <p className="text-sm text-muted-foreground">Ingresos continuos del primer mes + 100 afiliados de segundo nivel con 30 ventas cada uno ($6,000)</p>
                     </div>
                   </li>
                   <li className="flex items-start gap-2">
                     <div className="w-6 h-6 rounded-full bg-quantum-primary text-white flex items-center justify-center flex-shrink-0 mt-0.5">3</div>
                     <div>
-                      <p className="font-medium">Third Month: $37,020</p>
-                      <p className="text-sm text-muted-foreground">Previous income + 1,000 third-level affiliates with 30 sales each ($30,000)</p>
+                      <p className="font-medium">Tercer Mes: $37,020</p>
+                      <p className="text-sm text-muted-foreground">Ingresos anteriores + 1,000 afiliados de tercer nivel con 30 ventas cada uno ($30,000)</p>
                     </div>
                   </li>
                 </ul>
@@ -355,16 +355,16 @@ const Index = () => {
       {/* CTA Section */}
       <section className="py-16 px-4 bg-quantum-gradient text-white">
         <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Life?</h2>
+          <h2 className="text-3xl font-bold mb-4">¿Listo para Transformar Tu Vida?</h2>
           <p className="max-w-2xl mx-auto mb-8 text-white/80">
-            Download QuantumSync today and begin your journey to improved well-being, balanced energy, and new possibilities.
+            Descarga QuantumSync hoy y comienza tu viaje hacia un mejor bienestar, energía equilibrada y nuevas posibilidades.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-white text-quantum-primary font-medium px-6 py-3 rounded-full shadow-lg hover:bg-white/90 transition-colors">
-              Download Now
+              Descargar Ahora
             </button>
             <button className="border-2 border-white text-white font-medium px-6 py-3 rounded-full hover:bg-white/10 transition-colors">
-              Learn More
+              Saber Más
             </button>
           </div>
         </div>
