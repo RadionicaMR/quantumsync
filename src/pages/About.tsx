@@ -162,7 +162,7 @@ const About = () => {
               <h2 className="text-3xl font-bold mb-4">El Viaje de Nuestro Fundador</h2>
               <div className="quantum-divider w-24 my-4"></div>
               <p className="text-muted-foreground mb-6">
-                Detrás de cada gran idea hay una mente creativa y visionaria. En QuantumSync, esa mente pertenece a Mauricio Ramos, un psicólogo y experto en comunicación interpersonal y tecnologías de bienestar.
+                Detrás de cada gran idea hay una mente creativa y visionaria. En QuantumSync, esa mente pertenece a Mauricio Ramos, un estudioso de las terapias energéticas, sobre todo de la radiónica, y experto en comunicación interpersonal y tecnologías de bienestar.
               </p>
               <p className="text-muted-foreground mb-6">
                 Mauricio ha dedicado su carrera a entender cómo la energía y la intención pueden transformar vidas. Durante muchos años, estudió y fabricó equipos radiónicos clásicos, introduciendo modificaciones y mejoras en cada diseño que creó y construyó.
