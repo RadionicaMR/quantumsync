@@ -119,7 +119,8 @@ const Diagnose = () => {
                       "Equilibrio Emocional", 
                       "Niveles de Estrés", 
                       "Calidad del Sueño", 
-                      "Conexión Espiritual"
+                      "Conexión Espiritual",
+                      "Chakras"
                     ]}
                     selectedArea={selectedArea}
                     onSelectArea={handleSelectArea}

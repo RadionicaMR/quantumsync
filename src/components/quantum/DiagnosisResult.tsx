@@ -23,9 +23,19 @@ const DiagnosisResult: React.FC<DiagnosisResultProps> = ({
   
   // Define colors based on result
   const getResultColor = () => {
-    if (diagnosisPercentage < 30) return "bg-red-500";
-    if (diagnosisPercentage < 70) return "bg-yellow-500";
-    return "bg-green-500";
+    if (selectedArea === "Chakras") {
+      switch (diagnosisResult) {
+        case "EN ARMONÍA": return "bg-green-500";
+        case "CERRADOS": return "bg-yellow-500";
+        case "DESEQUILIBRADOS": return "bg-orange-500";
+        case "BLOQUEOS": return "bg-red-500";
+        default: return "bg-blue-500";
+      }
+    } else {
+      if (diagnosisPercentage < 30) return "bg-red-500";
+      if (diagnosisPercentage < 70) return "bg-yellow-500";
+      return "bg-green-500";
+    }
   };
   
   return (
@@ -59,7 +69,11 @@ const DiagnosisResult: React.FC<DiagnosisResultProps> = ({
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.8 }}
       >
-        {personName ? (
+        {selectedArea === "Chakras" ? (
+          <span>
+            {personName ? `Los chakras de ${personName} están:` : "Tus chakras están:"} {diagnosisResult}
+          </span>
+        ) : personName ? (
           <span>{personName} tiene {selectedArea} al {diagnosisPercentage}% del nivel óptimo</span>
         ) : (
           <span>Tu {selectedArea} está al {diagnosisPercentage}% del nivel óptimo</span>

@@ -100,12 +100,26 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
       setDiagnosisPercentage(percentage);
       
       let result;
-      if (percentage < 30) {
-        result = "Bajo";
-      } else if (percentage < 70) {
-        result = "Medio";
+      
+      // Special handling for Chakras area
+      if (area === "Chakras") {
+        if (percentage < 25) {
+          result = "BLOQUEOS";
+        } else if (percentage < 50) {
+          result = "DESEQUILIBRADOS";
+        } else if (percentage < 75) {
+          result = "CERRADOS";
+        } else {
+          result = "EN ARMONÍA";
+        }
       } else {
-        result = "Alto";
+        if (percentage < 30) {
+          result = "Bajo";
+        } else if (percentage < 70) {
+          result = "Medio";
+        } else {
+          result = "Alto";
+        }
       }
       
       setDiagnosisResult(result);
@@ -137,10 +151,19 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
       console.log(`Usando resultado reciente para ${area}: ${recentResult.result} (${recentResult.percentage}%)`);
       setDiagnosisResult(recentResult.result);
       setDiagnosisPercentage(recentResult.percentage);
-      if (recentResult.result === "Alto") {
-        setCameraResult("SI");
-      } else if (recentResult.result === "Bajo") {
-        setCameraResult("NO");
+      
+      // Handle chakras result specifically
+      if (area === "Chakras") {
+        setCameraResult(recentResult.result === "EN ARMONÍA" ? "SI" : "NO");
+      } else {
+        // Original behavior for other areas
+        if (recentResult.result === "Alto") {
+          setCameraResult("SI");
+        } else if (recentResult.result === "Bajo") {
+          setCameraResult("NO");
+        } else {
+          setCameraResult(null);
+        }
       }
       return;
     }
@@ -176,8 +199,9 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
         return;
       }
       
-      // Calibrar el dispositivo para detectar posteriormente cualquier cambio
-      // CRUCIAL: La calibración debe hacerse al inicio de cada diagnóstico
+      // Calibrate the device FIRST to detect any subsequent change
+      // CRUCIAL: Calibration must happen at the beginning of each diagnosis
+      console.log("Calibrando dispositivo antes del diagnóstico");
       calibrateDevice();
       
       // Play sound if enabled
@@ -193,31 +217,49 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
         description: "Mantenga el dispositivo mientras se realiza el análisis...",
       });
       
-      // Detect motion with a much higher threshold (8.0 degrees)
-      const hasSignificantMotion = await detectMotion(5000, 8.0);
+      // Detect motion with a more balanced threshold
+      const hasSignificantMotion = await detectMotion(5000, 6.5);
       console.log("¿Se detectó movimiento significativo?", hasSignificantMotion);
       
-      // Random chance of NO result: Add randomness to ensure we don't always get YES
-      // This gives a 60% chance of following the motion detection and 40% chance of NO
-      const useRandomResult = Math.random() < 0.4;
-      const forcedResult = useRandomResult ? false : hasSignificantMotion;
-      
-      // Respuestas basadas en movimiento real o valor aleatorio
-      const percentage = forcedResult ? 85 : 15;
-      setDiagnosisPercentage(percentage);
+      // IMPROVED RANDOMNESS: 50/50 chance of following motion detection result
+      const useRandomResult = Math.random() < 0.5;
+      const forcedResult = useRandomResult ? Math.random() > 0.5 : hasSignificantMotion;
       
       let result;
-      if (forcedResult) {
-        console.log("Configurando resultado como ALTO/SI");
-        result = "Alto";
-        setCameraResult("SI");
+      let percentage;
+      
+      // Special handling for Chakras
+      if (area === "Chakras") {
+        if (forcedResult) {
+          // Random positive result for chakras
+          const chakraResults = ["EN ARMONÍA"];
+          result = chakraResults[Math.floor(Math.random() * chakraResults.length)];
+          percentage = Math.floor(Math.random() * 26) + 75; // 75-100%
+          setCameraResult("SI");
+        } else {
+          // Random negative result for chakras
+          const chakraResults = ["BLOQUEOS", "DESEQUILIBRADOS", "CERRADOS"];
+          result = chakraResults[Math.floor(Math.random() * chakraResults.length)];
+          percentage = Math.floor(Math.random() * 75); // 0-74%
+          setCameraResult("NO");
+        }
       } else {
-        console.log("Configurando resultado como BAJO/NO");
-        result = "Bajo";
-        setCameraResult("NO");
+        // Original behavior for other areas
+        if (forcedResult) {
+          percentage = Math.floor(Math.random() * 31) + 70; // 70-100%
+          result = "Alto";
+          setCameraResult("SI");
+        } else {
+          percentage = Math.floor(Math.random() * 30); // 0-29%
+          result = "Bajo";
+          setCameraResult("NO");
+        }
       }
       
+      console.log(`Resultado del diagnóstico para ${area}: ${result} (${percentage}%)`);
+      
       setDiagnosisResult(result);
+      setDiagnosisPercentage(percentage);
       
       // Save result in recent results
       addResultToCache({
@@ -242,19 +284,29 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
       
       // Default to NO on error
       setCameraResult("NO");
-      setDiagnosisResult("Bajo");
+      
+      // For Chakras, use a negative result
+      if (area === "Chakras") {
+        const chakraResults = ["BLOQUEOS", "DESEQUILIBRADOS", "CERRADOS"];
+        const result = chakraResults[Math.floor(Math.random() * chakraResults.length)];
+        setDiagnosisResult(result);
+      } else {
+        setDiagnosisResult("Bajo");
+      }
+      
       setDiagnosisPercentage(15);
       
       // Save error result in recent results
       addResultToCache({
         area,
-        result: "Bajo",
+        result: area === "Chakras" ? "BLOQUEOS" : "Bajo",
         percentage: 15,
         timestamp: Date.now(),
         personName: personName || undefined
       });
     } finally {
       setProcessingCamera(false);
+      setIsPendulumSwinging(false);
     }
   };
 
