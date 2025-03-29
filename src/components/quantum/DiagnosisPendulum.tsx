@@ -1,11 +1,9 @@
 
 import { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
 import { toast } from "@/components/ui/use-toast";
 import { Card } from '@/components/ui/card';
 import PendulumVisual from './PendulumVisual';
 import DiagnosisResult from './DiagnosisResult';
-import QuantumButton from '@/components/QuantumButton';
 import { useDeviceMotion } from '@/hooks/useDeviceMotion';
 import { usePendulumAudio } from '@/hooks/usePendulumAudio';
 
@@ -32,6 +30,7 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
   const [diagnosisPercentage, setDiagnosisPercentage] = useState(0);
   const [processingCamera, setProcessingCamera] = useState(false);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
+  const [swingIntervalId, setSwingIntervalId] = useState<number | null>(null);
 
   const { detectMotion, requestPermission, calibrateDevice } = useDeviceMotion();
   const { startPendulumSound, stopPendulumSound } = usePendulumAudio();
@@ -51,6 +50,7 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
   }, []);
   
   const startPendulum = (area: string) => {
+    console.log(`Iniciando diagnóstico para: ${area}`);
     setIsPendulumSwinging(true);
     setDiagnosisResult(null);
     setCameraResult(null);
@@ -62,15 +62,18 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
     
     // Simulate pendulum swing
     let angle = 0;
-    const swingInterval = setInterval(() => {
+    const interval = window.setInterval(() => {
       angle = Math.sin(Date.now() / 500) * 30;
       setPendulumAngle(angle);
     }, 16);
     
+    setSwingIntervalId(interval);
+    
     // Stop after random time between 3-6 seconds
     const duration = Math.random() * 3000 + 3000;
     setTimeout(() => {
-      clearInterval(swingInterval);
+      clearInterval(interval);
+      setSwingIntervalId(null);
       setIsPendulumSwinging(false);
       setPendulumAngle(0);
       
@@ -104,10 +107,12 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
     
     // Let's mimic pendulum swinging during motion detection
     let angle = 0;
-    const swingInterval = setInterval(() => {
+    const interval = window.setInterval(() => {
       angle = Math.sin(Date.now() / 500) * 30;
       setPendulumAngle(angle);
     }, 16);
+    
+    setSwingIntervalId(interval);
     
     try {
       // Request permission for device motion
@@ -119,7 +124,8 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
           description: "Necesitamos acceso al sensor de movimiento para esta funcionalidad.",
           variant: "destructive"
         });
-        clearInterval(swingInterval);
+        clearInterval(interval);
+        setSwingIntervalId(null);
         setProcessingCamera(false);
         setIsPendulumSwinging(false);
         return;
@@ -141,14 +147,15 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
         description: "Mantenga el dispositivo mientras se realiza el análisis...",
       });
       
-      // Detect motion with a reasonable threshold (0.5 degrees)
-      // Esto evitará falsos positivos
-      const hasSignificantMotion = await detectMotion(5000, 0.5);
+      // Detect motion with a reasonable threshold (increased to 3.0 degrees)
+      const hasSignificantMotion = await detectMotion(5000, 3.0);
       console.log("¿Se detectó movimiento significativo?", hasSignificantMotion);
       
       // Stop swing animation
-      clearInterval(swingInterval);
+      clearInterval(interval);
+      setSwingIntervalId(null);
       setPendulumAngle(0);
+      setIsPendulumSwinging(false);
       
       // Respuestas basadas en movimiento real
       setDiagnosisPercentage(hasSignificantMotion ? 85 : 15);
@@ -172,12 +179,15 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
         description: "Ocurrió un error durante el análisis de movimiento.",
         variant: "destructive"
       });
-      clearInterval(swingInterval);
-      // Default to NO on error (changed from SI)
+      clearInterval(interval);
+      setSwingIntervalId(null);
+      
+      // Default to NO on error
       setCameraResult("NO");
+      setDiagnosisResult("Bajo");
+      setDiagnosisPercentage(15);
     } finally {
       setProcessingCamera(false);
-      setIsPendulumSwinging(false);
     }
   };
 
@@ -190,8 +200,13 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
       
       // Cleanup audio
       stopPendulumSound();
+      
+      // Clear any remaining intervals
+      if (swingIntervalId !== null) {
+        clearInterval(swingIntervalId);
+      }
     };
-  }, []);
+  }, [stopPendulumSound, swingIntervalId]);
 
   return (
     <Card className="quantum-card p-6 h-full">
@@ -246,6 +261,17 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
                 {(isPendulumSwinging || processingCamera) && (
                   <div className="text-muted-foreground animate-pulse mt-8">
                     {useCameraMode ? "Analizando movimiento del dispositivo..." : "Analizando patrones energéticos..."}
+                  </div>
+                )}
+                
+                {!isPendulumSwinging && !diagnosisResult && (
+                  <div className="mt-6">
+                    <button
+                      className="bg-quantum-primary text-white px-6 py-2 rounded-md hover:bg-quantum-primary/90 transition-colors"
+                      onClick={() => startMotionDiagnosis(selectedArea)}
+                    >
+                      Iniciar Diagnóstico
+                    </button>
                   </div>
                 )}
               </>

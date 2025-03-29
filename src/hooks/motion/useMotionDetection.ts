@@ -44,9 +44,9 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
           // Update maximum deviation seen during this monitoring period
           maxDeviation = Math.max(maxDeviation, rotationDeviation, accelDeviation * 100);
           
-          // Use a higher threshold to avoid false detections - 0.5 is much higher than the previous 0.00001
-          // This should prevent detecting noise as actual movement
-          if (rotationDeviation > 0.5 || accelDeviation > 0.02) {
+          // Use significantly higher thresholds to avoid false positives (increased from 0.5 to 3.0 for rotation)
+          // This requires a much more intentional movement
+          if (rotationDeviation > 3.0 || accelDeviation > 0.25) {
             console.log("¡Movimiento significativo detectado!");
             detected = true;
             setSignificantMotion(true);
@@ -61,8 +61,8 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
         if (Date.now() - startTime >= durationMs) {
           clearInterval(interval);
           
-          // Use a higher threshold for final detection as well - 0.3 instead of 0
-          const hasSignificantMotion = lastMotionValues.some(value => value > 0.3);
+          // Use a higher threshold for final detection as well (increased from 0.3 to 2.0)
+          const hasSignificantMotion = lastMotionValues.some(value => value > 2.0);
           
           console.log(`Tiempo completado. Máxima desviación: ${maxDeviation.toFixed(6)}`);
           console.log(`¿Se detectó movimiento significativo?: ${hasSignificantMotion || detected}`);
@@ -81,8 +81,8 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
       setTimeout(() => {
         clearInterval(interval);
         
-        // Final check for SIGNIFICANT motion (not just any motion)
-        const hasSignificantMotion = lastMotionValues.some(value => value > 0.3);
+        // Final check for SIGNIFICANT motion (increased from 0.3 to 2.0)
+        const hasSignificantMotion = lastMotionValues.some(value => value > 2.0);
         
         console.log(`Tiempo límite alcanzado. ¿Se detectó movimiento significativo?: ${hasSignificantMotion || detected}`);
         

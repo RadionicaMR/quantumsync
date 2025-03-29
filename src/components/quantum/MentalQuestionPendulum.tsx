@@ -1,6 +1,5 @@
 
 import { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { toast } from "@/components/ui/use-toast";
 import PendulumVisual from './PendulumVisual';
 import MentalQuestionResult from './MentalQuestionResult';
@@ -48,7 +47,10 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
 
   // Monitor device motion with a higher threshold
   useEffect(() => {
-    if (!askingMental) return;
+    if (!askingMental) {
+      setMotionDetected(false);
+      return;
+    }
     
     console.log("Activando monitoreo continuo de movimiento...");
     
@@ -58,16 +60,16 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
           motion.acceleration.x !== null || motion.acceleration.y !== null || 
           motion.acceleration.z !== null) {
         
-        // Check for significant deviation from the initial position
+        // Check for significant deviation from the initial position (increased thresholds)
         const hasSignificantRotation = 
-          (Math.abs(motion.rotation.beta || 0) > 0.5) || 
-          (Math.abs(motion.rotation.gamma || 0) > 0.5) || 
-          (Math.abs(motion.rotation.alpha || 0) > 0.5);
+          (Math.abs(motion.rotation.beta || 0) > 3.0) || 
+          (Math.abs(motion.rotation.gamma || 0) > 3.0) || 
+          (Math.abs(motion.rotation.alpha || 0) > 3.0);
         
         const hasSignificantAcceleration = 
-          (Math.abs(motion.acceleration.x || 0) > 0.1) || 
-          (Math.abs(motion.acceleration.y || 0) > 0.1) || 
-          (Math.abs(motion.acceleration.z || 0) > 0.2);
+          (Math.abs(motion.acceleration.x || 0) > 0.25) || 
+          (Math.abs(motion.acceleration.y || 0) > 0.25) || 
+          (Math.abs(motion.acceleration.z || 0) > 0.3);
         
         if (hasSignificantRotation || hasSignificantAcceleration) {
           console.log("¡Movimiento significativo detectado durante monitoreo continuo!");
@@ -147,12 +149,12 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
       } else {
         // Verificar una última vez si hay algún movimiento significativo en el estado actual
         const currentHasSignificantMotion = 
-          (Math.abs(motion.rotation.beta || 0) > 0.5) || 
-          (Math.abs(motion.rotation.gamma || 0) > 0.5) ||
-          (Math.abs(motion.rotation.alpha || 0) > 0.5) ||
-          (Math.abs(motion.acceleration.x || 0) > 0.1) ||
-          (Math.abs(motion.acceleration.y || 0) > 0.1) ||
-          (Math.abs(motion.acceleration.z || 0) > 0.2);
+          (Math.abs(motion.rotation.beta || 0) > 3.0) || 
+          (Math.abs(motion.rotation.gamma || 0) > 3.0) ||
+          (Math.abs(motion.rotation.alpha || 0) > 3.0) ||
+          (Math.abs(motion.acceleration.x || 0) > 0.25) ||
+          (Math.abs(motion.acceleration.y || 0) > 0.25) ||
+          (Math.abs(motion.acceleration.z || 0) > 0.3);
         
         if (currentHasSignificantMotion) {
           console.log("Se detectó movimiento en la comprobación final - respuesta SI");
@@ -174,7 +176,7 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
       });
       clearInterval(swingInterval);
       
-      // Default to NO on error (changed from SI)
+      // Default to NO on error
       setCameraResult("NO");
     } finally {
       setProcessingCamera(false);
