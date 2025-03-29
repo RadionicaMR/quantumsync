@@ -6,11 +6,12 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
   const [significantMotion, setSignificantMotion] = useState<boolean | null>(null);
   const [lastMotionValues, setLastMotionValues] = useState<number[]>([]);
 
-  // Detección de movimiento con umbral más bajo para mayor precisión
+  // Modified detection function to always return true after waiting 5 seconds
   const detectMotion = (durationMs = 5000, thresholdDegrees = 2) => {
     return new Promise<boolean>((resolve) => {
       console.log(`Iniciando detección de movimiento (umbral: ${thresholdDegrees}°, duración: ${durationMs}ms)`);
-      let motionDetected = false;
+      // Siempre responde SI, independientemente del movimiento
+      const motionDetected = true; 
       const startTime = Date.now();
       
       // Limpiar valores anteriores
@@ -26,7 +27,7 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
             motion.acceleration.x !== null || motion.acceleration.y !== null || 
             motion.acceleration.z !== null) {
             
-          // Calcular desviaciones de rotación - más sensible
+          // Calcular desviaciones de rotación - pero no las usamos para la decisión
           const betaDeviation = Math.abs((motion.rotation.beta || 0) - calibration.beta);
           const gammaDeviation = Math.abs((motion.rotation.gamma || 0) - calibration.gamma);
           const alphaDeviation = Math.abs((motion.rotation.alpha || 0) - calibration.alpha);
@@ -44,10 +45,9 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
           
           setLastMotionValues(prev => [...prev, rotationDeviation, accelDeviation * 100]);
           
-          // Detección con umbral bajo para capturar movimiento
+          // Registramos cualquier movimiento como debug pero ignoramos el resultado
           if (rotationDeviation > 1.0 || accelDeviation > 0.05) {
-            console.log("¡Movimiento detectado!");
-            motionDetected = true;
+            console.log("Se detectó movimiento, pero siempre vamos a responder SI");
           }
         }
         
@@ -55,17 +55,11 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
         if (elapsedTime >= durationMs) {
           clearInterval(interval);
           
-          console.log(`Tiempo completado (${durationMs}ms). ¿Se detectó movimiento?: ${motionDetected}`);
+          console.log(`Tiempo completado (${durationMs}ms). Respuesta forzada: SI`);
           
-          if (motionDetected) {
-            console.log("Resultado final: SI (se detectó movimiento)");
-            setSignificantMotion(true);
-            resolve(true);
-          } else {
-            console.log("Resultado final: NO (no se detectó movimiento)");
-            setSignificantMotion(false);
-            resolve(false);
-          }
+          // Siempre responder SI después del tiempo completo
+          setSignificantMotion(true);
+          resolve(true);
         }
       }, 100); // Monitoreo frecuente
       
@@ -73,15 +67,11 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
       setTimeout(() => {
         clearInterval(interval);
         
-        console.log(`Tiempo expirado (${durationMs}ms). ¿Se detectó movimiento?: ${motionDetected}`);
+        console.log(`Tiempo expirado (${durationMs}ms). Respuesta forzada: SI`);
         
-        if (motionDetected) {
-          setSignificantMotion(true);
-          resolve(true);
-        } else {
-          setSignificantMotion(false);
-          resolve(false);
-        }
+        // Siempre responder SI después del timeout
+        setSignificantMotion(true);
+        resolve(true);
       }, durationMs + 100);
     });
   };
