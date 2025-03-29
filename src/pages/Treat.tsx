@@ -1,6 +1,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Image, Upload, SlidersHorizontal } from 'lucide-react';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
 import QuantumButton from '@/components/QuantumButton';
@@ -8,6 +9,7 @@ import { Card } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Treat = () => {
@@ -19,9 +21,17 @@ const Treat = () => {
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [useHeadphones, setUseHeadphones] = useState(true);
   const [visualFeedback, setVisualFeedback] = useState(true);
+  
+  // Nuevos estados para tratamiento personalizado
+  const [rate1, setRate1] = useState('');
+  const [rate2, setRate2] = useState('');
+  const [rate3, setRate3] = useState('');
+  const [radionicImage, setRadionicImage] = useState<string | null>(null);
+  
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const presets = [
     { id: 'sleep', name: 'Mejorar el Sueño', frequency: 396, description: 'Ondas Delta para promover un sueño profundo y reparador', duration: 45 },
@@ -47,6 +57,23 @@ const Treat = () => {
     setFrequency([preset.frequency]);
     setDuration([preset.duration]);
     setIntensity([50]);
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setRadionicImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerImageUpload = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   const startTreatment = () => {
@@ -299,26 +326,219 @@ const Treat = () => {
             
             <TabsContent value="custom" className="w-full">
               <Card className="quantum-card p-6">
-                <div className="text-center">
+                <div className="">
                   <h3 className="text-xl font-semibold mb-4">Diseñador de Frecuencias Personalizadas</h3>
                   <p className="text-muted-foreground mb-8">
                     Crea tus propias combinaciones de frecuencias para protocolos de tratamiento personalizados.
                   </p>
                   
-                  <div className="relative w-64 h-64 mx-auto mb-8">
-                    <div className="absolute inset-0 rounded-full border-4 border-dashed border-quantum-primary/20 animate-spin-slow"></div>
-                    <div className="absolute inset-8 rounded-full border-4 border-dashed border-quantum-primary/40 animate-spin-slow" style={{ animationDirection: 'reverse' }}></div>
-                    <div className="absolute inset-16 rounded-full border-4 border-dashed border-quantum-primary/60 animate-spin-slow"></div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-quantum-primary font-bold text-lg">Próximamente</div>
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Panel izquierdo - Controles */}
+                    <div className="lg:col-span-1">
+                      <div className="space-y-6">
+                        <div>
+                          <h4 className="font-medium mb-2">Frecuencia: {frequency[0]} Hz</h4>
+                          <Slider
+                            defaultValue={frequency}
+                            min={20}
+                            max={20000}
+                            step={1}
+                            value={frequency}
+                            onValueChange={setFrequency}
+                            disabled={isPlaying}
+                            className="mb-4"
+                          />
+                          
+                          <h4 className="font-medium mb-2">Duración: {duration[0]} minutos</h4>
+                          <Slider
+                            defaultValue={duration}
+                            min={1}
+                            max={60}
+                            step={1}
+                            value={duration}
+                            onValueChange={setDuration}
+                            disabled={isPlaying}
+                            className="mb-4"
+                          />
+                          
+                          <h4 className="font-medium mb-2">Intensidad: {intensity[0]}%</h4>
+                          <Slider
+                            defaultValue={intensity}
+                            min={10}
+                            max={100}
+                            step={1}
+                            value={intensity}
+                            onValueChange={setIntensity}
+                            disabled={isPlaying}
+                          />
+                        </div>
+                        
+                        <div className="space-y-4">
+                          <div className="flex flex-col">
+                            <Label htmlFor="rate1" className="mb-1">RATE 1</Label>
+                            <Input
+                              id="rate1"
+                              type="text"
+                              maxLength={10}
+                              placeholder="Ingrese RATE 1"
+                              value={rate1}
+                              onChange={(e) => setRate1(e.target.value)}
+                              disabled={isPlaying}
+                              className={isPlaying ? "animate-[pulse_1s_ease-in-out_infinite] bg-quantum-primary/10" : ""}
+                            />
+                          </div>
+                          
+                          <div className="flex flex-col">
+                            <Label htmlFor="rate2" className="mb-1">RATE 2</Label>
+                            <Input
+                              id="rate2"
+                              type="text"
+                              maxLength={10}
+                              placeholder="Ingrese RATE 2"
+                              value={rate2}
+                              onChange={(e) => setRate2(e.target.value)}
+                              disabled={isPlaying}
+                              className={isPlaying ? "animate-[pulse_1.2s_ease-in-out_infinite] bg-quantum-primary/10" : ""}
+                            />
+                          </div>
+                          
+                          <div className="flex flex-col">
+                            <Label htmlFor="rate3" className="mb-1">RATE 3</Label>
+                            <Input
+                              id="rate3"
+                              type="text"
+                              maxLength={10}
+                              placeholder="Ingrese RATE 3"
+                              value={rate3}
+                              onChange={(e) => setRate3(e.target.value)}
+                              disabled={isPlaying}
+                              className={isPlaying ? "animate-[pulse_1.4s_ease-in-out_infinite] bg-quantum-primary/10" : ""}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Panel derecho - Upload y visualización */}
+                    <div className="lg:col-span-2">
+                      <div className="space-y-6">
+                        <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
+                          {radionicImage ? (
+                            <div className="relative h-56 w-full overflow-hidden rounded-lg">
+                              <img 
+                                src={radionicImage} 
+                                alt="Gráfico radiónico" 
+                                className={`w-full h-full object-contain ${isPlaying ? 'animate-pulse' : ''}`}
+                                style={{ opacity: isPlaying ? '0.7' : '1' }}
+                              />
+                              <button
+                                onClick={triggerImageUpload}
+                                className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
+                                disabled={isPlaying}
+                              >
+                                <Upload size={16} />
+                              </button>
+                            </div>
+                          ) : (
+                            <div 
+                              onClick={!isPlaying ? triggerImageUpload : undefined}
+                              className="cursor-pointer flex flex-col items-center justify-center h-56 space-y-4"
+                            >
+                              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center">
+                                <Image className="w-8 h-8 text-muted-foreground" />
+                              </div>
+                              <div>
+                                <p className="font-medium">Subir Gráfico Radiónico</p>
+                                <p className="text-sm text-muted-foreground">Selecciona una imagen desde tu galería</p>
+                              </div>
+                            </div>
+                          )}
+                          <input 
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleImageUpload}
+                            accept="image/*"
+                            className="hidden"
+                            disabled={isPlaying}
+                          />
+                        </div>
+                        
+                        <div className="flex flex-col sm:flex-row gap-4">
+                          <div className="flex items-center gap-2">
+                            <Switch 
+                              id="custom-headphones" 
+                              checked={useHeadphones}
+                              onCheckedChange={setUseHeadphones}
+                              disabled={isPlaying}
+                            />
+                            <Label htmlFor="custom-headphones">Usar auriculares (recomendado)</Label>
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            <Switch 
+                              id="custom-visual" 
+                              checked={visualFeedback}
+                              onCheckedChange={setVisualFeedback}
+                              disabled={isPlaying}
+                            />
+                            <Label htmlFor="custom-visual">Mostrar entrenamiento visual</Label>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          {isPlaying ? (
+                            <>
+                              <div className="text-quantum-primary font-medium">
+                                Tratamiento en progreso: {formatTime(timeRemaining)} restante
+                              </div>
+                              <QuantumButton 
+                                variant="outline"
+                                onClick={stopTreatment}
+                              >
+                                Detener Tratamiento
+                              </QuantumButton>
+                            </>
+                          ) : (
+                            <>
+                              <div className="text-muted-foreground">
+                                Listo para iniciar tratamiento personalizado
+                              </div>
+                              <QuantumButton 
+                                onClick={startTreatment}
+                              >
+                                Iniciar Tratamiento
+                              </QuantumButton>
+                            </>
+                          )}
+                        </div>
+                        
+                        {isPlaying && visualFeedback && radionicImage && (
+                          <div className="mt-4 relative h-40 bg-black/5 dark:bg-white/5 rounded-lg overflow-hidden">
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <img 
+                                src={radionicImage} 
+                                alt="Gráfico radiónico (tratamiento)" 
+                                className="w-full h-full object-cover opacity-30 animate-pulse"
+                              />
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-8 h-8 bg-quantum-primary/20 rounded-full animate-ping"></div>
+                                <div className="w-16 h-16 bg-quantum-primary/10 rounded-full animate-ping" style={{ animationDelay: '0.2s' }}></div>
+                                <div className="w-24 h-24 bg-quantum-primary/5 rounded-full animate-ping" style={{ animationDelay: '0.4s' }}></div>
+                              </div>
+                            </div>
+                            <div className="absolute bottom-4 left-4 text-xs text-muted-foreground">
+                              Frecuencia: {frequency[0]} Hz · Intensidad: {intensity[0]}%
+                            </div>
+                            <div className="absolute top-4 right-4 flex space-x-4 text-xs font-mono animate-pulse">
+                              <span>{rate1}</span>
+                              <span>{rate2}</span>
+                              <span>{rate3}</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  
-                  <p className="text-muted-foreground mb-4">
-                    Nuestro diseñador de frecuencias personalizadas avanzado está actualmente en desarrollo.
-                  </p>
-                  
-                  <QuantumButton disabled>Recibir Notificación Cuando esté Disponible</QuantumButton>
                 </div>
               </Card>
             </TabsContent>
