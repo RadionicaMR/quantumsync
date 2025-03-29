@@ -17,7 +17,7 @@ const HeroSection = ({
   children, 
   className = '', 
   align = 'center',
-  energyCircles = 3,
+  energyCircles = 5,
 }: HeroSectionProps) => {
   const alignment = {
     left: 'text-left items-start',
@@ -32,11 +32,27 @@ const HeroSection = ({
         <EnergyCircle key={i} />
       ))}
       
+      {/* Estrellas adicionales */}
+      <div className="stars-container absolute inset-0 z-0">
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div
+            key={`star-${i}`}
+            className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              opacity: 0.6 + Math.random() * 0.4,
+            }}
+          />
+        ))}
+      </div>
+      
       <div className={`container mx-auto relative z-10 flex flex-col ${alignment[align]} gap-6`}>
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-quantum-gradient max-w-4xl">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold holographic-gradient max-w-4xl">
           {title}
         </h1>
-        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl">
+        <p className="text-lg md:text-xl neon-text max-w-2xl">
           {subtitle}
         </p>
         {children}
