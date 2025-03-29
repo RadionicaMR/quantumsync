@@ -8,7 +8,7 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
   const [lastMotionTime, setLastMotionTime] = useState<number>(Date.now());
 
   // Detección de movimiento que responde SI o NO según haya o no movimiento
-  const detectMotion = (durationMs = 5000, thresholdDegrees = 0.05) => {
+  const detectMotion = (durationMs = 5000, thresholdDegrees = 0.02) => {
     return new Promise<boolean>((resolve) => {
       console.log(`Iniciando detección de movimiento (umbral: ${thresholdDegrees}, duración: ${durationMs}ms)`);
       let motionDetected = false;
@@ -27,7 +27,7 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
         if (motion.acceleration.x !== null || motion.acceleration.y !== null || 
             motion.acceleration.z !== null) {
             
-          // Calcular cambios en la aceleración
+          // Calcular cambios en la aceleración con mayor sensibilidad
           const deltaX = Math.abs((motion.acceleration.x || 0) - calibration.x);
           const deltaY = Math.abs((motion.acceleration.y || 0) - calibration.y);
           const deltaZ = Math.abs((motion.acceleration.z || 0) - calibration.z);
@@ -39,13 +39,16 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
           
           setLastMotionValues(prev => [...prev, totalDelta]);
           
+          // Umbral más bajo para detectar movimientos mínimos
           if (totalDelta > thresholdDegrees) {
             console.log("¡Movimiento detectado! Actualizando tiempo");
             setLastMotionTime(Date.now());
             motionDetected = true;
-          } else if (Date.now() - lastMotionTime > 2000) {
-            // Si no hay movimiento por más de 2 segundos, confirmar que no hay movimiento
+            setSignificantMotion(true);
+          } else if (Date.now() - lastMotionTime > 2500) {
+            // Aumentamos el tiempo de espera antes de confirmar que no hay movimiento
             motionDetected = false;
+            setSignificantMotion(false);
           }
         }
         
@@ -92,4 +95,3 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
     detectMotion
   };
 }
-
