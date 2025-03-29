@@ -85,10 +85,10 @@ const Diagnose = () => {
         className="hero-diagnose"
       />
 
-      <section className="py-12 px-4 bg-gradient-to-b from-quantum-dark/70 to-background">
+      <section className="py-6 px-4 bg-gradient-to-b from-quantum-dark/70 to-background">
         <div className="container mx-auto">
           <Tabs defaultValue="pendulum" className="w-full">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8 bg-quantum-dark/30 border border-quantum-primary/20">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-6 bg-quantum-dark/30 border border-quantum-primary/20">
               <TabsTrigger 
                 value="pendulum" 
                 className="data-[state=active]:bg-quantum-primary/20 data-[state=active]:text-white"

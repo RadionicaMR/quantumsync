@@ -27,14 +27,14 @@ const HeroSection = ({
   };
 
   return (
-    <div className={`relative w-full overflow-hidden py-24 md:py-32 px-4 bg-quantum-dark/90 ${className}`}>
+    <div className={`relative w-full overflow-hidden py-10 md:py-14 px-4 bg-quantum-dark/90 ${className}`}>
       {/* Fondo galáctico mejorado */}
       <div className="absolute inset-0 z-0 bg-black">
         {/* Nebulosa cósmica */}
         <div className="absolute inset-0 opacity-40 bg-gradient-to-br from-purple-900 via-blue-900 to-black mix-blend-multiply"></div>
         
         {/* Estrellas distantes */}
-        {Array.from({ length: 100 }).map((_, i) => (
+        {Array.from({ length: 50 }).map((_, i) => (
           <div
             key={`distant-star-${i}`}
             className="absolute rounded-full animate-pulse-soft"
@@ -51,22 +51,21 @@ const HeroSection = ({
         ))}
       </div>
       
-      {/* Energy circles */}
-      {Array.from({ length: energyCircles }).map((_, i) => (
+      {/* Energy circles - reduced number */}
+      {Array.from({ length: energyCircles > 3 ? 3 : energyCircles }).map((_, i) => (
         <EnergyCircle key={i} />
       ))}
       
-      {/* Anillos dowsing decorativos */}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] opacity-50 pointer-events-none">
-        <DowsingRing inset={50} opacity="80" reverse={false} duration="20s" pulseEffect={true} />
-        <DowsingRing inset={100} opacity="60" reverse={true} duration="25s" />
-        <DowsingRing inset={150} opacity="40" reverse={false} duration="30s" />
-        <DowsingRing inset={200} opacity="20" reverse={true} duration="35s" />
+      {/* Anillos dowsing decorativos - smaller and fewer */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] opacity-50 pointer-events-none">
+        <DowsingRing inset={30} opacity="80" reverse={false} duration="20s" pulseEffect={true} />
+        <DowsingRing inset={60} opacity="60" reverse={true} duration="25s" />
+        <DowsingRing inset={90} opacity="40" reverse={false} duration="30s" />
       </div>
       
-      {/* Estrellas con brillo holográfico */}
+      {/* Estrellas con brillo holográfico - fewer stars */}
       <div className="stars-container absolute inset-0 z-0">
-        {Array.from({ length: 50 }).map((_, i) => (
+        {Array.from({ length: 25 }).map((_, i) => (
           <div
             key={`star-${i}`}
             className="absolute rounded-full animate-pulse"
@@ -84,13 +83,13 @@ const HeroSection = ({
         ))}
       </div>
       
-      <div className={`container mx-auto relative z-10 flex flex-col ${alignment[align]} gap-6`}>
+      <div className={`container mx-auto relative z-10 flex flex-col ${alignment[align]} gap-3`}>
         <div className="cosmic-glow">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold holographic-gradient max-w-4xl drop-shadow-glow">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold holographic-gradient max-w-4xl drop-shadow-glow">
             {title}
           </h1>
         </div>
-        <p className="text-lg md:text-xl neon-text max-w-2xl">
+        <p className="text-md md:text-lg neon-text max-w-2xl">
           {subtitle}
         </p>
         {children}
