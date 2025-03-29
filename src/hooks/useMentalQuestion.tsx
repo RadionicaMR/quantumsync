@@ -29,7 +29,7 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
     checkMobile();
   }, [requestPermission]);
 
-  // Monitor device motion with a higher threshold
+  // Monitor device motion with a lower threshold for better detection
   useEffect(() => {
     if (!askingMental) {
       setMotionDetected(false);
@@ -44,16 +44,16 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
           motion.acceleration.x !== null || motion.acceleration.y !== null || 
           motion.acceleration.z !== null) {
         
-        // Check for significant deviation from the initial position (increased thresholds)
+        // Check for significant deviation from the initial position (reduced thresholds)
         const hasSignificantRotation = 
-          (Math.abs(motion.rotation.beta || 0) > 8.0) || 
-          (Math.abs(motion.rotation.gamma || 0) > 8.0) || 
-          (Math.abs(motion.rotation.alpha || 0) > 8.0);
+          (Math.abs(motion.rotation.beta || 0) > 5.0) || 
+          (Math.abs(motion.rotation.gamma || 0) > 5.0) || 
+          (Math.abs(motion.rotation.alpha || 0) > 5.0);
         
         const hasSignificantAcceleration = 
-          (Math.abs(motion.acceleration.x || 0) > 0.5) || 
-          (Math.abs(motion.acceleration.y || 0) > 0.5) || 
-          (Math.abs(motion.acceleration.z || 0) > 0.6);
+          (Math.abs(motion.acceleration.x || 0) > 0.3) || 
+          (Math.abs(motion.acceleration.y || 0) > 0.3) || 
+          (Math.abs(motion.acceleration.z || 0) > 0.4);
         
         if (hasSignificantRotation || hasSignificantAcceleration) {
           console.log("¡Movimiento significativo detectado durante monitoreo continuo!");
@@ -90,7 +90,7 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
       
       // Play sound if enabled
       if (pendulumSound) {
-        startPendulumSound();
+        startPendulumSound(0.2); // Aumentamos ligeramente el volumen para mejor retroalimentación
       }
 
       // Calibrar el dispositivo al inicio - MUY IMPORTANTE para iniciar desde cero
@@ -103,28 +103,28 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
         description: "Piensa en tu pregunta mientras sostienes el dispositivo...",
       });
 
-      // Utilizamos un umbral más alto para evitar falsos positivos
-      console.log("Iniciando detección de movimiento con umbral adecuado...");
+      // Utilizamos un umbral más bajo para detectar movimientos más sutiles
+      console.log("Iniciando detección de movimiento con umbral más sensible...");
       
       // Esperamos 5 segundos mientras se monitorea el movimiento
       await new Promise(resolve => setTimeout(resolve, 5000));
       
       console.log(`Estado final de detección: motionDetected=${motionDetected}`);
       
-      // Evaluar si hubo movimiento significativo con umbral más alto
+      // Evaluar si hubo movimiento significativo con umbral más bajo
       if (motionDetected) {
         console.log("Se detectó movimiento significativo - respuesta SI");
         setCameraResult("SI");
       } else {
         // Verificar una última vez si hay algún movimiento significativo en el estado actual
-        // con umbrales aún más altos para evitar falsos positivos
+        // con umbrales más bajos para aumentar la sensibilidad
         const currentHasSignificantMotion = 
-          (Math.abs(motion.rotation.beta || 0) > 8.0) || 
-          (Math.abs(motion.rotation.gamma || 0) > 8.0) ||
-          (Math.abs(motion.rotation.alpha || 0) > 8.0) ||
-          (Math.abs(motion.acceleration.x || 0) > 0.5) ||
-          (Math.abs(motion.acceleration.y || 0) > 0.5) ||
-          (Math.abs(motion.acceleration.z || 0) > 0.6);
+          (Math.abs(motion.rotation.beta || 0) > 5.0) || 
+          (Math.abs(motion.rotation.gamma || 0) > 5.0) ||
+          (Math.abs(motion.rotation.alpha || 0) > 5.0) ||
+          (Math.abs(motion.acceleration.x || 0) > 0.3) ||
+          (Math.abs(motion.acceleration.y || 0) > 0.3) ||
+          (Math.abs(motion.acceleration.z || 0) > 0.4);
         
         if (currentHasSignificantMotion) {
           console.log("Se detectó movimiento en la comprobación final - respuesta SI");
@@ -132,11 +132,25 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
         } else {
           console.log("NO se detectó movimiento significativo - respuesta NO");
           setCameraResult("NO");
+          
+          // Si no hay suficientes datos del sensor, generamos una respuesta aleatoria como fallback
+          if (motion.rotation.beta === null && motion.rotation.gamma === null) {
+            const randomResult = Math.random() > 0.5 ? "SI" : "NO";
+            console.log(`Generando respuesta aleatoria debido a falta de datos: ${randomResult}`);
+            setCameraResult(randomResult);
+          }
         }
       }
 
       // Stop sound
       stopPendulumSound();
+      
+      // Asegurémonos de que siempre hay un resultado
+      if (!cameraResult) {
+        const fallbackResult = Math.random() > 0.5 ? "SI" : "NO";
+        console.log(`Usando resultado fallback: ${fallbackResult}`);
+        setCameraResult(fallbackResult);
+      }
       
       return cameraResult;
     } catch (error) {
@@ -147,10 +161,19 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
         variant: "destructive"
       });
       
-      // Default to NO on error
-      setCameraResult("NO");
-      return "NO";
+      // Generar un resultado aleatorio en caso de error
+      const errorResult = Math.random() > 0.5 ? "SI" : "NO";
+      console.log(`Generando respuesta aleatoria debido a error: ${errorResult}`);
+      setCameraResult(errorResult);
+      return errorResult;
     } finally {
+      // Asegurémonos de que siempre hay un resultado antes de finalizar
+      if (!cameraResult) {
+        const finalFallbackResult = Math.random() > 0.5 ? "SI" : "NO";
+        console.log(`Configurando resultado final: ${finalFallbackResult}`);
+        setCameraResult(finalFallbackResult);
+      }
+      
       setProcessingCamera(false);
       setAskingMental(false);
     }
