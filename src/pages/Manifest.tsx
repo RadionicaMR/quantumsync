@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
@@ -11,16 +10,24 @@ import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from "@/components/ui/use-toast";
+import { ArrowUp } from "lucide-react";
 
 const Manifest = () => {
   const { toast } = useToast();
   const [goal, setGoal] = useState('');
   const [description, setDescription] = useState('');
   const [intentionStrength, setIntentionStrength] = useState([50]);
+  const [frequency, setFrequency] = useState([432]);
   const [selectedPattern, setSelectedPattern] = useState<number | null>(null);
   const [isActive, setIsActive] = useState(false);
   const [useReminder, setUseReminder] = useState(false);
   const [useVisualization, setUseVisualization] = useState(true);
+  const [customPatternImage, setCustomPatternImage] = useState<string | null>(null);
+  const [blinkSpeed, setBlinkSpeed] = useState([5]);
+  const patternInputRef = useRef<HTMLInputElement>(null);
+  const audioContext = useRef<AudioContext | null>(null);
+  const oscillator = useRef<OscillatorNode | null>(null);
+  const gainNode = useRef<GainNode | null>(null);
 
   const patterns = [
     { id: 1, name: 'Cuadrícula de Abundancia', description: 'Atrae prosperidad y abundancia' },
@@ -30,6 +37,57 @@ const Manifest = () => {
     { id: 5, name: 'Flujo Creativo', description: 'Potencia la expresión artística' },
     { id: 6, name: 'Paz Interior', description: 'Desarrolla armonía espiritual' },
   ];
+
+  // Initialize audio on first user interaction
+  useEffect(() => {
+    if (isActive && audioContext.current === null) {
+      audioContext.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      gainNode.current = audioContext.current.createGain();
+      gainNode.current.gain.value = 0.1; // Lower volume
+      gainNode.current.connect(audioContext.current.destination);
+      
+      oscillator.current = audioContext.current.createOscillator();
+      oscillator.current.type = 'sine';
+      oscillator.current.frequency.value = frequency[0];
+      oscillator.current.connect(gainNode.current);
+      oscillator.current.start();
+    }
+    
+    return () => {
+      if (oscillator.current) {
+        oscillator.current.stop();
+        oscillator.current.disconnect();
+        oscillator.current = null;
+      }
+      if (gainNode.current) {
+        gainNode.current.disconnect();
+        gainNode.current = null;
+      }
+    };
+  }, [isActive]);
+
+  // Update frequency when slider changes
+  useEffect(() => {
+    if (oscillator.current) {
+      oscillator.current.frequency.value = frequency[0];
+    }
+  }, [frequency]);
+
+  const handlePatternImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (loadEvent) => {
+        setCustomPatternImage(loadEvent.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+      setSelectedPattern(null); // Deselect any pre-defined pattern
+    }
+  };
+
+  const handleCustomImageUploadClick = () => {
+    patternInputRef.current?.click();
+  };
 
   const activateManifest = () => {
     if (!goal.trim()) {
@@ -41,10 +99,10 @@ const Manifest = () => {
       return;
     }
 
-    if (selectedPattern === null) {
+    if (selectedPattern === null && !customPatternImage) {
       toast({
         title: "Selecciona un patrón",
-        description: "Por favor, selecciona un patrón radiónico para tu manifestación.",
+        description: "Por favor, selecciona o sube un patrón radiónico para tu manifestación.",
         variant: "destructive",
       });
       return;
@@ -116,6 +174,39 @@ const Manifest = () => {
                       className="mt-2"
                     />
                   </div>
+
+                  <div>
+                    <Label htmlFor="frequency">Frecuencia: {frequency[0]} Hz</Label>
+                    <Slider
+                      id="frequency"
+                      defaultValue={frequency}
+                      min={100}
+                      max={963}
+                      step={1}
+                      value={frequency}
+                      onValueChange={setFrequency}
+                      disabled={isActive}
+                      className="mt-2"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Ajusta la frecuencia armónica para potenciar tu manifestación
+                    </p>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="blinkSpeed">Velocidad de Visualización: {blinkSpeed[0]}</Label>
+                    <Slider
+                      id="blinkSpeed"
+                      defaultValue={blinkSpeed}
+                      min={1}
+                      max={10}
+                      step={1}
+                      value={blinkSpeed}
+                      onValueChange={setBlinkSpeed}
+                      disabled={isActive}
+                      className="mt-2"
+                    />
+                  </div>
                 </div>
               </Card>
               
@@ -180,7 +271,12 @@ const Manifest = () => {
                             ? 'border-quantum-primary bg-quantum-gradient-soft' 
                             : 'border-border bg-card hover:bg-muted/50'
                         } ${isActive ? 'cursor-not-allowed opacity-60' : ''}`}
-                        onClick={() => !isActive && setSelectedPattern(pattern.id)}
+                        onClick={() => {
+                          if (!isActive) {
+                            setSelectedPattern(pattern.id);
+                            setCustomPatternImage(null);
+                          }
+                        }}
                         disabled={isActive}
                       >
                         <h4 className="font-semibold mb-1">{pattern.name}</h4>
@@ -188,16 +284,52 @@ const Manifest = () => {
                       </button>
                     </motion.div>
                   ))}
+
+                  {/* Custom pattern upload button */}
+                  <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+                  >
+                    <button
+                      className={`w-full h-full p-4 rounded-lg border-2 border-dashed transition-all text-left ${
+                        customPatternImage 
+                          ? 'border-quantum-primary bg-quantum-gradient-soft' 
+                          : 'border-border bg-card hover:bg-muted/50'
+                      } ${isActive ? 'cursor-not-allowed opacity-60' : ''}`}
+                      onClick={handleCustomImageUploadClick}
+                      disabled={isActive}
+                    >
+                      <div className="flex flex-col items-center justify-center h-full">
+                        <ArrowUp className="mb-2" />
+                        <h4 className="font-semibold mb-1 text-center">Subir Patrón</h4>
+                        <p className="text-sm text-muted-foreground text-center">
+                          {customPatternImage ? 'Imagen seleccionada' : 'Sube tu propio patrón radiónico'}
+                        </p>
+                      </div>
+                    </button>
+                    <input 
+                      ref={patternInputRef}
+                      type="file" 
+                      accept="image/*" 
+                      className="hidden" 
+                      onChange={handlePatternImageChange}
+                      disabled={isActive}
+                    />
+                  </motion.div>
                 </div>
                 
-                {selectedPattern && (
+                {(selectedPattern || customPatternImage) && (
                   <div className="relative bg-muted dark:bg-card rounded-lg overflow-hidden p-4">
                     <div className="text-center mb-4">
                       <h3 className="font-semibold">
-                        {patterns.find(p => p.id === selectedPattern)?.name}
+                        {customPatternImage 
+                          ? "Patrón Personalizado" 
+                          : patterns.find(p => p.id === selectedPattern)?.name}
                       </h3>
                       <p className="text-sm text-muted-foreground">
-                        {patterns.find(p => p.id === selectedPattern)?.description}
+                        {customPatternImage 
+                          ? "Tu patrón radiónico único" 
+                          : patterns.find(p => p.id === selectedPattern)?.description}
                       </p>
                     </div>
                     
@@ -206,6 +338,17 @@ const Manifest = () => {
                       <div className="absolute inset-0 flex items-center justify-center">
                         {/* Base grid */}
                         <div className="w-full h-full border-2 border-quantum-primary/20 rounded-lg"></div>
+                        
+                        {/* Custom pattern image */}
+                        {customPatternImage && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <img 
+                              src={customPatternImage} 
+                              alt="Patrón radiónico personalizado"
+                              className="max-w-full max-h-full object-contain"
+                            />
+                          </div>
+                        )}
                         
                         {/* Pattern specific to selection */}
                         {selectedPattern === 1 && (
@@ -280,24 +423,46 @@ const Manifest = () => {
                           </div>
                         )}
                         
-                        {/* Active energy visualization */}
+                        {/* Active energy visualization with hypnotic effect */}
                         {isActive && useVisualization && (
                           <>
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="w-1/2 h-1/2 rounded-full bg-quantum-primary/5 animate-pulse-soft"></div>
+                            <div 
+                              className="absolute inset-0 flex items-center justify-center"
+                              style={{
+                                animation: `hypnoticPulse ${11 - blinkSpeed[0]}00ms infinite alternate`,
+                              }}
+                            >
+                              <div className="w-1/2 h-1/2 rounded-full bg-quantum-primary/5"></div>
                             </div>
                             <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="w-1/3 h-1/3 rounded-full bg-quantum-primary/10 animate-pulse-soft" style={{ animationDelay: '0.5s' }}></div>
+                              <div className="w-1/3 h-1/3 rounded-full bg-quantum-primary/10"></div>
                             </div>
-                            <div className="absolute inset-0 bg-quantum-gradient-soft opacity-20 animate-pulse-soft"></div>
+                            <div 
+                              className="absolute inset-0 bg-quantum-gradient-soft opacity-20"
+                              style={{
+                                animation: `hypnoticPulse ${11 - blinkSpeed[0]}00ms infinite alternate`,
+                              }}
+                            ></div>
                           </>
                         )}
                         
-                        {/* Goal text overlay */}
+                        {/* Goal text overlay with hypnotic effect */}
                         {isActive && goal && (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="bg-white/80 dark:bg-black/50 px-4 py-2 rounded-lg backdrop-blur-sm max-w-[80%]">
-                              <p className="text-sm font-medium text-center">{goal}</p>
+                          <div 
+                            className="absolute inset-0 flex items-center justify-center z-20"
+                            style={{
+                              animation: `textPulse ${11 - blinkSpeed[0]}00ms infinite alternate`,
+                            }}
+                          >
+                            <div className="backdrop-blur-sm max-w-[90%]">
+                              <p 
+                                className="text-xl md:text-2xl font-bold text-center text-white drop-shadow-glow"
+                                style={{
+                                  textShadow: '0 0 10px rgba(155,135,245,0.8), 0 0 20px rgba(155,135,245,0.5)',
+                                }}
+                              >
+                                {goal}
+                              </p>
                             </div>
                           </div>
                         )}
@@ -306,8 +471,13 @@ const Manifest = () => {
                     
                     {isActive && (
                       <div className="mt-4 text-center">
-                        <div className="text-sm text-quantum-primary">
-                          Intención Activa • Fuerza: {intentionStrength[0]}%
+                        <div 
+                          className="text-sm text-quantum-primary"
+                          style={{
+                            animation: `textPulse ${11 - blinkSpeed[0]}00ms infinite alternate`,
+                          }}
+                        >
+                          Intención Activa • Fuerza: {intentionStrength[0]}% • {frequency[0]} Hz
                         </div>
                         <div className="text-xs text-muted-foreground mt-1">
                           Tu manifestación está siendo amplificada actualmente a través de campos cuánticos
@@ -317,7 +487,7 @@ const Manifest = () => {
                   </div>
                 )}
                 
-                {!selectedPattern && (
+                {!selectedPattern && !customPatternImage && (
                   <div className="flex items-center justify-center h-[300px] text-center text-muted-foreground">
                     <div>
                       <div className="text-quantum-primary text-5xl mb-4">
@@ -327,7 +497,7 @@ const Manifest = () => {
                           <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </div>
-                      <p className="mb-2">Selecciona un patrón radiónico</p>
+                      <p className="mb-2">Selecciona un patrón radiónico o sube el tuyo</p>
                       <p className="text-sm">Elige el patrón que mejor se alinee con tu objetivo de manifestación</p>
                     </div>
                   </div>
