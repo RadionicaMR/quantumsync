@@ -82,20 +82,31 @@ const Diagnose = () => {
       <HeroSection
         title="Diagnóstico Energético"
         subtitle="Identifica desequilibrios energéticos y áreas que necesitan atención con nuestras herramientas de diagnóstico radiónico intuitivas."
+        className="hero-diagnose"
       />
 
-      <section className="py-12 px-4">
+      <section className="py-12 px-4 bg-gradient-to-b from-quantum-dark/70 to-background">
         <div className="container mx-auto">
           <Tabs defaultValue="pendulum" className="w-full">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
-              <TabsTrigger value="pendulum">Péndulo Virtual</TabsTrigger>
-              <TabsTrigger value="dowsing">Escáner Energético</TabsTrigger>
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8 bg-quantum-dark/30 border border-quantum-primary/20">
+              <TabsTrigger 
+                value="pendulum" 
+                className="data-[state=active]:bg-quantum-primary/20 data-[state=active]:text-white"
+              >
+                Péndulo Virtual
+              </TabsTrigger>
+              <TabsTrigger 
+                value="dowsing"
+                className="data-[state=active]:bg-quantum-primary/20 data-[state=active]:text-white"
+              >
+                Escáner Energético
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="pendulum" className="w-full">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <Card className="quantum-card p-6 lg:col-span-1">
-                  <h3 className="text-xl font-semibold mb-4">Selecciona Área a Diagnosticar</h3>
+                <Card className="quantum-card shadow-lg shadow-quantum-primary/5 p-6 lg:col-span-1">
+                  <h3 className="text-xl font-semibold mb-4 holographic-gradient">Selecciona Área a Diagnosticar</h3>
                   
                   <AreaSelection 
                     areas={[
@@ -133,8 +144,8 @@ const Diagnose = () => {
                 
                 <div className="lg:col-span-2" id="pendulum-component">
                   {mentalQuestionMode ? (
-                    <Card className="quantum-card p-6 h-full">
-                      <h3 className="text-xl font-semibold mb-4">Respuesta a tu Pregunta Mental</h3>
+                    <Card className="quantum-card shadow-lg shadow-quantum-primary/5 p-6 h-full">
+                      <h3 className="text-xl font-semibold mb-4 holographic-gradient">Respuesta a tu Pregunta Mental</h3>
                       <div className="flex flex-col items-center justify-center min-h-[400px]">
                         <MentalQuestionPendulum
                           useCameraMode={useCameraMode}
@@ -167,9 +178,9 @@ const Diagnose = () => {
 
       <InfoSection />
 
-      <section className="py-12 px-4">
+      <section className="py-12 px-4 bg-gradient-to-b from-background to-quantum-dark/40">
         <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">¿Listo para Profundizar?</h2>
+          <h2 className="text-3xl font-bold mb-4 holographic-gradient">¿Listo para Profundizar?</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
             Después del diagnóstico, pasa a nuestro módulo de tratamiento para abordar cualquier desequilibrio con terapia de frecuencia dirigida.
           </p>
