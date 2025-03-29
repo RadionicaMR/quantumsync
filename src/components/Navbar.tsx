@@ -25,22 +25,22 @@ const Navbar = () => {
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-6">
           <Link to="/about" className="text-foreground/80 hover:text-primary transition-colors">
-            About
+            Nosotros
           </Link>
           <Link to="/diagnose" className="text-foreground/80 hover:text-primary transition-colors">
-            Diagnose
+            Diagnóstico
           </Link>
           <Link to="/treat" className="text-foreground/80 hover:text-primary transition-colors">
-            Treatment
+            Tratamiento
           </Link>
           <Link to="/manifest" className="text-foreground/80 hover:text-primary transition-colors">
-            Manifest
+            Manifestación
           </Link>
           <Link to="/affiliate" className="text-foreground/80 hover:text-primary transition-colors">
-            Affiliate
+            Afiliados
           </Link>
           <Button className="quantum-button">
-            Get Started
+            Comenzar
           </Button>
         </div>
 
@@ -61,41 +61,41 @@ const Navbar = () => {
             className="text-foreground/80 hover:text-primary transition-colors py-2"
             onClick={() => setIsMenuOpen(false)}
           >
-            About
+            Nosotros
           </Link>
           <Link 
             to="/diagnose" 
             className="text-foreground/80 hover:text-primary transition-colors py-2"
             onClick={() => setIsMenuOpen(false)}
           >
-            Diagnose
+            Diagnóstico
           </Link>
           <Link 
             to="/treat" 
             className="text-foreground/80 hover:text-primary transition-colors py-2"
             onClick={() => setIsMenuOpen(false)}
           >
-            Treatment
+            Tratamiento
           </Link>
           <Link 
             to="/manifest" 
             className="text-foreground/80 hover:text-primary transition-colors py-2"
             onClick={() => setIsMenuOpen(false)}
           >
-            Manifest
+            Manifestación
           </Link>
           <Link 
             to="/affiliate" 
             className="text-foreground/80 hover:text-primary transition-colors py-2"
             onClick={() => setIsMenuOpen(false)}
           >
-            Affiliate
+            Afiliados
           </Link>
           <Button 
             className="quantum-button w-full"
             onClick={() => setIsMenuOpen(false)}
           >
-            Get Started
+            Comenzar
           </Button>
         </div>
       )}
