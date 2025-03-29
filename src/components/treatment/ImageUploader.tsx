@@ -43,7 +43,10 @@ const ImageUploader = ({
     }
   };
 
-  const deleteImage = () => {
+  const deleteImage = (e: React.MouseEvent) => {
+    // Stop propagation to prevent triggering parent div click events
+    e.stopPropagation();
+    
     if (isPlaying) return;
     
     setImage(null);
@@ -53,7 +56,7 @@ const ImageUploader = ({
     
     toast({
       title: "Imagen eliminada",
-      description: `La imagen ha sido eliminada.`,
+      description: "La imagen ha sido eliminada correctamente.",
     });
   };
 
@@ -79,7 +82,10 @@ const ImageUploader = ({
                 <Trash2 size={16} />
               </button>
               <button
-                onClick={triggerImageUpload}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  triggerImageUpload();
+                }}
                 className="bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
                 disabled={isPlaying}
                 title="Cambiar imagen"
