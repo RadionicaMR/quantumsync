@@ -26,7 +26,7 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
   const [processingCamera, setProcessingCamera] = useState(false);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
 
-  const { detectMotion, requestPermission, motion } = useDeviceMotion();
+  const { detectMotion, requestPermission, motion, calibrateDevice } = useDeviceMotion();
   const { startPendulumSound, stopPendulumSound } = usePendulumAudio();
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -77,26 +77,32 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
         startPendulumSound();
       }
 
+      // Calibramos el dispositivo para tener un punto de referencia
+      calibrateDevice();
+
       // Show toast with instructions
       toast({
         title: "Formulando pregunta",
         description: "Piensa en tu pregunta mientras sostienes el dispositivo...",
       });
 
-      // Detect motion over 5 seconds with a very low threshold to make it more sensitive
-      const hasSignificantMotion = await detectMotion(5000, 0.5); // Reduced threshold to 0.5 degrees
+      // Detect motion over 5 seconds with an extremely low threshold to catch any movement at all
+      const hasSignificantMotion = await detectMotion(5000, 0.1); // Reducido a 0.1 grados para captar cualquier movimiento
       
       // Stop swing animation
       clearInterval(swingInterval);
       setPendulumAngle(0);
       setIsPendulumSwinging(false);
       
-      // Always set to YES if any motion is detected
+      // Por defecto, establecer SI
       setCameraResult("SI");
-
-      // If truly no motion, then NO
+      
+      // Solo si realmente no hay movimiento, entonces NO
       if (!hasSignificantMotion) {
+        console.log("No se detectó movimiento en absoluto");
         setCameraResult("NO");
+      } else {
+        console.log("Se detectó movimiento");
       }
 
       // Stop sound

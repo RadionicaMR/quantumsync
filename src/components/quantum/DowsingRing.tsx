@@ -16,6 +16,9 @@ const DowsingRing: React.FC<DowsingRingProps> = ({
   duration = '8s',
   pulseEffect = false
 }) => {
+  // Convertir el string de opacidad a número para usarlo en los efectos
+  const opacityValue = opacity.split('-')[1] ? Number(opacity.split('-')[1]) / 100 : 0.5;
+  
   return (
     <motion.div 
       className={`absolute rounded-full border-4 border-dashed border-quantum-primary/${opacity} animate-spin-slow`}
@@ -23,16 +26,16 @@ const DowsingRing: React.FC<DowsingRingProps> = ({
         inset: `${inset}px`, 
         animationDirection: reverse ? 'reverse' : 'normal',
         animationDuration: duration,
-        boxShadow: pulseEffect ? `0 0 15px rgba(138,43,226,0.${opacity.split('-')[1]})` : 'none'
+        boxShadow: pulseEffect ? `0 0 15px rgba(138,43,226,${opacityValue})` : 'none'
       }}
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ 
         opacity: 1, 
         scale: 1,
         boxShadow: pulseEffect ? [
-          `0 0 5px rgba(138,43,226,0.${opacity.split('-')[1]})`,
-          `0 0 20px rgba(138,43,226,0.${opacity.split('-')[1]})`,
-          `0 0 5px rgba(138,43,226,0.${opacity.split('-')[1]})`
+          `0 0 5px rgba(138,43,226,${opacityValue})`,
+          `0 0 20px rgba(138,43,226,${opacityValue})`,
+          `0 0 5px rgba(138,43,226,${opacityValue})`
         ] : 'none'
       }}
       transition={{ 

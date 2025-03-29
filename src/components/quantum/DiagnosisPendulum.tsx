@@ -33,7 +33,7 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
   const [processingCamera, setProcessingCamera] = useState(false);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
 
-  const { detectMotion, requestPermission } = useDeviceMotion();
+  const { detectMotion, requestPermission, calibrateDevice } = useDeviceMotion();
   const { startPendulumSound, stopPendulumSound } = usePendulumAudio();
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -97,6 +97,7 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
       return;
     }
 
+    console.log("Iniciando diagnóstico con sensor de movimiento");
     setCameraResult(null);
     setProcessingCamera(true);
     setIsPendulumSwinging(true);
@@ -124,6 +125,9 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
         return;
       }
       
+      // Calibrar el dispositivo para detectar posteriormente cualquier cambio
+      calibrateDevice();
+      
       // Play sound if enabled
       if (pendulumSound) {
         startPendulumSound();
@@ -134,24 +138,28 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
       
       toast({
         title: "Análisis en curso",
-        description: "Mantenga el dispositivo estable durante 5 segundos...",
+        description: "Mantenga el dispositivo mientras se realiza el análisis...",
       });
       
-      // Detect motion with lower threshold (0.5 degrees)
-      const hasSignificantMotion = await detectMotion(5000, 0.5);
+      // Detect motion with extremely low threshold (0.1 degrees)
+      // Esto detectará cualquier movimiento por mínimo que sea
+      const hasSignificantMotion = await detectMotion(5000, 0.1);
+      console.log("¿Se detectó movimiento?", hasSignificantMotion);
       
       // Stop swing animation
       clearInterval(swingInterval);
       setPendulumAngle(0);
       
-      // Always say "Alto" (high) for results if any motion detected
-      // This ensures more "YES" responses
+      // Siempre decir "Alto" (high) para resultados si se detecta cualquier movimiento
+      // Esto asegura más respuestas "SÍ"
       setDiagnosisPercentage(hasSignificantMotion ? 85 : 15);
       
       if (hasSignificantMotion) {
+        console.log("Configurando resultado como ALTO/SI");
         setDiagnosisResult("Alto");
         setCameraResult("SI");
       } else {
+        console.log("Configurando resultado como BAJO/NO");
         setDiagnosisResult("Bajo");
         setCameraResult("NO");
       }

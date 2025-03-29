@@ -37,6 +37,9 @@ export function useDeviceMotion() {
   const [calibration, setCalibration] = useState({
     beta: 0,
     gamma: 0,
+    x: 0,
+    y: 0,
+    z: 0
   });
 
   const [significantMotion, setSignificantMotion] = useState<boolean | null>(null);
@@ -44,15 +47,19 @@ export function useDeviceMotion() {
 
   // Request device motion permissions (for iOS 13+)
   const requestPermission = async () => {
+    console.log("Solicitando permiso para sensor de movimiento");
     if (typeof DeviceMotionEvent !== 'undefined' && 
         typeof (DeviceMotionEvent as any).requestPermission === 'function') {
       try {
+        console.log("Dispositivo iOS detectado, solicitando permisos específicos");
         const permissionState = await (DeviceMotionEvent as any).requestPermission();
+        const granted = permissionState === 'granted';
         setMotion(prev => ({
           ...prev,
-          hasPermission: permissionState === 'granted',
+          hasPermission: granted,
         }));
-        return permissionState === 'granted';
+        console.log("Permiso concedido:", granted);
+        return granted;
       } catch (e) {
         console.error('Error requesting device motion permission:', e);
         setMotion(prev => ({
@@ -62,7 +69,8 @@ export function useDeviceMotion() {
         return false;
       }
     } else {
-      // For non-iOS devices or iOS < 13, permission is implicitly granted
+      // Para dispositivos no iOS o iOS < 13, el permiso se concede implícitamente
+      console.log("Dispositivo no iOS o anterior a iOS 13, permisos concedidos implícitamente");
       setMotion(prev => ({
         ...prev,
         hasPermission: true,
@@ -74,19 +82,33 @@ export function useDeviceMotion() {
 
   // Calibrate the device's current position as the neutral position
   const calibrateDevice = () => {
+    console.log("Calibrando dispositivo...");
+    // Guardar posición actual como punto de referencia
     if (motion.rotation.beta !== null && motion.rotation.gamma !== null) {
       setCalibration({
         beta: motion.rotation.beta,
         gamma: motion.rotation.gamma,
+        x: motion.acceleration.x || 0,
+        y: motion.acceleration.y || 0,
+        z: motion.acceleration.z || 0
+      });
+      console.log("Dispositivo calibrado:", {
+        beta: motion.rotation.beta,
+        gamma: motion.rotation.gamma,
+        x: motion.acceleration.x,
+        y: motion.acceleration.y,
+        z: motion.acceleration.z
       });
       return true;
     }
+    console.log("No se pudo calibrar, no hay datos de movimiento");
     return false;
   };
 
   // Enhanced motion detection that stores a history of motion values
   const detectMotion = (durationMs = 5000, thresholdDegrees = 5) => {
     return new Promise<boolean>((resolve) => {
+      console.log(`Iniciando detección de movimiento (umbral: ${thresholdDegrees}°, duración: ${durationMs}ms)`);
       let maxDeviation = 0;
       let detected = false;
       let motionDetected = false;
@@ -105,18 +127,32 @@ export function useDeviceMotion() {
           const betaDeviation = Math.abs(motion.rotation.beta - calibration.beta);
           const gammaDeviation = Math.abs(motion.rotation.gamma - calibration.gamma);
           
+          // También verificamos aceleración para ser más sensibles
+          const xDeviation = Math.abs((motion.acceleration.x || 0) - calibration.x);
+          const yDeviation = Math.abs((motion.acceleration.y || 0) - calibration.y);
+          const zDeviation = Math.abs((motion.acceleration.z || 0) - calibration.z);
+          
           // Store the current deviation for history
           const currentDeviation = Math.max(betaDeviation, gammaDeviation);
+          const accelDeviation = Math.max(xDeviation, yDeviation, zDeviation);
+          
+          console.log(`Desviación actual: ${currentDeviation.toFixed(2)}° | Aceleración: ${accelDeviation.toFixed(2)}`);
+          
           setLastMotionValues(prev => [...prev, currentDeviation]);
           
           // Update maximum deviation seen during this monitoring period
           maxDeviation = Math.max(maxDeviation, currentDeviation);
           
-          // Almost any movement should trigger a "yes"
-          if (currentDeviation > thresholdDegrees) {
+          // Detect any movement at all (extremely sensitive)
+          if (currentDeviation > thresholdDegrees || accelDeviation > 0.05) {
+            console.log("¡Movimiento detectado!");
             detected = true;
             motionDetected = true;
             setSignificantMotion(true);
+            
+            // Resolver inmediatamente si detectamos movimiento
+            clearInterval(interval);
+            resolve(true);
           }
         }
         
@@ -125,16 +161,18 @@ export function useDeviceMotion() {
           clearInterval(interval);
           
           // Check if there was any motion at all during the period
-          // Even subtle motion should count as motion
-          const hasAnyMotion = lastMotionValues.some(value => value > 0.1);
+          const hasAnyMotion = lastMotionValues.some(value => value > 0.05);
           
-          if (hasAnyMotion || motionDetected) {
-            detected = true;
+          console.log(`Tiempo completado. Máxima desviación: ${maxDeviation.toFixed(2)}°`);
+          console.log(`¿Se detectó algún movimiento?: ${hasAnyMotion || detected}`);
+          
+          if (hasAnyMotion || detected) {
             setSignificantMotion(true);
+            resolve(true);
+          } else {
+            setSignificantMotion(false);
+            resolve(false);
           }
-          
-          setSignificantMotion(detected);
-          resolve(detected);
         }
       }, 100);
       
@@ -143,15 +181,17 @@ export function useDeviceMotion() {
         clearInterval(interval);
         
         // As a fallback, check if there was any motion at all
-        const hasAnyMotion = lastMotionValues.some(value => value > 0.1);
+        const hasAnyMotion = lastMotionValues.some(value => value > 0.05);
+        
+        console.log(`Tiempo límite alcanzado. ¿Se detectó algún movimiento?: ${hasAnyMotion || detected}`);
         
         if (hasAnyMotion && !detected) {
-          detected = true;
           setSignificantMotion(true);
+          resolve(true);
+        } else if (!detected) {
+          setSignificantMotion(false);
+          resolve(false);
         }
-        
-        setSignificantMotion(detected);
-        resolve(detected);
       }, durationMs + 100); // Add a little buffer
     });
   };
@@ -161,10 +201,12 @@ export function useDeviceMotion() {
     const isSupported = typeof window !== 'undefined' && 'DeviceMotionEvent' in window;
     
     if (!isSupported) {
+      console.log("Los eventos de movimiento no son compatibles con este dispositivo");
       setMotion(prev => ({ ...prev, isSupported: false }));
       return;
     }
     
+    console.log("Configurando listeners de eventos de movimiento del dispositivo");
     setMotion(prev => ({ ...prev, isSupported: true }));
     
     const handleDeviceMotion = (event: DeviceMotionEvent) => {
