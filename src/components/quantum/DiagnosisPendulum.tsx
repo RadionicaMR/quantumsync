@@ -2,6 +2,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { toast } from "@/components/ui/use-toast";
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import PendulumVisual from './PendulumVisual';
 import DiagnosisResult from './DiagnosisResult';
 import { useDeviceMotion } from '@/hooks/useDeviceMotion';
@@ -14,6 +16,16 @@ interface DiagnosisPendulumProps {
   pendulumSound: boolean;
   cameraResult: 'SI' | 'NO' | null;
   setCameraResult: (result: 'SI' | 'NO' | null) => void;
+  personName: string;
+  setPersonName: (name: string) => void;
+}
+
+// Interface para almacenar resultados recientes
+interface RecentDiagnosisResult {
+  area: string;
+  result: string;
+  percentage: number;
+  timestamp: number;
 }
 
 const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
@@ -22,7 +34,9 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
   useCameraMode,
   pendulumSound,
   cameraResult,
-  setCameraResult
+  setCameraResult,
+  personName,
+  setPersonName
 }) => {
   const [isPendulumSwinging, setIsPendulumSwinging] = useState(false);
   const [pendulumAngle, setPendulumAngle] = useState(0);
@@ -31,6 +45,9 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
   const [processingCamera, setProcessingCamera] = useState(false);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   const [swingIntervalId, setSwingIntervalId] = useState<number | null>(null);
+  
+  // Almacenar resultados recientes (últimos 5 minutos)
+  const [recentResults, setRecentResults] = useState<RecentDiagnosisResult[]>([]);
 
   const { detectMotion, requestPermission, calibrateDevice } = useDeviceMotion();
   const { startPendulumSound, stopPendulumSound } = usePendulumAudio();
@@ -51,6 +68,20 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
   
   const startPendulum = (area: string) => {
     console.log(`Iniciando diagnóstico para: ${area}`);
+    
+    // Comprobar si hay un resultado reciente para esta área (menos de 5 minutos)
+    const now = Date.now();
+    const recentResult = recentResults.find(result => 
+      result.area === area && (now - result.timestamp) < 5 * 60 * 1000
+    );
+    
+    if (recentResult) {
+      console.log(`Usando resultado reciente para ${area}: ${recentResult.result} (${recentResult.percentage}%)`);
+      setDiagnosisResult(recentResult.result);
+      setDiagnosisPercentage(recentResult.percentage);
+      return;
+    }
+    
     setIsPendulumSwinging(true);
     setDiagnosisResult(null);
     setCameraResult(null);
@@ -81,13 +112,27 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
       const percentage = Math.floor(Math.random() * 101);
       setDiagnosisPercentage(percentage);
       
+      let result;
       if (percentage < 30) {
-        setDiagnosisResult("Bajo");
+        result = "Bajo";
       } else if (percentage < 70) {
-        setDiagnosisResult("Medio");
+        result = "Medio";
       } else {
-        setDiagnosisResult("Alto");
+        result = "Alto";
       }
+      
+      setDiagnosisResult(result);
+      
+      // Guardar resultado en resultados recientes
+      setRecentResults(prev => [
+        ...prev, 
+        {
+          area,
+          result,
+          percentage,
+          timestamp: Date.now()
+        }
+      ]);
 
       // Stop sound
       stopPendulumSound();
@@ -97,6 +142,24 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
   const startMotionDiagnosis = async (area: string) => {
     if (!useCameraMode) {
       startPendulum(area);
+      return;
+    }
+
+    // Comprobar si hay un resultado reciente para esta área (menos de 5 minutos)
+    const now = Date.now();
+    const recentResult = recentResults.find(result => 
+      result.area === area && (now - result.timestamp) < 5 * 60 * 1000
+    );
+    
+    if (recentResult) {
+      console.log(`Usando resultado reciente para ${area}: ${recentResult.result} (${recentResult.percentage}%)`);
+      setDiagnosisResult(recentResult.result);
+      setDiagnosisPercentage(recentResult.percentage);
+      if (recentResult.result === "Alto") {
+        setCameraResult("SI");
+      } else if (recentResult.result === "Bajo") {
+        setCameraResult("NO");
+      }
       return;
     }
 
@@ -158,17 +221,32 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
       setIsPendulumSwinging(false);
       
       // Respuestas basadas en movimiento real
-      setDiagnosisPercentage(hasSignificantMotion ? 85 : 15);
+      const percentage = hasSignificantMotion ? 85 : 15;
+      setDiagnosisPercentage(percentage);
       
+      let result;
       if (hasSignificantMotion) {
         console.log("Configurando resultado como ALTO/SI");
-        setDiagnosisResult("Alto");
+        result = "Alto";
         setCameraResult("SI");
       } else {
         console.log("Configurando resultado como BAJO/NO");
-        setDiagnosisResult("Bajo");
+        result = "Bajo";
         setCameraResult("NO");
       }
+      
+      setDiagnosisResult(result);
+      
+      // Guardar resultado en resultados recientes
+      setRecentResults(prev => [
+        ...prev, 
+        {
+          area,
+          result,
+          percentage,
+          timestamp: Date.now()
+        }
+      ]);
 
       // Stop sound
       stopPendulumSound();
@@ -186,10 +264,33 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
       setCameraResult("NO");
       setDiagnosisResult("Bajo");
       setDiagnosisPercentage(15);
+      
+      // Guardar resultado de error en resultados recientes
+      setRecentResults(prev => [
+        ...prev, 
+        {
+          area,
+          result: "Bajo",
+          percentage: 15,
+          timestamp: Date.now()
+        }
+      ]);
     } finally {
       setProcessingCamera(false);
     }
   };
+
+  // Limpia los resultados recientes más viejos de 5 minutos
+  useEffect(() => {
+    const cleanupInterval = setInterval(() => {
+      const now = Date.now();
+      setRecentResults(prev => 
+        prev.filter(result => (now - result.timestamp) < 5 * 60 * 1000)
+      );
+    }, 60000); // Verificar cada minuto
+    
+    return () => clearInterval(cleanupInterval);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -229,10 +330,27 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
         ) : (
           // Regular diagnosis mode
           <>
+            {/* Campo para nombre de la persona */}
+            <div className="w-full max-w-xs mb-6">
+              <Label htmlFor="personName" className="text-sm font-medium mb-1 block">
+                Nombre de la persona
+              </Label>
+              <Input 
+                id="personName"
+                value={personName}
+                onChange={(e) => setPersonName(e.target.value)}
+                placeholder="Ingresa el nombre"
+                className="bg-quantum-dark/30 border-quantum-primary/30"
+              />
+            </div>
+            
             {selectedArea ? (
               <>
                 <div className="text-lg mb-6">
                   Diagnosticando: <span className="font-semibold">{selectedArea}</span>
+                  {personName && (
+                    <span> para <span className="font-semibold">{personName}</span></span>
+                  )}
                 </div>
                 
                 <PendulumVisual 
@@ -256,6 +374,7 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
                   selectedArea={selectedArea}
                   cameraResult={cameraResult}
                   onDiagnoseAgain={() => startMotionDiagnosis(selectedArea)}
+                  personName={personName}
                 />
                 
                 {(isPendulumSwinging || processingCamera) && (

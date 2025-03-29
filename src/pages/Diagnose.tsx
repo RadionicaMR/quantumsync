@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { Camera } from 'lucide-react';
 import Layout from '@/components/Layout';
@@ -24,6 +25,7 @@ const Diagnose = () => {
   const [cameraResult, setCameraResult] = useState<'SI' | 'NO' | null>(null);
   const [pendulumSound, setPendulumSound] = useState(true);
   const [mentalQuestionMode, setMentalQuestionMode] = useState(false);
+  const [personName, setPersonName] = useState('');
 
   const streamRef = useRef<MediaStream | null>(null);
 
@@ -165,6 +167,8 @@ const Diagnose = () => {
                       pendulumSound={pendulumSound}
                       cameraResult={cameraResult}
                       setCameraResult={setCameraResult}
+                      personName={personName}
+                      setPersonName={setPersonName}
                     />
                   )}
                 </div>

@@ -8,6 +8,7 @@ interface DiagnosisResultProps {
   selectedArea: string;
   cameraResult: 'SI' | 'NO' | null;
   onDiagnoseAgain: () => void;
+  personName?: string;
 }
 
 const DiagnosisResult: React.FC<DiagnosisResultProps> = ({ 
@@ -15,7 +16,8 @@ const DiagnosisResult: React.FC<DiagnosisResultProps> = ({
   diagnosisPercentage, 
   selectedArea,
   cameraResult,
-  onDiagnoseAgain
+  onDiagnoseAgain,
+  personName
 }) => {
   if (!diagnosisResult) return null;
   
@@ -57,7 +59,11 @@ const DiagnosisResult: React.FC<DiagnosisResultProps> = ({
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.8 }}
       >
-        Tu {selectedArea} está al {diagnosisPercentage}% del nivel óptimo
+        {personName ? (
+          <span>{personName} tiene {selectedArea} al {diagnosisPercentage}% del nivel óptimo</span>
+        ) : (
+          <span>Tu {selectedArea} está al {diagnosisPercentage}% del nivel óptimo</span>
+        )}
       </motion.div>
       
       {cameraResult && (
