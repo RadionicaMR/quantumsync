@@ -28,7 +28,19 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   
   const handleStartQuestion = async () => {
-    await startMentalQuestion();
+    if (!isMobileDevice && useCameraMode) {
+      toast({
+        title: "Dispositivo no compatible",
+        description: "Esta función solo está disponible en dispositivos móviles.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const result = await startMentalQuestion();
+    if (result) {
+      setCameraResult(result);
+    }
   };
 
   return (

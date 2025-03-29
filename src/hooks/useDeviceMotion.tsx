@@ -2,7 +2,7 @@
 import { useMotionPermission } from "./motion/useMotionPermission";
 import { useMotionEvents } from "./motion/useMotionEvents";
 import { useCalibration } from "./motion/useCalibration";
-import { useMotionDetection } from "./motion/useMotionDetection";
+import { useMotionDetection } from "./useMotionDetection";
 
 export function useDeviceMotion() {
   const { motion, setMotion } = useMotionEvents();

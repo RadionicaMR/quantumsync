@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { CalibrationState, DeviceMotionState } from "./types";
+import { CalibrationState, DeviceMotionState } from "@/hooks/motion/types";
 
 export function useMotionDetection(motion: DeviceMotionState, calibration: CalibrationState) {
   const [significantMotion, setSignificantMotion] = useState<boolean | null>(null);

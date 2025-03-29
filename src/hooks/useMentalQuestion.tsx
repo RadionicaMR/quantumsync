@@ -11,7 +11,7 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
   const [motionDetected, setMotionDetected] = useState(false);
   const [cameraResult, setCameraResult] = useState<'SI' | 'NO' | null>(null);
 
-  const { detectMotion, requestPermission, motion, calibrateDevice } = useDeviceMotion();
+  const { motion, requestPermission, calibrateDevice, detectMotion } = useDeviceMotion();
   const { startPendulumSound, stopPendulumSound } = usePendulumAudio();
   
   // Verificar si es dispositivo móvil
