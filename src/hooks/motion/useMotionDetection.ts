@@ -12,7 +12,6 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
       console.log(`Iniciando detección de movimiento (umbral: ${thresholdDegrees}°, duración: ${durationMs}ms)`);
       let maxDeviation = 0;
       let detected = false;
-      let motionDetected = false;
       const startTime = Date.now();
       
       // Clear previous motion values
@@ -45,11 +44,11 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
           // Update maximum deviation seen during this monitoring period
           maxDeviation = Math.max(maxDeviation, rotationDeviation, accelDeviation * 100);
           
-          // Detect any movement at all (extremely sensitive - almost any non-zero value)
-          if (rotationDeviation > 0.00001 || accelDeviation > 0.00001) {
-            console.log("¡Movimiento mínimo detectado!");
+          // Use a higher threshold to avoid false detections - 0.5 is much higher than the previous 0.00001
+          // This should prevent detecting noise as actual movement
+          if (rotationDeviation > 0.5 || accelDeviation > 0.02) {
+            console.log("¡Movimiento significativo detectado!");
             detected = true;
-            motionDetected = true;
             setSignificantMotion(true);
             
             // Resolver inmediatamente si detectamos movimiento
@@ -62,14 +61,13 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
         if (Date.now() - startTime >= durationMs) {
           clearInterval(interval);
           
-          // Check if there was any motion at all during the period
-          const hasAnyMotion = lastMotionValues.some(value => value > 0);
+          // Use a higher threshold for final detection as well - 0.3 instead of 0
+          const hasSignificantMotion = lastMotionValues.some(value => value > 0.3);
           
           console.log(`Tiempo completado. Máxima desviación: ${maxDeviation.toFixed(6)}`);
-          console.log(`¿Se detectó algún movimiento?: ${hasAnyMotion || detected}`);
+          console.log(`¿Se detectó movimiento significativo?: ${hasSignificantMotion || detected}`);
           
-          // Si se detectó cualquier movimiento, resolver como true
-          if (hasAnyMotion || detected || maxDeviation > 0) {
+          if (hasSignificantMotion || detected) {
             setSignificantMotion(true);
             resolve(true);
           } else {
@@ -77,18 +75,18 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
             resolve(false);
           }
         }
-      }, 25); // Frecuencia muy alta (25ms) para capturar cualquier movimiento
+      }, 25);
       
       // After specified duration, ensure we resolve the promise
       setTimeout(() => {
         clearInterval(interval);
         
-        // Final check for ANY motion at all
-        const hasAnyMotion = lastMotionValues.some(value => value > 0);
+        // Final check for SIGNIFICANT motion (not just any motion)
+        const hasSignificantMotion = lastMotionValues.some(value => value > 0.3);
         
-        console.log(`Tiempo límite alcanzado. ¿Se detectó algún movimiento?: ${hasAnyMotion || detected}`);
+        console.log(`Tiempo límite alcanzado. ¿Se detectó movimiento significativo?: ${hasSignificantMotion || detected}`);
         
-        if (hasAnyMotion || detected || maxDeviation > 0) {
+        if (hasSignificantMotion || detected) {
           setSignificantMotion(true);
           resolve(true);
         } else {

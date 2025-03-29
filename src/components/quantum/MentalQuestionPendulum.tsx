@@ -46,31 +46,31 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
     checkMobile();
   }, [requestPermission]);
 
-  // Monitor device motion continuously
+  // Monitor device motion with a higher threshold
   useEffect(() => {
     if (!askingMental) return;
     
     console.log("Activando monitoreo continuo de movimiento...");
     
     const intervalId = setInterval(() => {
-      // If there's any motion at all, consider it detected
+      // Use more sensitive thresholds for detecting motion
       if (motion.rotation.beta !== null || motion.rotation.gamma !== null || 
           motion.acceleration.x !== null || motion.acceleration.y !== null || 
           motion.acceleration.z !== null) {
         
-        // Check if there's any non-zero value in any motion parameter
-        const hasRotation = 
-          (motion.rotation.beta !== 0 && motion.rotation.beta !== null) || 
-          (motion.rotation.gamma !== 0 && motion.rotation.gamma !== null) || 
-          (motion.rotation.alpha !== 0 && motion.rotation.alpha !== null);
+        // Check for significant deviation from the initial position
+        const hasSignificantRotation = 
+          (Math.abs(motion.rotation.beta || 0) > 0.5) || 
+          (Math.abs(motion.rotation.gamma || 0) > 0.5) || 
+          (Math.abs(motion.rotation.alpha || 0) > 0.5);
         
-        const hasAcceleration = 
-          (motion.acceleration.x !== 0 && motion.acceleration.x !== null) || 
-          (motion.acceleration.y !== 0 && motion.acceleration.y !== null) || 
-          (motion.acceleration.z !== 0 && motion.acceleration.z !== null);
+        const hasSignificantAcceleration = 
+          (Math.abs(motion.acceleration.x || 0) > 0.1) || 
+          (Math.abs(motion.acceleration.y || 0) > 0.1) || 
+          (Math.abs(motion.acceleration.z || 0) > 0.2);
         
-        if (hasRotation || hasAcceleration) {
-          console.log("¡Movimiento detectado durante monitoreo continuo!");
+        if (hasSignificantRotation || hasSignificantAcceleration) {
+          console.log("¡Movimiento significativo detectado durante monitoreo continuo!");
           setMotionDetected(true);
         }
       }
@@ -117,7 +117,7 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
         startPendulumSound();
       }
 
-      // Calibramos el dispositivo para tener un punto de referencia
+      // Calibrar el dispositivo al inicio
       console.log("Calibrando dispositivo para pregunta mental...");
       calibrateDevice();
 
@@ -127,8 +127,8 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
         description: "Piensa en tu pregunta mientras sostienes el dispositivo...",
       });
 
-      // Utilizamos un umbral extremadamente bajo (0.001) para detectar cualquier movimiento
-      console.log("Iniciando detección de movimiento con umbral mínimo...");
+      // Utilizamos un umbral más alto para evitar falsos positivos
+      console.log("Iniciando detección de movimiento con umbral adecuado...");
       
       // Esperamos 5 segundos mientras se monitorea el movimiento
       await new Promise(resolve => setTimeout(resolve, 5000));
@@ -140,25 +140,25 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
       
       console.log(`Estado final de detección: motionDetected=${motionDetected}`);
       
-      // Siempre intentar dar "SI" como resultado
+      // Evaluar si hubo movimiento significativo
       if (motionDetected) {
-        console.log("Se detectó movimiento - respuesta SI");
+        console.log("Se detectó movimiento significativo - respuesta SI");
         setCameraResult("SI");
       } else {
-        // Verificar una última vez si hay algún movimiento en el estado actual
-        const currentHasMotion = 
-          (motion.rotation.beta !== 0 && motion.rotation.beta !== null) || 
-          (motion.rotation.gamma !== 0 && motion.rotation.gamma !== null) ||
-          (motion.rotation.alpha !== 0 && motion.rotation.alpha !== null) ||
-          (motion.acceleration.x !== 0 && motion.acceleration.x !== null) ||
-          (motion.acceleration.y !== 0 && motion.acceleration.y !== null) ||
-          (motion.acceleration.z !== 0 && motion.acceleration.z !== null);
+        // Verificar una última vez si hay algún movimiento significativo en el estado actual
+        const currentHasSignificantMotion = 
+          (Math.abs(motion.rotation.beta || 0) > 0.5) || 
+          (Math.abs(motion.rotation.gamma || 0) > 0.5) ||
+          (Math.abs(motion.rotation.alpha || 0) > 0.5) ||
+          (Math.abs(motion.acceleration.x || 0) > 0.1) ||
+          (Math.abs(motion.acceleration.y || 0) > 0.1) ||
+          (Math.abs(motion.acceleration.z || 0) > 0.2);
         
-        if (currentHasMotion) {
+        if (currentHasSignificantMotion) {
           console.log("Se detectó movimiento en la comprobación final - respuesta SI");
           setCameraResult("SI");
         } else {
-          console.log("NO se detectó movimiento - respuesta NO");
+          console.log("NO se detectó movimiento significativo - respuesta NO");
           setCameraResult("NO");
         }
       }
@@ -174,8 +174,8 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
       });
       clearInterval(swingInterval);
       
-      // Default to SI on error (fallback)
-      setCameraResult("SI");
+      // Default to NO on error (changed from SI)
+      setCameraResult("NO");
     } finally {
       setProcessingCamera(false);
       setAskingMental(false);

@@ -141,17 +141,16 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
         description: "Mantenga el dispositivo mientras se realiza el análisis...",
       });
       
-      // Detect motion with extremely low threshold (0.1 degrees)
-      // Esto detectará cualquier movimiento por mínimo que sea
-      const hasSignificantMotion = await detectMotion(5000, 0.1);
-      console.log("¿Se detectó movimiento?", hasSignificantMotion);
+      // Detect motion with a reasonable threshold (0.5 degrees)
+      // Esto evitará falsos positivos
+      const hasSignificantMotion = await detectMotion(5000, 0.5);
+      console.log("¿Se detectó movimiento significativo?", hasSignificantMotion);
       
       // Stop swing animation
       clearInterval(swingInterval);
       setPendulumAngle(0);
       
-      // Siempre decir "Alto" (high) para resultados si se detecta cualquier movimiento
-      // Esto asegura más respuestas "SÍ"
+      // Respuestas basadas en movimiento real
       setDiagnosisPercentage(hasSignificantMotion ? 85 : 15);
       
       if (hasSignificantMotion) {
@@ -174,6 +173,8 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
         variant: "destructive"
       });
       clearInterval(swingInterval);
+      // Default to NO on error (changed from SI)
+      setCameraResult("NO");
     } finally {
       setProcessingCamera(false);
       setIsPendulumSwinging(false);
