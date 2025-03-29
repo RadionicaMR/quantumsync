@@ -1,519 +1,605 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Upload, Volume2, VolumeX } from 'lucide-react';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
 import QuantumButton from '@/components/QuantumButton';
 import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Slider } from '@/components/ui/slider';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { useToast } from "@/components/ui/use-toast";
-import { ArrowUp } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const Manifest = () => {
-  const { toast } = useToast();
-  const [goal, setGoal] = useState('');
-  const [description, setDescription] = useState('');
-  const [intentionStrength, setIntentionStrength] = useState([50]);
-  const [frequency, setFrequency] = useState([432]);
-  const [selectedPattern, setSelectedPattern] = useState<number | null>(null);
-  const [isActive, setIsActive] = useState(false);
-  const [useReminder, setUseReminder] = useState(false);
-  const [useVisualization, setUseVisualization] = useState(true);
-  const [customPatternImage, setCustomPatternImage] = useState<string | null>(null);
-  const [blinkSpeed, setBlinkSpeed] = useState([5]);
-  const patternInputRef = useRef<HTMLInputElement>(null);
-  const audioContext = useRef<AudioContext | null>(null);
-  const oscillator = useRef<OscillatorNode | null>(null);
-  const gainNode = useRef<GainNode | null>(null);
+  // Estados para la manifestación
+  const [intention, setIntention] = useState('');
+  const [isManifestActive, setIsManifestActive] = useState(false);
+  const [visualSpeed, setVisualSpeed] = useState([10]);
+  const [patternImage, setPatternImage] = useState<string | null>(null);
+  const [receptorImage, setReceptorImage] = useState<string | null>(null);
+  const [selectedPattern, setSelectedPattern] = useState('');
+  const [activeTab, setActiveTab] = useState("presets");
+  const [manifestSound, setManifestSound] = useState(true);
+  const [manifestFrequency, setManifestFrequency] = useState([528]);
+  const [currentImage, setCurrentImage] = useState<'pattern' | 'receptor'>('pattern');
+  
+  // Referencias para elementos DOM y audio
+  const patternFileInputRef = useRef<HTMLInputElement>(null);
+  const receptorFileInputRef = useRef<HTMLInputElement>(null);
+  const oscillatorRef = useRef<OscillatorNode | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const hypnoticTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Patrones preestablecidos
   const patterns = [
-    { id: 1, name: 'Cuadrícula de Abundancia', description: 'Atrae prosperidad y abundancia' },
-    { id: 2, name: 'Matriz de Salud', description: 'Mejora la vitalidad y el bienestar' },
-    { id: 3, name: 'Armonía en Relaciones', description: 'Mejora las conexiones con otros' },
-    { id: 4, name: 'Éxito Profesional', description: 'Acelera el crecimiento profesional' },
-    { id: 5, name: 'Flujo Creativo', description: 'Potencia la expresión artística' },
-    { id: 6, name: 'Paz Interior', description: 'Desarrolla armonía espiritual' },
+    { id: 'abundance', name: 'Abundancia', description: 'Atrae prosperidad y abundancia material y espiritual a tu vida', image: '/patterns/abundance.svg' },
+    { id: 'health', name: 'Salud', description: 'Promueve la salud, vitalidad y bienestar físico y mental', image: '/patterns/health.svg' },
+    { id: 'love', name: 'Amor', description: 'Atrae relaciones armoniosas y amor incondicional a tu vida', image: '/patterns/love.svg' },
+    { id: 'success', name: 'Éxito', description: 'Amplifica el éxito y los logros en todas tus empresas', image: '/patterns/success.svg' },
+    { id: 'creativity', name: 'Creatividad', description: 'Estimula la inspiración, la creatividad y la expresión artística', image: '/patterns/creativity.svg' },
+    { id: 'protection', name: 'Protección', description: 'Crea un escudo energético contra energías e influencias negativas', image: '/patterns/protection.svg' },
   ];
 
-  // Initialize audio on first user interaction
-  useEffect(() => {
-    if (isActive && audioContext.current === null) {
-      audioContext.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-      gainNode.current = audioContext.current.createGain();
-      gainNode.current.gain.value = 0.1; // Lower volume
-      gainNode.current.connect(audioContext.current.destination);
-      
-      oscillator.current = audioContext.current.createOscillator();
-      oscillator.current.type = 'sine';
-      oscillator.current.frequency.value = frequency[0];
-      oscillator.current.connect(gainNode.current);
-      oscillator.current.start();
+  // Manejar cambio de pestaña
+  const handleTabChange = (value: string) => {
+    if (isManifestActive) {
+      stopManifestation();
     }
-    
-    return () => {
-      if (oscillator.current) {
-        oscillator.current.stop();
-        oscillator.current.disconnect();
-        oscillator.current = null;
-      }
-      if (gainNode.current) {
-        gainNode.current.disconnect();
-        gainNode.current = null;
-      }
-    };
-  }, [isActive]);
+    setActiveTab(value);
+    setSelectedPattern('');
+  };
 
-  // Update frequency when slider changes
-  useEffect(() => {
-    if (oscillator.current) {
-      oscillator.current.frequency.value = frequency[0];
-    }
-  }, [frequency]);
-
-  const handlePatternImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  // Manejadores de carga de imagen
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>, setter: (image: string | null) => void) => {
+    const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (loadEvent) => {
-        setCustomPatternImage(loadEvent.target?.result as string);
+      reader.onloadend = () => {
+        setter(reader.result as string);
       };
       reader.readAsDataURL(file);
-      setSelectedPattern(null); // Deselect any pre-defined pattern
     }
   };
 
-  const handleCustomImageUploadClick = () => {
-    patternInputRef.current?.click();
-  };
-
-  const activateManifest = () => {
-    if (!goal.trim()) {
-      toast({
-        title: "El objetivo es obligatorio",
-        description: "Por favor, ingresa una intención clara para tu manifestación.",
-        variant: "destructive",
-      });
-      return;
+  const triggerImageUpload = (ref: React.RefObject<HTMLInputElement>) => {
+    if (ref.current) {
+      ref.current.click();
     }
+  };
 
-    if (selectedPattern === null && !customPatternImage) {
-      toast({
-        title: "Selecciona un patrón",
-        description: "Por favor, selecciona o sube un patrón radiónico para tu manifestación.",
-        variant: "destructive",
-      });
-      return;
+  // Seleccionar patrón predefinido
+  const selectPattern = (patternId: string) => {
+    if (isManifestActive) {
+      stopManifestation();
     }
-
-    setIsActive(true);
-    toast({
-      title: "Manifestación Activada",
-      description: "Tu intención ahora está siendo amplificada a través de patrones radiónicos cuánticos.",
-    });
+    
+    setSelectedPattern(patternId);
   };
 
-  const deactivateManifest = () => {
-    setIsActive(false);
-    toast({
-      title: "Manifestación Desactivada",
-      description: "Tu intención ha sido guardada pero ya no está activa.",
-    });
+  // Iniciar manifestación
+  const startManifestation = () => {
+    if (activeTab === "presets" && !selectedPattern) return;
+    if (activeTab === "custom" && !patternImage) return;
+    
+    // Iniciar sonido si está habilitado
+    if (manifestSound) {
+      try {
+        // Inicializar contexto de audio
+        const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+        audioContextRef.current = new AudioContext();
+        
+        // Crear oscilador
+        const oscillator = audioContextRef.current.createOscillator();
+        const gainNode = audioContextRef.current.createGain();
+        
+        oscillator.type = 'sine';
+        oscillator.frequency.value = manifestFrequency[0];
+        
+        // Configurar volumen
+        gainNode.gain.value = 0.2; // volumen bajo para no molestar
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContextRef.current.destination);
+        
+        oscillator.start();
+        oscillatorRef.current = oscillator;
+      } catch (error) {
+        console.error("Error al iniciar el audio de manifestación:", error);
+      }
+    }
+    
+    // Iniciar efecto hipnótico con velocidad aumentada
+    // Ahora la velocidad máxima será aún mayor (el valor máximo del deslizador es 30)
+    const switchInterval = 1000 / (visualSpeed[0] * 3); // Multiplicamos por 3 para mayor velocidad
+    
+    if (patternImage && receptorImage) {
+      hypnoticTimerRef.current = setInterval(() => {
+        setCurrentImage(prev => prev === 'pattern' ? 'receptor' : 'pattern');
+      }, switchInterval);
+    }
+    
+    setIsManifestActive(true);
   };
+
+  // Detener manifestación
+  const stopManifestation = () => {
+    if (oscillatorRef.current) {
+      oscillatorRef.current.stop();
+      oscillatorRef.current = null;
+    }
+    
+    if (audioContextRef.current) {
+      audioContextRef.current.close();
+      audioContextRef.current = null;
+    }
+    
+    if (hypnoticTimerRef.current) {
+      clearInterval(hypnoticTimerRef.current);
+      hypnoticTimerRef.current = null;
+    }
+    
+    setIsManifestActive(false);
+  };
+
+  // Limpiar al desmontar
+  useEffect(() => {
+    return () => {
+      if (oscillatorRef.current) {
+        oscillatorRef.current.stop();
+      }
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+      }
+      if (hypnoticTimerRef.current) {
+        clearInterval(hypnoticTimerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <Layout>
       <HeroSection
-        title="Manifiesta tus Intenciones"
-        subtitle="Usa patrones radiónicos cuánticos para amplificar tus intenciones y atraer lo que deseas."
+        title="Manifestación Cuántica"
+        subtitle="Programa tus intenciones en el campo cuántico y atrae lo que deseas a tu realidad."
       />
 
       <section className="py-12 px-4">
         <div className="container mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-1">
-              <Card className="quantum-card p-6 mb-6">
-                <h3 className="text-xl font-semibold mb-4">Establece tu Intención</h3>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="goal">Tu Objetivo</Label>
-                    <Input 
-                      id="goal" 
-                      className="quantum-input mt-1" 
-                      placeholder="¿Qué quieres manifestar?"
-                      value={goal}
-                      onChange={(e) => setGoal(e.target.value)}
-                      disabled={isActive}
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="description">Descripción (Opcional)</Label>
-                    <Textarea 
-                      id="description" 
-                      className="quantum-input mt-1" 
-                      placeholder="Describe tu intención en detalle..."
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      disabled={isActive}
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="strength">Fuerza de Intención: {intentionStrength[0]}%</Label>
-                    <Slider
-                      id="strength"
-                      defaultValue={intentionStrength}
-                      max={100}
-                      step={1}
-                      value={intentionStrength}
-                      onValueChange={setIntentionStrength}
-                      disabled={isActive}
-                      className="mt-2"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="frequency">Frecuencia: {frequency[0]} Hz</Label>
-                    <Slider
-                      id="frequency"
-                      defaultValue={frequency}
-                      min={100}
-                      max={963}
-                      step={1}
-                      value={frequency}
-                      onValueChange={setFrequency}
-                      disabled={isActive}
-                      className="mt-2"
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Ajusta la frecuencia armónica para potenciar tu manifestación
-                    </p>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="blinkSpeed">Velocidad de Visualización: {blinkSpeed[0]}</Label>
-                    <Slider
-                      id="blinkSpeed"
-                      defaultValue={blinkSpeed}
-                      min={1}
-                      max={10}
-                      step={1}
-                      value={blinkSpeed}
-                      onValueChange={setBlinkSpeed}
-                      disabled={isActive}
-                      className="mt-2"
-                    />
-                  </div>
-                </div>
-              </Card>
-              
-              <Card className="quantum-card p-6">
-                <h3 className="text-xl font-semibold mb-4">Configuración</h3>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="reminder">Recordatorio Diario</Label>
-                    <Switch 
-                      id="reminder" 
-                      checked={useReminder}
-                      onCheckedChange={setUseReminder}
-                      disabled={isActive}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="visualization">Entrenamiento Visual</Label>
-                    <Switch 
-                      id="visualization" 
-                      checked={useVisualization}
-                      onCheckedChange={setUseVisualization}
-                    />
-                  </div>
-                  
-                  <div className="pt-4">
-                    {!isActive ? (
-                      <QuantumButton 
-                        onClick={activateManifest}
-                        className="w-full"
-                      >
-                        Activar Manifestación
-                      </QuantumButton>
-                    ) : (
-                      <QuantumButton 
-                        variant="outline"
-                        onClick={deactivateManifest}
-                        className="w-full"
-                      >
-                        Desactivar
-                      </QuantumButton>
-                    )}
-                  </div>
-                </div>
-              </Card>
-            </div>
+          <Tabs defaultValue="presets" className="w-full" onValueChange={handleTabChange}>
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
+              <TabsTrigger value="presets">Patrones Preestablecidos</TabsTrigger>
+              <TabsTrigger value="custom">Patrón Personalizado</TabsTrigger>
+            </TabsList>
             
-            <div className="lg:col-span-2">
-              <Card className="quantum-card p-6 h-full">
-                <h3 className="text-xl font-semibold mb-4">Seleccionar Patrón Radiónico</h3>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                  {patterns.map((pattern) => (
-                    <motion.div
-                      key={pattern.id}
-                      whileHover={{ scale: 1.03 }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-                    >
+            <TabsContent value="presets" className="w-full">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <Card className="quantum-card p-6 lg:col-span-1">
+                  <h3 className="text-xl font-semibold mb-4">Selecciona un Patrón Radiónico</h3>
+                  <div className="space-y-2">
+                    {patterns.map((pattern) => (
                       <button
-                        className={`w-full h-full p-4 rounded-lg border-2 transition-all text-left ${
+                        key={pattern.id}
+                        className={`w-full p-3 rounded-lg text-left transition-all ${
                           selectedPattern === pattern.id 
-                            ? 'border-quantum-primary bg-quantum-gradient-soft' 
-                            : 'border-border bg-card hover:bg-muted/50'
-                        } ${isActive ? 'cursor-not-allowed opacity-60' : ''}`}
-                        onClick={() => {
-                          if (!isActive) {
-                            setSelectedPattern(pattern.id);
-                            setCustomPatternImage(null);
-                          }
-                        }}
-                        disabled={isActive}
+                            ? 'bg-quantum-primary text-white' 
+                            : 'bg-muted hover:bg-muted/80'
+                        }`}
+                        onClick={() => selectPattern(pattern.id)}
+                        disabled={isManifestActive}
                       >
-                        <h4 className="font-semibold mb-1">{pattern.name}</h4>
-                        <p className="text-sm text-muted-foreground">{pattern.description}</p>
+                        <div className="font-medium">{pattern.name}</div>
+                        <div className={`text-sm ${selectedPattern === pattern.id ? 'text-white/80' : 'text-muted-foreground'}`}>
+                          {pattern.description}
+                        </div>
                       </button>
-                    </motion.div>
-                  ))}
-
-                  {/* Custom pattern upload button */}
-                  <motion.div
-                    whileHover={{ scale: 1.03 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-                  >
-                    <button
-                      className={`w-full h-full p-4 rounded-lg border-2 border-dashed transition-all text-left ${
-                        customPatternImage 
-                          ? 'border-quantum-primary bg-quantum-gradient-soft' 
-                          : 'border-border bg-card hover:bg-muted/50'
-                      } ${isActive ? 'cursor-not-allowed opacity-60' : ''}`}
-                      onClick={handleCustomImageUploadClick}
-                      disabled={isActive}
-                    >
-                      <div className="flex flex-col items-center justify-center h-full">
-                        <ArrowUp className="mb-2" />
-                        <h4 className="font-semibold mb-1 text-center">Subir Patrón</h4>
-                        <p className="text-sm text-muted-foreground text-center">
-                          {customPatternImage ? 'Imagen seleccionada' : 'Sube tu propio patrón radiónico'}
-                        </p>
-                      </div>
-                    </button>
-                    <input 
-                      ref={patternInputRef}
-                      type="file" 
-                      accept="image/*" 
-                      className="hidden" 
-                      onChange={handlePatternImageChange}
-                      disabled={isActive}
-                    />
-                  </motion.div>
-                </div>
+                    ))}
+                  </div>
+                </Card>
                 
-                {(selectedPattern || customPatternImage) && (
-                  <div className="relative bg-muted dark:bg-card rounded-lg overflow-hidden p-4">
-                    <div className="text-center mb-4">
-                      <h3 className="font-semibold">
-                        {customPatternImage 
-                          ? "Patrón Personalizado" 
-                          : patterns.find(p => p.id === selectedPattern)?.name}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {customPatternImage 
-                          ? "Tu patrón radiónico único" 
-                          : patterns.find(p => p.id === selectedPattern)?.description}
-                      </p>
-                    </div>
+                <div className="lg:col-span-2">
+                  <Card className="quantum-card p-6 h-full">
+                    <h3 className="text-xl font-semibold mb-4">Programa tu Intención</h3>
                     
-                    <div className="aspect-square max-w-md mx-auto relative">
-                      {/* Radionic pattern visualization */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        {/* Base grid */}
-                        <div className="w-full h-full border-2 border-quantum-primary/20 rounded-lg"></div>
-                        
-                        {/* Custom pattern image */}
-                        {customPatternImage && (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <img 
-                              src={customPatternImage} 
-                              alt="Patrón radiónico personalizado"
-                              className="max-w-full max-h-full object-contain"
+                    {selectedPattern || isManifestActive ? (
+                      <div className="space-y-6">
+                        <div className="mb-6">
+                          <Label htmlFor="intention" className="mb-2 block">Establece tu intención</Label>
+                          <Textarea 
+                            id="intention" 
+                            placeholder="Escribe tu intención con claridad y precisión..."
+                            className="min-h-[100px] quantum-input"
+                            value={intention}
+                            onChange={(e) => setIntention(e.target.value)}
+                            disabled={isManifestActive}
+                          />
+                          
+                          <div className="mt-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <Label>Frecuencia de Manifestación: {manifestFrequency[0]} Hz</Label>
+                              <div className="flex items-center">
+                                <Switch
+                                  checked={manifestSound}
+                                  onCheckedChange={setManifestSound}
+                                  disabled={isManifestActive}
+                                  id="sound-toggle"
+                                  className="mr-2"
+                                />
+                                <Label htmlFor="sound-toggle" className="cursor-pointer">
+                                  {manifestSound ? <Volume2 size={18} /> : <VolumeX size={18} />}
+                                </Label>
+                              </div>
+                            </div>
+                            <Slider
+                              min={100}
+                              max={963}
+                              step={1}
+                              value={manifestFrequency}
+                              onValueChange={setManifestFrequency}
+                              disabled={isManifestActive}
+                              className="mb-6"
                             />
                           </div>
-                        )}
-                        
-                        {/* Pattern specific to selection */}
-                        {selectedPattern === 1 && (
-                          <div className="absolute inset-0">
-                            <svg viewBox="0 0 100 100" className="w-full h-full">
-                              <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" className="text-quantum-primary/30" strokeWidth="1" />
-                              <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" className="text-quantum-primary/40" strokeWidth="1" />
-                              <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" className="text-quantum-primary/50" strokeWidth="1" />
-                              <path d="M10,50 L90,50" stroke="currentColor" className="text-quantum-primary/60" strokeWidth="1" />
-                              <path d="M50,10 L50,90" stroke="currentColor" className="text-quantum-primary/60" strokeWidth="1" />
-                              <path d="M20,20 L80,80" stroke="currentColor" className="text-quantum-primary/60" strokeWidth="1" />
-                              <path d="M20,80 L80,20" stroke="currentColor" className="text-quantum-primary/60" strokeWidth="1" />
-                            </svg>
+                          
+                          <div className="mt-4">
+                            <Label className="mb-2 block">Velocidad de Visualización: {visualSpeed[0]}</Label>
+                            <Slider
+                              min={1}
+                              max={30} // Aumentado el máximo para una visualización más rápida
+                              step={1}
+                              value={visualSpeed}
+                              onValueChange={setVisualSpeed}
+                              disabled={isManifestActive}
+                              className="mb-4"
+                            />
                           </div>
-                        )}
-                        
-                        {selectedPattern === 2 && (
-                          <div className="absolute inset-0">
-                            <svg viewBox="0 0 100 100" className="w-full h-full">
-                              <rect x="20" y="20" width="60" height="60" fill="none" stroke="currentColor" className="text-quantum-primary/30" strokeWidth="1" />
-                              <circle cx="50" cy="50" r="25" fill="none" stroke="currentColor" className="text-quantum-primary/50" strokeWidth="1" />
-                              <path d="M20,50 L80,50" stroke="currentColor" className="text-quantum-primary/60" strokeWidth="1" />
-                              <path d="M50,20 L50,80" stroke="currentColor" className="text-quantum-primary/60" strokeWidth="1" />
-                            </svg>
-                          </div>
-                        )}
-                        
-                        {selectedPattern === 3 && (
-                          <div className="absolute inset-0">
-                            <svg viewBox="0 0 100 100" className="w-full h-full">
-                              <circle cx="35" cy="35" r="20" fill="none" stroke="currentColor" className="text-quantum-primary/40" strokeWidth="1" />
-                              <circle cx="65" cy="65" r="20" fill="none" stroke="currentColor" className="text-quantum-primary/40" strokeWidth="1" />
-                              <path d="M35,35 L65,65" stroke="currentColor" className="text-quantum-primary/60" strokeWidth="1" />
-                              <path d="M20,50 L80,50" stroke="currentColor" className="text-quantum-primary/30" strokeWidth="1" />
-                              <path d="M50,20 L50,80" stroke="currentColor" className="text-quantum-primary/30" strokeWidth="1" />
-                            </svg>
-                          </div>
-                        )}
-                        
-                        {selectedPattern === 4 && (
-                          <div className="absolute inset-0">
-                            <svg viewBox="0 0 100 100" className="w-full h-full">
-                              <path d="M20,20 L80,20 L80,80 L20,80 Z" fill="none" stroke="currentColor" className="text-quantum-primary/30" strokeWidth="1" />
-                              <path d="M35,35 L65,35 L65,65 L35,65 Z" fill="none" stroke="currentColor" className="text-quantum-primary/50" strokeWidth="1" />
-                              <path d="M20,20 L80,80" stroke="currentColor" className="text-quantum-primary/60" strokeWidth="1" />
-                              <path d="M20,80 L80,20" stroke="currentColor" className="text-quantum-primary/60" strokeWidth="1" />
-                            </svg>
-                          </div>
-                        )}
-                        
-                        {selectedPattern === 5 && (
-                          <div className="absolute inset-0">
-                            <svg viewBox="0 0 100 100" className="w-full h-full">
-                              <path d="M50,20 L80,50 L50,80 L20,50 Z" fill="none" stroke="currentColor" className="text-quantum-primary/40" strokeWidth="1" />
-                              <circle cx="50" cy="50" r="15" fill="none" stroke="currentColor" className="text-quantum-primary/60" strokeWidth="1" />
-                              <path d="M20,20 L80,80" stroke="currentColor" className="text-quantum-primary/30" strokeWidth="1" />
-                              <path d="M20,80 L80,20" stroke="currentColor" className="text-quantum-primary/30" strokeWidth="1" />
-                            </svg>
-                          </div>
-                        )}
-                        
-                        {selectedPattern === 6 && (
-                          <div className="absolute inset-0">
-                            <svg viewBox="0 0 100 100" className="w-full h-full">
-                              <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" className="text-quantum-primary/30" strokeWidth="1" />
-                              <path d="M30,30 L70,70" stroke="currentColor" className="text-quantum-primary/60" strokeWidth="1" />
-                              <path d="M30,70 L70,30" stroke="currentColor" className="text-quantum-primary/60" strokeWidth="1" />
-                              <path d="M50,10 L50,90" stroke="currentColor" className="text-quantum-primary/40" strokeWidth="1" />
-                              <path d="M10,50 L90,50" stroke="currentColor" className="text-quantum-primary/40" strokeWidth="1" />
-                              <circle cx="50" cy="50" r="10" fill="none" stroke="currentColor" className="text-quantum-primary/70" strokeWidth="1" />
-                            </svg>
-                          </div>
-                        )}
-                        
-                        {/* Active energy visualization with hypnotic effect */}
-                        {isActive && useVisualization && (
-                          <>
+
+                          {/* Sección para subir imagen RECEPTOR */}
+                          <div className="mt-6">
+                            <Label className="mb-2 block">Imagen del RECEPTOR</Label>
                             <div 
-                              className="absolute inset-0 flex items-center justify-center"
-                              style={{
-                                animation: `hypnoticPulse ${11 - blinkSpeed[0]}00ms infinite alternate`,
-                              }}
+                              className="border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer"
+                              onClick={() => !isManifestActive && triggerImageUpload(receptorFileInputRef)}
                             >
-                              <div className="w-1/2 h-1/2 rounded-full bg-quantum-primary/5"></div>
+                              {receptorImage ? (
+                                <div className="relative h-40 w-full overflow-hidden rounded-lg">
+                                  <img 
+                                    src={receptorImage} 
+                                    alt="Imagen del receptor" 
+                                    className="w-full h-full object-contain"
+                                  />
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      triggerImageUpload(receptorFileInputRef);
+                                    }}
+                                    className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
+                                    disabled={isManifestActive}
+                                  >
+                                    <Upload size={16} />
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="flex flex-col items-center justify-center py-6">
+                                  <Upload className="w-10 h-10 text-muted-foreground mb-2" />
+                                  <p className="font-medium">Subir Imagen del Receptor</p>
+                                  <p className="text-sm text-muted-foreground mt-1">
+                                    Selecciona una imagen relacionada con tu objetivo
+                                  </p>
+                                </div>
+                              )}
+                              <input 
+                                type="file"
+                                ref={receptorFileInputRef}
+                                onChange={(e) => handleImageUpload(e, setReceptorImage)}
+                                accept="image/*"
+                                className="hidden"
+                                disabled={isManifestActive}
+                              />
                             </div>
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="w-1/3 h-1/3 rounded-full bg-quantum-primary/10"></div>
-                            </div>
-                            <div 
-                              className="absolute inset-0 bg-quantum-gradient-soft opacity-20"
-                              style={{
-                                animation: `hypnoticPulse ${11 - blinkSpeed[0]}00ms infinite alternate`,
-                              }}
-                            ></div>
-                          </>
-                        )}
+                          </div>
+                        </div>
                         
-                        {/* Goal text overlay with hypnotic effect */}
-                        {isActive && goal && (
-                          <div 
-                            className="absolute inset-0 flex items-center justify-center z-20"
-                            style={{
-                              animation: `textPulse ${11 - blinkSpeed[0]}00ms infinite alternate`,
-                            }}
-                          >
-                            <div className="backdrop-blur-sm max-w-[90%]">
-                              <p 
-                                className="text-xl md:text-2xl font-bold text-center text-white drop-shadow-glow"
+                        <div className="flex items-center justify-between">
+                          {isManifestActive ? (
+                            <>
+                              <div className="text-quantum-primary font-medium">
+                                Manifestación activa
+                              </div>
+                              <QuantumButton 
+                                variant="outline"
+                                onClick={stopManifestation}
+                              >
+                                Detener Manifestación
+                              </QuantumButton>
+                            </>
+                          ) : (
+                            <>
+                              <div className="text-muted-foreground">
+                                {selectedPattern ? 'Listo para iniciar manifestación' : 'Selecciona un patrón para continuar'}
+                              </div>
+                              <QuantumButton 
+                                onClick={startManifestation}
+                                disabled={!selectedPattern || !intention.trim()}
+                              >
+                                Activar Manifestación
+                              </QuantumButton>
+                            </>
+                          )}
+                        </div>
+                        
+                        {isManifestActive && (
+                          <div className="mt-6 relative overflow-hidden rounded-lg bg-black h-[300px]">
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              {/* Imagen del patrón o imagen del receptor en alternancia */}
+                              {(patternImage || receptorImage) && (
+                                <img 
+                                  src={currentImage === 'pattern' ? 
+                                    (patternImage || patterns.find(p => p.id === selectedPattern)?.image) : 
+                                    receptorImage || ''}
+                                  alt="Patrón de manifestación"
+                                  className="max-h-full max-w-full object-contain opacity-80"
+                                />
+                              )}
+                              
+                              {/* Texto de la intención superpuesto */}
+                              <div 
+                                className="absolute inset-0 flex items-center justify-center text-white font-bold text-2xl"
                                 style={{
-                                  textShadow: '0 0 10px rgba(155,135,245,0.8), 0 0 20px rgba(155,135,245,0.5)',
+                                  animation: `textPulse ${60/visualSpeed[0]}s alternate infinite ease-in-out`,
+                                  textShadow: '0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(155,135,245,0.8)'
                                 }}
                               >
-                                {goal}
-                              </p>
+                                {intention}
+                              </div>
                             </div>
                           </div>
                         )}
                       </div>
-                    </div>
-                    
-                    {isActive && (
-                      <div className="mt-4 text-center">
-                        <div 
-                          className="text-sm text-quantum-primary"
-                          style={{
-                            animation: `textPulse ${11 - blinkSpeed[0]}00ms infinite alternate`,
-                          }}
-                        >
-                          Intención Activa • Fuerza: {intentionStrength[0]}% • {frequency[0]} Hz
+                    ) : (
+                      <div className="text-center text-muted-foreground h-[300px] flex flex-col items-center justify-center">
+                        <div className="text-quantum-primary text-5xl mb-4">
+                          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mx-auto">
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M12 6V12L16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
                         </div>
-                        <div className="text-xs text-muted-foreground mt-1">
-                          Tu manifestación está siendo amplificada actualmente a través de campos cuánticos
-                        </div>
+                        <p className="text-lg mb-4">Selecciona un patrón para comenzar</p>
+                        <p className="text-sm max-w-md">
+                          Elige uno de nuestros patrones radiónicos diseñados para amplificar diferentes tipos de manifestaciones
+                        </p>
                       </div>
                     )}
-                  </div>
-                )}
-                
-                {!selectedPattern && !customPatternImage && (
-                  <div className="flex items-center justify-center h-[300px] text-center text-muted-foreground">
-                    <div>
-                      <div className="text-quantum-primary text-5xl mb-4">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mx-auto">
-                          <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M12 18C15.3137 18 18 15.3137 18 12C18 8.68629 15.3137 6 12 6C8.68629 6 6 8.68629 6 12C6 15.3137 8.68629 18 12 18Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
+                  </Card>
+                </div>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="custom" className="w-full">
+              <Card className="quantum-card p-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <div className="lg:col-span-1">
+                    <h3 className="text-xl font-semibold mb-4">Carga tu Patrón Radiónico</h3>
+                    <div 
+                      className="border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer"
+                      onClick={() => !isManifestActive && triggerImageUpload(patternFileInputRef)}
+                    >
+                      {patternImage ? (
+                        <div className="relative h-40 w-full overflow-hidden rounded-lg">
+                          <img 
+                            src={patternImage} 
+                            alt="Patrón radiónico personalizado" 
+                            className="w-full h-full object-contain"
+                          />
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              triggerImageUpload(patternFileInputRef);
+                            }}
+                            className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
+                            disabled={isManifestActive}
+                          >
+                            <Upload size={16} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center py-12">
+                          <Upload className="w-12 h-12 text-muted-foreground mb-4" />
+                          <p className="font-medium">Subir Patrón Radiónico</p>
+                          <p className="text-sm text-muted-foreground mt-2">
+                            Sube tu propio diseño desde tu galería
+                          </p>
+                        </div>
+                      )}
+                      <input 
+                        type="file"
+                        ref={patternFileInputRef}
+                        onChange={(e) => handleImageUpload(e, setPatternImage)}
+                        accept="image/*"
+                        className="hidden"
+                        disabled={isManifestActive}
+                      />
+                    </div>
+
+                    <div className="mt-6">
+                      <Label className="mb-2 block">Imagen del RECEPTOR</Label>
+                      <div 
+                        className="border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer"
+                        onClick={() => !isManifestActive && triggerImageUpload(receptorFileInputRef)}
+                      >
+                        {receptorImage ? (
+                          <div className="relative h-40 w-full overflow-hidden rounded-lg">
+                            <img 
+                              src={receptorImage} 
+                              alt="Imagen del receptor" 
+                              className="w-full h-full object-contain"
+                            />
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                triggerImageUpload(receptorFileInputRef);
+                              }}
+                              className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
+                              disabled={isManifestActive}
+                            >
+                              <Upload size={16} />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center justify-center py-6">
+                            <Upload className="w-10 h-10 text-muted-foreground mb-2" />
+                            <p className="font-medium">Subir Imagen del Receptor</p>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              Selecciona una imagen relacionada con tu objetivo
+                            </p>
+                          </div>
+                        )}
+                        <input 
+                          type="file"
+                          ref={receptorFileInputRef}
+                          onChange={(e) => handleImageUpload(e, setReceptorImage)}
+                          accept="image/*"
+                          className="hidden"
+                          disabled={isManifestActive}
+                        />
                       </div>
-                      <p className="mb-2">Selecciona un patrón radiónico o sube el tuyo</p>
-                      <p className="text-sm">Elige el patrón que mejor se alinee con tu objetivo de manifestación</p>
+                    </div>
+
+                  </div>
+                  
+                  <div className="lg:col-span-2">
+                    <h3 className="text-xl font-semibold mb-4">Programa tu Intención</h3>
+                    
+                    <div className="space-y-6">
+                      <div>
+                        <Label htmlFor="custom-intention" className="mb-2 block">Establece tu intención</Label>
+                        <Textarea 
+                          id="custom-intention" 
+                          placeholder="Escribe tu intención con claridad y precisión..."
+                          className="min-h-[100px] quantum-input"
+                          value={intention}
+                          onChange={(e) => setIntention(e.target.value)}
+                          disabled={isManifestActive}
+                        />
+
+                        <div className="mt-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <Label>Frecuencia de Manifestación: {manifestFrequency[0]} Hz</Label>
+                            <div className="flex items-center">
+                              <Switch
+                                checked={manifestSound}
+                                onCheckedChange={setManifestSound}
+                                disabled={isManifestActive}
+                                id="custom-sound-toggle"
+                                className="mr-2"
+                              />
+                              <Label htmlFor="custom-sound-toggle" className="cursor-pointer">
+                                {manifestSound ? <Volume2 size={18} /> : <VolumeX size={18} />}
+                              </Label>
+                            </div>
+                          </div>
+                          <Slider
+                            min={100}
+                            max={963}
+                            step={1}
+                            value={manifestFrequency}
+                            onValueChange={setManifestFrequency}
+                            disabled={isManifestActive}
+                            className="mb-6"
+                          />
+                        </div>
+                        
+                        <div className="mt-4">
+                          <Label className="mb-2 block">Velocidad de Visualización: {visualSpeed[0]}</Label>
+                          <Slider
+                            min={1}
+                            max={30} // Aumentado el máximo para una visualización más rápida
+                            step={1}
+                            value={visualSpeed}
+                            onValueChange={setVisualSpeed}
+                            disabled={isManifestActive}
+                            className="mb-4"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        {isManifestActive ? (
+                          <>
+                            <div className="text-quantum-primary font-medium">
+                              Manifestación activa
+                            </div>
+                            <QuantumButton 
+                              variant="outline"
+                              onClick={stopManifestation}
+                            >
+                              Detener Manifestación
+                            </QuantumButton>
+                          </>
+                        ) : (
+                          <>
+                            <div className="text-muted-foreground">
+                              {patternImage ? 'Listo para iniciar manifestación' : 'Carga un patrón para continuar'}
+                            </div>
+                            <QuantumButton 
+                              onClick={startManifestation}
+                              disabled={!patternImage || !intention.trim()}
+                            >
+                              Activar Manifestación
+                            </QuantumButton>
+                          </>
+                        )}
+                      </div>
+                      
+                      {isManifestActive && (
+                        <div className="mt-6 relative overflow-hidden rounded-lg bg-black h-[300px]">
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            {/* Imagen del patrón o imagen del receptor en alternancia */}
+                            {(patternImage || receptorImage) && (
+                              <img 
+                                src={currentImage === 'pattern' ? patternImage || '' : receptorImage || ''}
+                                alt="Patrón de manifestación"
+                                className="max-h-full max-w-full object-contain opacity-80"
+                              />
+                            )}
+                            
+                            {/* Texto de la intención superpuesto con estilo más sutil para la sección personalizada */}
+                            <div 
+                              className="absolute inset-0 flex items-center justify-center text-white font-medium text-xl opacity-60"
+                              style={{
+                                animation: `textPulse ${60/visualSpeed[0]}s alternate infinite ease-in-out`,
+                                textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 16px rgba(155,135,245,0.6)'
+                              }}
+                            >
+                              {intention}
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
-                )}
+                </div>
               </Card>
-            </div>
-          </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </section>
 
       <section className="py-12 px-4 bg-quantum-gradient-soft">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Cómo Funciona la Manifestación</h2>
+            <h2 className="text-3xl font-bold mb-4">Cómo Funciona la Manifestación Cuántica</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              QuantumSync combina el establecimiento de intenciones con amplificación radiónica para ayudar a manifestar tus deseos.
+              QuantumSync utiliza principios de manifestación cuántica y radiónica para amplificar tus intenciones a nivel energético.
             </p>
           </div>
           
@@ -522,9 +608,9 @@ const Manifest = () => {
               <div className="w-12 h-12 rounded-full bg-quantum-gradient-soft text-quantum-primary flex items-center justify-center mb-4 mx-auto">
                 1
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-center">Establece una Intención Clara</h3>
+              <h3 className="text-xl font-semibold mb-2 text-center">Define tu Intención</h3>
               <p className="text-muted-foreground text-center">
-                Define exactamente lo que quieres manifestar con claridad y formulación positiva.
+                Establece claramente qué deseas manifestar, siendo específico y positivo en tu formulación.
               </p>
             </Card>
             
@@ -532,9 +618,9 @@ const Manifest = () => {
               <div className="w-12 h-12 rounded-full bg-quantum-gradient-soft text-quantum-primary flex items-center justify-center mb-4 mx-auto">
                 2
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-center">Amplificación Energética</h3>
+              <h3 className="text-xl font-semibold mb-2 text-center">Amplifica con Patrones Radiónicos</h3>
               <p className="text-muted-foreground text-center">
-                Nuestros patrones radiónicos amplifican tu intención a través de campos de resonancia cuántica.
+                Los patrones geométricos actúan como amplificadores energéticos para tu intención en el campo cuántico.
               </p>
             </Card>
             
@@ -542,9 +628,9 @@ const Manifest = () => {
               <div className="w-12 h-12 rounded-full bg-quantum-gradient-soft text-quantum-primary flex items-center justify-center mb-4 mx-auto">
                 3
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-center">Alineación con la Atracción</h3>
+              <h3 className="text-xl font-semibold mb-2 text-center">Activa la Manifestación</h3>
               <p className="text-muted-foreground text-center">
-                A medida que te alineas energéticamente con tu objetivo, naturalmente atraes experiencias correspondientes.
+                Mediante la visualización activa y las frecuencias sonoras, tu intención se programa en la matriz de la realidad.
               </p>
             </Card>
           </div>
@@ -552,12 +638,46 @@ const Manifest = () => {
       </section>
 
       <section className="py-12 px-4">
-        <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">Únete a Nuestra Comunidad</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
-            Conéctate con otros en su viaje de manifestación y comparte experiencias.
-          </p>
-          <QuantumButton>Únete a Nuestra Comunidad</QuantumButton>
+        <div className="container mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Patrones Radiónicos Avanzados</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Explora nuestra biblioteca de patrones radiónicos para diferentes propósitos de manifestación.
+            </p>
+          </div>
+          
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full max-w-4xl mx-auto"
+          >
+            <CarouselContent>
+              {patterns.map((pattern) => (
+                <CarouselItem key={pattern.id} className="md:basis-1/2 lg:basis-1/3">
+                  <Card className="quantum-card h-full">
+                    <div className="p-1">
+                      <div className="h-48 flex items-center justify-center p-6">
+                        <div className="relative w-full h-full">
+                          <div className="absolute inset-0 rounded-full bg-quantum-gradient-soft opacity-30 animate-pulse-soft"></div>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="text-2xl font-bold holographic-gradient">{pattern.name}</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-4 text-center">
+                        <h4 className="font-medium mb-2">{pattern.name}</h4>
+                        <p className="text-sm text-muted-foreground">{pattern.description}</p>
+                      </div>
+                    </div>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
         </div>
       </section>
     </Layout>
