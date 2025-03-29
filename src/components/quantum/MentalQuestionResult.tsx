@@ -7,18 +7,25 @@ interface MentalQuestionResultProps {
   askingMental: boolean;
   onAskAgain: () => void;
   onStartQuestion: () => void;
+  countdownSeconds?: number;
 }
 
 const MentalQuestionResult: React.FC<MentalQuestionResultProps> = ({ 
   cameraResult, 
   askingMental, 
   onAskAgain, 
-  onStartQuestion
+  onStartQuestion,
+  countdownSeconds = 0
 }) => {
   if (askingMental) {
     return (
       <div className="text-center mt-8 animate-pulse">
         <p className="text-lg">Formulando tu pregunta...</p>
+        {countdownSeconds > 0 && (
+          <p className="text-2xl font-bold mt-4 mb-2">
+            {countdownSeconds}
+          </p>
+        )}
         <p className="text-sm text-muted-foreground mt-2">
           Mantén el dispositivo estable mientras piensas en tu pregunta
         </p>

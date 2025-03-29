@@ -10,8 +10,7 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
   const detectMotion = (durationMs = 5000, thresholdDegrees = 2) => {
     return new Promise<boolean>((resolve) => {
       console.log(`Iniciando detección de movimiento (umbral: ${thresholdDegrees}°, duración: ${durationMs}ms)`);
-      let maxDeviation = 0;
-      let detected = false;
+      let motionDetected = false;
       const startTime = Date.now();
       
       // Limpiar valores anteriores
@@ -20,6 +19,9 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
       
       // Monitorear con alta frecuencia
       const interval = setInterval(() => {
+        const elapsedTime = Date.now() - startTime;
+        console.log(`Tiempo transcurrido: ${Math.floor(elapsedTime / 1000)}s de ${Math.floor(durationMs / 1000)}s`);
+
         if (motion.rotation.beta !== null || motion.rotation.gamma !== null || 
             motion.acceleration.x !== null || motion.acceleration.y !== null || 
             motion.acceleration.z !== null) {
@@ -42,28 +44,20 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
           
           setLastMotionValues(prev => [...prev, rotationDeviation, accelDeviation * 100]);
           
-          // Actualizar la máxima desviación observada
-          maxDeviation = Math.max(maxDeviation, rotationDeviation, accelDeviation * 100);
-          
-          // Detección con umbral muy bajo para capturar cualquier movimiento
+          // Detección con umbral bajo para capturar movimiento
           if (rotationDeviation > 1.0 || accelDeviation > 0.05) {
-            console.log("¡Movimiento significativo detectado!");
-            detected = true;
-            setSignificantMotion(true);
-            
-            // Resolver inmediatamente si detectamos movimiento
-            clearInterval(interval);
-            resolve(true);
+            console.log("¡Movimiento detectado!");
+            motionDetected = true;
           }
         }
         
-        // Resolver cuando se acabe el tiempo
-        if (Date.now() - startTime >= durationMs) {
+        // IMPORTANTE: Solo resolver cuando se complete el tiempo completo
+        if (elapsedTime >= durationMs) {
           clearInterval(interval);
           
-          console.log(`Tiempo completado. Máxima desviación: ${maxDeviation.toFixed(2)}`);
+          console.log(`Tiempo completado (${durationMs}ms). ¿Se detectó movimiento?: ${motionDetected}`);
           
-          if (detected) {
+          if (motionDetected) {
             console.log("Resultado final: SI (se detectó movimiento)");
             setSignificantMotion(true);
             resolve(true);
@@ -73,14 +67,18 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
             resolve(false);
           }
         }
-      }, 10); // Monitoreo más frecuente
+      }, 100); // Monitoreo frecuente
       
-      // Asegurar que resolvemos la promesa después del tiempo especificado
+      // Asegurar que siempre esperamos el tiempo completo
       setTimeout(() => {
         clearInterval(interval);
         
-        if (!detected) {
-          console.log("Tiempo expirado sin detección: NO");
+        console.log(`Tiempo expirado (${durationMs}ms). ¿Se detectó movimiento?: ${motionDetected}`);
+        
+        if (motionDetected) {
+          setSignificantMotion(true);
+          resolve(true);
+        } else {
           setSignificantMotion(false);
           resolve(false);
         }

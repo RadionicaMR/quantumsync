@@ -10,6 +10,7 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   const [motionDetected, setMotionDetected] = useState(false);
   const [cameraResult, setCameraResult] = useState<'SI' | 'NO' | null>(null);
+  const [countdownSeconds, setCountdownSeconds] = useState(0);
 
   const { motion, requestPermission, calibrateDevice, detectMotion } = useDeviceMotion();
   const { startPendulumSound, stopPendulumSound } = usePendulumAudio();
@@ -28,6 +29,30 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
     
     checkMobile();
   }, [requestPermission]);
+
+  // Cuenta regresiva mientras se procesa
+  useEffect(() => {
+    let timer: number | null = null;
+    
+    if (processingCamera) {
+      setCountdownSeconds(5);
+      timer = window.setInterval(() => {
+        setCountdownSeconds(prev => {
+          if (prev <= 1) {
+            if (timer) clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      setCountdownSeconds(0);
+    }
+    
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [processingCamera]);
 
   const startMentalQuestion = async () => {
     setAskingMental(true);
@@ -64,11 +89,11 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
       // Mostrar toast con instrucciones
       toast({
         title: "Formulando pregunta",
-        description: "Piensa en tu pregunta mientras sostienes el dispositivo...",
+        description: "Piensa en tu pregunta mientras sostienes el dispositivo por 5 segundos...",
       });
       
-      // Utilizar directamente detectMotion para obtener resultado
-      console.log("Iniciando detección de movimiento...");
+      // Utilizar detectMotion para obtener resultado, esperando siempre 5 segundos
+      console.log("Iniciando detección de movimiento por 5 segundos...");
       const hasMotion = await detectMotion(5000, 1.0);
       console.log("Resultado de detección de movimiento:", hasMotion);
       
@@ -113,6 +138,7 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
     isMobileDevice,
     cameraResult,
     setCameraResult,
-    startMentalQuestion
+    startMentalQuestion,
+    countdownSeconds
   };
 };

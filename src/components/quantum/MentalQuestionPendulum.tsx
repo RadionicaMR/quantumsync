@@ -22,7 +22,8 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
     askingMental,
     processingCamera,
     isMobileDevice,
-    startMentalQuestion
+    startMentalQuestion,
+    countdownSeconds
   } = useMentalQuestion(pendulumSound);
   
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -77,6 +78,7 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
         askingMental={askingMental}
         onAskAgain={handleStartQuestion}
         onStartQuestion={handleStartQuestion}
+        countdownSeconds={countdownSeconds}
       />
     </>
   );
