@@ -44,14 +44,15 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
           
           setLastMotionValues(prev => [...prev, rotationDeviation, accelDeviation * 100]);
           
-          // Detectamos movimiento con umbral bajo para mayor sensibilidad
-          if (rotationDeviation > 1.0 || accelDeviation > 0.05) {
-            console.log("¡Movimiento detectado! Se responderá SI");
+          // Usar umbrales más estrictos para identificar movimiento real
+          // Aumentamos los umbrales para evitar falsos positivos
+          if (rotationDeviation > 3.0 || accelDeviation > 0.2) {
+            console.log("¡Movimiento significativo detectado! Se responderá SI");
             motionDetected = true;
           }
         }
         
-        // Esperamos siempre el tiempo completo antes de resolver
+        // Siempre completamos el tiempo completo antes de resolver
         if (elapsedTime >= durationMs) {
           clearInterval(interval);
           
