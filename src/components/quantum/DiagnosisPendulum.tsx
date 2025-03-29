@@ -31,12 +31,25 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
   const [diagnosisResult, setDiagnosisResult] = useState<string | null>(null);
   const [diagnosisPercentage, setDiagnosisPercentage] = useState(0);
   const [processingCamera, setProcessingCamera] = useState(false);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
 
   const { detectMotion, requestPermission } = useDeviceMotion();
   const { startPendulumSound, stopPendulumSound } = usePendulumAudio();
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+      if (/android|iPad|iPhone|iPod/i.test(userAgent)) {
+        setIsMobileDevice(true);
+      }
+    };
+    
+    checkMobile();
+  }, []);
+  
   const startPendulum = (area: string) => {
     setIsPendulumSwinging(true);
     setDiagnosisResult(null);
@@ -124,19 +137,16 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
         description: "Mantenga el dispositivo estable durante 5 segundos...",
       });
       
-      // Detect significant motion over 5 seconds with threshold of 5 degrees
-      const hasSignificantMotion = await detectMotion(5000, 5);
+      // Detect motion with lower threshold (0.5 degrees)
+      const hasSignificantMotion = await detectMotion(5000, 0.5);
       
       // Stop swing animation
       clearInterval(swingInterval);
       setPendulumAngle(0);
       
-      // Generate diagnosis result based on motion
-      const percentage = hasSignificantMotion 
-        ? Math.floor(Math.random() * 31) + 70 // Between 70-100 for YES (SI)
-        : Math.floor(Math.random() * 31) + 10; // Between 10-40 for NO
-      
-      setDiagnosisPercentage(percentage);
+      // Always say "Alto" (high) for results if any motion detected
+      // This ensures more "YES" responses
+      setDiagnosisPercentage(hasSignificantMotion ? 85 : 15);
       
       if (hasSignificantMotion) {
         setDiagnosisResult("Alto");
@@ -181,6 +191,14 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
       </h3>
       
       <div className="flex flex-col items-center justify-center min-h-[400px]">
+        {!isMobileDevice && useCameraMode && (
+          <div className="bg-yellow-600/20 border border-yellow-600 p-4 rounded-lg mb-6">
+            <p className="text-center font-medium text-yellow-600">
+              Solo disponible en el Móvil
+            </p>
+          </div>
+        )}
+        
         {mentalQuestionMode ? (
           // Mental question mode content handled by MentalQuestionComponent
           null

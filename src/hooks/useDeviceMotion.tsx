@@ -40,6 +40,7 @@ export function useDeviceMotion() {
   });
 
   const [significantMotion, setSignificantMotion] = useState<boolean | null>(null);
+  const [lastMotionValues, setLastMotionValues] = useState<number[]>([]);
 
   // Request device motion permissions (for iOS 13+)
   const requestPermission = async () => {
@@ -83,14 +84,19 @@ export function useDeviceMotion() {
     return false;
   };
 
-  // Start monitoring device motion for a specific duration
+  // Enhanced motion detection that stores a history of motion values
   const detectMotion = (durationMs = 5000, thresholdDegrees = 5) => {
     return new Promise<boolean>((resolve) => {
       let maxDeviation = 0;
       let detected = false;
+      let motionDetected = false;
+      const startTime = Date.now();
       
       // Reset the calibration
       calibrateDevice();
+      
+      // Clear previous motion values
+      setLastMotionValues([]);
       
       // Start monitoring
       const interval = setInterval(() => {
@@ -99,26 +105,54 @@ export function useDeviceMotion() {
           const betaDeviation = Math.abs(motion.rotation.beta - calibration.beta);
           const gammaDeviation = Math.abs(motion.rotation.gamma - calibration.gamma);
           
-          // Use the maximum deviation on any axis
+          // Store the current deviation for history
           const currentDeviation = Math.max(betaDeviation, gammaDeviation);
+          setLastMotionValues(prev => [...prev, currentDeviation]);
           
           // Update maximum deviation seen during this monitoring period
           maxDeviation = Math.max(maxDeviation, currentDeviation);
           
-          // Check if threshold is exceeded
+          // Almost any movement should trigger a "yes"
           if (currentDeviation > thresholdDegrees) {
             detected = true;
+            motionDetected = true;
             setSignificantMotion(true);
           }
         }
+        
+        // Early resolve if time is up
+        if (Date.now() - startTime >= durationMs) {
+          clearInterval(interval);
+          
+          // Check if there was any motion at all during the period
+          // Even subtle motion should count as motion
+          const hasAnyMotion = lastMotionValues.some(value => value > 0.1);
+          
+          if (hasAnyMotion || motionDetected) {
+            detected = true;
+            setSignificantMotion(true);
+          }
+          
+          setSignificantMotion(detected);
+          resolve(detected);
+        }
       }, 100);
       
-      // After specified duration, resolve the promise with the result
+      // After specified duration, ensure we resolve the promise
       setTimeout(() => {
         clearInterval(interval);
+        
+        // As a fallback, check if there was any motion at all
+        const hasAnyMotion = lastMotionValues.some(value => value > 0.1);
+        
+        if (hasAnyMotion && !detected) {
+          detected = true;
+          setSignificantMotion(true);
+        }
+        
         setSignificantMotion(detected);
         resolve(detected);
-      }, durationMs);
+      }, durationMs + 100); // Add a little buffer
     });
   };
 

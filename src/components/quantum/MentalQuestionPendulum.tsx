@@ -1,5 +1,5 @@
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from "@/components/ui/use-toast";
 import PendulumVisual from './PendulumVisual';
@@ -24,10 +24,23 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
   const [pendulumAngle, setPendulumAngle] = useState(0);
   const [askingMental, setAskingMental] = useState(false);
   const [processingCamera, setProcessingCamera] = useState(false);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
 
-  const { detectMotion, requestPermission } = useDeviceMotion();
+  const { detectMotion, requestPermission, motion } = useDeviceMotion();
   const { startPendulumSound, stopPendulumSound } = usePendulumAudio();
   const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+      if (/android|iPad|iPhone|iPod/i.test(userAgent)) {
+        setIsMobileDevice(true);
+      }
+    };
+    
+    checkMobile();
+  }, []);
 
   const startMentalQuestion = async () => {
     setAskingMental(true);
@@ -69,19 +82,20 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
         title: "Formulando pregunta",
         description: "Piensa en tu pregunta mientras sostienes el dispositivo...",
       });
-      
-      // Detect significant motion over 5 seconds with threshold of 5 degrees
-      const hasSignificantMotion = await detectMotion(5000, 5);
+
+      // Detect motion over 5 seconds with a very low threshold to make it more sensitive
+      const hasSignificantMotion = await detectMotion(5000, 0.5); // Reduced threshold to 0.5 degrees
       
       // Stop swing animation
       clearInterval(swingInterval);
       setPendulumAngle(0);
       setIsPendulumSwinging(false);
       
-      // Generate result based on motion
-      if (hasSignificantMotion) {
-        setCameraResult("SI");
-      } else {
+      // Always set to YES if any motion is detected
+      setCameraResult("SI");
+
+      // If truly no motion, then NO
+      if (!hasSignificantMotion) {
         setCameraResult("NO");
       }
 
@@ -103,6 +117,14 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
 
   return (
     <>
+      {!isMobileDevice && useCameraMode && (
+        <div className="bg-yellow-600/20 border border-yellow-600 p-4 rounded-lg mb-6">
+          <p className="text-center font-medium text-yellow-600">
+            Solo disponible en el Móvil
+          </p>
+        </div>
+      )}
+
       <PendulumVisual 
         isPendulumSwinging={isPendulumSwinging} 
         pendulumAngle={pendulumAngle} 
