@@ -1,7 +1,6 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Image, Upload, SlidersHorizontal } from 'lucide-react';
+import { Image, Upload, SlidersHorizontal, Trash2 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
 import QuantumButton from '@/components/QuantumButton';
@@ -11,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from '@/hooks/use-toast';
 
 const Treat = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -71,6 +71,10 @@ const Treat = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setter(reader.result as string);
+        toast({
+          title: "Imagen cargada",
+          description: "La imagen se ha subido correctamente.",
+        });
       };
       reader.readAsDataURL(file);
     }
@@ -80,6 +84,28 @@ const Treat = () => {
     if (ref.current) {
       ref.current.click();
     }
+  };
+
+  // Función para eliminar imágenes
+  const deleteImage = (type: 'radionic' | 'receptor') => {
+    if (isPlaying) return;
+    
+    if (type === 'radionic') {
+      setRadionicImage(null);
+      if (radionicFileInputRef.current) {
+        radionicFileInputRef.current.value = '';
+      }
+    } else {
+      setReceptorImage(null);
+      if (receptorFileInputRef.current) {
+        receptorFileInputRef.current.value = '';
+      }
+    }
+    
+    toast({
+      title: "Imagen eliminada",
+      description: `La imagen del ${type === 'radionic' ? 'gráfico radiónico' : 'receptor'} ha sido eliminada.`,
+    });
   };
 
   // Función para el efecto hipnótico
@@ -484,13 +510,24 @@ const Treat = () => {
                                   className={`w-full h-full object-contain ${isPlaying ? 'animate-pulse' : ''}`}
                                   style={{ opacity: isPlaying ? '0.7' : '1' }}
                                 />
-                                <button
-                                  onClick={() => triggerImageUpload(radionicFileInputRef)}
-                                  className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
-                                  disabled={isPlaying}
-                                >
-                                  <Upload size={16} />
-                                </button>
+                                <div className="absolute top-2 right-2 flex space-x-2">
+                                  <button
+                                    onClick={() => deleteImage('radionic')}
+                                    className="bg-red-500/70 text-white p-2 rounded-full hover:bg-red-600/90 transition-colors"
+                                    disabled={isPlaying}
+                                    title="Eliminar imagen"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                  <button
+                                    onClick={() => triggerImageUpload(radionicFileInputRef)}
+                                    className="bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
+                                    disabled={isPlaying}
+                                    title="Cambiar imagen"
+                                  >
+                                    <Upload size={16} />
+                                  </button>
+                                </div>
                               </div>
                             ) : (
                               <div 
@@ -529,13 +566,24 @@ const Treat = () => {
                                   className={`w-full h-full object-contain ${isPlaying ? 'animate-pulse' : ''}`}
                                   style={{ opacity: isPlaying ? '0.7' : '1' }}
                                 />
-                                <button
-                                  onClick={() => triggerImageUpload(receptorFileInputRef)}
-                                  className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
-                                  disabled={isPlaying}
-                                >
-                                  <Upload size={16} />
-                                </button>
+                                <div className="absolute top-2 right-2 flex space-x-2">
+                                  <button
+                                    onClick={() => deleteImage('receptor')}
+                                    className="bg-red-500/70 text-white p-2 rounded-full hover:bg-red-600/90 transition-colors"
+                                    disabled={isPlaying}
+                                    title="Eliminar imagen"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                  <button
+                                    onClick={() => triggerImageUpload(receptorFileInputRef)}
+                                    className="bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
+                                    disabled={isPlaying}
+                                    title="Cambiar imagen"
+                                  >
+                                    <Upload size={16} />
+                                  </button>
+                                </div>
                               </div>
                             ) : (
                               <div 
