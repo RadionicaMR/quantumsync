@@ -141,10 +141,10 @@ export function useDeviceMotion() {
           setLastMotionValues(prev => [...prev, currentDeviation]);
           
           // Update maximum deviation seen during this monitoring period
-          maxDeviation = Math.max(maxDeviation, currentDeviation);
+          maxDeviation = Math.max(maxDeviation, currentDeviation, accelDeviation * 10);
           
           // Detect any movement at all (extremely sensitive)
-          if (currentDeviation > thresholdDegrees || accelDeviation > 0.05) {
+          if (currentDeviation > thresholdDegrees || accelDeviation > 0.001) {
             console.log("¡Movimiento detectado!");
             detected = true;
             motionDetected = true;
@@ -161,7 +161,7 @@ export function useDeviceMotion() {
           clearInterval(interval);
           
           // Check if there was any motion at all during the period
-          const hasAnyMotion = lastMotionValues.some(value => value > 0.05);
+          const hasAnyMotion = lastMotionValues.some(value => value > 0.001);
           
           console.log(`Tiempo completado. Máxima desviación: ${maxDeviation.toFixed(2)}°`);
           console.log(`¿Se detectó algún movimiento?: ${hasAnyMotion || detected}`);
@@ -174,14 +174,14 @@ export function useDeviceMotion() {
             resolve(false);
           }
         }
-      }, 100);
+      }, 50); // More frequent checking (50ms instead of 100ms)
       
       // After specified duration, ensure we resolve the promise
       setTimeout(() => {
         clearInterval(interval);
         
         // As a fallback, check if there was any motion at all
-        const hasAnyMotion = lastMotionValues.some(value => value > 0.05);
+        const hasAnyMotion = lastMotionValues.some(value => value > 0.001);
         
         console.log(`Tiempo límite alcanzado. ¿Se detectó algún movimiento?: ${hasAnyMotion || detected}`);
         
@@ -192,7 +192,7 @@ export function useDeviceMotion() {
           setSignificantMotion(false);
           resolve(false);
         }
-      }, durationMs + 100); // Add a little buffer
+      }, durationMs + 50); // Add a little buffer
     });
   };
 

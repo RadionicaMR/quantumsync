@@ -25,11 +25,12 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
   const [askingMental, setAskingMental] = useState(false);
   const [processingCamera, setProcessingCamera] = useState(false);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
+  const [motionDetected, setMotionDetected] = useState(false);
 
   const { detectMotion, requestPermission, motion, calibrateDevice } = useDeviceMotion();
   const { startPendulumSound, stopPendulumSound } = usePendulumAudio();
   const videoRef = useRef<HTMLVideoElement | null>(null);
-
+  
   // Check if device is mobile
   useEffect(() => {
     const checkMobile = () => {
@@ -42,11 +43,37 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
     checkMobile();
   }, []);
 
+  // Activate sensors and request permissions as early as possible
+  useEffect(() => {
+    if (isMobileDevice) {
+      // Initialize sensors when the component loads
+      requestPermission().catch(console.error);
+    }
+  }, [isMobileDevice, requestPermission]);
+
+  // Monitor device motion continuously when in camera mode
+  useEffect(() => {
+    const monitorMotion = () => {
+      if (motion.rotation.beta !== null || motion.acceleration.x !== null) {
+        console.log("Motion detected during monitoring!");
+        setMotionDetected(true);
+      }
+    };
+
+    if (askingMental && useCameraMode) {
+      const interval = setInterval(monitorMotion, 100);
+      return () => clearInterval(interval);
+    }
+  }, [askingMental, useCameraMode, motion.rotation.beta, motion.acceleration]);
+
   const startMentalQuestion = async () => {
     setAskingMental(true);
     setCameraResult(null);
     setProcessingCamera(true);
     setIsPendulumSwinging(true);
+    setMotionDetected(false);
+    
+    console.log("Iniciando pregunta mental, activando sensores...");
     
     // Begin pendulum swing animation
     let angle = 0;
@@ -78,6 +105,7 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
       }
 
       // Calibramos el dispositivo para tener un punto de referencia
+      console.log("Calibrando dispositivo...");
       calibrateDevice();
 
       // Show toast with instructions
@@ -87,7 +115,12 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
       });
 
       // Detect motion over 5 seconds with an extremely low threshold to catch any movement at all
-      const hasSignificantMotion = await detectMotion(5000, 0.1); // Reducido a 0.1 grados para captar cualquier movimiento
+      console.log("Iniciando detección de movimiento con umbral mínimo...");
+      const hasSignificantMotion = await detectMotion(5000, 0.01); // Reducido a 0.01 grados para captar cualquier movimiento
+      
+      // Also check if motion was detected during monitoring
+      const movementDetected = hasSignificantMotion || motionDetected;
+      console.log(`Resultado de detección: hasSignificantMotion=${hasSignificantMotion}, motionDetected=${motionDetected}`);
       
       // Stop swing animation
       clearInterval(swingInterval);
@@ -95,14 +128,12 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
       setIsPendulumSwinging(false);
       
       // Por defecto, establecer SI
-      setCameraResult("SI");
-      
-      // Solo si realmente no hay movimiento, entonces NO
-      if (!hasSignificantMotion) {
-        console.log("No se detectó movimiento en absoluto");
-        setCameraResult("NO");
+      if (movementDetected) {
+        console.log("Se detectó movimiento - respuesta SI");
+        setCameraResult("SI");
       } else {
-        console.log("Se detectó movimiento");
+        console.log("NO se detectó movimiento - respuesta NO");
+        setCameraResult("NO");
       }
 
       // Stop sound
@@ -115,6 +146,9 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
         variant: "destructive"
       });
       clearInterval(swingInterval);
+      
+      // Default to SI on error (fallback)
+      setCameraResult("SI");
     } finally {
       setProcessingCamera(false);
       setAskingMental(false);
