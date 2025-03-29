@@ -17,7 +17,7 @@ const ImageGrid = ({
   isPlaying,
 }: ImageGridProps) => {
   return (
-    <>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
       <ImageUploader
         title="GRÁFICO RADIÓNICO"
         subtitle="Subir Gráfico Radiónico"
@@ -33,7 +33,7 @@ const ImageGrid = ({
         setImage={setReceptorImage}
         isPlaying={isPlaying}
       />
-    </>
+    </div>
   );
 };
 

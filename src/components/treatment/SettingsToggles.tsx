@@ -18,7 +18,7 @@ const SettingsToggles = ({
   isPlaying,
 }: SettingsTogglesProps) => {
   return (
-    <div className="flex flex-col sm:flex-row gap-4">
+    <div className="flex flex-col sm:flex-row gap-6 justify-between w-full">
       <div className="flex items-center gap-2">
         <Switch 
           id="custom-headphones" 

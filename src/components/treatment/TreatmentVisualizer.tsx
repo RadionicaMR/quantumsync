@@ -31,7 +31,7 @@ const TreatmentVisualizer = ({
   }
 
   return (
-    <div className="mt-4 relative h-48 bg-black/10 dark:bg-white/5 rounded-lg overflow-hidden">
+    <div className="mt-4 relative h-64 md:h-80 lg:h-96 w-full bg-black/10 dark:bg-white/5 rounded-lg overflow-hidden">
       {/* Efecto hipnótico con las imágenes */}
       {radionicImage && receptorImage && hypnoticEffect && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
@@ -49,13 +49,13 @@ const TreatmentVisualizer = ({
       
       {/* Overlay con los pulsos circulares */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-        <div className="w-8 h-8 bg-quantum-primary/20 rounded-full animate-ping"></div>
-        <div className="w-16 h-16 bg-quantum-primary/15 rounded-full animate-ping" style={{ animationDelay: '0.2s' }}></div>
-        <div className="w-24 h-24 bg-quantum-primary/10 rounded-full animate-ping" style={{ animationDelay: '0.4s' }}></div>
+        <div className="w-12 h-12 bg-quantum-primary/20 rounded-full animate-ping"></div>
+        <div className="w-24 h-24 bg-quantum-primary/15 rounded-full animate-ping" style={{ animationDelay: '0.2s' }}></div>
+        <div className="w-36 h-36 bg-quantum-primary/10 rounded-full animate-ping" style={{ animationDelay: '0.4s' }}></div>
       </div>
       
       {/* Información y RATES */}
-      <div className="absolute bottom-3 left-3 text-xs text-white z-20 font-mono bg-black/40 px-2 py-1 rounded">
+      <div className="absolute bottom-3 left-3 text-xs md:text-sm text-white z-20 font-mono bg-black/40 px-2 py-1 rounded">
         Frecuencia: {frequency[0]} Hz · Intensidad: {intensity[0]}%
       </div>
       <div className="absolute top-3 right-3 flex space-x-4 text-sm font-mono bg-black/40 px-2 py-1 rounded z-20">

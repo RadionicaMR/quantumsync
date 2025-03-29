@@ -74,8 +74,8 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       {/* Panel izquierdo - Controles */}
-      <div className="lg:col-span-1">
-        <div className="space-y-6">
+      <div className="lg:col-span-1 w-full">
+        <div className="space-y-6 w-full">
           <FrequencyControls 
             frequency={frequency}
             setFrequency={setFrequency}
@@ -101,8 +101,8 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
       </div>
       
       {/* Panel derecho - Upload y visualización */}
-      <div className="lg:col-span-2">
-        <div className="space-y-6">
+      <div className="lg:col-span-2 w-full">
+        <div className="space-y-6 w-full">
           <ImageGrid 
             radionicImage={radionicImage}
             setRadionicImage={setRadionicImage}
