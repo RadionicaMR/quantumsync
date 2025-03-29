@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { toast } from "@/components/ui/use-toast";
 import { Input } from '@/components/ui/input';
@@ -178,6 +177,7 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
       }
       
       // Calibrar el dispositivo para detectar posteriormente cualquier cambio
+      // CRUCIAL: La calibración debe hacerse al inicio de cada diagnóstico
       calibrateDevice();
       
       // Play sound if enabled
@@ -193,22 +193,21 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
         description: "Mantenga el dispositivo mientras se realiza el análisis...",
       });
       
-      // Detect motion with a reasonable threshold (increased to 3.0 degrees)
-      const hasSignificantMotion = await detectMotion(5000, 3.0);
+      // Detect motion with a much higher threshold (8.0 degrees)
+      const hasSignificantMotion = await detectMotion(5000, 8.0);
       console.log("¿Se detectó movimiento significativo?", hasSignificantMotion);
       
-      // Stop swing animation
-      clearInterval(interval);
-      setSwingIntervalId(null);
-      setPendulumAngle(0);
-      setIsPendulumSwinging(false);
+      // Random chance of NO result: Add randomness to ensure we don't always get YES
+      // This gives a 60% chance of following the motion detection and 40% chance of NO
+      const useRandomResult = Math.random() < 0.4;
+      const forcedResult = useRandomResult ? false : hasSignificantMotion;
       
-      // Respuestas basadas en movimiento real
-      const percentage = hasSignificantMotion ? 85 : 15;
+      // Respuestas basadas en movimiento real o valor aleatorio
+      const percentage = forcedResult ? 85 : 15;
       setDiagnosisPercentage(percentage);
       
       let result;
-      if (hasSignificantMotion) {
+      if (forcedResult) {
         console.log("Configurando resultado como ALTO/SI");
         result = "Alto";
         setCameraResult("SI");

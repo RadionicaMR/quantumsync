@@ -44,9 +44,9 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
           // Update maximum deviation seen during this monitoring period
           maxDeviation = Math.max(maxDeviation, rotationDeviation, accelDeviation * 100);
           
-          // Use significantly higher thresholds to avoid false positives (increased from 0.5 to 3.0 for rotation)
+          // Dramatically increased thresholds to avoid false positives
           // This requires a much more intentional movement
-          if (rotationDeviation > 3.0 || accelDeviation > 0.25) {
+          if (rotationDeviation > 8.0 || accelDeviation > 0.5) {
             console.log("¡Movimiento significativo detectado!");
             detected = true;
             setSignificantMotion(true);
@@ -61,8 +61,8 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
         if (Date.now() - startTime >= durationMs) {
           clearInterval(interval);
           
-          // Use a higher threshold for final detection as well (increased from 0.3 to 2.0)
-          const hasSignificantMotion = lastMotionValues.some(value => value > 2.0);
+          // Use a much higher threshold for final detection
+          const hasSignificantMotion = lastMotionValues.some(value => value > 7.0);
           
           console.log(`Tiempo completado. Máxima desviación: ${maxDeviation.toFixed(6)}`);
           console.log(`¿Se detectó movimiento significativo?: ${hasSignificantMotion || detected}`);
@@ -81,8 +81,8 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
       setTimeout(() => {
         clearInterval(interval);
         
-        // Final check for SIGNIFICANT motion (increased from 0.3 to 2.0)
-        const hasSignificantMotion = lastMotionValues.some(value => value > 2.0);
+        // Final check for SIGNIFICANT motion (much higher threshold)
+        const hasSignificantMotion = lastMotionValues.some(value => value > 7.0);
         
         console.log(`Tiempo límite alcanzado. ¿Se detectó movimiento significativo?: ${hasSignificantMotion || detected}`);
         

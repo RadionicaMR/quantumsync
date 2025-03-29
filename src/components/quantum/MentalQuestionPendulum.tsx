@@ -62,14 +62,14 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
         
         // Check for significant deviation from the initial position (increased thresholds)
         const hasSignificantRotation = 
-          (Math.abs(motion.rotation.beta || 0) > 3.0) || 
-          (Math.abs(motion.rotation.gamma || 0) > 3.0) || 
-          (Math.abs(motion.rotation.alpha || 0) > 3.0);
+          (Math.abs(motion.rotation.beta || 0) > 8.0) || 
+          (Math.abs(motion.rotation.gamma || 0) > 8.0) || 
+          (Math.abs(motion.rotation.alpha || 0) > 8.0);
         
         const hasSignificantAcceleration = 
-          (Math.abs(motion.acceleration.x || 0) > 0.25) || 
-          (Math.abs(motion.acceleration.y || 0) > 0.25) || 
-          (Math.abs(motion.acceleration.z || 0) > 0.3);
+          (Math.abs(motion.acceleration.x || 0) > 0.5) || 
+          (Math.abs(motion.acceleration.y || 0) > 0.5) || 
+          (Math.abs(motion.acceleration.z || 0) > 0.6);
         
         if (hasSignificantRotation || hasSignificantAcceleration) {
           console.log("¡Movimiento significativo detectado durante monitoreo continuo!");
@@ -119,7 +119,7 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
         startPendulumSound();
       }
 
-      // Calibrar el dispositivo al inicio
+      // Calibrar el dispositivo al inicio - MUY IMPORTANTE para iniciar desde cero
       console.log("Calibrando dispositivo para pregunta mental...");
       calibrateDevice();
 
@@ -142,19 +142,20 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
       
       console.log(`Estado final de detección: motionDetected=${motionDetected}`);
       
-      // Evaluar si hubo movimiento significativo
+      // Evaluar si hubo movimiento significativo con umbral más alto
       if (motionDetected) {
         console.log("Se detectó movimiento significativo - respuesta SI");
         setCameraResult("SI");
       } else {
         // Verificar una última vez si hay algún movimiento significativo en el estado actual
+        // con umbrales aún más altos para evitar falsos positivos
         const currentHasSignificantMotion = 
-          (Math.abs(motion.rotation.beta || 0) > 3.0) || 
-          (Math.abs(motion.rotation.gamma || 0) > 3.0) ||
-          (Math.abs(motion.rotation.alpha || 0) > 3.0) ||
-          (Math.abs(motion.acceleration.x || 0) > 0.25) ||
-          (Math.abs(motion.acceleration.y || 0) > 0.25) ||
-          (Math.abs(motion.acceleration.z || 0) > 0.3);
+          (Math.abs(motion.rotation.beta || 0) > 8.0) || 
+          (Math.abs(motion.rotation.gamma || 0) > 8.0) ||
+          (Math.abs(motion.rotation.alpha || 0) > 8.0) ||
+          (Math.abs(motion.acceleration.x || 0) > 0.5) ||
+          (Math.abs(motion.acceleration.y || 0) > 0.5) ||
+          (Math.abs(motion.acceleration.z || 0) > 0.6);
         
         if (currentHasSignificantMotion) {
           console.log("Se detectó movimiento en la comprobación final - respuesta SI");
