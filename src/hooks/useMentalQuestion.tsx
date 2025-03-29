@@ -44,16 +44,16 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
           motion.acceleration.x !== null || motion.acceleration.y !== null || 
           motion.acceleration.z !== null) {
         
-        // Check for significant deviation from the initial position (reduced thresholds)
+        // Check for significant deviation from the initial position (more sensitive thresholds)
         const hasSignificantRotation = 
-          (Math.abs(motion.rotation.beta || 0) > 5.0) || 
-          (Math.abs(motion.rotation.gamma || 0) > 5.0) || 
-          (Math.abs(motion.rotation.alpha || 0) > 5.0);
+          (Math.abs(motion.rotation.beta || 0) > 3.0) || 
+          (Math.abs(motion.rotation.gamma || 0) > 3.0) || 
+          (Math.abs(motion.rotation.alpha || 0) > 3.0);
         
         const hasSignificantAcceleration = 
-          (Math.abs(motion.acceleration.x || 0) > 0.3) || 
-          (Math.abs(motion.acceleration.y || 0) > 0.3) || 
-          (Math.abs(motion.acceleration.z || 0) > 0.4);
+          (Math.abs(motion.acceleration.x || 0) > 0.2) || 
+          (Math.abs(motion.acceleration.y || 0) > 0.2) || 
+          (Math.abs(motion.acceleration.z || 0) > 0.3);
         
         if (hasSignificantRotation || hasSignificantAcceleration) {
           console.log("¡Movimiento significativo detectado durante monitoreo continuo!");
@@ -74,7 +74,7 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
     console.log("Iniciando pregunta mental, activando sensores...");
     
     try {
-      // Request permission for device motion - even if already granted, to ensure it's active
+      // Request permission for device motion
       const hasPermission = await requestPermission();
       
       if (!hasPermission) {
@@ -90,10 +90,10 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
       
       // Play sound if enabled
       if (pendulumSound) {
-        startPendulumSound(0.2); // Aumentamos ligeramente el volumen para mejor retroalimentación
+        startPendulumSound(0.2);
       }
 
-      // Calibrar el dispositivo al inicio - MUY IMPORTANTE para iniciar desde cero
+      // Calibrar el dispositivo al inicio
       console.log("Calibrando dispositivo para pregunta mental...");
       calibrateDevice();
 
@@ -102,57 +102,52 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
         title: "Formulando pregunta",
         description: "Piensa en tu pregunta mientras sostienes el dispositivo...",
       });
-
-      // Utilizamos un umbral más bajo para detectar movimientos más sutiles
-      console.log("Iniciando detección de movimiento con umbral más sensible...");
       
       // Esperamos 5 segundos mientras se monitorea el movimiento
       await new Promise(resolve => setTimeout(resolve, 5000));
       
       console.log(`Estado final de detección: motionDetected=${motionDetected}`);
       
-      // Evaluar si hubo movimiento significativo con umbral más bajo
+      // Garantizar que siempre tenemos un resultado (SI o NO)
+      // Forzamos una respuesta después de 5 segundos
+      let result: 'SI' | 'NO';
+      
       if (motionDetected) {
         console.log("Se detectó movimiento significativo - respuesta SI");
-        setCameraResult("SI");
+        result = "SI";
       } else {
-        // Verificar una última vez si hay algún movimiento significativo en el estado actual
-        // con umbrales más bajos para aumentar la sensibilidad
-        const currentHasSignificantMotion = 
-          (Math.abs(motion.rotation.beta || 0) > 5.0) || 
-          (Math.abs(motion.rotation.gamma || 0) > 5.0) ||
-          (Math.abs(motion.rotation.alpha || 0) > 5.0) ||
-          (Math.abs(motion.acceleration.x || 0) > 0.3) ||
-          (Math.abs(motion.acceleration.y || 0) > 0.3) ||
-          (Math.abs(motion.acceleration.z || 0) > 0.4);
-        
-        if (currentHasSignificantMotion) {
-          console.log("Se detectó movimiento en la comprobación final - respuesta SI");
-          setCameraResult("SI");
+        // Si no tenemos datos de sensores o no se detectó movimiento, generamos respuesta aleatoria
+        if (motion.rotation.beta === null && motion.rotation.gamma === null) {
+          result = Math.random() > 0.5 ? "SI" : "NO";
+          console.log(`Generando respuesta aleatoria por falta de datos: ${result}`);
         } else {
-          console.log("NO se detectó movimiento significativo - respuesta NO");
-          setCameraResult("NO");
+          // Verificar una última vez con umbrales muy bajos
+          const hasAnyMotion = 
+            (Math.abs(motion.rotation.beta || 0) > 2.0) || 
+            (Math.abs(motion.rotation.gamma || 0) > 2.0) ||
+            (Math.abs(motion.rotation.alpha || 0) > 2.0) ||
+            (Math.abs(motion.acceleration.x || 0) > 0.1) ||
+            (Math.abs(motion.acceleration.y || 0) > 0.1) ||
+            (Math.abs(motion.acceleration.z || 0) > 0.2);
           
-          // Si no hay suficientes datos del sensor, generamos una respuesta aleatoria como fallback
-          if (motion.rotation.beta === null && motion.rotation.gamma === null) {
-            const randomResult = Math.random() > 0.5 ? "SI" : "NO";
-            console.log(`Generando respuesta aleatoria debido a falta de datos: ${randomResult}`);
-            setCameraResult(randomResult);
+          result = hasAnyMotion ? "SI" : "NO";
+          console.log(`Última comprobación de movimiento: ${result}`);
+          
+          // Si aún no detectamos movimiento, generamos un resultado aleatorio
+          if (result === "NO" && Math.random() > 0.7) {
+            result = "SI";
+            console.log("Forzando respuesta aleatoria SI");
           }
         }
       }
-
-      // Stop sound
+      
+      // Establecer el resultado final
+      setCameraResult(result);
+      
+      // Detener sonido
       stopPendulumSound();
       
-      // Asegurémonos de que siempre hay un resultado
-      if (!cameraResult) {
-        const fallbackResult = Math.random() > 0.5 ? "SI" : "NO";
-        console.log(`Usando resultado fallback: ${fallbackResult}`);
-        setCameraResult(fallbackResult);
-      }
-      
-      return cameraResult;
+      return result;
     } catch (error) {
       console.error("Error durante la pregunta mental:", error);
       toast({
@@ -167,11 +162,11 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
       setCameraResult(errorResult);
       return errorResult;
     } finally {
-      // Asegurémonos de que siempre hay un resultado antes de finalizar
+      // SIEMPRE asegurar que hay un resultado
       if (!cameraResult) {
-        const finalFallbackResult = Math.random() > 0.5 ? "SI" : "NO";
-        console.log(`Configurando resultado final: ${finalFallbackResult}`);
-        setCameraResult(finalFallbackResult);
+        const finalResult = Math.random() > 0.5 ? "SI" : "NO";
+        console.log(`Configurando resultado final forzado: ${finalResult}`);
+        setCameraResult(finalResult);
       }
       
       setProcessingCamera(false);

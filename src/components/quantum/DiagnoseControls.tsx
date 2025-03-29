@@ -30,6 +30,13 @@ const DiagnoseControls: React.FC<DiagnoseControlsProps> = ({
   toggleCamera,
   isCameraActive
 }) => {
+  // Aplicar sensibilidad a los umbrales de detección de movimiento
+  const handleSensitivityChange = (values: number[]) => {
+    setSensitivity(values);
+    console.log(`Sensibilidad ajustada a: ${values[0]}`);
+    // La lógica para aplicar esta sensibilidad está en los hooks de detección de movimiento
+  };
+  
   return (
     <div className="mt-6">
       <div className="flex items-center justify-between mb-4">
@@ -67,7 +74,7 @@ const DiagnoseControls: React.FC<DiagnoseControlsProps> = ({
         max={100}
         step={1}
         value={sensitivity}
-        onValueChange={setSensitivity}
+        onValueChange={handleSensitivityChange}
         disabled={isPendulumSwinging || processingCamera}
       />
       <div className="flex justify-between text-sm text-muted-foreground mt-1">
