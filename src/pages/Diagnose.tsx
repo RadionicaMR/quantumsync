@@ -1,13 +1,14 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Camera, VolumeUp, VolumeX } from 'lucide-react';
+import { Camera, Volume, Volume2 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
 import QuantumButton from '@/components/QuantumButton';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
 import { useDeviceMotion } from '@/hooks/useDeviceMotion';
 import { toast } from "@/components/ui/use-toast";
 
@@ -304,7 +305,7 @@ const Diagnose = () => {
                           className="mr-2"
                         />
                         <Label htmlFor="sound-toggle" className="cursor-pointer">
-                          {pendulumSound ? <VolumeUp size={18} /> : <VolumeX size={18} />}
+                          {pendulumSound ? <Volume size={18} /> : <Volume2 size={18} />}
                         </Label>
                       </div>
                     </div>
