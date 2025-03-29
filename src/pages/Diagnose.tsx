@@ -1,12 +1,15 @@
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Camera, VolumeUp, VolumeX } from 'lucide-react';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
 import QuantumButton from '@/components/QuantumButton';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Slider } from '@/components/ui/slider';
+import { useDeviceMotion } from '@/hooks/useDeviceMotion';
+import { toast } from "@/components/ui/use-toast";
 
 const Diagnose = () => {
   const [pendulumAngle, setPendulumAngle] = useState(0);
@@ -15,6 +18,17 @@ const Diagnose = () => {
   const [diagnosisResult, setDiagnosisResult] = useState<string | null>(null);
   const [diagnosisPercentage, setDiagnosisPercentage] = useState(0);
   const [sensitivity, setSensitivity] = useState([50]);
+  const [useCameraMode, setUseCameraMode] = useState(false);
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [cameraResult, setCameraResult] = useState<'SI' | 'NO' | null>(null);
+  const [processingCamera, setProcessingCamera] = useState(false);
+  const [pendulumSound, setPendulumSound] = useState(true);
+
+  const { detectMotion, requestPermission, motion } = useDeviceMotion();
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const oscillatorRef = useRef<OscillatorNode | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
 
   const areas = [
     "Energía Física", 
@@ -25,10 +39,140 @@ const Diagnose = () => {
     "Conexión Espiritual"
   ];
 
+  // Function to start/stop camera
+  const toggleCamera = async () => {
+    if (isCameraActive && streamRef.current) {
+      // Stop camera
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+      setIsCameraActive(false);
+      return;
+    }
+
+    try {
+      // Request camera permissions
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: { ideal: 'environment' } } 
+      });
+      
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        streamRef.current = stream;
+        setIsCameraActive(true);
+      }
+    } catch (err) {
+      console.error("Error accessing camera:", err);
+      toast({
+        title: "Error de cámara",
+        description: "No pudimos acceder a la cámara de tu dispositivo.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const startMotionDiagnosis = async (area: string) => {
+    if (!useCameraMode) {
+      startPendulum(area);
+      return;
+    }
+
+    setSelectedArea(area);
+    setCameraResult(null);
+    setProcessingCamera(true);
+    setIsPendulumSwinging(true);
+    
+    // Let's mimic pendulum swinging during motion detection
+    let angle = 0;
+    const swingInterval = setInterval(() => {
+      angle = Math.sin(Date.now() / 500) * 30;
+      setPendulumAngle(angle);
+    }, 16);
+    
+    try {
+      // Request permission for device motion
+      const hasPermission = await requestPermission();
+      
+      if (!hasPermission) {
+        toast({
+          title: "Permiso denegado",
+          description: "Necesitamos acceso al sensor de movimiento para esta funcionalidad.",
+          variant: "destructive"
+        });
+        clearInterval(swingInterval);
+        setProcessingCamera(false);
+        setIsPendulumSwinging(false);
+        return;
+      }
+      
+      // Play sound if enabled
+      if (pendulumSound) {
+        startPendulumSound();
+      }
+
+      // Wait 1 second to prepare
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: "Análisis en curso",
+        description: "Mantenga el dispositivo estable durante 5 segundos...",
+      });
+      
+      // Detect significant motion over 5 seconds with threshold of 5 degrees
+      const hasSignificantMotion = await detectMotion(5000, 5);
+      
+      // Stop swing animation
+      clearInterval(swingInterval);
+      setPendulumAngle(0);
+      
+      // Generate diagnosis result based on motion
+      const percentage = hasSignificantMotion 
+        ? Math.floor(Math.random() * 31) + 70 // Between 70-100 for YES (SI)
+        : Math.floor(Math.random() * 31) + 10; // Between 10-40 for NO
+      
+      setDiagnosisPercentage(percentage);
+      
+      if (hasSignificantMotion) {
+        setDiagnosisResult("Alto");
+        setCameraResult("SI");
+      } else {
+        setDiagnosisResult("Bajo");
+        setCameraResult("NO");
+      }
+
+      // Stop sound
+      if (oscillatorRef.current) {
+        oscillatorRef.current.stop();
+        oscillatorRef.current = null;
+      }
+      
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+    } catch (error) {
+      console.error("Error durante el diagnóstico con movimiento:", error);
+      toast({
+        title: "Error",
+        description: "Ocurrió un error durante el análisis de movimiento.",
+        variant: "destructive"
+      });
+      clearInterval(swingInterval);
+    } finally {
+      setProcessingCamera(false);
+      setIsPendulumSwinging(false);
+    }
+  };
+
   const startPendulum = (area: string) => {
     setSelectedArea(area);
     setIsPendulumSwinging(true);
     setDiagnosisResult(null);
+    setCameraResult(null);
+    
+    // Play sound if enabled
+    if (pendulumSound) {
+      startPendulumSound();
+    }
     
     // Simulate pendulum swing
     let angle = 0;
@@ -55,8 +199,62 @@ const Diagnose = () => {
       } else {
         setDiagnosisResult("Alto");
       }
+
+      // Stop sound
+      if (oscillatorRef.current) {
+        oscillatorRef.current.stop();
+        oscillatorRef.current = null;
+      }
+      
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
     }, duration);
   };
+
+  const startPendulumSound = () => {
+    try {
+      // Inicializar contexto de audio
+      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      audioContextRef.current = new AudioContext();
+      
+      // Crear oscilador
+      const oscillator = audioContextRef.current.createOscillator();
+      const gainNode = audioContextRef.current.createGain();
+      
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 174; // Frecuencia relacionada con el péndulo
+      
+      // Configurar volumen
+      gainNode.gain.value = 0.1; // volumen muy bajo
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContextRef.current.destination);
+      
+      oscillator.start();
+      oscillatorRef.current = oscillator;
+    } catch (error) {
+      console.error("Error al iniciar el audio del péndulo:", error);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      // Cleanup camera on component unmount
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+      
+      // Cleanup audio
+      if (oscillatorRef.current) {
+        oscillatorRef.current.stop();
+      }
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+      }
+    };
+  }, []);
 
   return (
     <Layout>
@@ -86,8 +284,8 @@ const Diagnose = () => {
                             ? 'bg-quantum-primary text-white' 
                             : 'bg-muted hover:bg-muted/80'
                         }`}
-                        onClick={() => startPendulum(area)}
-                        disabled={isPendulumSwinging}
+                        onClick={() => startMotionDiagnosis(area)}
+                        disabled={isPendulumSwinging || processingCamera}
                       >
                         {area}
                       </button>
@@ -95,6 +293,35 @@ const Diagnose = () => {
                   </div>
                   
                   <div className="mt-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="font-medium">Modo de Diagnóstico</h4>
+                      <div className="flex items-center">
+                        <Switch
+                          checked={pendulumSound}
+                          onCheckedChange={setPendulumSound}
+                          disabled={isPendulumSwinging || processingCamera}
+                          id="sound-toggle"
+                          className="mr-2"
+                        />
+                        <Label htmlFor="sound-toggle" className="cursor-pointer">
+                          {pendulumSound ? <VolumeUp size={18} /> : <VolumeX size={18} />}
+                        </Label>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2 mb-4">
+                      <Switch
+                        checked={useCameraMode}
+                        onCheckedChange={setUseCameraMode}
+                        disabled={isPendulumSwinging || processingCamera}
+                        id="camera-mode"
+                      />
+                      <Label htmlFor="camera-mode" className="cursor-pointer flex items-center gap-2">
+                        <Camera size={18} className="text-quantum-primary" />
+                        Usar sensor de movimiento
+                      </Label>
+                    </div>
+                    
                     <h4 className="font-medium mb-2">Sensibilidad del Péndulo</h4>
                     <Slider
                       defaultValue={[50]}
@@ -102,7 +329,7 @@ const Diagnose = () => {
                       step={1}
                       value={sensitivity}
                       onValueChange={setSensitivity}
-                      disabled={isPendulumSwinging}
+                      disabled={isPendulumSwinging || processingCamera}
                     />
                     <div className="flex justify-between text-sm text-muted-foreground mt-1">
                       <span>Baja</span>
@@ -129,6 +356,16 @@ const Diagnose = () => {
                             
                             {/* Línea central */}
                             <div className="absolute h-[150px] w-[2px] bg-quantum-gradient opacity-40"></div>
+                            
+                            {/* Video de la cámara (oculto) */}
+                            {useCameraMode && (
+                              <video 
+                                ref={videoRef}
+                                autoPlay 
+                                playsInline
+                                className="hidden"
+                              />
+                            )}
                             
                             {/* Péndulo holográfico */}
                             <motion.div
@@ -193,17 +430,25 @@ const Diagnose = () => {
                                 Tu {selectedArea} está al {diagnosisPercentage}% del nivel óptimo
                               </div>
                               
+                              {cameraResult && (
+                                <div className="mt-4 text-xl font-bold">
+                                  <span className={`px-4 py-2 rounded-full ${cameraResult === 'SI' ? 'bg-green-500' : 'bg-red-500'} text-white`}>
+                                    {cameraResult}
+                                  </span>
+                                </div>
+                              )}
+                              
                               <div className="mt-6">
-                                <QuantumButton onClick={() => startPendulum(selectedArea)}>
+                                <QuantumButton onClick={() => startMotionDiagnosis(selectedArea)}>
                                   Diagnosticar de Nuevo
                                 </QuantumButton>
                               </div>
                             </motion.div>
                           )}
                           
-                          {isPendulumSwinging && (
+                          {(isPendulumSwinging || processingCamera) && (
                             <div className="text-muted-foreground animate-pulse mt-8">
-                              Analizando patrones energéticos...
+                              {useCameraMode ? "Analizando movimiento del dispositivo..." : "Analizando patrones energéticos..."}
                             </div>
                           )}
                         </>
@@ -218,6 +463,14 @@ const Diagnose = () => {
                           </div>
                           <p className="mb-4">Selecciona un área para comenzar tu diagnóstico energético</p>
                           <p className="text-sm">El péndulo virtual te ayudará a identificar desequilibrios en tu campo energético</p>
+                          
+                          {useCameraMode && (
+                            <div className="mt-6">
+                              <QuantumButton onClick={toggleCamera} variant="outline">
+                                {isCameraActive ? "Detener Cámara" : "Probar Cámara"}
+                              </QuantumButton>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
@@ -311,5 +564,17 @@ const Diagnose = () => {
     </Layout>
   );
 };
+
+// Missing Label component
+const Label = ({ children, htmlFor, className, ...props }: { 
+  children: React.ReactNode; 
+  htmlFor?: string;
+  className?: string;
+  [key: string]: any;
+}) => (
+  <label htmlFor={htmlFor} className={`text-sm font-medium ${className || ''}`} {...props}>
+    {children}
+  </label>
+);
 
 export default Diagnose;

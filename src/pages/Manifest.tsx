@@ -1,6 +1,7 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Upload, Volume2, VolumeX, Clock } from 'lucide-react';
+import { Upload, Volume2, VolumeX, Clock, Trash2 } from 'lucide-react';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
 import QuantumButton from '@/components/QuantumButton';
@@ -18,6 +19,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { toast } from "@/components/ui/use-toast";
 
 const Manifest = () => {
   // Estados para la manifestación
@@ -31,7 +33,8 @@ const Manifest = () => {
   const [manifestSound, setManifestSound] = useState(true);
   const [manifestFrequency, setManifestFrequency] = useState([528]);
   const [currentImage, setCurrentImage] = useState<'pattern' | 'receptor' | 'mix'>('pattern');
-  const [exposureTime, setExposureTime] = useState([5]); // Valor del 1-10 segundos
+  const [exposureTime, setExposureTime] = useState([5]); // Changed to minutes now
+  const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
   
   // Referencias para elementos DOM y audio
   const patternFileInputRef = useRef<HTMLInputElement>(null);
@@ -40,6 +43,7 @@ const Manifest = () => {
   const audioContextRef = useRef<AudioContext | null>(null);
   const hypnoticTimerRef = useRef<NodeJS.Timeout | null>(null);
   const exposureTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Patrones preestablecidos
   const patterns = [
@@ -78,6 +82,15 @@ const Manifest = () => {
     }
   };
 
+  // Eliminar imagen
+  const handleDeleteImage = (type: 'pattern' | 'receptor') => {
+    if (type === 'pattern') {
+      setPatternImage(null);
+    } else {
+      setReceptorImage(null);
+    }
+  };
+
   // Seleccionar patrón predefinido
   const selectPattern = (patternId: string) => {
     if (isManifestActive) {
@@ -85,6 +98,17 @@ const Manifest = () => {
     }
     
     setSelectedPattern(patternId);
+  };
+
+  // Formatear tiempo restante
+  const formatTimeRemaining = (minutes: number): string => {
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    
+    if (hours > 0) {
+      return `${hours}h ${remainingMinutes}m`;
+    }
+    return `${remainingMinutes}m`;
   };
 
   // Iniciar manifestación
@@ -123,7 +147,7 @@ const Manifest = () => {
     // Ahora la velocidad máxima será aún mayor (el valor máximo del deslizador es 30)
     const switchInterval = 1000 / (visualSpeed[0] * 3); // Multiplicamos por 3 para mayor velocidad
     
-    if (patternImage && receptorImage) {
+    if (patternImage || selectedPattern) {
       // Iniciar efecto hipnótico que alterna entre patrón, receptor y mezcla
       hypnoticTimerRef.current = setInterval(() => {
         setCurrentImage(prev => {
@@ -137,10 +161,31 @@ const Manifest = () => {
       }, switchInterval);
 
       // Configurar temporizador de exposición para cambiar la visibilidad
-      const exposureTimeInMs = exposureTime[0] * 1000; // convertir a milisegundos
+      const exposureTimeInMs = exposureTime[0] * 60 * 1000; // convertir a milisegundos (ahora en minutos)
+      setTimeRemaining(exposureTime[0]);
+      
+      // Iniciar cuenta regresiva
+      countdownTimerRef.current = setInterval(() => {
+        setTimeRemaining(prev => {
+          if (prev !== null && prev > 0) {
+            return prev - 1/60; // Decrementar 1 segundo (1/60 de minuto)
+          }
+          return prev;
+        });
+      }, 1000);
+      
+      // Configurar temporizador para detener la manifestación
       if (exposureTimerRef.current) {
-        clearInterval(exposureTimerRef.current);
+        clearTimeout(exposureTimerRef.current);
       }
+      
+      exposureTimerRef.current = setTimeout(() => {
+        stopManifestation();
+        toast({
+          title: "Manifestación completada",
+          description: `Tu intención "${intention}" ha sido completamente programada.`,
+        });
+      }, exposureTimeInMs);
     }
     
     setIsManifestActive(true);
@@ -164,10 +209,16 @@ const Manifest = () => {
     }
 
     if (exposureTimerRef.current) {
-      clearInterval(exposureTimerRef.current);
+      clearTimeout(exposureTimerRef.current);
       exposureTimerRef.current = null;
     }
     
+    if (countdownTimerRef.current) {
+      clearInterval(countdownTimerRef.current);
+      countdownTimerRef.current = null;
+    }
+    
+    setTimeRemaining(null);
     setIsManifestActive(false);
   };
 
@@ -184,7 +235,10 @@ const Manifest = () => {
         clearInterval(hypnoticTimerRef.current);
       }
       if (exposureTimerRef.current) {
-        clearInterval(exposureTimerRef.current);
+        clearTimeout(exposureTimerRef.current);
+      }
+      if (countdownTimerRef.current) {
+        clearInterval(countdownTimerRef.current);
       }
     };
   }, []);
@@ -289,11 +343,11 @@ const Manifest = () => {
                           <div className="mt-4">
                             <Label className="mb-2 flex items-center gap-2">
                               <Clock size={16} className="text-quantum-primary" />
-                              Tiempo de Exposición: {exposureTime[0]} seg
+                              Tiempo de Exposición: {exposureTime[0]} minutos
                             </Label>
                             <Slider
                               min={1}
-                              max={10}
+                              max={180}
                               step={1}
                               value={exposureTime}
                               onValueChange={setExposureTime}
@@ -306,7 +360,7 @@ const Manifest = () => {
                           <div className="mt-6">
                             <Label className="mb-2 block">Imagen del RECEPTOR</Label>
                             <div 
-                              className="border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer"
+                              className="border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer relative"
                               onClick={() => !isManifestActive && triggerImageUpload(receptorFileInputRef)}
                             >
                               {receptorImage ? (
@@ -316,16 +370,28 @@ const Manifest = () => {
                                     alt="Imagen del receptor" 
                                     className="w-full h-full object-contain"
                                   />
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      triggerImageUpload(receptorFileInputRef);
-                                    }}
-                                    className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
-                                    disabled={isManifestActive}
-                                  >
-                                    <Upload size={16} />
-                                  </button>
+                                  <div className="absolute top-2 right-2 flex space-x-2">
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        triggerImageUpload(receptorFileInputRef);
+                                      }}
+                                      className="bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
+                                      disabled={isManifestActive}
+                                    >
+                                      <Upload size={16} />
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeleteImage('receptor');
+                                      }}
+                                      className="bg-red-500/70 text-white p-2 rounded-full hover:bg-red-500/90"
+                                      disabled={isManifestActive}
+                                    >
+                                      <Trash2 size={16} />
+                                    </button>
+                                  </div>
                                 </div>
                               ) : (
                                 <div className="flex flex-col items-center justify-center py-6">
@@ -352,7 +418,9 @@ const Manifest = () => {
                           {isManifestActive ? (
                             <>
                               <div className="text-quantum-primary font-medium">
-                                Manifestación activa
+                                {timeRemaining !== null && (
+                                  <span>Tiempo restante: {formatTimeRemaining(Math.ceil(timeRemaining))}</span>
+                                )}
                               </div>
                               <QuantumButton 
                                 variant="outline"
@@ -460,7 +528,7 @@ const Manifest = () => {
                   <div className="lg:col-span-1">
                     <h3 className="text-xl font-semibold mb-4">Carga tu Patrón Radiónico</h3>
                     <div 
-                      className="border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer"
+                      className="border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer relative"
                       onClick={() => !isManifestActive && triggerImageUpload(patternFileInputRef)}
                     >
                       {patternImage ? (
@@ -470,16 +538,28 @@ const Manifest = () => {
                             alt="Patrón radiónico personalizado" 
                             className="w-full h-full object-contain"
                           />
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              triggerImageUpload(patternFileInputRef);
-                            }}
-                            className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
-                            disabled={isManifestActive}
-                          >
-                            <Upload size={16} />
-                          </button>
+                          <div className="absolute top-2 right-2 flex space-x-2">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                triggerImageUpload(patternFileInputRef);
+                              }}
+                              className="bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
+                              disabled={isManifestActive}
+                            >
+                              <Upload size={16} />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteImage('pattern');
+                              }}
+                              className="bg-red-500/70 text-white p-2 rounded-full hover:bg-red-500/90"
+                              disabled={isManifestActive}
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center justify-center py-12">
@@ -503,7 +583,7 @@ const Manifest = () => {
                     <div className="mt-6">
                       <Label className="mb-2 block">Imagen del RECEPTOR</Label>
                       <div 
-                        className="border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer"
+                        className="border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer relative"
                         onClick={() => !isManifestActive && triggerImageUpload(receptorFileInputRef)}
                       >
                         {receptorImage ? (
@@ -513,16 +593,28 @@ const Manifest = () => {
                               alt="Imagen del receptor" 
                               className="w-full h-full object-contain"
                             />
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                triggerImageUpload(receptorFileInputRef);
-                              }}
-                              className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
-                              disabled={isManifestActive}
-                            >
-                              <Upload size={16} />
-                            </button>
+                            <div className="absolute top-2 right-2 flex space-x-2">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  triggerImageUpload(receptorFileInputRef);
+                                }}
+                                className="bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
+                                disabled={isManifestActive}
+                              >
+                                <Upload size={16} />
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteImage('receptor');
+                                }}
+                                className="bg-red-500/70 text-white p-2 rounded-full hover:bg-red-500/90"
+                                disabled={isManifestActive}
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
                           </div>
                         ) : (
                           <div className="flex flex-col items-center justify-center py-6">
@@ -604,11 +696,11 @@ const Manifest = () => {
                         <div className="mt-4">
                           <Label className="mb-2 flex items-center gap-2">
                             <Clock size={16} className="text-quantum-primary" />
-                            Tiempo de Exposición: {exposureTime[0]} seg
+                            Tiempo de Exposición: {exposureTime[0]} minutos
                           </Label>
                           <Slider
                             min={1}
-                            max={10}
+                            max={180}
                             step={1}
                             value={exposureTime}
                             onValueChange={setExposureTime}
@@ -622,7 +714,9 @@ const Manifest = () => {
                         {isManifestActive ? (
                           <>
                             <div className="text-quantum-primary font-medium">
-                              Manifestación activa
+                              {timeRemaining !== null && (
+                                <span>Tiempo restante: {formatTimeRemaining(Math.ceil(timeRemaining))}</span>
+                              )}
                             </div>
                             <QuantumButton 
                               variant="outline"

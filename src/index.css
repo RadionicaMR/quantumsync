@@ -176,7 +176,7 @@
   filter: drop-shadow(0 0 8px rgba(155, 135, 245, 0.8));
 }
 
-/* New hypnotic animation */
+/* Hypnotic animation */
 @keyframes hypnoticPulse {
   0% {
     opacity: 0.2;
@@ -197,4 +197,18 @@
     opacity: 1;
     transform: scale(1.02);
   }
+}
+
+/* Slow spinning animation */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
 }
