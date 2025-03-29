@@ -11,6 +11,7 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { useDeviceMotion } from '@/hooks/useDeviceMotion';
 import { toast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
 
 const Diagnose = () => {
   const [pendulumAngle, setPendulumAngle] = useState(0);
@@ -24,6 +25,8 @@ const Diagnose = () => {
   const [cameraResult, setCameraResult] = useState<'SI' | 'NO' | null>(null);
   const [processingCamera, setProcessingCamera] = useState(false);
   const [pendulumSound, setPendulumSound] = useState(true);
+  const [askingMental, setAskingMental] = useState(false);
+  const [mentalQuestionMode, setMentalQuestionMode] = useState(false);
 
   const { detectMotion, requestPermission, motion } = useDeviceMotion();
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -39,6 +42,87 @@ const Diagnose = () => {
     "Calidad del Sueño", 
     "Conexión Espiritual"
   ];
+
+  const startMentalQuestion = async () => {
+    setMentalQuestionMode(true);
+    setAskingMental(true);
+    setCameraResult(null);
+    setProcessingCamera(true);
+    setIsPendulumSwinging(true);
+    
+    // Begin pendulum swing animation
+    let angle = 0;
+    const swingInterval = setInterval(() => {
+      angle = Math.sin(Date.now() / 500) * 30;
+      setPendulumAngle(angle);
+    }, 16);
+    
+    try {
+      // Request permission for device motion
+      const hasPermission = await requestPermission();
+      
+      if (!hasPermission) {
+        toast({
+          title: "Permiso denegado",
+          description: "Necesitamos acceso al sensor de movimiento para esta funcionalidad.",
+          variant: "destructive"
+        });
+        clearInterval(swingInterval);
+        setProcessingCamera(false);
+        setIsPendulumSwinging(false);
+        setAskingMental(false);
+        return;
+      }
+      
+      // Play sound if enabled
+      if (pendulumSound) {
+        startPendulumSound();
+      }
+
+      // Show toast with instructions
+      toast({
+        title: "Formulando pregunta",
+        description: "Piensa en tu pregunta mientras sostienes el dispositivo...",
+      });
+      
+      // Detect significant motion over 5 seconds with threshold of 5 degrees
+      const hasSignificantMotion = await detectMotion(5000, 5);
+      
+      // Stop swing animation
+      clearInterval(swingInterval);
+      setPendulumAngle(0);
+      setIsPendulumSwinging(false);
+      
+      // Generate result based on motion
+      if (hasSignificantMotion) {
+        setCameraResult("SI");
+      } else {
+        setCameraResult("NO");
+      }
+
+      // Stop sound
+      if (oscillatorRef.current) {
+        oscillatorRef.current.stop();
+        oscillatorRef.current = null;
+      }
+      
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+    } catch (error) {
+      console.error("Error durante la pregunta mental:", error);
+      toast({
+        title: "Error",
+        description: "Ocurrió un error durante el análisis de movimiento.",
+        variant: "destructive"
+      });
+      clearInterval(swingInterval);
+    } finally {
+      setProcessingCamera(false);
+      setAskingMental(false);
+    }
+  };
 
   // Function to start/stop camera
   const toggleCamera = async () => {
@@ -276,22 +360,60 @@ const Diagnose = () => {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <Card className="quantum-card p-6 lg:col-span-1">
                   <h3 className="text-xl font-semibold mb-4">Selecciona Área a Diagnosticar</h3>
-                  <div className="space-y-2">
-                    {areas.map((area) => (
-                      <button
-                        key={area}
-                        className={`w-full p-3 rounded-lg text-left transition-all ${
-                          selectedArea === area 
-                            ? 'bg-quantum-primary text-white' 
-                            : 'bg-muted hover:bg-muted/80'
-                        }`}
-                        onClick={() => startMotionDiagnosis(area)}
-                        disabled={isPendulumSwinging || processingCamera}
-                      >
-                        {area}
-                      </button>
-                    ))}
+                  
+                  <div className="mb-6">
+                    <QuantumButton
+                      onClick={() => setMentalQuestionMode(!mentalQuestionMode)}
+                      className="w-full mb-4"
+                    >
+                      {mentalQuestionMode 
+                        ? "Modo Diagnóstico por Área" 
+                        : "Modo Pregunta Mental (SI/NO)"}
+                    </QuantumButton>
+                    
+                    {mentalQuestionMode && (
+                      <div className="bg-quantum-gradient-soft p-4 rounded-lg mb-4">
+                        <h4 className="font-medium mb-2">Pregunta Mental</h4>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          Piensa en una pregunta que se pueda responder con SÍ o NO. Mantén el dispositivo estable y presiona el botón.
+                        </p>
+                        <QuantumButton
+                          onClick={startMentalQuestion}
+                          disabled={askingMental || processingCamera}
+                          className="w-full"
+                        >
+                          {askingMental ? "Analizando..." : "Iniciar Pregunta Mental"}
+                        </QuantumButton>
+                        
+                        {useCameraMode && (
+                          <div className="mt-4 p-2 bg-blue-100 border border-blue-200 rounded-md">
+                            <p className="text-sm text-blue-800 text-center font-medium">
+                              Solo disponible en el Móvil
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
+                  
+                  {!mentalQuestionMode && (
+                    <div className="space-y-2">
+                      {areas.map((area) => (
+                        <button
+                          key={area}
+                          className={`w-full p-3 rounded-lg text-left transition-all ${
+                            selectedArea === area 
+                              ? 'bg-quantum-primary text-white' 
+                              : 'bg-muted hover:bg-muted/80'
+                          }`}
+                          onClick={() => startMotionDiagnosis(area)}
+                          disabled={isPendulumSwinging || processingCamera}
+                        >
+                          {area}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                   
                   <div className="mt-6">
                     <div className="flex items-center justify-between mb-4">
@@ -342,15 +464,14 @@ const Diagnose = () => {
                 
                 <div className="lg:col-span-2">
                   <Card className="quantum-card p-6 h-full">
-                    <h3 className="text-xl font-semibold mb-4">Diagnóstico Energético</h3>
+                    <h3 className="text-xl font-semibold mb-4">
+                      {mentalQuestionMode ? "Respuesta a tu Pregunta Mental" : "Diagnóstico Energético"}
+                    </h3>
                     
                     <div className="flex flex-col items-center justify-center min-h-[400px]">
-                      {selectedArea ? (
+                      {mentalQuestionMode ? (
+                        // Pregunta mental UI
                         <>
-                          <div className="text-lg mb-6">
-                            Diagnosticando: <span className="font-semibold">{selectedArea}</span>
-                          </div>
-                          
                           <div className="relative w-full h-[200px] flex items-center justify-center">
                             {/* Círculo de energía de fondo */}
                             <div className="absolute w-48 h-48 rounded-full bg-quantum-gradient-soft opacity-30 animate-pulse-soft"></div>
@@ -390,18 +511,11 @@ const Diagnose = () => {
                                 
                                 {/* Orbe del péndulo */}
                                 <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-16 h-16">
-                                  {/* Capas del orbe para efecto holográfico */}
                                   <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 animate-pulse"></div>
                                   <div className="absolute inset-1 rounded-full bg-gradient-to-br from-purple-600/30 to-blue-600/30 animate-pulse" style={{animationDelay: '0.2s'}}></div>
                                   <div className="absolute inset-2 rounded-full bg-gradient-to-br from-purple-700/40 to-blue-700/40 animate-pulse" style={{animationDelay: '0.4s'}}></div>
                                   <div className="absolute inset-3 rounded-full bg-gradient-to-br from-quantum-vividpurple/70 to-blue-400/70 backdrop-blur-sm border border-white/20 shadow-[0_0_15px_rgba(138,43,226,0.7)]"></div>
-                                  
-                                  {/* Símbolo en el centro del orbe */}
-                                  <div className="absolute inset-0 flex items-center justify-center text-white text-lg font-bold holographic-gradient">
-                                    Q
-                                  </div>
-                                  
-                                  {/* Destellos de luz */}
+                                  <div className="absolute inset-0 flex items-center justify-center text-white text-lg font-bold holographic-gradient">Q</div>
                                   <div className="absolute top-1/4 left-1/4 w-1 h-1 rounded-full bg-white animate-pulse"></div>
                                   <div className="absolute top-3/4 right-1/4 w-2 h-2 rounded-full bg-white animate-pulse" style={{animationDelay: '0.6s'}}></div>
                                 </div>
@@ -409,70 +523,182 @@ const Diagnose = () => {
                             </motion.div>
                           </div>
                           
-                          {diagnosisResult && (
+                          {askingMental && (
+                            <div className="text-center mt-8 animate-pulse">
+                              <p className="text-lg">Formulando tu pregunta...</p>
+                              <p className="text-sm text-muted-foreground mt-2">
+                                Mantén el dispositivo estable mientras piensas en tu pregunta
+                              </p>
+                            </div>
+                          )}
+                          
+                          {cameraResult && !askingMental && (
                             <motion.div 
                               className="text-center mt-8"
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
                               transition={{ duration: 0.5 }}
                             >
-                              <div className="text-2xl font-semibold mb-2">
-                                Resultado del Diagnóstico: {diagnosisResult}
-                              </div>
-                              <div className="w-full max-w-md h-4 bg-muted rounded-full mb-2 overflow-hidden">
-                                <motion.div 
-                                  className="h-full bg-quantum-gradient"
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${diagnosisPercentage}%` }}
-                                  transition={{ duration: 1 }}
-                                />
-                              </div>
-                              <div className="text-muted-foreground">
-                                Tu {selectedArea} está al {diagnosisPercentage}% del nivel óptimo
+                              <div className="text-4xl font-bold mb-6">
+                                <span className={`px-8 py-4 rounded-full ${
+                                  cameraResult === 'SI' 
+                                    ? 'bg-green-500 text-white' 
+                                    : 'bg-red-500 text-white'
+                                }`}>
+                                  {cameraResult}
+                                </span>
                               </div>
                               
-                              {cameraResult && (
-                                <div className="mt-4 text-xl font-bold">
-                                  <span className={`px-4 py-2 rounded-full ${cameraResult === 'SI' ? 'bg-green-500' : 'bg-red-500'} text-white`}>
-                                    {cameraResult}
-                                  </span>
-                                </div>
-                              )}
-                              
-                              <div className="mt-6">
-                                <QuantumButton onClick={() => startMotionDiagnosis(selectedArea)}>
-                                  Diagnosticar de Nuevo
+                              <div className="mt-8">
+                                <QuantumButton onClick={startMentalQuestion} className="px-8">
+                                  Volver a preguntar
                                 </QuantumButton>
                               </div>
                             </motion.div>
                           )}
                           
-                          {(isPendulumSwinging || processingCamera) && (
-                            <div className="text-muted-foreground animate-pulse mt-8">
-                              {useCameraMode ? "Analizando movimiento del dispositivo..." : "Analizando patrones energéticos..."}
+                          {!askingMental && !cameraResult && (
+                            <div className="text-center">
+                              <p className="text-lg mb-6">Piensa en una pregunta que pueda responderse con SÍ o NO</p>
+                              <QuantumButton onClick={startMentalQuestion} disabled={askingMental}>
+                                Iniciar Pregunta Mental
+                              </QuantumButton>
                             </div>
                           )}
                         </>
                       ) : (
-                        <div className="text-center text-muted-foreground">
-                          <div className="text-quantum-primary text-5xl mb-4">
-                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mx-auto">
-                              <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                              <path d="M12 18C15.3137 18 18 15.3137 18 12C18 8.68629 15.3137 6 12 6C8.68629 6 6 8.68629 6 12C6 15.3137 8.68629 18 12 18Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                              <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                          </div>
-                          <p className="mb-4">Selecciona un área para comenzar tu diagnóstico energético</p>
-                          <p className="text-sm">El péndulo virtual te ayudará a identificar desequilibrios en tu campo energético</p>
-                          
-                          {useCameraMode && (
-                            <div className="mt-6">
-                              <QuantumButton onClick={toggleCamera} variant="outline">
-                                {isCameraActive ? "Detener Cámara" : "Probar Cámara"}
-                              </QuantumButton>
+                        // Diagnóstico por área UI
+                        <>
+                          {selectedArea ? (
+                            <>
+                              <div className="text-lg mb-6">
+                                Diagnosticando: <span className="font-semibold">{selectedArea}</span>
+                              </div>
+                              
+                              <div className="relative w-full h-[200px] flex items-center justify-center">
+                                {/* Círculo de energía de fondo */}
+                                <div className="absolute w-48 h-48 rounded-full bg-quantum-gradient-soft opacity-30 animate-pulse-soft"></div>
+                                
+                                {/* Línea central */}
+                                <div className="absolute h-[150px] w-[2px] bg-quantum-gradient opacity-40"></div>
+                                
+                                {/* Video de la cámara (oculto) */}
+                                {useCameraMode && (
+                                  <video 
+                                    ref={videoRef}
+                                    autoPlay 
+                                    playsInline
+                                    className="hidden"
+                                  />
+                                )}
+                                
+                                {/* Péndulo holográfico */}
+                                <motion.div
+                                  className="absolute top-0 w-1 h-[150px]"
+                                  style={{ 
+                                    transformOrigin: 'top center',
+                                    rotate: `${pendulumAngle}deg` 
+                                  }}
+                                  animate={{ 
+                                    rotate: isPendulumSwinging ? ['-30deg', '30deg', '-30deg'] : '0deg' 
+                                  }}
+                                  transition={{
+                                    duration: 2,
+                                    ease: "easeInOut",
+                                    repeat: isPendulumSwinging ? Infinity : 0
+                                  }}
+                                >
+                                  <div className="w-1 h-[150px] bg-gradient-to-b from-quantum-primary/50 to-quantum-primary/10 relative">
+                                    {/* Hilo del péndulo */}
+                                    <div className="absolute inset-0 w-full h-full bg-white/10"></div>
+                                    
+                                    {/* Orbe del péndulo */}
+                                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-16 h-16">
+                                      {/* Capas del orbe para efecto holográfico */}
+                                      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 animate-pulse"></div>
+                                      <div className="absolute inset-1 rounded-full bg-gradient-to-br from-purple-600/30 to-blue-600/30 animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                                      <div className="absolute inset-2 rounded-full bg-gradient-to-br from-purple-700/40 to-blue-700/40 animate-pulse" style={{animationDelay: '0.4s'}}></div>
+                                      <div className="absolute inset-3 rounded-full bg-gradient-to-br from-quantum-vividpurple/70 to-blue-400/70 backdrop-blur-sm border border-white/20 shadow-[0_0_15px_rgba(138,43,226,0.7)]"></div>
+                                      
+                                      {/* Símbolo en el centro del orbe */}
+                                      <div className="absolute inset-0 flex items-center justify-center text-white text-lg font-bold holographic-gradient">
+                                        Q
+                                      </div>
+                                      
+                                      {/* Destellos de luz */}
+                                      <div className="absolute top-1/4 left-1/4 w-1 h-1 rounded-full bg-white animate-pulse"></div>
+                                      <div className="absolute top-3/4 right-1/4 w-2 h-2 rounded-full bg-white animate-pulse" style={{animationDelay: '0.6s'}}></div>
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              </div>
+                              
+                              {diagnosisResult && (
+                                <motion.div 
+                                  className="text-center mt-8"
+                                  initial={{ opacity: 0, y: 20 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ duration: 0.5 }}
+                                >
+                                  <div className="text-2xl font-semibold mb-2">
+                                    Resultado del Diagnóstico: {diagnosisResult}
+                                  </div>
+                                  <div className="w-full max-w-md h-4 bg-muted rounded-full mb-2 overflow-hidden">
+                                    <motion.div 
+                                      className="h-full bg-quantum-gradient"
+                                      initial={{ width: 0 }}
+                                      animate={{ width: `${diagnosisPercentage}%` }}
+                                      transition={{ duration: 1 }}
+                                    />
+                                  </div>
+                                  <div className="text-muted-foreground">
+                                    Tu {selectedArea} está al {diagnosisPercentage}% del nivel óptimo
+                                  </div>
+                                  
+                                  {cameraResult && (
+                                    <div className="mt-4 text-xl font-bold">
+                                      <span className={`px-4 py-2 rounded-full ${cameraResult === 'SI' ? 'bg-green-500' : 'bg-red-500'} text-white`}>
+                                        {cameraResult}
+                                      </span>
+                                    </div>
+                                  )}
+                                  
+                                  <div className="mt-6">
+                                    <QuantumButton onClick={() => startMotionDiagnosis(selectedArea)}>
+                                      Diagnosticar de Nuevo
+                                    </QuantumButton>
+                                  </div>
+                                </motion.div>
+                              )}
+                              
+                              {(isPendulumSwinging || processingCamera) && (
+                                <div className="text-muted-foreground animate-pulse mt-8">
+                                  {useCameraMode ? "Analizando movimiento del dispositivo..." : "Analizando patrones energéticos..."}
+                                </div>
+                              )}
+                            </>
+                          ) : (
+                            <div className="text-center text-muted-foreground">
+                              <div className="text-quantum-primary text-5xl mb-4">
+                                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mx-auto">
+                                  <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                  <path d="M12 18C15.3137 18 18 15.3137 18 12C18 8.68629 15.3137 6 12 6C8.68629 6 6 8.68629 6 12C6 15.3137 8.68629 18 12 18Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                  <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                              </div>
+                              <p className="mb-4">Selecciona un área para comenzar tu diagnóstico energético</p>
+                              <p className="text-sm">El péndulo virtual te ayudará a identificar desequilibrios en tu campo energético</p>
+                              
+                              {useCameraMode && (
+                                <div className="mt-6">
+                                  <QuantumButton onClick={toggleCamera} variant="outline">
+                                    {isCameraActive ? "Detener Cámara" : "Probar Cámara"}
+                                  </QuantumButton>
+                                </div>
+                              )}
                             </div>
                           )}
-                        </div>
+                        </>
                       )}
                     </div>
                   </Card>
