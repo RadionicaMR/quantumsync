@@ -29,41 +29,6 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
     checkMobile();
   }, [requestPermission]);
 
-  // Monitorear el movimiento del dispositivo
-  useEffect(() => {
-    if (!askingMental) {
-      setMotionDetected(false);
-      return;
-    }
-    
-    console.log("Activando monitoreo continuo de movimiento...");
-    
-    const intervalId = setInterval(() => {
-      if (motion.rotation.beta !== null || motion.rotation.gamma !== null || 
-          motion.acceleration.x !== null || motion.acceleration.y !== null || 
-          motion.acceleration.z !== null) {
-        
-        // Verificar desviaciones significativas con umbral bajo
-        const hasSignificantRotation = 
-          (Math.abs(motion.rotation.beta || 0) > 2.0) || 
-          (Math.abs(motion.rotation.gamma || 0) > 2.0) || 
-          (Math.abs(motion.rotation.alpha || 0) > 2.0);
-        
-        const hasSignificantAcceleration = 
-          (Math.abs(motion.acceleration.x || 0) > 0.15) || 
-          (Math.abs(motion.acceleration.y || 0) > 0.15) || 
-          (Math.abs(motion.acceleration.z || 0) > 0.15);
-        
-        if (hasSignificantRotation || hasSignificantAcceleration) {
-          console.log("¡Movimiento significativo detectado durante monitoreo continuo!");
-          setMotionDetected(true);
-        }
-      }
-    }, 50); // Monitoreo más frecuente
-    
-    return () => clearInterval(intervalId);
-  }, [askingMental, motion]);
-
   const startMentalQuestion = async () => {
     setAskingMental(true);
     setCameraResult(null);
@@ -102,19 +67,19 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
         description: "Piensa en tu pregunta mientras sostienes el dispositivo...",
       });
       
-      // Esperar mientras se monitorea el movimiento
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      // Utilizar directamente detectMotion para obtener resultado
+      console.log("Iniciando detección de movimiento...");
+      const hasMotion = await detectMotion(5000, 1.0);
+      console.log("Resultado de detección de movimiento:", hasMotion);
       
-      console.log(`Estado final de detección: motionDetected=${motionDetected}`);
-      
-      // Determinar resultado basado en detección de movimiento
+      // Establecer resultado basado en detección de movimiento
       let result: 'SI' | 'NO';
       
-      if (motionDetected) {
-        console.log("Se detectó movimiento significativo - respuesta SI");
+      if (hasMotion) {
+        console.log("Se detectó movimiento - respuesta SI");
         result = "SI";
       } else {
-        console.log("No se detectó movimiento significativo - respuesta NO");
+        console.log("No se detectó movimiento - respuesta NO");
         result = "NO";
       }
       
@@ -133,9 +98,9 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
         variant: "destructive"
       });
       
-      // En caso de error, establecer NO como predeterminado
-      setCameraResult("NO");
-      return "NO";
+      // En caso de error, no establecer resultado
+      setCameraResult(null);
+      return null;
     } finally {
       setProcessingCamera(false);
       setAskingMental(false);

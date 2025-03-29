@@ -7,7 +7,7 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
   const [lastMotionValues, setLastMotionValues] = useState<number[]>([]);
 
   // Detección de movimiento con umbral más bajo para mayor precisión
-  const detectMotion = (durationMs = 5000, thresholdDegrees = 3) => {
+  const detectMotion = (durationMs = 5000, thresholdDegrees = 2) => {
     return new Promise<boolean>((resolve) => {
       console.log(`Iniciando detección de movimiento (umbral: ${thresholdDegrees}°, duración: ${durationMs}ms)`);
       let maxDeviation = 0;
@@ -16,6 +16,7 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
       
       // Limpiar valores anteriores
       setLastMotionValues([]);
+      setSignificantMotion(null);
       
       // Monitorear con alta frecuencia
       const interval = setInterval(() => {
@@ -37,7 +38,7 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
           const rotationDeviation = Math.max(betaDeviation, gammaDeviation, alphaDeviation);
           const accelDeviation = Math.max(xDeviation, yDeviation, zDeviation);
           
-          console.log(`Desviación rotación: ${rotationDeviation.toFixed(5)}° | Aceleración: ${accelDeviation.toFixed(5)}`);
+          console.log(`Desviación rotación: ${rotationDeviation.toFixed(2)}° | Aceleración: ${accelDeviation.toFixed(2)}`);
           
           setLastMotionValues(prev => [...prev, rotationDeviation, accelDeviation * 100]);
           
@@ -45,7 +46,7 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
           maxDeviation = Math.max(maxDeviation, rotationDeviation, accelDeviation * 100);
           
           // Detección con umbral muy bajo para capturar cualquier movimiento
-          if (rotationDeviation > 1.5 || accelDeviation > 0.1) {
+          if (rotationDeviation > 1.0 || accelDeviation > 0.05) {
             console.log("¡Movimiento significativo detectado!");
             detected = true;
             setSignificantMotion(true);
@@ -60,7 +61,7 @@ export function useMotionDetection(motion: DeviceMotionState, calibration: Calib
         if (Date.now() - startTime >= durationMs) {
           clearInterval(interval);
           
-          console.log(`Tiempo completado. Máxima desviación: ${maxDeviation.toFixed(6)}`);
+          console.log(`Tiempo completado. Máxima desviación: ${maxDeviation.toFixed(2)}`);
           
           if (detected) {
             console.log("Resultado final: SI (se detectó movimiento)");

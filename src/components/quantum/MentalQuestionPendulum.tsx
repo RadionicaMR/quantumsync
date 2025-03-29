@@ -37,7 +37,11 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
       return;
     }
 
+    // Restablecer resultado anterior
+    setCameraResult(null);
+
     const result = await startMentalQuestion();
+    console.log("Resultado obtenido:", result);
     if (result) {
       setCameraResult(result);
     }

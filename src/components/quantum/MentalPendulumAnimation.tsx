@@ -28,7 +28,7 @@ const MentalPendulumAnimation: React.FC<MentalPendulumAnimationProps> = ({
       
       // Activar sonido si está habilitado
       if (pendulumSound) {
-        startPendulumSound(0.5); // Volumen más alto para mejor retroalimentación
+        startPendulumSound(0.5);
       }
     } else {
       // Detener animación y restablecer ángulo
