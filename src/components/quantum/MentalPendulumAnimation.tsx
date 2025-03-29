@@ -19,21 +19,21 @@ const MentalPendulumAnimation: React.FC<MentalPendulumAnimationProps> = ({
     let swingInterval: number | null = null;
     
     if (isSwinging) {
-      // Begin pendulum swing animation with increased amplitude
+      // Aumentar la amplitud del péndulo para mejor visualización
       swingInterval = window.setInterval(() => {
-        // Aumentamos la amplitud a 45 grados para un movimiento muy notorio
-        const angle = Math.sin(Date.now() / 500) * 45;
+        // Amplitud de 60 grados para un movimiento más dramático
+        const angle = Math.sin(Date.now() / 500) * 60;
         setPendulumAngle(angle);
       }, 16);
       
-      // Play sound if enabled
+      // Activar sonido si está habilitado
       if (pendulumSound) {
-        startPendulumSound(0.3); // Mayor volumen para mejor retroalimentación
+        startPendulumSound(0.5); // Volumen más alto para mejor retroalimentación
       }
     } else {
-      // Stop animation and reset angle
+      // Detener animación y restablecer ángulo
       setPendulumAngle(0);
-      // Stop sound
+      // Detener sonido
       stopPendulumSound();
     }
     
