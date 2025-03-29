@@ -1,7 +1,6 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Upload, Volume2, VolumeX } from 'lucide-react';
+import { Upload, Volume2, VolumeX, Clock } from 'lucide-react';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
 import QuantumButton from '@/components/QuantumButton';
@@ -31,7 +30,8 @@ const Manifest = () => {
   const [activeTab, setActiveTab] = useState("presets");
   const [manifestSound, setManifestSound] = useState(true);
   const [manifestFrequency, setManifestFrequency] = useState([528]);
-  const [currentImage, setCurrentImage] = useState<'pattern' | 'receptor'>('pattern');
+  const [currentImage, setCurrentImage] = useState<'pattern' | 'receptor' | 'mix'>('pattern');
+  const [exposureTime, setExposureTime] = useState([5]); // Valor del 1-10 segundos
   
   // Referencias para elementos DOM y audio
   const patternFileInputRef = useRef<HTMLInputElement>(null);
@@ -39,6 +39,7 @@ const Manifest = () => {
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const hypnoticTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const exposureTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Patrones preestablecidos
   const patterns = [
@@ -123,9 +124,23 @@ const Manifest = () => {
     const switchInterval = 1000 / (visualSpeed[0] * 3); // Multiplicamos por 3 para mayor velocidad
     
     if (patternImage && receptorImage) {
+      // Iniciar efecto hipnótico que alterna entre patrón, receptor y mezcla
       hypnoticTimerRef.current = setInterval(() => {
-        setCurrentImage(prev => prev === 'pattern' ? 'receptor' : 'pattern');
+        setCurrentImage(prev => {
+          switch(prev) {
+            case 'pattern': return 'receptor';
+            case 'receptor': return 'mix';
+            case 'mix': return 'pattern';
+            default: return 'pattern';
+          }
+        });
       }, switchInterval);
+
+      // Configurar temporizador de exposición para cambiar la visibilidad
+      const exposureTimeInMs = exposureTime[0] * 1000; // convertir a milisegundos
+      if (exposureTimerRef.current) {
+        clearInterval(exposureTimerRef.current);
+      }
     }
     
     setIsManifestActive(true);
@@ -147,6 +162,11 @@ const Manifest = () => {
       clearInterval(hypnoticTimerRef.current);
       hypnoticTimerRef.current = null;
     }
+
+    if (exposureTimerRef.current) {
+      clearInterval(exposureTimerRef.current);
+      exposureTimerRef.current = null;
+    }
     
     setIsManifestActive(false);
   };
@@ -162,6 +182,9 @@ const Manifest = () => {
       }
       if (hypnoticTimerRef.current) {
         clearInterval(hypnoticTimerRef.current);
+      }
+      if (exposureTimerRef.current) {
+        clearInterval(exposureTimerRef.current);
       }
     };
   }, []);
@@ -263,6 +286,22 @@ const Manifest = () => {
                             />
                           </div>
 
+                          <div className="mt-4">
+                            <Label className="mb-2 flex items-center gap-2">
+                              <Clock size={16} className="text-quantum-primary" />
+                              Tiempo de Exposición: {exposureTime[0]} seg
+                            </Label>
+                            <Slider
+                              min={1}
+                              max={10}
+                              step={1}
+                              value={exposureTime}
+                              onValueChange={setExposureTime}
+                              disabled={isManifestActive}
+                              className="mb-4"
+                            />
+                          </div>
+
                           {/* Sección para subir imagen RECEPTOR */}
                           <div className="mt-6">
                             <Label className="mb-2 block">Imagen del RECEPTOR</Label>
@@ -340,20 +379,51 @@ const Manifest = () => {
                         {isManifestActive && (
                           <div className="mt-6 relative overflow-hidden rounded-lg bg-black h-[300px]">
                             <div className="absolute inset-0 flex items-center justify-center">
-                              {/* Imagen del patrón o imagen del receptor en alternancia */}
-                              {(patternImage || receptorImage) && (
+                              {/* Mostrar imagen según el estado actual */}
+                              {currentImage === 'pattern' && (patternImage || selectedPattern) && (
                                 <img 
-                                  src={currentImage === 'pattern' ? 
-                                    (patternImage || patterns.find(p => p.id === selectedPattern)?.image) : 
-                                    receptorImage || ''}
+                                  src={patternImage || patterns.find(p => p.id === selectedPattern)?.image}
                                   alt="Patrón de manifestación"
-                                  className="max-h-full max-w-full object-contain opacity-80"
+                                  className="max-h-full max-w-full object-contain opacity-80 transition-opacity duration-300"
+                                  style={{ animation: `pulse ${exposureTime[0] / 3}s infinite alternate` }}
                                 />
                               )}
                               
-                              {/* Texto de la intención superpuesto */}
+                              {currentImage === 'receptor' && receptorImage && (
+                                <img 
+                                  src={receptorImage}
+                                  alt="Imagen del receptor"
+                                  className="max-h-full max-w-full object-contain opacity-80 transition-opacity duration-300"
+                                  style={{ animation: `pulse ${exposureTime[0] / 3}s infinite alternate` }}
+                                />
+                              )}
+                              
+                              {currentImage === 'mix' && (
+                                <>
+                                  {/* Superposición de ambas imágenes */}
+                                  {(patternImage || (selectedPattern && patterns.find(p => p.id === selectedPattern)?.image)) && (
+                                    <img 
+                                      src={patternImage || patterns.find(p => p.id === selectedPattern)?.image}
+                                      alt="Mezcla de imágenes"
+                                      className="absolute inset-0 max-h-full max-w-full object-contain opacity-40 mix-blend-overlay"
+                                      style={{ animation: `pulse ${exposureTime[0] / 3}s infinite alternate` }}
+                                    />
+                                  )}
+                                  
+                                  {receptorImage && (
+                                    <img 
+                                      src={receptorImage}
+                                      alt="Mezcla de imágenes"
+                                      className="absolute inset-0 max-h-full max-w-full object-contain opacity-40 mix-blend-multiply"
+                                      style={{ animation: `pulse ${exposureTime[0] / 3}s infinite alternate` }}
+                                    />
+                                  )}
+                                </>
+                              )}
+                              
+                              {/* Texto de la intención siempre visible */}
                               <div 
-                                className="absolute inset-0 flex items-center justify-center text-white font-bold text-2xl"
+                                className="absolute inset-0 flex items-center justify-center text-white font-bold text-2xl p-4 text-center"
                                 style={{
                                   animation: `textPulse ${60/visualSpeed[0]}s alternate infinite ease-in-out`,
                                   textShadow: '0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(155,135,245,0.8)'
@@ -530,6 +600,22 @@ const Manifest = () => {
                             className="mb-4"
                           />
                         </div>
+
+                        <div className="mt-4">
+                          <Label className="mb-2 flex items-center gap-2">
+                            <Clock size={16} className="text-quantum-primary" />
+                            Tiempo de Exposición: {exposureTime[0]} seg
+                          </Label>
+                          <Slider
+                            min={1}
+                            max={10}
+                            step={1}
+                            value={exposureTime}
+                            onValueChange={setExposureTime}
+                            disabled={isManifestActive}
+                            className="mb-4"
+                          />
+                        </div>
                       </div>
                       
                       <div className="flex items-center justify-between">
@@ -563,18 +649,51 @@ const Manifest = () => {
                       {isManifestActive && (
                         <div className="mt-6 relative overflow-hidden rounded-lg bg-black h-[300px]">
                           <div className="absolute inset-0 flex items-center justify-center">
-                            {/* Imagen del patrón o imagen del receptor en alternancia */}
-                            {(patternImage || receptorImage) && (
+                            {/* Mostrar imagen según el estado actual */}
+                            {currentImage === 'pattern' && patternImage && (
                               <img 
-                                src={currentImage === 'pattern' ? patternImage || '' : receptorImage || ''}
+                                src={patternImage}
                                 alt="Patrón de manifestación"
-                                className="max-h-full max-w-full object-contain opacity-80"
+                                className="max-h-full max-w-full object-contain opacity-80 transition-opacity duration-300"
+                                style={{ animation: `pulse ${exposureTime[0] / 3}s infinite alternate` }}
                               />
                             )}
                             
-                            {/* Texto de la intención superpuesto con estilo más sutil para la sección personalizada */}
+                            {currentImage === 'receptor' && receptorImage && (
+                              <img 
+                                src={receptorImage}
+                                alt="Imagen del receptor"
+                                className="max-h-full max-w-full object-contain opacity-80 transition-opacity duration-300"
+                                style={{ animation: `pulse ${exposureTime[0] / 3}s infinite alternate` }}
+                              />
+                            )}
+                            
+                            {currentImage === 'mix' && (
+                              <>
+                                {/* Superposición de ambas imágenes */}
+                                {patternImage && (
+                                  <img 
+                                    src={patternImage}
+                                    alt="Mezcla de imágenes"
+                                    className="absolute inset-0 max-h-full max-w-full object-contain opacity-40 mix-blend-overlay"
+                                    style={{ animation: `pulse ${exposureTime[0] / 3}s infinite alternate` }}
+                                  />
+                                )}
+                                
+                                {receptorImage && (
+                                  <img 
+                                    src={receptorImage}
+                                    alt="Mezcla de imágenes"
+                                    className="absolute inset-0 max-h-full max-w-full object-contain opacity-40 mix-blend-multiply"
+                                    style={{ animation: `pulse ${exposureTime[0] / 3}s infinite alternate` }}
+                                  />
+                                )}
+                              </>
+                            )}
+                            
+                            {/* Texto de la intención con estilo más sutil */}
                             <div 
-                              className="absolute inset-0 flex items-center justify-center text-white font-medium text-xl opacity-60"
+                              className="absolute inset-0 flex items-center justify-center text-white font-medium text-xl opacity-60 p-4 text-center"
                               style={{
                                 animation: `textPulse ${60/visualSpeed[0]}s alternate infinite ease-in-out`,
                                 textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 16px rgba(155,135,245,0.6)'
