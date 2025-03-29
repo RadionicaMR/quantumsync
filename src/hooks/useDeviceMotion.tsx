@@ -37,6 +37,7 @@ export function useDeviceMotion() {
   const [calibration, setCalibration] = useState({
     beta: 0,
     gamma: 0,
+    alpha: 0,
     x: 0,
     y: 0,
     z: 0
@@ -84,25 +85,29 @@ export function useDeviceMotion() {
   const calibrateDevice = () => {
     console.log("Calibrando dispositivo...");
     // Guardar posición actual como punto de referencia
-    if (motion.rotation.beta !== null && motion.rotation.gamma !== null) {
-      setCalibration({
-        beta: motion.rotation.beta,
-        gamma: motion.rotation.gamma,
-        x: motion.acceleration.x || 0,
-        y: motion.acceleration.y || 0,
-        z: motion.acceleration.z || 0
-      });
-      console.log("Dispositivo calibrado:", {
-        beta: motion.rotation.beta,
-        gamma: motion.rotation.gamma,
-        x: motion.acceleration.x,
-        y: motion.acceleration.y,
-        z: motion.acceleration.z
-      });
-      return true;
-    }
-    console.log("No se pudo calibrar, no hay datos de movimiento");
-    return false;
+    setCalibration({
+      beta: motion.rotation.beta || 0,
+      gamma: motion.rotation.gamma || 0,
+      alpha: motion.rotation.alpha || 0,
+      x: motion.acceleration.x || 0,
+      y: motion.acceleration.y || 0,
+      z: motion.acceleration.z || 0
+    });
+    
+    console.log("Dispositivo calibrado:", {
+      beta: motion.rotation.beta,
+      gamma: motion.rotation.gamma,
+      alpha: motion.rotation.alpha,
+      x: motion.acceleration.x,
+      y: motion.acceleration.y,
+      z: motion.acceleration.z
+    });
+    
+    // Reiniciamos la detección de movimiento
+    setSignificantMotion(false);
+    setLastMotionValues([]);
+    
+    return true;
   };
 
   // Enhanced motion detection that stores a history of motion values
@@ -114,38 +119,42 @@ export function useDeviceMotion() {
       let motionDetected = false;
       const startTime = Date.now();
       
-      // Reset the calibration
+      // Reset the calibration to get a fresh reference point
       calibrateDevice();
       
       // Clear previous motion values
       setLastMotionValues([]);
       
-      // Start monitoring
+      // Start monitoring with high frequency (25ms)
       const interval = setInterval(() => {
-        if (motion.rotation.beta !== null && motion.rotation.gamma !== null) {
-          // Calculate deviation from calibrated position
-          const betaDeviation = Math.abs(motion.rotation.beta - calibration.beta);
-          const gammaDeviation = Math.abs(motion.rotation.gamma - calibration.gamma);
+        if (motion.rotation.beta !== null || motion.rotation.gamma !== null || 
+            motion.acceleration.x !== null || motion.acceleration.y !== null || 
+            motion.acceleration.z !== null) {
+            
+          // Calculate rotation deviations
+          const betaDeviation = Math.abs((motion.rotation.beta || 0) - calibration.beta);
+          const gammaDeviation = Math.abs((motion.rotation.gamma || 0) - calibration.gamma);
+          const alphaDeviation = Math.abs((motion.rotation.alpha || 0) - calibration.alpha);
           
-          // También verificamos aceleración para ser más sensibles
+          // Calculate acceleration deviations
           const xDeviation = Math.abs((motion.acceleration.x || 0) - calibration.x);
           const yDeviation = Math.abs((motion.acceleration.y || 0) - calibration.y);
           const zDeviation = Math.abs((motion.acceleration.z || 0) - calibration.z);
           
           // Store the current deviation for history
-          const currentDeviation = Math.max(betaDeviation, gammaDeviation);
+          const rotationDeviation = Math.max(betaDeviation, gammaDeviation, alphaDeviation);
           const accelDeviation = Math.max(xDeviation, yDeviation, zDeviation);
           
-          console.log(`Desviación actual: ${currentDeviation.toFixed(2)}° | Aceleración: ${accelDeviation.toFixed(2)}`);
+          console.log(`Desviación rotación: ${rotationDeviation.toFixed(5)}° | Aceleración: ${accelDeviation.toFixed(5)}`);
           
-          setLastMotionValues(prev => [...prev, currentDeviation]);
+          setLastMotionValues(prev => [...prev, rotationDeviation, accelDeviation * 100]);
           
           // Update maximum deviation seen during this monitoring period
-          maxDeviation = Math.max(maxDeviation, currentDeviation, accelDeviation * 10);
+          maxDeviation = Math.max(maxDeviation, rotationDeviation, accelDeviation * 100);
           
-          // Detect any movement at all (extremely sensitive)
-          if (currentDeviation > thresholdDegrees || accelDeviation > 0.001) {
-            console.log("¡Movimiento detectado!");
+          // Detect any movement at all (extremely sensitive - almost any non-zero value)
+          if (rotationDeviation > 0.00001 || accelDeviation > 0.00001) {
+            console.log("¡Movimiento mínimo detectado!");
             detected = true;
             motionDetected = true;
             setSignificantMotion(true);
@@ -161,12 +170,13 @@ export function useDeviceMotion() {
           clearInterval(interval);
           
           // Check if there was any motion at all during the period
-          const hasAnyMotion = lastMotionValues.some(value => value > 0.001);
+          const hasAnyMotion = lastMotionValues.some(value => value > 0);
           
-          console.log(`Tiempo completado. Máxima desviación: ${maxDeviation.toFixed(2)}°`);
+          console.log(`Tiempo completado. Máxima desviación: ${maxDeviation.toFixed(6)}`);
           console.log(`¿Se detectó algún movimiento?: ${hasAnyMotion || detected}`);
           
-          if (hasAnyMotion || detected) {
+          // Si se detectó cualquier movimiento, resolver como true
+          if (hasAnyMotion || detected || maxDeviation > 0) {
             setSignificantMotion(true);
             resolve(true);
           } else {
@@ -174,29 +184,29 @@ export function useDeviceMotion() {
             resolve(false);
           }
         }
-      }, 50); // More frequent checking (50ms instead of 100ms)
+      }, 25); // Frecuencia muy alta (25ms) para capturar cualquier movimiento
       
       // After specified duration, ensure we resolve the promise
       setTimeout(() => {
         clearInterval(interval);
         
-        // As a fallback, check if there was any motion at all
-        const hasAnyMotion = lastMotionValues.some(value => value > 0.001);
+        // Final check for ANY motion at all
+        const hasAnyMotion = lastMotionValues.some(value => value > 0);
         
         console.log(`Tiempo límite alcanzado. ¿Se detectó algún movimiento?: ${hasAnyMotion || detected}`);
         
-        if (hasAnyMotion && !detected) {
+        if (hasAnyMotion || detected || maxDeviation > 0) {
           setSignificantMotion(true);
           resolve(true);
-        } else if (!detected) {
+        } else {
           setSignificantMotion(false);
           resolve(false);
         }
-      }, durationMs + 50); // Add a little buffer
+      }, durationMs + 50);
     });
   };
 
-  // Setup device motion event listeners
+  // Setup device motion event listeners with high precision
   useEffect(() => {
     const isSupported = typeof window !== 'undefined' && 'DeviceMotionEvent' in window;
     

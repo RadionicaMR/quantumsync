@@ -1,6 +1,5 @@
 
 import { ReactNode } from 'react';
-import EnergyCircle from './EnergyCircle';
 import DowsingRing from './quantum/DowsingRing';
 
 interface HeroSectionProps {
@@ -27,14 +26,14 @@ const HeroSection = ({
   };
 
   return (
-    <div className={`relative w-full overflow-hidden py-10 md:py-14 px-4 bg-quantum-dark/90 ${className}`}>
-      {/* Fondo galáctico mejorado */}
+    <div className={`relative w-full overflow-hidden py-6 md:py-10 px-4 bg-quantum-dark/90 ${className}`}>
+      {/* Fondo galáctico */}
       <div className="absolute inset-0 z-0 bg-black">
         {/* Nebulosa cósmica */}
         <div className="absolute inset-0 opacity-40 bg-gradient-to-br from-purple-900 via-blue-900 to-black mix-blend-multiply"></div>
         
-        {/* Estrellas distantes */}
-        {Array.from({ length: 50 }).map((_, i) => (
+        {/* Estrellas distantes - reducidas */}
+        {Array.from({ length: 20 }).map((_, i) => (
           <div
             key={`distant-star-${i}`}
             className="absolute rounded-full animate-pulse-soft"
@@ -51,45 +50,18 @@ const HeroSection = ({
         ))}
       </div>
       
-      {/* Energy circles - reduced number */}
-      {Array.from({ length: energyCircles > 3 ? 3 : energyCircles }).map((_, i) => (
-        <EnergyCircle key={i} />
-      ))}
-      
       {/* Anillos dowsing decorativos - smaller and fewer */}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] opacity-50 pointer-events-none">
-        <DowsingRing inset={30} opacity="80" reverse={false} duration="20s" pulseEffect={true} />
-        <DowsingRing inset={60} opacity="60" reverse={true} duration="25s" />
-        <DowsingRing inset={90} opacity="40" reverse={false} duration="30s" />
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] opacity-30 pointer-events-none">
+        <DowsingRing inset={30} opacity="60" reverse={false} duration="20s" pulseEffect={true} />
       </div>
       
-      {/* Estrellas con brillo holográfico - fewer stars */}
-      <div className="stars-container absolute inset-0 z-0">
-        {Array.from({ length: 25 }).map((_, i) => (
-          <div
-            key={`star-${i}`}
-            className="absolute rounded-full animate-pulse"
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              width: `${Math.random() * 4 + 1}px`,
-              height: `${Math.random() * 4 + 1}px`,
-              background: `radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(155,135,245,0.8) 50%, rgba(155,135,245,0) 100%)`,
-              boxShadow: '0 0 10px 3px rgba(155,135,245,0.6)',
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${Math.random() * 3 + 2}s`,
-            }}
-          />
-        ))}
-      </div>
-      
-      <div className={`container mx-auto relative z-10 flex flex-col ${alignment[align]} gap-3`}>
+      <div className={`container mx-auto relative z-10 flex flex-col ${alignment[align]} gap-2`}>
         <div className="cosmic-glow">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold holographic-gradient max-w-4xl drop-shadow-glow">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold holographic-gradient max-w-4xl drop-shadow-glow">
             {title}
           </h1>
         </div>
-        <p className="text-md md:text-lg neon-text max-w-2xl">
+        <p className="text-sm md:text-base neon-text max-w-2xl">
           {subtitle}
         </p>
         {children}

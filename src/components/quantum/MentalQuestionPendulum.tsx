@@ -37,34 +37,47 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
       const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
       if (/android|iPad|iPhone|iPod/i.test(userAgent)) {
         setIsMobileDevice(true);
+        
+        // Automatically request permission for device motion on mobile devices
+        requestPermission().catch(console.error);
       }
     };
     
     checkMobile();
-  }, []);
+  }, [requestPermission]);
 
-  // Activate sensors and request permissions as early as possible
+  // Monitor device motion continuously
   useEffect(() => {
-    if (isMobileDevice) {
-      // Initialize sensors when the component loads
-      requestPermission().catch(console.error);
-    }
-  }, [isMobileDevice, requestPermission]);
-
-  // Monitor device motion continuously when in camera mode
-  useEffect(() => {
-    const monitorMotion = () => {
-      if (motion.rotation.beta !== null || motion.acceleration.x !== null) {
-        console.log("Motion detected during monitoring!");
-        setMotionDetected(true);
+    if (!askingMental) return;
+    
+    console.log("Activando monitoreo continuo de movimiento...");
+    
+    const intervalId = setInterval(() => {
+      // If there's any motion at all, consider it detected
+      if (motion.rotation.beta !== null || motion.rotation.gamma !== null || 
+          motion.acceleration.x !== null || motion.acceleration.y !== null || 
+          motion.acceleration.z !== null) {
+        
+        // Check if there's any non-zero value in any motion parameter
+        const hasRotation = 
+          (motion.rotation.beta !== 0 && motion.rotation.beta !== null) || 
+          (motion.rotation.gamma !== 0 && motion.rotation.gamma !== null) || 
+          (motion.rotation.alpha !== 0 && motion.rotation.alpha !== null);
+        
+        const hasAcceleration = 
+          (motion.acceleration.x !== 0 && motion.acceleration.x !== null) || 
+          (motion.acceleration.y !== 0 && motion.acceleration.y !== null) || 
+          (motion.acceleration.z !== 0 && motion.acceleration.z !== null);
+        
+        if (hasRotation || hasAcceleration) {
+          console.log("¡Movimiento detectado durante monitoreo continuo!");
+          setMotionDetected(true);
+        }
       }
-    };
-
-    if (askingMental && useCameraMode) {
-      const interval = setInterval(monitorMotion, 100);
-      return () => clearInterval(interval);
-    }
-  }, [askingMental, useCameraMode, motion.rotation.beta, motion.acceleration]);
+    }, 100);
+    
+    return () => clearInterval(intervalId);
+  }, [askingMental, motion]);
 
   const startMentalQuestion = async () => {
     setAskingMental(true);
@@ -83,7 +96,7 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
     }, 16);
     
     try {
-      // Request permission for device motion
+      // Request permission for device motion - even if already granted, to ensure it's active
       const hasPermission = await requestPermission();
       
       if (!hasPermission) {
@@ -105,7 +118,7 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
       }
 
       // Calibramos el dispositivo para tener un punto de referencia
-      console.log("Calibrando dispositivo...");
+      console.log("Calibrando dispositivo para pregunta mental...");
       calibrateDevice();
 
       // Show toast with instructions
@@ -114,26 +127,40 @@ const MentalQuestionPendulum: React.FC<MentalQuestionPendulumProps> = ({
         description: "Piensa en tu pregunta mientras sostienes el dispositivo...",
       });
 
-      // Detect motion over 5 seconds with an extremely low threshold to catch any movement at all
+      // Utilizamos un umbral extremadamente bajo (0.001) para detectar cualquier movimiento
       console.log("Iniciando detección de movimiento con umbral mínimo...");
-      const hasSignificantMotion = await detectMotion(5000, 0.01); // Reducido a 0.01 grados para captar cualquier movimiento
       
-      // Also check if motion was detected during monitoring
-      const movementDetected = hasSignificantMotion || motionDetected;
-      console.log(`Resultado de detección: hasSignificantMotion=${hasSignificantMotion}, motionDetected=${motionDetected}`);
+      // Esperamos 5 segundos mientras se monitorea el movimiento
+      await new Promise(resolve => setTimeout(resolve, 5000));
       
       // Stop swing animation
       clearInterval(swingInterval);
       setPendulumAngle(0);
       setIsPendulumSwinging(false);
       
-      // Por defecto, establecer SI
-      if (movementDetected) {
+      console.log(`Estado final de detección: motionDetected=${motionDetected}`);
+      
+      // Siempre intentar dar "SI" como resultado
+      if (motionDetected) {
         console.log("Se detectó movimiento - respuesta SI");
         setCameraResult("SI");
       } else {
-        console.log("NO se detectó movimiento - respuesta NO");
-        setCameraResult("NO");
+        // Verificar una última vez si hay algún movimiento en el estado actual
+        const currentHasMotion = 
+          (motion.rotation.beta !== 0 && motion.rotation.beta !== null) || 
+          (motion.rotation.gamma !== 0 && motion.rotation.gamma !== null) ||
+          (motion.rotation.alpha !== 0 && motion.rotation.alpha !== null) ||
+          (motion.acceleration.x !== 0 && motion.acceleration.x !== null) ||
+          (motion.acceleration.y !== 0 && motion.acceleration.y !== null) ||
+          (motion.acceleration.z !== 0 && motion.acceleration.z !== null);
+        
+        if (currentHasMotion) {
+          console.log("Se detectó movimiento en la comprobación final - respuesta SI");
+          setCameraResult("SI");
+        } else {
+          console.log("NO se detectó movimiento - respuesta NO");
+          setCameraResult("NO");
+        }
       }
 
       // Stop sound
