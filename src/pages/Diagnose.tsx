@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { Camera } from 'lucide-react';
 import Layout from '@/components/Layout';
@@ -7,6 +6,7 @@ import QuantumButton from '@/components/QuantumButton';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from "@/components/ui/use-toast";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Custom components
 import AreaSelection from '@/components/quantum/AreaSelection';
@@ -26,6 +26,8 @@ const Diagnose = () => {
   const [mentalQuestionMode, setMentalQuestionMode] = useState(false);
 
   const streamRef = useRef<MediaStream | null>(null);
+
+  const isMobile = useIsMobile();
 
   // Function to start/stop camera
   const toggleCamera = async () => {
@@ -81,14 +83,14 @@ const Diagnose = () => {
     <Layout>
       <HeroSection
         title="Diagnóstico Energético"
-        subtitle="Identifica desequilibrios energéticos y áreas que necesitan atención con nuestras herramientas de diagnóstico radiónico intuitivas."
+        subtitle="Identifica desequilibrios energéticos y áreas que necesitan atención."
         className="hero-diagnose"
       />
 
-      <section className="py-6 px-4 bg-gradient-to-b from-quantum-dark/70 to-background">
+      <section className="py-4 md:py-6 px-4 bg-gradient-to-b from-quantum-dark/70 to-background">
         <div className="container mx-auto">
           <Tabs defaultValue="pendulum" className="w-full">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-6 bg-quantum-dark/30 border border-quantum-primary/20">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-4 md:mb-6 bg-quantum-dark/30 border border-quantum-primary/20">
               <TabsTrigger 
                 value="pendulum" 
                 className="data-[state=active]:bg-quantum-primary/20 data-[state=active]:text-white"
@@ -104,9 +106,9 @@ const Diagnose = () => {
             </TabsList>
             
             <TabsContent value="pendulum" className="w-full">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <Card className="quantum-card shadow-lg shadow-quantum-primary/5 p-6 lg:col-span-1">
-                  <h3 className="text-xl font-semibold mb-4 holographic-gradient">Selecciona Área a Diagnosticar</h3>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
+                <Card className="quantum-card shadow-lg shadow-quantum-primary/5 p-4 md:p-6 lg:col-span-1">
+                  <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 holographic-gradient">Selecciona Área a Diagnosticar</h3>
                   
                   <AreaSelection 
                     areas={[
@@ -144,9 +146,9 @@ const Diagnose = () => {
                 
                 <div className="lg:col-span-2" id="pendulum-component">
                   {mentalQuestionMode ? (
-                    <Card className="quantum-card shadow-lg shadow-quantum-primary/5 p-6 h-full">
-                      <h3 className="text-xl font-semibold mb-4 holographic-gradient">Respuesta a tu Pregunta Mental</h3>
-                      <div className="flex flex-col items-center justify-center min-h-[400px]">
+                    <Card className="quantum-card shadow-lg shadow-quantum-primary/5 p-4 md:p-6 h-full">
+                      <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 holographic-gradient">Respuesta a tu Pregunta Mental</h3>
+                      <div className="flex flex-col items-center justify-center min-h-[300px] md:min-h-[400px]">
                         <MentalQuestionPendulum
                           useCameraMode={useCameraMode}
                           pendulumSound={pendulumSound}
@@ -178,10 +180,10 @@ const Diagnose = () => {
 
       <InfoSection />
 
-      <section className="py-12 px-4 bg-gradient-to-b from-background to-quantum-dark/40">
+      <section className="py-8 md:py-12 px-4 bg-gradient-to-b from-background to-quantum-dark/40">
         <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4 holographic-gradient">¿Listo para Profundizar?</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4 holographic-gradient">¿Listo para Profundizar?</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto mb-6 md:mb-8">
             Después del diagnóstico, pasa a nuestro módulo de tratamiento para abordar cualquier desequilibrio con terapia de frecuencia dirigida.
           </p>
           <QuantumButton>Explorar Tratamientos</QuantumButton>
