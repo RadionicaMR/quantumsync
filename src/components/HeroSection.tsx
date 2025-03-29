@@ -32,19 +32,19 @@ const HeroSection = ({
         <EnergyCircle key={i} />
       ))}
       
-      {/* Estrellas adicionales con brillo holográfico */}
+      {/* Estrellas con brillo holográfico */}
       <div className="stars-container absolute inset-0 z-0">
-        {Array.from({ length: 30 }).map((_, i) => (
+        {Array.from({ length: 50 }).map((_, i) => (
           <div
             key={`star-${i}`}
             className="absolute rounded-full animate-pulse"
             style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
-              width: `${Math.random() * 3 + 1}px`,
-              height: `${Math.random() * 3 + 1}px`,
+              width: `${Math.random() * 4 + 1}px`,
+              height: `${Math.random() * 4 + 1}px`,
               background: `radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(155,135,245,0.8) 50%, rgba(155,135,245,0) 100%)`,
-              boxShadow: '0 0 8px 2px rgba(155,135,245,0.5)',
+              boxShadow: '0 0 10px 3px rgba(155,135,245,0.6)',
               animationDelay: `${Math.random() * 5}s`,
               animationDuration: `${Math.random() * 3 + 2}s`,
             }}

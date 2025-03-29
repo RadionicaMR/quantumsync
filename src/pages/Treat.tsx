@@ -22,16 +22,22 @@ const Treat = () => {
   const [useHeadphones, setUseHeadphones] = useState(true);
   const [visualFeedback, setVisualFeedback] = useState(true);
   
-  // Nuevos estados para tratamiento personalizado
+  // Estados para tratamiento personalizado
   const [rate1, setRate1] = useState('');
   const [rate2, setRate2] = useState('');
   const [rate3, setRate3] = useState('');
   const [radionicImage, setRadionicImage] = useState<string | null>(null);
+  const [receptorImage, setReceptorImage] = useState<string | null>(null);
+  const [hypnoticEffect, setHypnoticEffect] = useState(false);
+  const [hypnoticSpeed, setHypnoticSpeed] = useState([10]); // Velocidad de oscilación (1-20)
+  const [currentImage, setCurrentImage] = useState<'radionic' | 'receptor'>('radionic');
   
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const hypnoticTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const radionicFileInputRef = useRef<HTMLInputElement>(null);
+  const receptorFileInputRef = useRef<HTMLInputElement>(null);
 
   const presets = [
     { id: 'sleep', name: 'Mejorar el Sueño', frequency: 396, description: 'Ondas Delta para promover un sueño profundo y reparador', duration: 45 },
@@ -59,21 +65,43 @@ const Treat = () => {
     setIntensity([50]);
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>, setter: (image: string | null) => void) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setRadionicImage(reader.result as string);
+        setter(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const triggerImageUpload = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
+  const triggerImageUpload = (ref: React.RefObject<HTMLInputElement>) => {
+    if (ref.current) {
+      ref.current.click();
     }
+  };
+
+  // Función para el efecto hipnótico
+  const startHypnoticEffect = () => {
+    if (radionicImage && receptorImage) {
+      setHypnoticEffect(true);
+      
+      // La velocidad del efecto hipnótico se calcula inversamente: valores más altos = transición más rápida
+      const switchInterval = 1000 / (hypnoticSpeed[0] * 2);
+      
+      hypnoticTimerRef.current = setInterval(() => {
+        setCurrentImage(prev => prev === 'radionic' ? 'receptor' : 'radionic');
+      }, switchInterval);
+    }
+  };
+
+  const stopHypnoticEffect = () => {
+    if (hypnoticTimerRef.current) {
+      clearInterval(hypnoticTimerRef.current);
+      hypnoticTimerRef.current = null;
+    }
+    setHypnoticEffect(false);
   };
 
   const startTreatment = () => {
@@ -114,6 +142,11 @@ const Treat = () => {
         });
       }, 1000);
       
+      // Iniciar efecto hipnótico si hay imágenes cargadas
+      if (radionicImage && receptorImage) {
+        startHypnoticEffect();
+      }
+      
       setIsPlaying(true);
     } catch (error) {
       console.error("Error al iniciar el tratamiento de audio:", error);
@@ -137,6 +170,7 @@ const Treat = () => {
       timerRef.current = null;
     }
     
+    stopHypnoticEffect();
     setIsPlaying(false);
   };
 
@@ -148,6 +182,9 @@ const Treat = () => {
       }
       if (timerRef.current) {
         clearInterval(timerRef.current);
+      }
+      if (hypnoticTimerRef.current) {
+        clearInterval(hypnoticTimerRef.current);
       }
     };
   }, []);
@@ -370,6 +407,19 @@ const Treat = () => {
                             value={intensity}
                             onValueChange={setIntensity}
                             disabled={isPlaying}
+                            className="mb-4"
+                          />
+                          
+                          <h4 className="font-medium mb-2">Velocidad Hipnótica: {hypnoticSpeed[0]}</h4>
+                          <Slider
+                            defaultValue={hypnoticSpeed}
+                            min={1}
+                            max={20}
+                            step={1}
+                            value={hypnoticSpeed}
+                            onValueChange={setHypnoticSpeed}
+                            disabled={isPlaying}
+                            className="mb-4"
                           />
                         </div>
                         
@@ -422,45 +472,94 @@ const Treat = () => {
                     {/* Panel derecho - Upload y visualización */}
                     <div className="lg:col-span-2">
                       <div className="space-y-6">
-                        <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
-                          {radionicImage ? (
-                            <div className="relative h-56 w-full overflow-hidden rounded-lg">
-                              <img 
-                                src={radionicImage} 
-                                alt="Gráfico radiónico" 
-                                className={`w-full h-full object-contain ${isPlaying ? 'animate-pulse' : ''}`}
-                                style={{ opacity: isPlaying ? '0.7' : '1' }}
-                              />
-                              <button
-                                onClick={triggerImageUpload}
-                                className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
-                                disabled={isPlaying}
+                        {/* Sección del Gráfico Radiónico */}
+                        <div>
+                          <h4 className="font-medium mb-3">GRÁFICO RADIÓNICO</h4>
+                          <div className="border-2 border-dashed border-border rounded-lg p-4 text-center">
+                            {radionicImage ? (
+                              <div className="relative h-44 w-full overflow-hidden rounded-lg">
+                                <img 
+                                  src={radionicImage} 
+                                  alt="Gráfico radiónico" 
+                                  className={`w-full h-full object-contain ${isPlaying ? 'animate-pulse' : ''}`}
+                                  style={{ opacity: isPlaying ? '0.7' : '1' }}
+                                />
+                                <button
+                                  onClick={() => triggerImageUpload(radionicFileInputRef)}
+                                  className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
+                                  disabled={isPlaying}
+                                >
+                                  <Upload size={16} />
+                                </button>
+                              </div>
+                            ) : (
+                              <div 
+                                onClick={() => !isPlaying && triggerImageUpload(radionicFileInputRef)}
+                                className="cursor-pointer flex flex-col items-center justify-center h-44 space-y-3"
                               >
-                                <Upload size={16} />
-                              </button>
-                            </div>
-                          ) : (
-                            <div 
-                              onClick={!isPlaying ? triggerImageUpload : undefined}
-                              className="cursor-pointer flex flex-col items-center justify-center h-56 space-y-4"
-                            >
-                              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center">
-                                <Image className="w-8 h-8 text-muted-foreground" />
+                                <div className="w-14 h-14 bg-muted rounded-full flex items-center justify-center">
+                                  <Image className="w-7 h-7 text-muted-foreground" />
+                                </div>
+                                <div>
+                                  <p className="font-medium">Subir Gráfico Radiónico</p>
+                                  <p className="text-sm text-muted-foreground">Selecciona una imagen desde tu galería</p>
+                                </div>
                               </div>
-                              <div>
-                                <p className="font-medium">Subir Gráfico Radiónico</p>
-                                <p className="text-sm text-muted-foreground">Selecciona una imagen desde tu galería</p>
+                            )}
+                            <input 
+                              type="file"
+                              ref={radionicFileInputRef}
+                              onChange={(e) => handleImageUpload(e, setRadionicImage)}
+                              accept="image/*"
+                              className="hidden"
+                              disabled={isPlaying}
+                            />
+                          </div>
+                        </div>
+                        
+                        {/* Nueva sección RECEPTOR */}
+                        <div>
+                          <h4 className="font-medium mb-3">RECEPTOR</h4>
+                          <div className="border-2 border-dashed border-border rounded-lg p-4 text-center">
+                            {receptorImage ? (
+                              <div className="relative h-44 w-full overflow-hidden rounded-lg">
+                                <img 
+                                  src={receptorImage} 
+                                  alt="Imagen del receptor" 
+                                  className={`w-full h-full object-contain ${isPlaying ? 'animate-pulse' : ''}`}
+                                  style={{ opacity: isPlaying ? '0.7' : '1' }}
+                                />
+                                <button
+                                  onClick={() => triggerImageUpload(receptorFileInputRef)}
+                                  className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
+                                  disabled={isPlaying}
+                                >
+                                  <Upload size={16} />
+                                </button>
                               </div>
-                            </div>
-                          )}
-                          <input 
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleImageUpload}
-                            accept="image/*"
-                            className="hidden"
-                            disabled={isPlaying}
-                          />
+                            ) : (
+                              <div 
+                                onClick={() => !isPlaying && triggerImageUpload(receptorFileInputRef)}
+                                className="cursor-pointer flex flex-col items-center justify-center h-44 space-y-3"
+                              >
+                                <div className="w-14 h-14 bg-muted rounded-full flex items-center justify-center">
+                                  <Image className="w-7 h-7 text-muted-foreground" />
+                                </div>
+                                <div>
+                                  <p className="font-medium">Subir Imagen del Receptor</p>
+                                  <p className="text-sm text-muted-foreground">Selecciona una imagen desde tu galería</p>
+                                </div>
+                              </div>
+                            )}
+                            <input 
+                              type="file"
+                              ref={receptorFileInputRef}
+                              onChange={(e) => handleImageUpload(e, setReceptorImage)}
+                              accept="image/*"
+                              className="hidden"
+                              disabled={isPlaying}
+                            />
+                          </div>
                         </div>
                         
                         <div className="flex flex-col sm:flex-row gap-4">
@@ -505,6 +604,7 @@ const Treat = () => {
                               </div>
                               <QuantumButton 
                                 onClick={startTreatment}
+                                disabled={!radionicImage}
                               >
                                 Iniciar Tratamiento
                               </QuantumButton>
@@ -512,27 +612,39 @@ const Treat = () => {
                           )}
                         </div>
                         
-                        {isPlaying && visualFeedback && radionicImage && (
-                          <div className="mt-4 relative h-40 bg-black/5 dark:bg-white/5 rounded-lg overflow-hidden">
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <img 
-                                src={radionicImage} 
-                                alt="Gráfico radiónico (tratamiento)" 
-                                className="w-full h-full object-cover opacity-30 animate-pulse"
-                              />
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="w-8 h-8 bg-quantum-primary/20 rounded-full animate-ping"></div>
-                                <div className="w-16 h-16 bg-quantum-primary/10 rounded-full animate-ping" style={{ animationDelay: '0.2s' }}></div>
-                                <div className="w-24 h-24 bg-quantum-primary/5 rounded-full animate-ping" style={{ animationDelay: '0.4s' }}></div>
+                        {/* Visualización de tratamiento con efecto hipnótico */}
+                        {isPlaying && visualFeedback && (
+                          <div className="mt-4 relative h-48 bg-black/10 dark:bg-white/5 rounded-lg overflow-hidden">
+                            {/* Efecto hipnótico con las imágenes */}
+                            {radionicImage && receptorImage && hypnoticEffect && (
+                              <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+                                <img 
+                                  src={currentImage === 'radionic' ? radionicImage : receptorImage}
+                                  alt={currentImage === 'radionic' ? "Efecto radiónico" : "Efecto receptor"}
+                                  className="w-full h-full object-contain transition-opacity duration-100 animate-pulse"
+                                  style={{ 
+                                    opacity: 0.8,
+                                    filter: 'contrast(1.2) brightness(1.1)'
+                                  }}
+                                />
                               </div>
+                            )}
+                            
+                            {/* Overlay con los pulsos circulares */}
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                              <div className="w-8 h-8 bg-quantum-primary/20 rounded-full animate-ping"></div>
+                              <div className="w-16 h-16 bg-quantum-primary/15 rounded-full animate-ping" style={{ animationDelay: '0.2s' }}></div>
+                              <div className="w-24 h-24 bg-quantum-primary/10 rounded-full animate-ping" style={{ animationDelay: '0.4s' }}></div>
                             </div>
-                            <div className="absolute bottom-4 left-4 text-xs text-muted-foreground">
+                            
+                            {/* Información y RATES */}
+                            <div className="absolute bottom-3 left-3 text-xs text-white z-20 font-mono bg-black/40 px-2 py-1 rounded">
                               Frecuencia: {frequency[0]} Hz · Intensidad: {intensity[0]}%
                             </div>
-                            <div className="absolute top-4 right-4 flex space-x-4 text-xs font-mono animate-pulse">
-                              <span>{rate1}</span>
-                              <span>{rate2}</span>
-                              <span>{rate3}</span>
+                            <div className="absolute top-3 right-3 flex space-x-4 text-sm font-mono bg-black/40 px-2 py-1 rounded z-20">
+                              <span className="animate-pulse">{rate1}</span>
+                              <span className="animate-pulse" style={{ animationDelay: '0.2s' }}>{rate2}</span>
+                              <span className="animate-pulse" style={{ animationDelay: '0.4s' }}>{rate3}</span>
                             </div>
                           </div>
                         )}
