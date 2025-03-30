@@ -26,15 +26,19 @@ export const useTreatmentImages = () => {
         clearInterval(hypnoticTimerRef.current);
       }
       
-      // La velocidad del efecto hipnótico se calcula inversamente: valores más altos = transición más rápida
-      // Ajustamos para que sea más notorio
-      const switchInterval = 1000 / hypnoticSpeed[0];
+      // Configuramos la velocidad basada en el valor del deslizador
+      // Valores más altos significan cambios más rápidos entre imágenes
+      const switchInterval = Math.max(100, 2000 / hypnoticSpeed[0]);
+      
+      console.log("Starting hypnotic effect with speed:", hypnoticSpeed[0], "interval:", switchInterval);
       
       hypnoticTimerRef.current = setInterval(() => {
-        setCurrentImage(prev => prev === 'radionic' ? 'receptor' : 'radionic');
+        setCurrentImage(prev => {
+          const newImage = prev === 'radionic' ? 'receptor' : 'radionic';
+          console.log("Switching to image:", newImage);
+          return newImage;
+        });
       }, switchInterval);
-      
-      console.log("Hypnotic effect started with speed:", hypnoticSpeed[0], "interval:", switchInterval);
     } else {
       console.log("Cannot start hypnotic effect: missing images", {
         hasRadionicImages,
@@ -54,9 +58,10 @@ export const useTreatmentImages = () => {
     console.log("Hypnotic effect stopped");
   };
 
+  // Reinicia el efecto hipnótico si cambia la velocidad
   useEffect(() => {
-    // If hypnotic effect is active and speed changes, restart the effect
     if (hypnoticEffect) {
+      console.log("Hypnotic speed changed, restarting effect with speed:", hypnoticSpeed[0]);
       startHypnoticEffect();
     }
     

@@ -154,6 +154,7 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
             rate1={rate1}
             rate2={rate2}
             rate3={rate3}
+            hypnoticSpeed={hypnoticSpeed}
           />
         </div>
       </div>

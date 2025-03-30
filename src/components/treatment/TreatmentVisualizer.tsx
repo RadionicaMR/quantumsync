@@ -45,7 +45,7 @@ const TreatmentVisualizer = ({
   const hasImages = hasRadionicImages || hasReceptorImages;
 
   // Calculate animation speed based on hypnotic speed
-  const animationDuration = 60 / (hypnoticSpeed[0] * 2);
+  const animationDuration = Math.max(0.1, 20 / hypnoticSpeed[0]);
 
   return (
     <div className="relative aspect-square w-full bg-black rounded-lg overflow-hidden">
@@ -61,10 +61,10 @@ const TreatmentVisualizer = ({
                 alt={`Efecto radiónico ${index + 1}`}
                 className="absolute inset-0 w-full h-full object-contain"
                 style={{ 
-                  opacity: hypnoticEffect && currentImage === 'receptor' ? 0 : 1,
+                  opacity: hypnoticEffect ? (currentImage === 'radionic' ? 1 : 0) : 1,
                   mixBlendMode: 'screen',
                   filter: 'contrast(1.2) brightness(1.1)',
-                  transition: `opacity ${animationDuration/2}s ease-in-out`
+                  transition: `opacity ${animationDuration/3}s ease-in-out`
                 }}
               />
             ))}
@@ -76,10 +76,10 @@ const TreatmentVisualizer = ({
                 alt={`Efecto receptor ${index + 1}`}
                 className="absolute inset-0 w-full h-full object-contain"
                 style={{ 
-                  opacity: hypnoticEffect && currentImage === 'radionic' ? 0 : 1,
+                  opacity: hypnoticEffect ? (currentImage === 'receptor' ? 1 : 0) : 1,
                   mixBlendMode: 'multiply',
                   filter: 'contrast(1.2) brightness(1.1)',
-                  transition: `opacity ${animationDuration/2}s ease-in-out`
+                  transition: `opacity ${animationDuration/3}s ease-in-out`
                 }}
               />
             ))}
