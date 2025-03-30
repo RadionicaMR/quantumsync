@@ -13,6 +13,7 @@ interface TreatmentVisualizerProps {
   rate1: string;
   rate2: string;
   rate3: string;
+  hypnoticSpeed?: number[];
 }
 
 const TreatmentVisualizer = ({
@@ -29,6 +30,7 @@ const TreatmentVisualizer = ({
   rate1,
   rate2,
   rate3,
+  hypnoticSpeed = [10],
 }: TreatmentVisualizerProps) => {
   if (!isPlaying || !visualFeedback) {
     return null;
@@ -42,12 +44,15 @@ const TreatmentVisualizer = ({
   const hasReceptorImages = receptorImagesArray.length > 0;
   const hasImages = hasRadionicImages || hasReceptorImages;
 
+  // Calculate animation speed based on hypnotic speed
+  const animationDuration = 60 / (hypnoticSpeed[0] * 2);
+
   return (
     <div className="relative aspect-square w-full bg-black rounded-lg overflow-hidden">
       {/* Show blended images */}
       {hasImages && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-          {/* Always show a blend of both images instead of alternating */}
+          {/* Show images with appropriate animation based on hypnoticEffect */}
           <div className="absolute inset-0 flex items-center justify-center">
             {hasRadionicImages && radionicImagesArray.map((img, index) => (
               <img 
@@ -56,9 +61,10 @@ const TreatmentVisualizer = ({
                 alt={`Efecto radiónico ${index + 1}`}
                 className="absolute inset-0 w-full h-full object-contain"
                 style={{ 
-                  opacity: 0.7 / radionicImagesArray.length,
+                  opacity: hypnoticEffect && currentImage === 'receptor' ? 0.3 : 0.7 / radionicImagesArray.length,
                   mixBlendMode: 'screen',
                   filter: 'contrast(1.2) brightness(1.1)',
+                  transition: `opacity ${animationDuration}s ease-in-out`
                 }}
               />
             ))}
@@ -70,9 +76,10 @@ const TreatmentVisualizer = ({
                 alt={`Efecto receptor ${index + 1}`}
                 className="absolute inset-0 w-full h-full object-contain"
                 style={{ 
-                  opacity: 0.7 / receptorImagesArray.length,
+                  opacity: hypnoticEffect && currentImage === 'radionic' ? 0.3 : 0.7 / receptorImagesArray.length,
                   mixBlendMode: 'multiply',
                   filter: 'contrast(1.2) brightness(1.1)',
+                  transition: `opacity ${animationDuration}s ease-in-out`
                 }}
               />
             ))}
@@ -106,7 +113,7 @@ const TreatmentVisualizer = ({
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  animation: 'random-move 15s infinite alternate'
+                  animation: `random-move ${15/hypnoticSpeed[0]*10}s infinite alternate`
                 }}>
               {rate1}
             </div>
@@ -120,7 +127,7 @@ const TreatmentVisualizer = ({
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  animation: 'random-move 18s infinite alternate-reverse'
+                  animation: `random-move ${18/hypnoticSpeed[0]*10}s infinite alternate-reverse`
                 }}>
               {rate2}
             </div>
@@ -134,7 +141,7 @@ const TreatmentVisualizer = ({
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  animation: 'random-move 20s infinite'
+                  animation: `random-move ${20/hypnoticSpeed[0]*10}s infinite`
                 }}>
               {rate3}
             </div>
@@ -145,7 +152,12 @@ const TreatmentVisualizer = ({
       {/* Texto de frecuencia que titila junto con las imágenes */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="flex flex-col items-center max-w-[80%] z-20">
-          <div className="text-white text-center font-semibold text-lg md:text-xl lg:text-2xl line-clamp-3 bg-black/30 px-3 py-2 rounded animate-pulse">
+          <div 
+            className="text-white text-center font-semibold text-lg md:text-xl lg:text-2xl line-clamp-3 bg-black/30 px-3 py-2 rounded"
+            style={{ 
+              animation: `pulse ${animationDuration * 2}s infinite alternate ease-in-out`
+            }}
+          >
             Frecuencia: {frequency[0]} Hz
           </div>
         </div>

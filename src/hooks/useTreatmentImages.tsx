@@ -22,7 +22,7 @@ export const useTreatmentImages = () => {
       setHypnoticEffect(true);
       
       // La velocidad del efecto hipnótico se calcula inversamente: valores más altos = transición más rápida
-      const switchInterval = 1000 / (hypnoticSpeed[0] * 2);
+      const switchInterval = 1000 / (hypnoticSpeed[0] * 0.5);
       
       hypnoticTimerRef.current = setInterval(() => {
         setCurrentImage(prev => prev === 'radionic' ? 'receptor' : 'radionic');

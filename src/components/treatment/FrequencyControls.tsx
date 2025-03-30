@@ -103,7 +103,25 @@ const FrequencyControls = ({
           className="mb-4"
         />
         
-        <h4 className="font-medium mb-2">Velocidad Hipnótica: {hypnoticSpeed[0]}</h4>
+        <div className="flex items-center justify-between mb-2">
+          <h4 className="font-medium">Velocidad Visualización:</h4>
+          <div className="flex items-center">
+            <Input
+              type="number"
+              value={hypnoticSpeed[0]}
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (!isNaN(value) && value >= 1 && value <= 20) {
+                  setHypnoticSpeed([value]);
+                }
+              }}
+              disabled={isPlaying}
+              className="w-24 ml-2"
+              min={1}
+              max={20}
+            />
+          </div>
+        </div>
         <Slider
           defaultValue={hypnoticSpeed}
           min={1}
