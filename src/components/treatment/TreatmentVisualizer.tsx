@@ -41,7 +41,7 @@ const TreatmentVisualizer = ({
   const hasImages = radionicImagesArray.length > 0 || receptorImagesArray.length > 0;
 
   return (
-    <div className="mt-4 relative h-64 md:h-80 lg:h-96 w-full bg-black/10 dark:bg-white/5 rounded-lg overflow-hidden">
+    <div className="mt-4 relative aspect-square w-full bg-white rounded-lg overflow-hidden">
       {/* Efectos con las imágenes */}
       {hasImages && hypnoticEffect && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
@@ -87,54 +87,48 @@ const TreatmentVisualizer = ({
         Frecuencia: {frequency[0]} Hz · Intensidad: {intensity[0]}%
       </div>
       
-      {/* RATES girando en círculo */}
+      {/* RATES con movimiento aleatorio dentro de la imagen */}
       {(rate1 || rate2 || rate3) && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="relative w-full h-full max-w-[80%] max-h-[80%]">
+          <div className="relative w-full h-full max-w-[90%] max-h-[90%]">
             {rate1 && (
-              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded animate-spin-slow text-sm md:text-base" 
+              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded text-sm md:text-base" 
                   style={{ 
-                    left: '50%', 
-                    top: '15%',
-                    transform: 'translateX(-50%) rotate(0deg)', 
-                    transformOrigin: 'center 8rem',
-                    maxWidth: '90%',
+                    left: '20%',
+                    top: '20%',
+                    maxWidth: '80%',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
+                    whiteSpace: 'nowrap',
+                    animation: 'random-move 15s infinite alternate'
                   }}>
                 {rate1}
               </div>
             )}
             {rate2 && (
-              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded animate-spin-slow text-sm md:text-base"
+              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded text-sm md:text-base"
                   style={{ 
-                    left: '50%', 
-                    top: '15%',
-                    transform: 'translateX(-50%) rotate(120deg)', 
-                    transformOrigin: 'center 8rem',
-                    animationDelay: '0.5s',
-                    animationDirection: 'reverse',
-                    maxWidth: '90%',
+                    left: '50%',
+                    top: '40%',
+                    maxWidth: '80%',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
+                    whiteSpace: 'nowrap',
+                    animation: 'random-move 18s infinite alternate-reverse'
                   }}>
                 {rate2}
               </div>
             )}
             {rate3 && (
-              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded animate-spin-slow text-sm md:text-base"
+              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded text-sm md:text-base"
                   style={{ 
-                    left: '50%', 
-                    top: '15%',
-                    transform: 'translateX(-50%) rotate(240deg)', 
-                    transformOrigin: 'center 8rem',
-                    animationDelay: '1s',
-                    maxWidth: '90%',
+                    left: '30%',
+                    top: '60%',
+                    maxWidth: '80%',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
+                    whiteSpace: 'nowrap',
+                    animation: 'random-move 20s infinite'
                   }}>
                 {rate3}
               </div>
@@ -142,6 +136,15 @@ const TreatmentVisualizer = ({
           </div>
         </div>
       )}
+      
+      {/* Texto de frecuencia que titila junto con las imágenes */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="flex flex-col items-center max-w-[80%] z-20">
+          <div className="text-white text-center font-semibold text-lg md:text-xl lg:text-2xl line-clamp-3 bg-black/30 px-3 py-2 rounded animate-pulse">
+            Frecuencia: {frequency[0]} Hz
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

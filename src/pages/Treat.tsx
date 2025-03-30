@@ -54,6 +54,16 @@ const Treat = () => {
                 onSelectPreset={treatment.selectPreset}
                 startTreatment={treatment.startTreatment}
                 stopTreatment={treatment.stopTreatment}
+                // Add these new props
+                radionicImage={treatment.radionicImage}
+                receptorImage={treatment.receptorImage}
+                radionicImages={treatment.radionicImages}
+                receptorImages={treatment.receptorImages}
+                currentImage={treatment.currentImage}
+                hypnoticEffect={treatment.hypnoticEffect}
+                rate1={treatment.rate1}
+                rate2={treatment.rate2}
+                rate3={treatment.rate3}
               />
             </TabsContent>
             
