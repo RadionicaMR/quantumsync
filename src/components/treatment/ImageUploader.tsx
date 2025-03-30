@@ -1,3 +1,4 @@
+
 import React, { useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Plus, Trash2, Upload } from 'lucide-react';
@@ -54,9 +55,9 @@ const ImageUploader = ({
           reader.readAsDataURL(file);
         });
       })).then(newImages => {
-        // Here's the fix - create a new array first, then pass that array to setImages
+        // Crear un nuevo array con las imágenes combinadas y pasarlo directamente a setImages
         const combined = [...images, ...newImages];
-        const limitedImages = combined.slice(0, maxImages); // Ensure we don't exceed maxImages
+        const limitedImages = combined.slice(0, maxImages); // Asegurar que no excedemos maxImages
         setImages(limitedImages);
       });
     }

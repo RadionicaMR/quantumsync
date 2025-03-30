@@ -43,7 +43,7 @@ const ManifestVisualizer = ({
             src={patternImage || patterns.find(p => p.id === selectedPattern)?.image}
             alt="Patrón de manifestación"
             className="max-h-full max-w-full object-contain opacity-80 transition-opacity duration-300"
-            style={{ animation: `pulse ${exposureTime[0] / 3}s infinite alternate` }}
+            style={{ animation: `pulse ${60/visualSpeed[0]}s infinite alternate` }}
           />
         )}
         
@@ -52,7 +52,7 @@ const ManifestVisualizer = ({
             src={receptorImage}
             alt="Imagen del receptor"
             className="max-h-full max-w-full object-contain opacity-80 transition-opacity duration-300"
-            style={{ animation: `pulse ${exposureTime[0] / 3}s infinite alternate` }}
+            style={{ animation: `pulse ${60/visualSpeed[0]}s infinite alternate` }}
           />
         )}
         
@@ -64,7 +64,7 @@ const ManifestVisualizer = ({
                 src={patternImage || patterns.find(p => p.id === selectedPattern)?.image}
                 alt="Mezcla de imágenes"
                 className="absolute inset-0 max-h-full max-w-full object-contain opacity-40 mix-blend-overlay"
-                style={{ animation: `pulse ${exposureTime[0] / 3}s infinite alternate` }}
+                style={{ animation: `pulse ${60/visualSpeed[0]}s infinite alternate` }}
               />
             )}
             
@@ -73,13 +73,13 @@ const ManifestVisualizer = ({
                 src={receptorImage}
                 alt="Mezcla de imágenes"
                 className="absolute inset-0 max-h-full max-w-full object-contain opacity-40 mix-blend-multiply"
-                style={{ animation: `pulse ${exposureTime[0] / 3}s infinite alternate` }}
+                style={{ animation: `pulse ${60/visualSpeed[0]}s infinite alternate` }}
               />
             )}
           </>
         )}
         
-        {/* Texto de la intención que titila con la misma velocidad que las imágenes y en tres líneas */}
+        {/* Texto de la intención */}
         <div className="absolute inset-0 flex items-center justify-center z-10">
           <div 
             className="max-w-[80%] text-white font-bold text-xl md:text-2xl p-4 text-center bg-black/30 rounded line-clamp-3"
