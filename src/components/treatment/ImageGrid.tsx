@@ -1,5 +1,4 @@
-
-import ImageUploader from './ImageUploader';
+import ImageUploader from './image-uploader/ImageUploader';
 
 interface ImageGridProps {
   radionicImage: string | null;

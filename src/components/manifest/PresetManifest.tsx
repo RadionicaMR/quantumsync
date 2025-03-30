@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import PatternSelector from './PatternSelector';
 import ManifestControls from './ManifestControls';
 import ManifestVisualizer from './ManifestVisualizer';
-import ImageUploader from './ImageUploader';
+import ImageUploader from '@/components/manifest/ImageUploader';
 
 interface Pattern {
   id: string;
