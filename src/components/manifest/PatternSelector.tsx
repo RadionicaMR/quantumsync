@@ -29,7 +29,7 @@ const PatternSelector = ({
         {patterns.map((pattern) => (
           <button
             key={pattern.id}
-            className={`w-full p-3 rounded-lg text-left transition-all ${
+            className={`w-full p-3 rounded-xl text-left transition-all ${
               selectedPattern === pattern.id 
                 ? 'bg-quantum-primary text-white' 
                 : 'bg-muted hover:bg-muted/80'

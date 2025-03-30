@@ -23,13 +23,13 @@ const QuantumButton = ({
   let buttonClass = '';
   
   if (variant === 'default') {
-    buttonClass = 'quantum-button';
+    buttonClass = 'quantum-button rounded-xl';
   } else if (variant === 'outline') {
-    buttonClass = 'rounded-full bg-transparent text-quantum-primary font-medium px-6 py-3 border-2 border-quantum-primary hover:bg-quantum-primary/10 transition-colors duration-300';
+    buttonClass = 'rounded-xl bg-transparent text-quantum-primary font-medium px-6 py-3 border-2 border-quantum-primary hover:bg-quantum-primary/10 transition-colors duration-300';
   } else if (variant === 'secondary') {
-    buttonClass = 'rounded-full bg-quantum-tertiary text-white font-medium px-6 py-3 shadow-md shadow-quantum-tertiary/20 hover:shadow-lg hover:shadow-quantum-tertiary/30 hover:translate-y-[-2px] active:translate-y-[0px] transition-all duration-300';
+    buttonClass = 'rounded-xl bg-quantum-tertiary text-white font-medium px-6 py-3 shadow-md shadow-quantum-tertiary/20 hover:shadow-lg hover:shadow-quantum-tertiary/30 hover:translate-y-[-2px] active:translate-y-[0px] transition-all duration-300';
   } else if (variant === 'ghost') {
-    buttonClass = 'rounded-full bg-transparent text-quantum-primary font-medium px-6 py-3 hover:bg-quantum-primary/10 transition-colors duration-300';
+    buttonClass = 'rounded-xl bg-transparent text-quantum-primary font-medium px-6 py-3 hover:bg-quantum-primary/10 transition-colors duration-300';
   }
   
   if (size === 'sm') {

@@ -38,7 +38,7 @@ const AreaSelection: React.FC<AreaSelectionProps> = ({
       </QuantumButton>
       
       {mentalQuestionMode && (
-        <div className="bg-quantum-gradient-soft p-4 rounded-lg mb-4">
+        <div className="bg-quantum-gradient-soft p-4 rounded-xl mb-4">
           <h4 className="font-medium mb-2">Pregunta Mental</h4>
           <p className="text-sm text-muted-foreground mb-4">
             Piensa en una pregunta que se pueda responder con SÍ o NO. Mantén el dispositivo estable y presiona el botón.
@@ -52,7 +52,7 @@ const AreaSelection: React.FC<AreaSelectionProps> = ({
           </QuantumButton>
           
           {useCameraMode && (
-            <div className="mt-4 p-2 bg-blue-100 border border-blue-200 rounded-md">
+            <div className="mt-4 p-2 bg-blue-100 border border-blue-200 rounded-xl">
               <p className="text-sm text-blue-800 text-center font-medium">
                 Solo disponible en el Móvil
               </p>
@@ -66,7 +66,7 @@ const AreaSelection: React.FC<AreaSelectionProps> = ({
           {areas.map((area) => (
             <button
               key={area}
-              className={`w-full p-3 rounded-lg text-left transition-all ${
+              className={`w-full p-3 rounded-xl text-left transition-all ${
                 selectedArea === area 
                   ? 'bg-quantum-primary text-white' 
                   : 'bg-muted hover:bg-muted/80'

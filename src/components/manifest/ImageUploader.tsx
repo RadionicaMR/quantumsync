@@ -46,11 +46,11 @@ const ImageUploader = ({
     <>
       <Label className="mb-2 block">{label}</Label>
       <div 
-        className="border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer relative"
+        className="border-2 border-dashed border-border rounded-xl p-4 text-center cursor-pointer relative"
         onClick={triggerImageUpload}
       >
         {image ? (
-          <div className="relative h-40 w-full overflow-hidden rounded-lg">
+          <div className="relative h-40 w-full overflow-hidden rounded-xl">
             <img 
               src={image} 
               alt={label} 
