@@ -94,9 +94,12 @@ const CustomManifest = ({
               description="Selecciona una imagen relacionada con tu objetivo"
             />
           </div>
-
-          {/* Campos RATE */}
-          <div className="mt-6">
+        </div>
+        
+        <div className="lg:col-span-2">
+          <h3 className="text-xl font-semibold mb-4">Programa tu Intención</h3>
+          
+          <div className="space-y-6">
             <ManifestControls
               intention={intention}
               setIntention={setIntention}
@@ -121,13 +124,7 @@ const CustomManifest = ({
               formatTimeRemaining={formatTimeRemaining}
               canStart={!!patternImage}
             />
-          </div>
-        </div>
-        
-        <div className="lg:col-span-2">
-          <h3 className="text-xl font-semibold mb-4">Visualización</h3>
-          
-          <div className="space-y-6">
+            
             <ManifestVisualizer
               isActive={isManifestActive}
               currentImage={currentImage}
