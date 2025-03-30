@@ -189,7 +189,7 @@ const Manifest = () => {
           title: "Manifestación completada",
           description: `Tu intención "${intention}" ha sido completamente programada.`,
         });
-      }, exposureTimeInMs);
+      }, exposureTimeInMs);\
     }
     
     setIsManifestActive(true);
