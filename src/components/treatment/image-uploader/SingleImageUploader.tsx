@@ -7,16 +7,16 @@ interface SingleImageUploaderProps {
   onImageChange: (image: string | null) => void;
   isDisabled: boolean;
   placeholder: string;
+  inputId: string;
 }
 
 const SingleImageUploader = ({ 
   image, 
   onImageChange, 
   isDisabled,
-  placeholder 
+  placeholder,
+  inputId
 }: SingleImageUploaderProps) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -25,12 +25,6 @@ const SingleImageUploader = ({
         onImageChange(reader.result as string);
       };
       reader.readAsDataURL(file);
-    }
-  };
-
-  const triggerFileInput = () => {
-    if (fileInputRef.current && !isDisabled) {
-      fileInputRef.current.click();
     }
   };
 
@@ -69,8 +63,8 @@ const SingleImageUploader = ({
         </div>
       )}
       <input
+        id={inputId}
         type="file"
-        ref={fileInputRef}
         onChange={handleImageUpload}
         accept="image/*"
         className="hidden"

@@ -88,13 +88,14 @@ const ImageUploader = ({
         {activeTab === 'single' && (
           <div
             className="border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer"
-            onClick={isPlaying ? undefined : undefined}
+            onClick={isPlaying ? undefined : () => document.getElementById(`fileInput-${title}`)?.click()}
           >
             <SingleImageUploader 
               image={image} 
               onImageChange={setImage} 
               isDisabled={isPlaying}
               placeholder={subtitle}
+              inputId={`fileInput-${title}`}
             />
           </div>
         )}

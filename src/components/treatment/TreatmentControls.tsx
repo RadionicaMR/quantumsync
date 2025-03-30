@@ -100,14 +100,14 @@ const TreatmentControls = ({
                   value={duration[0]}
                   onChange={(e) => {
                     const value = parseInt(e.target.value);
-                    if (!isNaN(value) && value >= 1 && value <= 60) {
+                    if (!isNaN(value) && value >= 1 && value <= 180) {
                       setDuration([value]);
                     }
                   }}
                   disabled={isPlaying}
                   className="w-24 ml-2"
                   min={1}
-                  max={60}
+                  max={180}
                 />
                 <span className="ml-2 text-sm text-muted-foreground">min</span>
               </div>
@@ -115,7 +115,7 @@ const TreatmentControls = ({
             <Slider
               defaultValue={duration}
               min={1}
-              max={60}
+              max={180}
               step={1}
               value={duration}
               onValueChange={setDuration}
@@ -143,7 +143,7 @@ const TreatmentControls = ({
                 onCheckedChange={setUseHeadphones}
                 disabled={isPlaying}
               />
-              <Label htmlFor="headphones">Usar auriculares (recomendado)</Label>
+              <Label htmlFor="headphones">Usar auriculares</Label>
             </div>
             
             <div className="flex items-center gap-2">
