@@ -13,3 +13,5 @@ export const useManifestUtils = () => {
 
   return { formatTimeRemaining };
 };
+
+export type ManifestUtils = ReturnType<typeof useManifestUtils>;

@@ -8,6 +8,7 @@ interface DiagnosisStandbyProps {
   diagnosisResult: string | null;
   onStartDiagnosis: () => void;
   useCameraMode: boolean;
+  personName: string;
 }
 
 const DiagnosisStandby: React.FC<DiagnosisStandbyProps> = ({
@@ -16,7 +17,8 @@ const DiagnosisStandby: React.FC<DiagnosisStandbyProps> = ({
   processingCamera,
   diagnosisResult,
   onStartDiagnosis,
-  useCameraMode
+  useCameraMode,
+  personName
 }) => {
   if (!selectedArea) {
     return (
@@ -42,15 +44,31 @@ const DiagnosisStandby: React.FC<DiagnosisStandbyProps> = ({
     );
   }
   
+  // Only show start diagnosis button if either:
+  // 1. The user is not using camera mode (pendulum virtual), or
+  // 2. Person name is provided when using camera mode
+  const canStartDiagnosis = !useCameraMode || (useCameraMode && personName.trim().length > 0);
+  
   if (!isPendulumSwinging && !diagnosisResult) {
     return (
       <div className="mt-6">
         <button
-          className="bg-quantum-primary text-white px-6 py-2 rounded-md hover:bg-quantum-primary/90 transition-colors"
-          onClick={onStartDiagnosis}
+          className={`px-6 py-2 rounded-md transition-colors ${
+            canStartDiagnosis 
+              ? "bg-quantum-primary text-white hover:bg-quantum-primary/90" 
+              : "bg-muted text-muted-foreground cursor-not-allowed"
+          }`}
+          onClick={canStartDiagnosis ? onStartDiagnosis : undefined}
+          disabled={!canStartDiagnosis}
         >
           Iniciar Diagnóstico
         </button>
+        
+        {useCameraMode && !personName.trim() && (
+          <div className="text-amber-500 text-sm mt-2">
+            Debe ingresar el nombre de la persona para iniciar el diagnóstico
+          </div>
+        )}
       </div>
     );
   }

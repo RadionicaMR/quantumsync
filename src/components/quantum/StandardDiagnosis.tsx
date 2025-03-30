@@ -6,6 +6,7 @@ import PersonNameInput from './PersonNameInput';
 import DiagnosisStandby from './DiagnosisStandby';
 import { useDiagnosis } from '@/hooks/useDiagnosis';
 import { RecentDiagnosisResult } from '@/hooks/useDiagnosisCache';
+import { useNavigate } from 'react-router-dom';
 
 interface StandardDiagnosisProps {
   selectedArea: string | null;
@@ -31,6 +32,7 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
   addResultToCache
 }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const navigate = useNavigate();
   
   const {
     isPendulumSwinging,
@@ -52,6 +54,17 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
     if (selectedArea) {
       startMotionDiagnosis(selectedArea);
     }
+  };
+
+  const navigateToTreatment = () => {
+    navigate('/treat', { 
+      state: { 
+        fromDiagnosis: true, 
+        diagnosisArea: selectedArea,
+        diagnosisResult,
+        personName
+      } 
+    });
   };
 
   return (
@@ -86,9 +99,10 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
         diagnosisResult={diagnosisResult}
         diagnosisPercentage={diagnosisPercentage}
         selectedArea={selectedArea || ''}
-        cameraResult={cameraResult}
+        cameraResult={!useCameraMode ? null : cameraResult}
         onDiagnoseAgain={handleStartDiagnosis}
         personName={personName}
+        onStartTreatment={navigateToTreatment}
       />
       
       <DiagnosisStandby 
@@ -98,6 +112,7 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
         diagnosisResult={diagnosisResult}
         onStartDiagnosis={handleStartDiagnosis}
         useCameraMode={useCameraMode}
+        personName={personName}
       />
     </>
   );

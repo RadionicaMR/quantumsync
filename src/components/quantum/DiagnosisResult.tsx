@@ -9,6 +9,7 @@ interface DiagnosisResultProps {
   cameraResult: 'SI' | 'NO' | null;
   onDiagnoseAgain: () => void;
   personName?: string;
+  onStartTreatment: () => void;
 }
 
 const DiagnosisResult: React.FC<DiagnosisResultProps> = ({ 
@@ -17,7 +18,8 @@ const DiagnosisResult: React.FC<DiagnosisResultProps> = ({
   selectedArea,
   cameraResult,
   onDiagnoseAgain,
-  personName
+  personName,
+  onStartTreatment
 }) => {
   if (!diagnosisResult) return null;
   
@@ -80,6 +82,7 @@ const DiagnosisResult: React.FC<DiagnosisResultProps> = ({
         )}
       </motion.div>
       
+      {/* Only show SI/NO result for mental question mode, not for area diagnosis */}
       {cameraResult && (
         <motion.div 
           className="mt-4 text-xl font-bold"
@@ -99,13 +102,17 @@ const DiagnosisResult: React.FC<DiagnosisResultProps> = ({
       )}
       
       <motion.div 
-        className="mt-6"
+        className="mt-6 flex flex-col md:flex-row gap-3 justify-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 1.5 }}
       >
-        <QuantumButton onClick={onDiagnoseAgain}>
+        <QuantumButton onClick={onDiagnoseAgain} variant="outline">
           Diagnosticar de Nuevo
+        </QuantumButton>
+        
+        <QuantumButton onClick={onStartTreatment} className="mt-2 md:mt-0">
+          Iniciar Tratamiento
         </QuantumButton>
       </motion.div>
     </motion.div>

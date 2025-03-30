@@ -1,4 +1,6 @@
 
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
 import { Card } from '@/components/ui/card';
@@ -9,9 +11,30 @@ import CallToAction from '@/components/treatment/CallToAction';
 import PresetTreatment from '@/components/treatment/PresetTreatment';
 import { treatmentPresets } from '@/data/treatmentPresets';
 import { useTreatment } from '@/hooks/useTreatment';
+import { toast } from '@/components/ui/use-toast';
 
 const Treat = () => {
   const treatment = useTreatment();
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState("presets");
+  
+  // Check if we're coming from diagnosis page
+  useEffect(() => {
+    if (location.state?.fromDiagnosis) {
+      const { personName, diagnosisArea, diagnosisResult } = location.state;
+      
+      // Set the receptor name from the diagnosis
+      if (personName) {
+        treatment.setReceptorName(personName);
+        
+        // Show toast notification
+        toast({
+          title: "Diagnóstico importado",
+          description: `Importando datos del diagnóstico de ${diagnosisArea} para ${personName}`,
+        });
+      }
+    }
+  }, [location.state, treatment]);
   
   return (
     <Layout>
@@ -22,7 +45,7 @@ const Treat = () => {
 
       <section className="py-12 px-4">
         <div className="container mx-auto">
-          <Tabs defaultValue="presets" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
               <TabsTrigger value="presets" className="flex flex-col">
                 <span>Preajustes</span>
