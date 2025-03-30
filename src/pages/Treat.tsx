@@ -1,181 +1,18 @@
-import { useState, useRef, useEffect } from 'react';
+
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import PresetSelector, { TreatmentPreset } from '@/components/treatment/PresetSelector';
-import TreatmentControls from '@/components/treatment/TreatmentControls';
 import CustomTreatment from '@/components/treatment/CustomTreatment';
 import HowItWorks from '@/components/treatment/HowItWorks';
 import CallToAction from '@/components/treatment/CallToAction';
+import PresetTreatment from '@/components/treatment/PresetTreatment';
+import { treatmentPresets } from '@/data/treatmentPresets';
+import { useTreatment } from '@/hooks/useTreatment';
 
 const Treat = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [frequency, setFrequency] = useState([528]);
-  const [duration, setDuration] = useState([5]);
-  const [intensity, setIntensity] = useState([50]);
-  const [selectedPreset, setSelectedPreset] = useState('');
-  const [timeRemaining, setTimeRemaining] = useState(0);
-  const [useHeadphones, setUseHeadphones] = useState(true);
-  const [visualFeedback, setVisualFeedback] = useState(true);
+  const treatment = useTreatment();
   
-  // Estados para tratamiento personalizado
-  const [rate1, setRate1] = useState('');
-  const [rate2, setRate2] = useState('');
-  const [rate3, setRate3] = useState('');
-  const [radionicImage, setRadionicImage] = useState<string | null>(null);
-  const [receptorImage, setReceptorImage] = useState<string | null>(null);
-  // Nuevos estados para múltiples imágenes
-  const [radionicImages, setRadionicImages] = useState<string[]>([]);
-  const [receptorImages, setReceptorImages] = useState<string[]>([]);
-  const [hypnoticEffect, setHypnoticEffect] = useState(false);
-  const [hypnoticSpeed, setHypnoticSpeed] = useState([10]); // Velocidad de oscilación (1-20)
-  const [currentImage, setCurrentImage] = useState<'radionic' | 'receptor'>('radionic');
-  
-  const oscillatorRef = useRef<OscillatorNode | null>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const hypnoticTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  const presets: TreatmentPreset[] = [
-    { id: 'sleep', name: 'Mejorar el Sueño', frequency: 396, description: 'Ondas Delta para promover un sueño profundo y reparador', duration: 45 },
-    { id: 'stress', name: 'Reducir el Estrés', frequency: 639, description: 'Frecuencias Theta para relajación y alivio de la ansiedad', duration: 20 },
-    { id: 'focus', name: 'Mejorar la Concentración', frequency: 852, description: 'Ondas Beta para mejorar la concentración y claridad mental', duration: 15 },
-    { id: 'energy', name: 'Aumentar Energía', frequency: 528, description: 'La "frecuencia milagrosa" para vitalidad y reparación del ADN', duration: 10 },
-    { id: 'harmony', name: 'Equilibrio Emocional', frequency: 741, description: 'Ayuda a liberar emociones negativas y promover la armonía', duration: 15 },
-    { id: 'manifest', name: 'Manifestación', frequency: 963, description: 'Conecta con la conciencia espiritual y el poder de manifestación', duration: 30 },
-  ];
-
-  const formatTime = (minutes: number) => {
-    const mins = Math.floor(minutes);
-    const secs = Math.round((minutes - mins) * 60);
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const selectPreset = (preset: TreatmentPreset) => {
-    if (isPlaying) {
-      stopTreatment();
-    }
-    
-    setSelectedPreset(preset.id);
-    setFrequency([preset.frequency]);
-    setDuration([preset.duration]);
-    setIntensity([50]);
-  };
-
-  // Función para el efecto hipnótico
-  const startHypnoticEffect = () => {
-    const hasRadionicImages = radionicImages.length > 0 || radionicImage;
-    const hasReceptorImages = receptorImages.length > 0 || receptorImage;
-    
-    if (hasRadionicImages && hasReceptorImages) {
-      setHypnoticEffect(true);
-      
-      // La velocidad del efecto hipnótico se calcula inversamente: valores más altos = transición más rápida
-      const switchInterval = 1000 / (hypnoticSpeed[0] * 2);
-      
-      hypnoticTimerRef.current = setInterval(() => {
-        setCurrentImage(prev => prev === 'radionic' ? 'receptor' : 'radionic');
-      }, switchInterval);
-    }
-  };
-
-  const stopHypnoticEffect = () => {
-    if (hypnoticTimerRef.current) {
-      clearInterval(hypnoticTimerRef.current);
-      hypnoticTimerRef.current = null;
-    }
-    setHypnoticEffect(false);
-  };
-
-  const startTreatment = () => {
-    if (isPlaying) return;
-    
-    try {
-      // Initialize audio context
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-      audioContextRef.current = new AudioContext();
-      
-      // Create oscillator
-      const oscillator = audioContextRef.current.createOscillator();
-      const gainNode = audioContextRef.current.createGain();
-      
-      oscillator.type = 'sine';
-      oscillator.frequency.value = frequency[0];
-      
-      // Set volume based on intensity
-      const volume = intensity[0] / 100 * 0.3; // max volume 0.3 to protect hearing
-      gainNode.gain.value = volume;
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContextRef.current.destination);
-      
-      oscillator.start();
-      oscillatorRef.current = oscillator;
-      
-      // Start timer
-      setTimeRemaining(duration[0]);
-      timerRef.current = setInterval(() => {
-        setTimeRemaining(prev => {
-          const newTime = prev - 1/60;
-          if (newTime <= 0) {
-            stopTreatment();
-            return 0;
-          }
-          return newTime;
-        });
-      }, 1000);
-      
-      // Iniciar efecto hipnótico si hay imágenes cargadas
-      const hasRadionicImages = radionicImages.length > 0 || radionicImage;
-      const hasReceptorImages = receptorImages.length > 0 || receptorImage;
-      
-      if (hasRadionicImages && hasReceptorImages) {
-        startHypnoticEffect();
-      }
-      
-      setIsPlaying(true);
-    } catch (error) {
-      console.error("Error al iniciar el tratamiento de audio:", error);
-      alert("No se pudo iniciar el tratamiento de audio. Por favor, asegúrate de que tu dispositivo admite la API Web Audio.");
-    }
-  };
-
-  const stopTreatment = () => {
-    if (oscillatorRef.current) {
-      oscillatorRef.current.stop();
-      oscillatorRef.current = null;
-    }
-    
-    if (audioContextRef.current) {
-      audioContextRef.current.close();
-      audioContextRef.current = null;
-    }
-    
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    
-    stopHypnoticEffect();
-    setIsPlaying(false);
-  };
-
-  // Cleanup on component unmount
-  useEffect(() => {
-    return () => {
-      if (oscillatorRef.current) {
-        oscillatorRef.current.stop();
-      }
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-      if (hypnoticTimerRef.current) {
-        clearInterval(hypnoticTimerRef.current);
-      }
-    };
-  }, []);
-
   return (
     <Layout>
       <HeroSection
@@ -198,38 +35,26 @@ const Treat = () => {
             </TabsList>
             
             <TabsContent value="presets" className="w-full">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-1">
-                  <PresetSelector 
-                    presets={presets}
-                    selectedPreset={selectedPreset}
-                    isPlaying={isPlaying}
-                    onSelectPreset={selectPreset}
-                  />
-                </div>
-                
-                <div className="lg:col-span-2">
-                  <TreatmentControls
-                    selectedPreset={selectedPreset}
-                    presets={presets}
-                    frequency={frequency}
-                    setFrequency={setFrequency}
-                    duration={duration}
-                    setDuration={setDuration}
-                    intensity={intensity}
-                    setIntensity={setIntensity}
-                    setUseHeadphones={setUseHeadphones}
-                    useHeadphones={useHeadphones}
-                    visualFeedback={visualFeedback}
-                    setVisualFeedback={setVisualFeedback}
-                    isPlaying={isPlaying}
-                    timeRemaining={timeRemaining}
-                    startTreatment={startTreatment}
-                    stopTreatment={stopTreatment}
-                    formatTime={formatTime}
-                  />
-                </div>
-              </div>
+              <PresetTreatment
+                presets={treatmentPresets}
+                selectedPreset={treatment.selectedPreset}
+                isPlaying={treatment.isPlaying}
+                frequency={treatment.frequency}
+                setFrequency={treatment.setFrequency}
+                duration={treatment.duration}
+                setDuration={treatment.setDuration}
+                intensity={treatment.intensity}
+                setIntensity={treatment.setIntensity}
+                useHeadphones={treatment.useHeadphones}
+                setUseHeadphones={treatment.setUseHeadphones}
+                visualFeedback={treatment.visualFeedback}
+                setVisualFeedback={treatment.setVisualFeedback}
+                timeRemaining={treatment.timeRemaining}
+                formatTime={treatment.formatTime}
+                onSelectPreset={treatment.selectPreset}
+                startTreatment={treatment.startTreatment}
+                stopTreatment={treatment.stopTreatment}
+              />
             </TabsContent>
             
             <TabsContent value="custom" className="w-full">
@@ -241,39 +66,39 @@ const Treat = () => {
                   </p>
                   
                   <CustomTreatment
-                    frequency={frequency}
-                    setFrequency={setFrequency}
-                    duration={duration}
-                    setDuration={setDuration}
-                    intensity={intensity}
-                    setIntensity={setIntensity}
-                    rate1={rate1}
-                    setRate1={setRate1}
-                    rate2={rate2}
-                    setRate2={setRate2}
-                    rate3={rate3}
-                    setRate3={setRate3}
-                    radionicImage={radionicImage}
-                    setRadionicImage={setRadionicImage}
-                    radionicImages={radionicImages}
-                    setRadionicImages={setRadionicImages}
-                    receptorImage={receptorImage}
-                    setReceptorImage={setReceptorImage}
-                    receptorImages={receptorImages}
-                    setReceptorImages={setReceptorImages}
-                    hypnoticSpeed={hypnoticSpeed}
-                    setHypnoticSpeed={setHypnoticSpeed}
-                    useHeadphones={useHeadphones}
-                    setUseHeadphones={setUseHeadphones}
-                    visualFeedback={visualFeedback}
-                    setVisualFeedback={setVisualFeedback}
-                    isPlaying={isPlaying}
-                    timeRemaining={timeRemaining}
-                    formatTime={formatTime}
-                    currentImage={currentImage}
-                    hypnoticEffect={hypnoticEffect}
-                    startTreatment={startTreatment}
-                    stopTreatment={stopTreatment}
+                    frequency={treatment.frequency}
+                    setFrequency={treatment.setFrequency}
+                    duration={treatment.duration}
+                    setDuration={treatment.setDuration}
+                    intensity={treatment.intensity}
+                    setIntensity={treatment.setIntensity}
+                    rate1={treatment.rate1}
+                    setRate1={treatment.setRate1}
+                    rate2={treatment.rate2}
+                    setRate2={treatment.setRate2}
+                    rate3={treatment.rate3}
+                    setRate3={treatment.setRate3}
+                    radionicImage={treatment.radionicImage}
+                    setRadionicImage={treatment.setRadionicImage}
+                    radionicImages={treatment.radionicImages}
+                    setRadionicImages={treatment.setRadionicImages}
+                    receptorImage={treatment.receptorImage}
+                    setReceptorImage={treatment.setReceptorImage}
+                    receptorImages={treatment.receptorImages}
+                    setReceptorImages={treatment.setReceptorImages}
+                    hypnoticSpeed={treatment.hypnoticSpeed}
+                    setHypnoticSpeed={treatment.setHypnoticSpeed}
+                    useHeadphones={treatment.useHeadphones}
+                    setUseHeadphones={treatment.setUseHeadphones}
+                    visualFeedback={treatment.visualFeedback}
+                    setVisualFeedback={treatment.setVisualFeedback}
+                    isPlaying={treatment.isPlaying}
+                    timeRemaining={treatment.timeRemaining}
+                    formatTime={treatment.formatTime}
+                    currentImage={treatment.currentImage}
+                    hypnoticEffect={treatment.hypnoticEffect}
+                    startTreatment={treatment.startTreatment}
+                    stopTreatment={treatment.stopTreatment}
                   />
                 </div>
               </Card>
