@@ -62,39 +62,51 @@ const TreatmentVisualizer = ({
       {/* RATES girando en círculo */}
       {(rate1 || rate2 || rate3) && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="relative w-64 h-64">
+          <div className="relative w-full h-full max-w-[80%] max-h-[80%]">
             {rate1 && (
-              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded animate-spin-slow" 
+              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded animate-spin-slow text-sm md:text-base" 
                   style={{ 
                     left: '50%', 
-                    top: '10%',
+                    top: '15%',
                     transform: 'translateX(-50%) rotate(0deg)', 
-                    transformOrigin: 'center 10rem' 
+                    transformOrigin: 'center 8rem',
+                    maxWidth: '90%',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
                   }}>
                 {rate1}
               </div>
             )}
             {rate2 && (
-              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded animate-spin-slow"
+              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded animate-spin-slow text-sm md:text-base"
                   style={{ 
                     left: '50%', 
-                    top: '10%',
+                    top: '15%',
                     transform: 'translateX(-50%) rotate(120deg)', 
-                    transformOrigin: 'center 10rem',
+                    transformOrigin: 'center 8rem',
                     animationDelay: '0.5s',
-                    animationDirection: 'reverse'
+                    animationDirection: 'reverse',
+                    maxWidth: '90%',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
                   }}>
                 {rate2}
               </div>
             )}
             {rate3 && (
-              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded animate-spin-slow"
+              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded animate-spin-slow text-sm md:text-base"
                   style={{ 
                     left: '50%', 
-                    top: '10%',
+                    top: '15%',
                     transform: 'translateX(-50%) rotate(240deg)', 
-                    transformOrigin: 'center 10rem',
-                    animationDelay: '1s'
+                    transformOrigin: 'center 8rem',
+                    animationDelay: '1s',
+                    maxWidth: '90%',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
                   }}>
                 {rate3}
               </div>
