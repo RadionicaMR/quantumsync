@@ -28,7 +28,7 @@ const RateInputs = ({
         <Input
           id="rate1"
           type="text"
-          maxLength={20}
+          maxLength={30}
           placeholder="Ingrese RATE 1"
           value={rate1}
           onChange={(e) => setRate1(e.target.value)}
@@ -42,7 +42,7 @@ const RateInputs = ({
         <Input
           id="rate2"
           type="text"
-          maxLength={20}
+          maxLength={30}
           placeholder="Ingrese RATE 2"
           value={rate2}
           onChange={(e) => setRate2(e.target.value)}
@@ -56,7 +56,7 @@ const RateInputs = ({
         <Input
           id="rate3"
           type="text"
-          maxLength={20}
+          maxLength={30}
           placeholder="Ingrese RATE 3"
           value={rate3}
           onChange={(e) => setRate3(e.target.value)}
