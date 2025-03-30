@@ -8,4 +8,5 @@ export const treatmentPresets: TreatmentPreset[] = [
   { id: 'energy', name: 'Aumentar Energía', frequency: 528, description: 'La "frecuencia milagrosa" para vitalidad y reparación del ADN', duration: 10 },
   { id: 'harmony', name: 'Equilibrio Emocional', frequency: 741, description: 'Ayuda a liberar emociones negativas y promover la armonía', duration: 15 },
   { id: 'manifest', name: 'Manifestación', frequency: 963, description: 'Conecta con la conciencia espiritual y el poder de manifestación', duration: 30 },
+  { id: 'cleaning', name: 'Limpieza Energética Ambientes', frequency: 417, description: 'Elimina energías negativas y facilita cambios positivos en el entorno', duration: 15 },
 ];
