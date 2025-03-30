@@ -5,9 +5,9 @@ import { useManifestAudio } from './useManifestAudio';
 import { useManifestTimers } from './useManifestTimers';
 import { useManifestUtils } from './useManifestUtils';
 import { toast } from "@/components/ui/use-toast";
-import { Pattern } from '@/data/manifestPatterns';
+import { ManifestPattern } from '@/data/manifestPatterns';
 
-export const useManifestCore = (patterns: Pattern[]) => {
+export const useManifestCore = (patterns: ManifestPattern[]) => {
   const state = useManifestState();
   const { startAudio, stopAudio, ...audio } = useManifestAudio();
   const { clearAllTimers, ...timers } = useManifestTimers();
@@ -49,7 +49,7 @@ export const useManifestCore = (patterns: Pattern[]) => {
     if (state.patternImage || state.selectedPattern || state.receptorImage || state.receptorName) {
       // Start hypnotic effect that alternates between pattern, receptor and mix
       timers.hypnoticTimerRef.current = setInterval(() => {
-        state.setCurrentImage(prev => {
+        state.setCurrentImage((prev) => {
           switch(prev) {
             case 'pattern': return 'receptor';
             case 'receptor': return 'mix';
@@ -65,7 +65,7 @@ export const useManifestCore = (patterns: Pattern[]) => {
       
       // Start countdown
       timers.countdownTimerRef.current = setInterval(() => {
-        state.setTimeRemaining(prev => {
+        state.setTimeRemaining((prev) => {
           if (prev !== null && prev > 0) {
             return prev - 1/60; // Decrement 1 second (1/60 of a minute)
           }

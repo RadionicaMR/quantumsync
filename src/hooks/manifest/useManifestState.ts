@@ -10,9 +10,9 @@ export const useManifestState = (): ManifestState & {
   setActiveTab: (value: string) => void;
   setManifestSound: (value: boolean) => void;
   setManifestFrequency: (value: number[]) => void;
-  setCurrentImage: (value: 'pattern' | 'receptor' | 'mix') => void;
+  setCurrentImage: (value: ((prev: 'pattern' | 'receptor' | 'mix') => 'pattern' | 'receptor' | 'mix') | 'pattern' | 'receptor' | 'mix') => void;
   setExposureTime: (value: number[]) => void;
-  setTimeRemaining: (value: number | null) => void;
+  setTimeRemaining: (value: ((prev: number | null) => number | null) | number | null) => void;
   setReceptorName: (value: string) => void;
   setRate1: (value: string) => void;
   setRate2: (value: string) => void;

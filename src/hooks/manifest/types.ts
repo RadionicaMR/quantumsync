@@ -1,5 +1,5 @@
 
-import { Pattern } from '@/data/manifestPatterns';
+import { ManifestPattern } from '@/data/manifestPatterns';
 
 // Define all shared types for the manifest hooks
 export interface ManifestState {
@@ -24,6 +24,8 @@ export interface ManifestState {
 export interface ManifestAudio {
   oscillatorRef: React.MutableRefObject<OscillatorNode | null>;
   audioContextRef: React.MutableRefObject<AudioContext | null>;
+  startAudio: (frequency: number) => void;
+  stopAudio: () => void;
 }
 
 export interface ManifestTimers {
