@@ -189,6 +189,38 @@
   .treatment-btn-inactive {
     @apply bg-black/40 border-purple-500/30 text-purple-300 rounded-xl;
   }
+
+  /* Cosmic Background Effects */
+  .cosmic-dust {
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 15px 15px;
+  }
+
+  .cosmic-glow {
+    text-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+  }
+
+  .star-twinkle {
+    position: relative;
+  }
+
+  .star-twinkle::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background-color: white;
+    box-shadow: 
+      0 0 10px 2px white,
+      0 0 20px 4px rgba(139, 92, 246, 0.8);
+    animation: twinkle 4s infinite ease-in-out;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 1; }
+  }
 }
 
 /* Add the random-move animation */
@@ -228,4 +260,9 @@
 @keyframes shimmer {
   0% { background-position: -500px 0; }
   100% { background-position: 500px 0; }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
 }

@@ -137,6 +137,9 @@ export default {
 				'quantum-gradient-soft': 'linear-gradient(135deg, rgba(155, 135, 245, 0.2) 0%, rgba(110, 89, 165, 0.2) 100%)',
 				'quantum-radial': 'radial-gradient(circle, #9b87f5 0%, #1A1F2C 100%)',
 				'quantum-energy': 'url("/energy-bg.svg")',
+				'cosmic-stars': 'url("/img/quantum-bg.webp")',
+				'cosmic-nebula': 'radial-gradient(ellipse at center, rgba(139, 92, 246, 0.4) 0%, transparent 70%)',
+				'cosmic-deep': 'linear-gradient(to bottom, #0f0c29, #302b63, #24243e)',
 			}
 		}
 	},
