@@ -9,7 +9,7 @@ export const useTreatmentImages = () => {
   const [receptorImages, setReceptorImages] = useState<string[]>([]);
   const [hypnoticEffect, setHypnoticEffect] = useState(false);
   const [hypnoticSpeed, setHypnoticSpeed] = useState([10]); // Velocidad de oscilación (1-20)
-  const [currentImage, setCurrentImage] = useState<'radionic' | 'receptor' | 'mix'>('radionic');
+  const [currentImage, setCurrentImage] = useState<'radionic' | 'receptor' | 'mix'>('mix'); // Comenzamos con 'mix' para ver ambas imágenes
   const [receptorName, setReceptorName] = useState<string>('');
   
   const hypnoticTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -17,7 +17,7 @@ export const useTreatmentImages = () => {
   // Función para el efecto hipnótico
   const startHypnoticEffect = () => {
     // Consideramos ya sea imágenes cargadas o un nombre de receptor
-    const hasRadionicImagesOrName = radionicImages.length > 0 || radionicImage || receptorName;
+    const hasRadionicImagesOrName = radionicImages.length > 0 || radionicImage;
     const hasReceptorImagesOrName = receptorImages.length > 0 || receptorImage || receptorName;
     
     if (hasRadionicImagesOrName || hasReceptorImagesOrName) {
@@ -29,29 +29,30 @@ export const useTreatmentImages = () => {
       }
       
       // Configuramos la velocidad basada en el valor del deslizador
-      // Valores más altos significan cambios más rápidos entre imágenes
       const switchInterval = Math.max(100, 2000 / hypnoticSpeed[0]);
       
       console.log("Starting hypnotic effect with speed:", hypnoticSpeed[0], "interval:", switchInterval);
       
-      // Establecemos inicialmente una imagen para asegurar que ambas sean visibles
-      setCurrentImage('radionic');
+      // Importante: establecemos 'mix' inicialmente para mostrar ambas imágenes
+      setCurrentImage('mix');
       
       // Crear el intervalo para alternar entre imágenes
       hypnoticTimerRef.current = setInterval(() => {
         setCurrentImage(prev => {
-          // Si tenemos ambas imágenes (o nombre como imagen), alternar entre radionic y receptor
+          // Si tenemos ambas imágenes disponibles, alternamos entre los tres estados
           if ((radionicImages.length > 0 || radionicImage) && 
               (receptorImages.length > 0 || receptorImage || receptorName)) {
-            return prev === 'radionic' ? 'receptor' : 'radionic';
-          }
-          // Si solo tenemos imágenes radiónicas, mantener en 'radionic'
-          else if (radionicImages.length > 0 || radionicImage) {
+            if (prev === 'radionic') return 'receptor';
+            if (prev === 'receptor') return 'mix';
             return 'radionic';
           }
-          // Si solo tenemos imágenes de receptor o nombre, mantener en 'receptor'
+          // Si solo tenemos imágenes radiónicas, alternamos entre 'radionic' y 'mix'
+          else if (radionicImages.length > 0 || radionicImage) {
+            return prev === 'radionic' ? 'mix' : 'radionic';
+          }
+          // Si solo tenemos imágenes de receptor o nombre, alternamos entre 'receptor' y 'mix'
           else {
-            return 'receptor';
+            return prev === 'receptor' ? 'mix' : 'receptor';
           }
         });
       }, switchInterval);
