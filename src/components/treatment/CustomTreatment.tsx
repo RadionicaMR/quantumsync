@@ -5,6 +5,7 @@ import ImageGrid from './ImageGrid';
 import SettingsToggles from './SettingsToggles';
 import TreatmentActions from './TreatmentActions';
 import TreatmentVisualizer from './TreatmentVisualizer';
+import ReceptorNameInput from './ReceptorNameInput';
 
 interface CustomTreatmentProps {
   frequency: number[];
@@ -40,6 +41,8 @@ interface CustomTreatmentProps {
   hypnoticEffect: boolean;
   startTreatment: () => void;
   stopTreatment: () => void;
+  receptorName?: string;
+  setReceptorName?: (name: string) => void;
 }
 
 const CustomTreatment = (props: CustomTreatmentProps) => {
@@ -77,6 +80,8 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
     hypnoticEffect,
     startTreatment,
     stopTreatment,
+    receptorName = '',
+    setReceptorName = () => {},
   } = props;
 
   return (
@@ -103,6 +108,12 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
             setRate2={setRate2}
             rate3={rate3}
             setRate3={setRate3}
+            isPlaying={isPlaying}
+          />
+          
+          <ReceptorNameInput
+            receptorName={receptorName}
+            setReceptorName={setReceptorName}
             isPlaying={isPlaying}
           />
         </div>
@@ -137,7 +148,7 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
             formatTime={formatTime}
             startTreatment={startTreatment}
             stopTreatment={stopTreatment}
-            radionicImage={radionicImage}
+            receptorName={receptorName}
           />
           
           <TreatmentVisualizer 
@@ -155,6 +166,7 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
             rate2={rate2}
             rate3={rate3}
             hypnoticSpeed={hypnoticSpeed}
+            receptorName={receptorName}
           />
         </div>
       </div>

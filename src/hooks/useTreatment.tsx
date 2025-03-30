@@ -35,13 +35,8 @@ export const useTreatment = () => {
     // Start audio treatment
     audioHook.startAudio();
     
-    // Iniciar efecto hipnótico si hay imágenes cargadas
-    const hasRadionicImages = imageHook.radionicImages.length > 0 || imageHook.radionicImage;
-    const hasReceptorImages = imageHook.receptorImages.length > 0 || imageHook.receptorImage;
-    
-    if (hasRadionicImages && hasReceptorImages) {
-      imageHook.startHypnoticEffect();
-    }
+    // Iniciar efecto hipnótico si hay imágenes cargadas o hay nombre de receptor
+    imageHook.startHypnoticEffect();
   };
 
   const stopTreatment = () => {
@@ -81,6 +76,8 @@ export const useTreatment = () => {
     hypnoticSpeed: imageHook.hypnoticSpeed,
     setHypnoticSpeed: imageHook.setHypnoticSpeed,
     currentImage: imageHook.currentImage,
+    receptorName: imageHook.receptorName,
+    setReceptorName: imageHook.setReceptorName,
     
     // Rate properties
     rate1: rateHook.rate1,

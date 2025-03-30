@@ -7,7 +7,7 @@ interface TreatmentActionsProps {
   formatTime: (minutes: number) => string;
   startTreatment: () => void;
   stopTreatment: () => void;
-  radionicImage: string | null;
+  receptorName?: string;
 }
 
 const TreatmentActions = ({
@@ -16,8 +16,11 @@ const TreatmentActions = ({
   formatTime,
   startTreatment,
   stopTreatment,
-  radionicImage,
+  receptorName,
 }: TreatmentActionsProps) => {
+  // Treatment can start if at least the receptor name is filled
+  const canStartTreatment = !!receptorName?.trim();
+
   return (
     <div className="flex items-center justify-between">
       {isPlaying ? (
@@ -38,11 +41,14 @@ const TreatmentActions = ({
       ) : (
         <>
           <div className="text-muted-foreground">
-            Listo para iniciar tratamiento personalizado
+            {canStartTreatment
+              ? "Listo para iniciar tratamiento personalizado"
+              : "Ingrese el nombre del receptor para iniciar"
+            }
           </div>
           <QuantumButton 
             onClick={startTreatment}
-            disabled={radionicImage === null}
+            disabled={!canStartTreatment}
           >
             <div className="flex flex-col items-center">
               <span>INICIAR</span>

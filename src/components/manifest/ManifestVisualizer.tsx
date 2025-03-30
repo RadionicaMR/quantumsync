@@ -14,6 +14,7 @@ interface ManifestVisualizerProps {
   rate1: string;
   rate2: string;
   rate3: string;
+  receptorName?: string;
 }
 
 const ManifestVisualizer = ({
@@ -28,17 +29,23 @@ const ManifestVisualizer = ({
   exposureTime,
   rate1,
   rate2,
-  rate3
+  rate3,
+  receptorName = ''
 }: ManifestVisualizerProps) => {
   if (!isActive) {
     return null;
   }
 
+  const hasPatternImage = patternImage || (selectedPattern && patterns.find(p => p.id === selectedPattern)?.image);
+  const hasReceptorImage = !!receptorImage;
+  const hasImages = hasPatternImage || hasReceptorImage;
+  const hasContent = hasImages || receptorName || intention;
+
   return (
     <div className="mt-6 relative overflow-hidden rounded-lg bg-white aspect-square">
       <div className="absolute inset-0 flex items-center justify-center">
         {/* Mostrar imagen según el estado actual */}
-        {currentImage === 'pattern' && (patternImage || selectedPattern) && (
+        {currentImage === 'pattern' && hasPatternImage && (
           <img 
             src={patternImage || patterns.find(p => p.id === selectedPattern)?.image}
             alt="Patrón de manifestación"
@@ -47,7 +54,7 @@ const ManifestVisualizer = ({
           />
         )}
         
-        {currentImage === 'receptor' && receptorImage && (
+        {currentImage === 'receptor' && hasReceptorImage && (
           <img 
             src={receptorImage}
             alt="Imagen del receptor"
@@ -59,7 +66,7 @@ const ManifestVisualizer = ({
         {currentImage === 'mix' && (
           <>
             {/* Superposición de ambas imágenes */}
-            {(patternImage || (selectedPattern && patterns.find(p => p.id === selectedPattern)?.image)) && (
+            {hasPatternImage && (
               <img 
                 src={patternImage || patterns.find(p => p.id === selectedPattern)?.image}
                 alt="Mezcla de imágenes"
@@ -68,7 +75,7 @@ const ManifestVisualizer = ({
               />
             )}
             
-            {receptorImage && (
+            {hasReceptorImage && (
               <img 
                 src={receptorImage}
                 alt="Mezcla de imágenes"
@@ -79,18 +86,29 @@ const ManifestVisualizer = ({
           </>
         )}
         
-        {/* Texto de la intención */}
-        <div className="absolute inset-0 flex items-center justify-center z-10">
-          <div 
-            className="max-w-[80%] text-white font-bold text-xl md:text-2xl p-4 text-center bg-black/30 rounded line-clamp-3"
-            style={{
-              animation: `pulse ${60/visualSpeed[0]}s infinite alternate ease-in-out`,
-              textShadow: '0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(155,135,245,0.8)'
-            }}
-          >
-            {intention}
+        {/* Mostrar nombre del receptor si no hay imágenes disponibles */}
+        {!hasImages && receptorName && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-3xl font-bold text-quantum-primary bg-black/10 px-6 py-4 rounded-lg">
+              {receptorName}
+            </div>
           </div>
-        </div>
+        )}
+        
+        {/* Texto de la intención */}
+        {intention && (
+          <div className="absolute inset-0 flex items-center justify-center z-10">
+            <div 
+              className="max-w-[80%] text-white font-bold text-xl md:text-2xl p-4 text-center bg-black/30 rounded line-clamp-3"
+              style={{
+                animation: `pulse ${60/visualSpeed[0]}s infinite alternate ease-in-out`,
+                textShadow: '0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(155,135,245,0.8)'
+              }}
+            >
+              {intention}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* RATES con movimiento aleatorio */}

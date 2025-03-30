@@ -72,6 +72,8 @@ const Treat = () => {
                 setRate3={treatment.setRate3}
                 hypnoticSpeed={treatment.hypnoticSpeed}
                 setHypnoticSpeed={treatment.setHypnoticSpeed}
+                receptorName={treatment.receptorName}
+                setReceptorName={treatment.setReceptorName}
               />
             </TabsContent>
             
@@ -117,6 +119,8 @@ const Treat = () => {
                     hypnoticEffect={treatment.hypnoticEffect}
                     startTreatment={treatment.startTreatment}
                     stopTreatment={treatment.stopTreatment}
+                    receptorName={treatment.receptorName}
+                    setReceptorName={treatment.setReceptorName}
                   />
                 </div>
               </Card>

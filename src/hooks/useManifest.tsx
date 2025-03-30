@@ -23,6 +23,8 @@ export const useManifest = (patterns: Pattern[]) => {
   const [currentImage, setCurrentImage] = useState<'pattern' | 'receptor' | 'mix'>('pattern');
   const [exposureTime, setExposureTime] = useState([5]); 
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
+  // Estado para el nombre del receptor
+  const [receptorName, setReceptorName] = useState('');
   // Estados para RATES
   const [rate1, setRate1] = useState('');
   const [rate2, setRate2] = useState('');
@@ -66,8 +68,9 @@ export const useManifest = (patterns: Pattern[]) => {
 
   // Iniciar manifestación
   const startManifestation = () => {
-    if (activeTab === "presets" && !selectedPattern) return;
-    if (activeTab === "custom" && !patternImage) return;
+    // Se puede iniciar con un patrón, una imagen o un nombre de receptor
+    if ((activeTab === "presets" && !selectedPattern && !receptorName) || 
+        (activeTab === "custom" && !patternImage && !receptorName)) return;
     
     // Iniciar sonido si está habilitado
     if (manifestSound) {
@@ -99,7 +102,8 @@ export const useManifest = (patterns: Pattern[]) => {
     // Iniciar efecto hipnótico con velocidad aumentada
     const switchInterval = 1000 / (visualSpeed[0] * 3);
     
-    if (patternImage || selectedPattern) {
+    // Podemos iniciar con un patrón, una imagen o un nombre de receptor
+    if (patternImage || selectedPattern || receptorImage || receptorName) {
       // Iniciar efecto hipnótico que alterna entre patrón, receptor y mezcla
       hypnoticTimerRef.current = setInterval(() => {
         setCurrentImage(prev => {
@@ -217,6 +221,8 @@ export const useManifest = (patterns: Pattern[]) => {
     exposureTime,
     setExposureTime,
     timeRemaining,
+    receptorName,
+    setReceptorName,
     rate1,
     setRate1,
     rate2,

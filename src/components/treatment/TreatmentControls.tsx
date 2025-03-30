@@ -29,7 +29,7 @@ interface TreatmentControlsProps {
   formatTime: (minutes: number) => string;
   hypnoticSpeed?: number[];
   setHypnoticSpeed?: (value: number[]) => void;
-  radionicImage?: string | null;
+  receptorName?: string;
 }
 
 const TreatmentControls = ({
@@ -52,7 +52,7 @@ const TreatmentControls = ({
   formatTime,
   hypnoticSpeed = [10],
   setHypnoticSpeed = () => {},
-  radionicImage = null,
+  receptorName = '',
 }: TreatmentControlsProps) => {
   const selectedPresetData = presets.find(p => p.id === selectedPreset);
   
@@ -98,7 +98,7 @@ const TreatmentControls = ({
           formatTime={formatTime}
           startTreatment={startTreatment}
           stopTreatment={stopTreatment}
-          radionicImage={radionicImage}
+          receptorName={receptorName}
         />
         
         <TreatmentFeedbackVisual

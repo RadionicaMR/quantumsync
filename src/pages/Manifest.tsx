@@ -65,6 +65,8 @@ const Manifest = () => {
                 currentImage={manifest.currentImage}
                 receptorImage={manifest.receptorImage}
                 setReceptorImage={manifest.setReceptorImage}
+                receptorName={manifest.receptorName}
+                setReceptorName={manifest.setReceptorName}
               />
             </TabsContent>
             
@@ -97,6 +99,8 @@ const Manifest = () => {
                 stopManifestation={manifest.stopManifestation}
                 formatTimeRemaining={manifest.formatTimeRemaining}
                 currentImage={manifest.currentImage}
+                receptorName={manifest.receptorName}
+                setReceptorName={manifest.setReceptorName}
               />
             </TabsContent>
           </Tabs>

@@ -10,15 +10,17 @@ export const useTreatmentImages = () => {
   const [hypnoticEffect, setHypnoticEffect] = useState(false);
   const [hypnoticSpeed, setHypnoticSpeed] = useState([10]); // Velocidad de oscilación (1-20)
   const [currentImage, setCurrentImage] = useState<'radionic' | 'receptor'>('radionic');
+  const [receptorName, setReceptorName] = useState<string>('');
   
   const hypnoticTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Función para el efecto hipnótico
   const startHypnoticEffect = () => {
-    const hasRadionicImages = radionicImages.length > 0 || radionicImage;
-    const hasReceptorImages = receptorImages.length > 0 || receptorImage;
+    // Consideramos ya sea imágenes cargadas o un nombre de receptor
+    const hasRadionicImagesOrName = radionicImages.length > 0 || radionicImage || receptorName;
+    const hasReceptorImagesOrName = receptorImages.length > 0 || receptorImage || receptorName;
     
-    if (hasRadionicImages && hasReceptorImages) {
+    if (hasRadionicImagesOrName || hasReceptorImagesOrName) {
       setHypnoticEffect(true);
       
       // Detenemos cualquier temporizador existente antes de crear uno nuevo
@@ -40,11 +42,12 @@ export const useTreatmentImages = () => {
         });
       }, switchInterval);
     } else {
-      console.log("Cannot start hypnotic effect: missing images", {
-        hasRadionicImages,
-        hasReceptorImages,
+      console.log("Cannot start hypnotic effect: missing images or receptor name", {
+        hasRadionicImagesOrName,
+        hasReceptorImagesOrName,
         radionicImage,
-        receptorImage
+        receptorImage,
+        receptorName
       });
     }
   };
@@ -88,6 +91,8 @@ export const useTreatmentImages = () => {
     hypnoticSpeed,
     setHypnoticSpeed,
     currentImage,
+    receptorName,
+    setReceptorName,
     startHypnoticEffect,
     stopHypnoticEffect
   };

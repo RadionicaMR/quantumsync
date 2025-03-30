@@ -14,6 +14,7 @@ interface TreatmentVisualizerProps {
   rate2: string;
   rate3: string;
   hypnoticSpeed?: number[];
+  receptorName?: string;
 }
 
 const TreatmentVisualizer = ({
@@ -31,6 +32,7 @@ const TreatmentVisualizer = ({
   rate2,
   rate3,
   hypnoticSpeed = [10],
+  receptorName = '',
 }: TreatmentVisualizerProps) => {
   if (!isPlaying || !visualFeedback) {
     return null;
@@ -83,6 +85,15 @@ const TreatmentVisualizer = ({
                 }}
               />
             ))}
+          </div>
+        </div>
+      )}
+      
+      {/* Show receptor name if no images are available */}
+      {!hasImages && receptorName && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-2xl font-bold text-white bg-black/50 px-6 py-4 rounded-lg">
+            {receptorName}
           </div>
         </div>
       )}

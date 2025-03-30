@@ -4,6 +4,7 @@ import TreatmentControls from './TreatmentControls';
 import TreatmentVisualizer from './TreatmentVisualizer';
 import ImageUploader from './image-uploader/ImageUploader';
 import RateInputs from './RateInputs';
+import ReceptorNameInput from './ReceptorNameInput';
 import { Card } from '@/components/ui/card';
 
 interface PresetTreatmentProps {
@@ -44,6 +45,8 @@ interface PresetTreatmentProps {
   setRate3: (value: string) => void;
   hypnoticSpeed: number[];
   setHypnoticSpeed: (value: number[]) => void;
+  receptorName?: string;
+  setReceptorName?: (name: string) => void;
 }
 
 const PresetTreatment = ({
@@ -84,6 +87,8 @@ const PresetTreatment = ({
   setRate3,
   hypnoticSpeed,
   setHypnoticSpeed,
+  receptorName = '',
+  setReceptorName = () => {},
 }: PresetTreatmentProps) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -116,9 +121,9 @@ const PresetTreatment = ({
             startTreatment={startTreatment}
             stopTreatment={stopTreatment}
             formatTime={formatTime}
-            radionicImage={radionicImage}
             hypnoticSpeed={hypnoticSpeed}
             setHypnoticSpeed={setHypnoticSpeed}
+            receptorName={receptorName}
           />
           
           {/* Moved image uploaders inside the main Card */}
@@ -145,6 +150,15 @@ const PresetTreatment = ({
                 isPlaying={isPlaying}
               />
             </div>
+          </div>
+
+          {/* Add receptor name input */}
+          <div className="mt-6">
+            <ReceptorNameInput
+              receptorName={receptorName}
+              setReceptorName={setReceptorName}
+              isPlaying={isPlaying}
+            />
           </div>
 
           {/* Add rate inputs inside the Card */}
@@ -181,6 +195,7 @@ const PresetTreatment = ({
               rate2={rate2}
               rate3={rate3}
               hypnoticSpeed={hypnoticSpeed}
+              receptorName={receptorName}
             />
           </Card>
         )}
