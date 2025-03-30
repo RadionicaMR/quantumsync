@@ -19,57 +19,57 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
-              Combining science, technology, and wellness to transform your life through radionic technology and vibrational frequencies.
+              Combinando ciencia, tecnología y bienestar para transformar tu vida a través de tecnología radiónica y frecuencias vibracionales.
             </p>
           </div>
           
           <div>
-            <h3 className="text-sm font-semibold mb-4">Features</h3>
+            <h3 className="text-sm font-semibold mb-4">Características</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/diagnose" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Energy Diagnosis
+                  Diagnóstico Energético
                 </Link>
               </li>
               <li>
                 <Link to="/treat" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Vibrational Treatment
+                  Tratamiento Vibracional
                 </Link>
               </li>
               <li>
                 <Link to="/manifest" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Goal Manifestation
+                  Manifestación de Metas
                 </Link>
               </li>
               <li>
                 <Link to="/learn" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Learn Radionics
+                  Aprender Radiónica
                 </Link>
               </li>
             </ul>
           </div>
           
           <div>
-            <h3 className="text-sm font-semibold mb-4">Company</h3>
+            <h3 className="text-sm font-semibold mb-4">Compañía</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  About Us
+                  Sobre Nosotros
                 </Link>
               </li>
               <li>
                 <Link to="/founder" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Meet the Founder
+                  Conoce al Fundador
                 </Link>
               </li>
               <li>
                 <Link to="/affiliate" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Affiliate Program
+                  Programa de Afiliados
                 </Link>
               </li>
               <li>
                 <Link to="/contact" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Contact Us
+                  Contáctanos
                 </Link>
               </li>
             </ul>
@@ -80,17 +80,17 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Terms of Service
+                  Términos de Servicio
                 </Link>
               </li>
               <li>
                 <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Privacy Policy
+                  Política de Privacidad
                 </Link>
               </li>
               <li>
                 <Link to="/disclaimer" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Disclaimer
+                  Aviso Legal
                 </Link>
               </li>
             </ul>
@@ -101,7 +101,7 @@ const Footer = () => {
         
         <div className="flex flex-col md:flex-row justify-between items-center">
           <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} QuantumSync. All rights reserved.
+            &copy; {new Date().getFullYear()} QuantumSync. Todos los derechos reservados.
           </p>
           <div className="flex gap-4 mt-4 md:mt-0">
             <a href="#" className="text-muted-foreground hover:text-primary transition-colors">

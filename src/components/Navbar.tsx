@@ -13,7 +13,7 @@ const Navbar = () => {
     <nav className="w-full py-1 md:py-2 px-3 md:px-4 bg-black/40 dark:bg-card/40 backdrop-blur-lg shadow-sm z-50 fixed top-0 left-0 right-0 border-b border-purple-500/30">
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center gap-1">
-          <span className="text-base md:text-lg font-bold holographic-gradient">
+          <span className="text-xl md:text-2xl font-bold holographic-gradient">
             QuantumSync
           </span>
         </Link>
@@ -35,9 +35,11 @@ const Navbar = () => {
           <Link to="/affiliate" className="neon-text hover:text-primary transition-colors text-sm md:text-base">
             Afiliados
           </Link>
-          <Button className="rounded-full bg-gradient-to-r from-purple-600/70 to-blue-500/70 backdrop-blur-md border border-white/20 text-white font-medium px-3 py-1 md:px-4 md:py-1 shadow-[0_0_15px_rgba(138,43,226,0.5)] hover:shadow-[0_0_25px_rgba(138,43,226,0.7)] transition-all duration-300 text-xs md:text-sm">
-            Comenzar
-          </Button>
+          <Link to="/diagnose">
+            <Button className="rounded-full bg-gradient-to-r from-purple-600/70 to-blue-500/70 backdrop-blur-md border border-white/20 text-white font-medium px-3 py-1 md:px-4 md:py-1 shadow-[0_0_15px_rgba(138,43,226,0.5)] hover:shadow-[0_0_25px_rgba(138,43,226,0.7)] transition-all duration-300 text-xs md:text-sm">
+              Comenzar
+            </Button>
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}
@@ -87,12 +89,16 @@ const Navbar = () => {
           >
             Afiliados
           </Link>
-          <Button 
-            className="rounded-full bg-gradient-to-r from-purple-600/70 to-blue-500/70 backdrop-blur-md border border-white/20 text-white font-medium px-3 py-1 shadow-[0_0_15px_rgba(138,43,226,0.5)] hover:shadow-[0_0_25px_rgba(138,43,226,0.7)] w-full transition-all duration-300 text-xs"
+          <Link 
+            to="/diagnose"
             onClick={() => setIsMenuOpen(false)}
           >
-            Comenzar
-          </Button>
+            <Button 
+              className="rounded-full bg-gradient-to-r from-purple-600/70 to-blue-500/70 backdrop-blur-md border border-white/20 text-white font-medium px-3 py-1 shadow-[0_0_15px_rgba(138,43,226,0.5)] hover:shadow-[0_0_25px_rgba(138,43,226,0.7)] w-full transition-all duration-300 text-xs"
+            >
+              Comenzar
+            </Button>
+          </Link>
         </div>
       )}
     </nav>
