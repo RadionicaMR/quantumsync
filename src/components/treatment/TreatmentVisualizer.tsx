@@ -44,7 +44,7 @@ const TreatmentVisualizer = ({
 
   const hasRadionicImages = radionicImagesArray.length > 0;
   const hasReceptorImages = receptorImagesArray.length > 0;
-  const hasImages = hasRadionicImages || hasReceptorImages;
+  const hasImages = hasRadionicImages || hasReceptorImages || receptorName.trim().length > 0;
 
   // Calculate animation speed based on hypnotic speed
   const animationDuration = Math.max(0.1, 20 / hypnoticSpeed[0]);
@@ -63,7 +63,7 @@ const TreatmentVisualizer = ({
                 alt={`Efecto radiónico ${index + 1}`}
                 className="absolute inset-0 w-full h-full object-contain"
                 style={{ 
-                  opacity: hypnoticEffect ? (currentImage === 'radionic' ? 1 : 0) : 1,
+                  opacity: hypnoticEffect ? (currentImage === 'radionic' ? 0.8 : 0) : 0.8,
                   mixBlendMode: 'screen',
                   filter: 'contrast(1.2) brightness(1.1)',
                   transition: `opacity ${animationDuration/3}s ease-in-out`
@@ -78,22 +78,29 @@ const TreatmentVisualizer = ({
                 alt={`Efecto receptor ${index + 1}`}
                 className="absolute inset-0 w-full h-full object-contain"
                 style={{ 
-                  opacity: hypnoticEffect ? (currentImage === 'receptor' ? 1 : 0) : 1,
+                  opacity: hypnoticEffect ? (currentImage === 'receptor' ? 0.8 : 0) : 0.8,
                   mixBlendMode: 'multiply',
                   filter: 'contrast(1.2) brightness(1.1)',
                   transition: `opacity ${animationDuration/3}s ease-in-out`
                 }}
               />
             ))}
-          </div>
-        </div>
-      )}
-      
-      {/* Show receptor name if no images are available */}
-      {!hasImages && receptorName && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-2xl font-bold text-white bg-black/50 px-6 py-4 rounded-lg">
-            {receptorName}
+            
+            {/* Show receptor name when no images are available or when in hypnotic mode and showing receptor */}
+            {receptorName && (!hasRadionicImages && !hasReceptorImages || 
+                             (hypnoticEffect && currentImage === 'receptor' && !hasReceptorImages)) && (
+              <div 
+                className="absolute inset-0 flex items-center justify-center"
+                style={{
+                  opacity: hypnoticEffect ? (currentImage === 'receptor' ? 1 : 0) : 1,
+                  transition: `opacity ${animationDuration/3}s ease-in-out`
+                }}
+              >
+                <div className="text-2xl font-bold text-white bg-black/50 px-6 py-4 rounded-lg">
+                  {receptorName}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

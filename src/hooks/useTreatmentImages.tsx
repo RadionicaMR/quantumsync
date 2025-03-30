@@ -9,7 +9,7 @@ export const useTreatmentImages = () => {
   const [receptorImages, setReceptorImages] = useState<string[]>([]);
   const [hypnoticEffect, setHypnoticEffect] = useState(false);
   const [hypnoticSpeed, setHypnoticSpeed] = useState([10]); // Velocidad de oscilación (1-20)
-  const [currentImage, setCurrentImage] = useState<'radionic' | 'receptor'>('radionic');
+  const [currentImage, setCurrentImage] = useState<'radionic' | 'receptor' | 'mix'>('radionic');
   const [receptorName, setReceptorName] = useState<string>('');
   
   const hypnoticTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -34,6 +34,10 @@ export const useTreatmentImages = () => {
       
       console.log("Starting hypnotic effect with speed:", hypnoticSpeed[0], "interval:", switchInterval);
       
+      // Establecemos inicialmente una imagen para asegurar que ambas sean visibles
+      setCurrentImage('radionic');
+      
+      // Crear el intervalo para alternar entre imágenes
       hypnoticTimerRef.current = setInterval(() => {
         setCurrentImage(prev => {
           const newImage = prev === 'radionic' ? 'receptor' : 'radionic';
