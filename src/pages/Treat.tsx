@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
@@ -26,6 +25,9 @@ const Treat = () => {
   const [rate3, setRate3] = useState('');
   const [radionicImage, setRadionicImage] = useState<string | null>(null);
   const [receptorImage, setReceptorImage] = useState<string | null>(null);
+  // Nuevos estados para múltiples imágenes
+  const [radionicImages, setRadionicImages] = useState<string[]>([]);
+  const [receptorImages, setReceptorImages] = useState<string[]>([]);
   const [hypnoticEffect, setHypnoticEffect] = useState(false);
   const [hypnoticSpeed, setHypnoticSpeed] = useState([10]); // Velocidad de oscilación (1-20)
   const [currentImage, setCurrentImage] = useState<'radionic' | 'receptor'>('radionic');
@@ -63,7 +65,10 @@ const Treat = () => {
 
   // Función para el efecto hipnótico
   const startHypnoticEffect = () => {
-    if (radionicImage && receptorImage) {
+    const hasRadionicImages = radionicImages.length > 0 || radionicImage;
+    const hasReceptorImages = receptorImages.length > 0 || receptorImage;
+    
+    if (hasRadionicImages && hasReceptorImages) {
       setHypnoticEffect(true);
       
       // La velocidad del efecto hipnótico se calcula inversamente: valores más altos = transición más rápida
@@ -122,7 +127,10 @@ const Treat = () => {
       }, 1000);
       
       // Iniciar efecto hipnótico si hay imágenes cargadas
-      if (radionicImage && receptorImage) {
+      const hasRadionicImages = radionicImages.length > 0 || radionicImage;
+      const hasReceptorImages = receptorImages.length > 0 || receptorImage;
+      
+      if (hasRadionicImages && hasReceptorImages) {
         startHypnoticEffect();
       }
       
@@ -210,8 +218,8 @@ const Treat = () => {
                     setDuration={setDuration}
                     intensity={intensity}
                     setIntensity={setIntensity}
-                    useHeadphones={useHeadphones}
                     setUseHeadphones={setUseHeadphones}
+                    useHeadphones={useHeadphones}
                     visualFeedback={visualFeedback}
                     setVisualFeedback={setVisualFeedback}
                     isPlaying={isPlaying}
@@ -247,8 +255,12 @@ const Treat = () => {
                     setRate3={setRate3}
                     radionicImage={radionicImage}
                     setRadionicImage={setRadionicImage}
+                    radionicImages={radionicImages}
+                    setRadionicImages={setRadionicImages}
                     receptorImage={receptorImage}
                     setReceptorImage={setReceptorImage}
+                    receptorImages={receptorImages}
+                    setReceptorImages={setReceptorImages}
                     hypnoticSpeed={hypnoticSpeed}
                     setHypnoticSpeed={setHypnoticSpeed}
                     useHeadphones={useHeadphones}

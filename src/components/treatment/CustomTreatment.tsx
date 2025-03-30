@@ -21,8 +21,12 @@ interface CustomTreatmentProps {
   setRate3: (value: string) => void;
   radionicImage: string | null;
   setRadionicImage: (image: string | null) => void;
+  radionicImages: string[];
+  setRadionicImages: (images: string[]) => void;
   receptorImage: string | null;
   setReceptorImage: (image: string | null) => void;
+  receptorImages: string[];
+  setReceptorImages: (images: string[]) => void;
   hypnoticSpeed: number[];
   setHypnoticSpeed: (value: number[]) => void;
   useHeadphones: boolean;
@@ -54,8 +58,12 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
     setRate3,
     radionicImage,
     setRadionicImage,
+    radionicImages,
+    setRadionicImages,
     receptorImage,
     setReceptorImage,
+    receptorImages,
+    setReceptorImages,
     hypnoticSpeed,
     setHypnoticSpeed,
     useHeadphones,
@@ -106,8 +114,12 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
           <ImageGrid 
             radionicImage={radionicImage}
             setRadionicImage={setRadionicImage}
+            radionicImages={radionicImages}
+            setRadionicImages={setRadionicImages}
             receptorImage={receptorImage}
             setReceptorImage={setReceptorImage}
+            receptorImages={receptorImages}
+            setReceptorImages={setReceptorImages}
             isPlaying={isPlaying}
           />
           
@@ -133,6 +145,8 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
             visualFeedback={visualFeedback}
             radionicImage={radionicImage}
             receptorImage={receptorImage}
+            radionicImages={radionicImages}
+            receptorImages={receptorImages}
             currentImage={currentImage}
             hypnoticEffect={hypnoticEffect}
             frequency={frequency}

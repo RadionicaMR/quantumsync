@@ -4,6 +4,8 @@ interface TreatmentVisualizerProps {
   visualFeedback: boolean;
   radionicImage: string | null;
   receptorImage: string | null;
+  radionicImages: string[];
+  receptorImages: string[];
   currentImage: 'radionic' | 'receptor';
   hypnoticEffect: boolean;
   frequency: number[];
@@ -18,6 +20,8 @@ const TreatmentVisualizer = ({
   visualFeedback,
   radionicImage,
   receptorImage,
+  radionicImages = [],
+  receptorImages = [],
   currentImage,
   hypnoticEffect,
   frequency,
@@ -30,20 +34,44 @@ const TreatmentVisualizer = ({
     return null;
   }
 
+  // Use the multi-image arrays if they have content, otherwise fall back to the single image
+  const radionicImagesArray = radionicImages.length > 0 ? radionicImages : (radionicImage ? [radionicImage] : []);
+  const receptorImagesArray = receptorImages.length > 0 ? receptorImages : (receptorImage ? [receptorImage] : []);
+
+  const hasImages = radionicImagesArray.length > 0 || receptorImagesArray.length > 0;
+
   return (
     <div className="mt-4 relative h-64 md:h-80 lg:h-96 w-full bg-black/10 dark:bg-white/5 rounded-lg overflow-hidden">
-      {/* Efecto hipnótico con las imágenes */}
-      {radionicImage && receptorImage && hypnoticEffect && (
+      {/* Efectos con las imágenes */}
+      {hasImages && hypnoticEffect && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-          <img 
-            src={currentImage === 'radionic' ? radionicImage : receptorImage}
-            alt={currentImage === 'radionic' ? "Efecto radiónico" : "Efecto receptor"}
-            className="w-full h-full object-contain transition-opacity duration-100 animate-pulse"
-            style={{ 
-              opacity: 0.8,
-              filter: 'contrast(1.2) brightness(1.1)'
-            }}
-          />
+          {currentImage === 'radionic' && radionicImagesArray.map((img, index) => (
+            <img 
+              key={`radionic-${index}`}
+              src={img}
+              alt={`Efecto radiónico ${index + 1}`}
+              className="absolute inset-0 w-full h-full object-contain transition-opacity duration-100 animate-pulse"
+              style={{ 
+                opacity: 0.8 / radionicImagesArray.length,
+                filter: 'contrast(1.2) brightness(1.1)',
+                animationDelay: `${index * 0.3}s`
+              }}
+            />
+          ))}
+          
+          {currentImage === 'receptor' && receptorImagesArray.map((img, index) => (
+            <img 
+              key={`receptor-${index}`}
+              src={img}
+              alt={`Efecto receptor ${index + 1}`}
+              className="absolute inset-0 w-full h-full object-contain transition-opacity duration-100 animate-pulse"
+              style={{ 
+                opacity: 0.8 / receptorImagesArray.length,
+                filter: 'contrast(1.2) brightness(1.1)',
+                animationDelay: `${index * 0.3}s`
+              }}
+            />
+          ))}
         </div>
       )}
       

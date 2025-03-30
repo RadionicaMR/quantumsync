@@ -4,16 +4,24 @@ import ImageUploader from './ImageUploader';
 interface ImageGridProps {
   radionicImage: string | null;
   setRadionicImage: (image: string | null) => void;
+  radionicImages: string[];
+  setRadionicImages: (images: string[]) => void;
   receptorImage: string | null;
   setReceptorImage: (image: string | null) => void;
+  receptorImages: string[];
+  setReceptorImages: (images: string[]) => void;
   isPlaying: boolean;
 }
 
 const ImageGrid = ({
   radionicImage,
   setRadionicImage,
+  radionicImages,
+  setRadionicImages,
   receptorImage,
   setReceptorImage,
+  receptorImages,
+  setReceptorImages,
   isPlaying,
 }: ImageGridProps) => {
   return (
@@ -23,7 +31,10 @@ const ImageGrid = ({
         subtitle="Subir Gráfico Radiónico"
         image={radionicImage}
         setImage={setRadionicImage}
+        images={radionicImages}
+        setImages={setRadionicImages}
         isPlaying={isPlaying}
+        maxImages={3}
       />
       
       <ImageUploader
@@ -31,7 +42,10 @@ const ImageGrid = ({
         subtitle="Subir Imagen del Receptor"
         image={receptorImage}
         setImage={setReceptorImage}
+        images={receptorImages}
+        setImages={setReceptorImages}
         isPlaying={isPlaying}
+        maxImages={3}
       />
     </div>
   );
