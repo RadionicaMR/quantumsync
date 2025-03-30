@@ -4,9 +4,10 @@ import { TreatmentPreset } from '@/hooks/useTreatment';
 import PresetSelector from '../PresetSelector';
 import TreatmentControls from '../TreatmentControls';
 import TreatmentVisualizer from '../TreatmentVisualizer';
-import ImageUploader from '../image-uploader/ImageUploader';
-import RateInputs from '../RateInputs';
-import ReceptorNameInput from '../ReceptorNameInput';
+import ImageUploaderSection from './ImageUploaderSection';
+import RateSection from './RateSection';
+import ReceptorSection from './ReceptorSection';
+import TreatmentVisualizerSection from './TreatmentVisualizerSection';
 
 interface PresetTreatmentLayoutProps {
   presets: TreatmentPreset[];

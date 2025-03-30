@@ -1,5 +1,4 @@
 
-import { Card } from '@/components/ui/card';
 import TreatmentVisualizer from '../TreatmentVisualizer';
 
 interface TreatmentVisualizerSectionProps {
@@ -16,8 +15,8 @@ interface TreatmentVisualizerSectionProps {
   rate1: string;
   rate2: string;
   rate3: string;
-  hypnoticSpeed: number[];
-  receptorName: string;
+  hypnoticSpeed?: number[];
+  receptorName?: string;
 }
 
 const TreatmentVisualizerSection = ({
@@ -37,10 +36,8 @@ const TreatmentVisualizerSection = ({
   hypnoticSpeed,
   receptorName,
 }: TreatmentVisualizerSectionProps) => {
-  if (!isPlaying || !visualFeedback) return null;
-
   return (
-    <Card className="p-4">
+    <div>
       <h3 className="font-semibold mb-4">Visualización del Tratamiento</h3>
       <TreatmentVisualizer
         isPlaying={isPlaying}
@@ -59,7 +56,7 @@ const TreatmentVisualizerSection = ({
         hypnoticSpeed={hypnoticSpeed}
         receptorName={receptorName}
       />
-    </Card>
+    </div>
   );
 };
 
