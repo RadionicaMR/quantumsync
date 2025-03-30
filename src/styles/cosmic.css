@@ -1,0 +1,46 @@
+
+/* Cosmic Background Effects */
+.cosmic-dust {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 15px 15px;
+}
+
+.cosmic-glow {
+  text-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+}
+
+.star-twinkle {
+  position: relative;
+}
+
+.star-twinkle::before {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: 
+    0 0 10px 2px white,
+    0 0 20px 4px rgba(139, 92, 246, 0.8);
+  animation: twinkle 4s infinite ease-in-out;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Random movement animation for cosmic elements */
+@keyframes random-move {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(20%, 15%); }
+  20% { transform: translate(-15%, 25%); }
+  30% { transform: translate(25%, -15%); }
+  40% { transform: translate(-20%, -20%); }
+  50% { transform: translate(10%, 30%); }
+  60% { transform: translate(-25%, 10%); }
+  70% { transform: translate(15%, -25%); }
+  80% { transform: translate(-10%, -15%); }
+  90% { transform: translate(20%, -5%); }
+}
