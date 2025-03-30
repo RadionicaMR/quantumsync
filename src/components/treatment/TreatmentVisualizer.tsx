@@ -92,16 +92,8 @@ const TreatmentVisualizer = ({
         Frecuencia: {frequency[0]} Hz · Intensidad: {intensity[0]}%
       </div>
       
+      {/* Add keyframes for random-move animation directly in styles.css */}
       {/* RATES con movimiento aleatorio dentro de la imagen */}
-      <style jsx>{`
-        @keyframes random-move {
-          0% { transform: translate(10%, 10%); }
-          25% { transform: translate(60%, 30%); }
-          50% { transform: translate(30%, 70%); }
-          75% { transform: translate(70%, 50%); }
-          100% { transform: translate(20%, 40%); }
-        }
-      `}</style>
       
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="relative w-full h-full max-w-[90%] max-h-[90%]">
