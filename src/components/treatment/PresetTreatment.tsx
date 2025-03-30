@@ -93,61 +93,66 @@ const PresetTreatment = ({
       </div>
       
       <div className="lg:col-span-2 space-y-6">
-        <TreatmentControls
-          selectedPreset={selectedPreset}
-          presets={presets}
-          frequency={frequency}
-          setFrequency={setFrequency}
-          duration={duration}
-          setDuration={setDuration}
-          intensity={intensity}
-          setIntensity={setIntensity}
-          setUseHeadphones={setUseHeadphones}
-          useHeadphones={useHeadphones}
-          visualFeedback={visualFeedback}
-          setVisualFeedback={setVisualFeedback}
-          isPlaying={isPlaying}
-          timeRemaining={timeRemaining}
-          startTreatment={startTreatment}
-          stopTreatment={stopTreatment}
-          formatTime={formatTime}
-        />
-
-        {/* Add image uploaders for RECEPTOR and RADIONIC images */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <ImageUploader
-            title="Imagen del RECEPTOR"
-            subtitle="Sujeto del tratamiento"
-            image={receptorImage}
-            setImage={setReceptorImage}
-            images={receptorImages}
-            setImages={setReceptorImages}
+        <Card className="quantum-card p-6">
+          <TreatmentControls
+            selectedPreset={selectedPreset}
+            presets={presets}
+            frequency={frequency}
+            setFrequency={setFrequency}
+            duration={duration}
+            setDuration={setDuration}
+            intensity={intensity}
+            setIntensity={setIntensity}
+            setUseHeadphones={setUseHeadphones}
+            useHeadphones={useHeadphones}
+            visualFeedback={visualFeedback}
+            setVisualFeedback={setVisualFeedback}
             isPlaying={isPlaying}
+            timeRemaining={timeRemaining}
+            startTreatment={startTreatment}
+            stopTreatment={stopTreatment}
+            formatTime={formatTime}
           />
           
-          <ImageUploader
-            title="Gráfico RADIÓNICO"
-            subtitle="Patrones de tratamiento"
-            image={radionicImage}
-            setImage={setRadionicImage}
-            images={radionicImages}
-            setImages={setRadionicImages}
-            isPlaying={isPlaying}
-          />
-        </div>
+          {/* Moved image uploaders inside the main Card */}
+          <div className="mt-6">
+            <h3 className="font-semibold mb-4">Imágenes del Tratamiento</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <ImageUploader
+                title="Imagen del RECEPTOR"
+                subtitle="Sujeto del tratamiento"
+                image={receptorImage}
+                setImage={setReceptorImage}
+                images={receptorImages}
+                setImages={setReceptorImages}
+                isPlaying={isPlaying}
+              />
+              
+              <ImageUploader
+                title="Gráfico RADIÓNICO"
+                subtitle="Patrones de tratamiento"
+                image={radionicImage}
+                setImage={setRadionicImage}
+                images={radionicImages}
+                setImages={setRadionicImages}
+                isPlaying={isPlaying}
+              />
+            </div>
+          </div>
 
-        {/* Add rate inputs */}
-        <Card className="p-4">
-          <h3 className="font-semibold mb-4">Configuración de RATES</h3>
-          <RateInputs
-            rate1={rate1}
-            setRate1={setRate1}
-            rate2={rate2}
-            setRate2={setRate2}
-            rate3={rate3}
-            setRate3={setRate3}
-            isPlaying={isPlaying}
-          />
+          {/* Add rate inputs inside the Card */}
+          <div className="mt-6">
+            <h3 className="font-semibold mb-4">Configuración de RATES</h3>
+            <RateInputs
+              rate1={rate1}
+              setRate1={setRate1}
+              rate2={rate2}
+              setRate2={setRate2}
+              rate3={rate3}
+              setRate3={setRate3}
+              isPlaying={isPlaying}
+            />
+          </div>
         </Card>
 
         {/* Add TreatmentVisualizer when active */}
