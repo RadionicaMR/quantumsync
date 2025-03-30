@@ -1,9 +1,11 @@
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import PatternSelector from './PatternSelector';
 import ManifestControls from './ManifestControls';
 import ManifestVisualizer from './ManifestVisualizer';
 import ImageUploader from '@/components/manifest/ImageUploader';
+import ReceptorNameInput from './ReceptorNameInput';
 
 interface Pattern {
   id: string;
@@ -40,6 +42,8 @@ interface PresetManifestProps {
   currentImage: 'pattern' | 'receptor' | 'mix';
   receptorImage: string | null;
   setReceptorImage: (image: string | null) => void;
+  receptorName: string;
+  setReceptorName: (name: string) => void;
 }
 
 const PresetManifest = ({
@@ -69,7 +73,9 @@ const PresetManifest = ({
   onSelectPattern,
   currentImage,
   receptorImage,
-  setReceptorImage
+  setReceptorImage,
+  receptorName,
+  setReceptorName
 }: PresetManifestProps) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -108,9 +114,18 @@ const PresetManifest = ({
                 startManifestation={startManifestation}
                 stopManifestation={stopManifestation}
                 formatTimeRemaining={formatTimeRemaining}
-                canStart={!!selectedPattern}
+                canStart={!!selectedPattern || !!receptorName.trim()}
               />
               
+              {/* Nombre del RECEPTOR */}
+              <div className="mt-6">
+                <ReceptorNameInput 
+                  receptorName={receptorName}
+                  setReceptorName={setReceptorName}
+                  isActive={isManifestActive}
+                />
+              </div>
+
               {/* Imagen del RECEPTOR */}
               <div className="mt-6">
                 <ImageUploader
@@ -135,6 +150,7 @@ const PresetManifest = ({
                 rate1={rate1}
                 rate2={rate2}
                 rate3={rate3}
+                receptorName={receptorName}
               />
             </div>
           ) : (

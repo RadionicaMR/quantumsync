@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import ManifestControls from './ManifestControls';
 import ManifestVisualizer from './ManifestVisualizer';
 import ImageUploader from './ImageUploader';
+import ReceptorNameInput from './ReceptorNameInput';
 
 interface Pattern {
   id: string;
@@ -40,6 +41,8 @@ interface CustomManifestProps {
   stopManifestation: () => void;
   formatTimeRemaining: (minutes: number) => string;
   currentImage: 'pattern' | 'receptor' | 'mix';
+  receptorName: string;
+  setReceptorName: (name: string) => void;
 }
 
 const CustomManifest = ({
@@ -69,7 +72,9 @@ const CustomManifest = ({
   startManifestation,
   stopManifestation,
   formatTimeRemaining,
-  currentImage
+  currentImage,
+  receptorName,
+  setReceptorName
 }: CustomManifestProps) => {
   return (
     <Card className="quantum-card p-6">
@@ -84,6 +89,14 @@ const CustomManifest = ({
             isDisabled={isManifestActive}
             description="Sube tu propio diseño desde tu galería"
           />
+          
+          <div className="mt-6">
+            <ReceptorNameInput 
+              receptorName={receptorName}
+              setReceptorName={setReceptorName}
+              isActive={isManifestActive}
+            />
+          </div>
 
           <div className="mt-6">
             <ImageUploader
@@ -122,7 +135,7 @@ const CustomManifest = ({
               startManifestation={startManifestation}
               stopManifestation={stopManifestation}
               formatTimeRemaining={formatTimeRemaining}
-              canStart={!!patternImage}
+              canStart={!!patternImage || !!receptorName.trim()}
             />
             
             <ManifestVisualizer
@@ -138,6 +151,7 @@ const CustomManifest = ({
               rate1={rate1}
               rate2={rate2}
               rate3={rate3}
+              receptorName={receptorName}
             />
           </div>
         </div>
