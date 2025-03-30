@@ -1,8 +1,11 @@
 
 import QuantumButton from '@/components/QuantumButton';
 import InfoSection from '@/components/quantum/InfoSection';
+import { useNavigate } from 'react-router-dom';
 
 const DiagnosisFooter = () => {
+  const navigate = useNavigate();
+  
   return (
     <>
       <InfoSection />
@@ -13,7 +16,7 @@ const DiagnosisFooter = () => {
           <p className="text-muted-foreground max-w-2xl mx-auto mb-6 md:mb-8">
             Después del diagnóstico, pasa a nuestro módulo de tratamiento para abordar cualquier desequilibrio con terapia de frecuencia dirigida.
           </p>
-          <QuantumButton>Explorar Tratamientos</QuantumButton>
+          <QuantumButton onClick={() => navigate('/treat')}>Explorar Tratamientos</QuantumButton>
         </div>
       </section>
     </>

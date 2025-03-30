@@ -16,11 +16,11 @@ const About = () => {
       description: "Construimos confianza a través de la transparencia, la fiabilidad y un profundo compromiso con el bienestar de nuestros usuarios."
     },
     {
-      title: "Sostenibilidad",
-      description: "Nuestras prácticas y productos están diseñados con responsabilidad ambiental y social en mente."
+      title: "Empoderamiento",
+      description: "Sostenemos que nuestras creencias personales determinan nuestro mundo exterior, y que trabajando sobre nosotros mismos, cambiamos el mundo que nos rodea."
     },
     {
-      title: "Impacto Positivo",
+      title: "Transformación Positiva",
       description: "Todo lo que hacemos tiene como objetivo crear un cambio positivo en la vida de las personas y en el mundo en general."
     }
   ];
