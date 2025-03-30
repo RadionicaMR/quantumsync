@@ -7,6 +7,7 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import QuantumButton from '@/components/QuantumButton';
 import RateInputs from '@/components/treatment/RateInputs';
+import { Input } from '@/components/ui/input';
 
 interface ManifestControlsProps {
   intention: string;
@@ -72,14 +73,29 @@ const ManifestControls = ({
         
         <div className="mt-4">
           <div className="flex items-center justify-between mb-2">
-            <Label>Frecuencia de Manifestación: {manifestFrequency[0]} Hz</Label>
+            <Label>Frecuencia de Manifestación:</Label>
             <div className="flex items-center">
+              <Input
+                type="number"
+                value={manifestFrequency[0]}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+                  if (!isNaN(value) && value >= 100 && value <= 963) {
+                    setManifestFrequency([value]);
+                  }
+                }}
+                disabled={isManifestActive}
+                className="w-24 ml-2"
+                min={100}
+                max={963}
+              />
+              <span className="ml-2 text-sm text-muted-foreground">Hz</span>
               <Switch
                 checked={manifestSound}
                 onCheckedChange={setManifestSound}
                 disabled={isManifestActive}
                 id="sound-toggle"
-                className="mr-2"
+                className="ml-4 mr-2"
               />
               <Label htmlFor="sound-toggle" className="cursor-pointer">
                 {manifestSound ? <Volume2 size={18} /> : <VolumeX size={18} />}
@@ -98,7 +114,25 @@ const ManifestControls = ({
         </div>
         
         <div className="mt-4">
-          <Label className="mb-2 block">Velocidad de Visualización: {visualSpeed[0]}</Label>
+          <div className="flex items-center justify-between mb-2">
+            <Label>Velocidad de Visualización:</Label>
+            <div className="flex items-center">
+              <Input
+                type="number"
+                value={visualSpeed[0]}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+                  if (!isNaN(value) && value >= 1 && value <= 30) {
+                    setVisualSpeed([value]);
+                  }
+                }}
+                disabled={isManifestActive}
+                className="w-24 ml-2"
+                min={1}
+                max={30}
+              />
+            </div>
+          </div>
           <Slider
             min={1}
             max={30}
@@ -111,10 +145,29 @@ const ManifestControls = ({
         </div>
 
         <div className="mt-4">
-          <Label className="mb-2 flex items-center gap-2">
-            <Clock size={16} className="text-quantum-primary" />
-            Tiempo de Exposición: {exposureTime[0]} minutos
-          </Label>
+          <div className="flex items-center justify-between mb-2">
+            <Label className="flex items-center gap-2">
+              <Clock size={16} className="text-quantum-primary" />
+              Tiempo de Exposición:
+            </Label>
+            <div className="flex items-center">
+              <Input
+                type="number"
+                value={exposureTime[0]}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+                  if (!isNaN(value) && value >= 1 && value <= 180) {
+                    setExposureTime([value]);
+                  }
+                }}
+                disabled={isManifestActive}
+                className="w-24 ml-2"
+                min={1}
+                max={180}
+              />
+              <span className="ml-2 text-sm text-muted-foreground">min</span>
+            </div>
+          </div>
           <Slider
             min={1}
             max={180}

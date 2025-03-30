@@ -1,5 +1,7 @@
 
 import { Slider } from '@/components/ui/slider';
+import { Input } from '@/components/ui/input';
+import { useState } from 'react';
 
 interface FrequencyControlsProps {
   frequency: number[];
@@ -27,7 +29,26 @@ const FrequencyControls = ({
   return (
     <div className="space-y-6">
       <div>
-        <h4 className="font-medium mb-2">Frecuencia: {frequency[0]} Hz</h4>
+        <div className="flex items-center justify-between mb-2">
+          <h4 className="font-medium">Frecuencia:</h4>
+          <div className="flex items-center">
+            <Input
+              type="number"
+              value={frequency[0]}
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (!isNaN(value) && value >= 20 && value <= 20000) {
+                  setFrequency([value]);
+                }
+              }}
+              disabled={isPlaying}
+              className="w-24 ml-2"
+              min={20}
+              max={20000}
+            />
+            <span className="ml-2 text-sm text-muted-foreground">Hz</span>
+          </div>
+        </div>
         <Slider
           defaultValue={frequency}
           min={20}
@@ -39,7 +60,26 @@ const FrequencyControls = ({
           className="mb-4"
         />
         
-        <h4 className="font-medium mb-2">Duración: {duration[0]} minutos</h4>
+        <div className="flex items-center justify-between mb-2">
+          <h4 className="font-medium">Duración:</h4>
+          <div className="flex items-center">
+            <Input
+              type="number"
+              value={duration[0]}
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (!isNaN(value) && value >= 1 && value <= 60) {
+                  setDuration([value]);
+                }
+              }}
+              disabled={isPlaying}
+              className="w-24 ml-2"
+              min={1}
+              max={60}
+            />
+            <span className="ml-2 text-sm text-muted-foreground">min</span>
+          </div>
+        </div>
         <Slider
           defaultValue={duration}
           min={1}
