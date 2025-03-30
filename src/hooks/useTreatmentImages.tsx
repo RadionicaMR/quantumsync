@@ -40,9 +40,19 @@ export const useTreatmentImages = () => {
       // Crear el intervalo para alternar entre imágenes
       hypnoticTimerRef.current = setInterval(() => {
         setCurrentImage(prev => {
-          const newImage = prev === 'radionic' ? 'receptor' : 'radionic';
-          console.log("Switching to image:", newImage);
-          return newImage;
+          // Si tenemos ambas imágenes (o nombre como imagen), alternar entre radionic y receptor
+          if ((radionicImages.length > 0 || radionicImage) && 
+              (receptorImages.length > 0 || receptorImage || receptorName)) {
+            return prev === 'radionic' ? 'receptor' : 'radionic';
+          }
+          // Si solo tenemos imágenes radiónicas, mantener en 'radionic'
+          else if (radionicImages.length > 0 || radionicImage) {
+            return 'radionic';
+          }
+          // Si solo tenemos imágenes de receptor o nombre, mantener en 'receptor'
+          else {
+            return 'receptor';
+          }
         });
       }, switchInterval);
     } else {

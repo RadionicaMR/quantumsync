@@ -1,4 +1,3 @@
-
 interface TreatmentVisualizerProps {
   isPlaying: boolean;
   visualFeedback: boolean;
@@ -6,7 +5,7 @@ interface TreatmentVisualizerProps {
   receptorImage: string | null;
   radionicImages: string[];
   receptorImages: string[];
-  currentImage: 'radionic' | 'receptor';
+  currentImage: 'radionic' | 'receptor' | 'mix';
   hypnoticEffect: boolean;
   frequency: number[];
   intensity: number[];
@@ -63,7 +62,7 @@ const TreatmentVisualizer = ({
                 alt={`Efecto radiónico ${index + 1}`}
                 className="absolute inset-0 w-full h-full object-contain"
                 style={{ 
-                  opacity: hypnoticEffect ? (currentImage === 'radionic' ? 0.8 : 0) : 0.8,
+                  opacity: hypnoticEffect ? (currentImage === 'radionic' ? 0.8 : (currentImage === 'mix' ? 0.4 : 0)) : 0.8,
                   mixBlendMode: 'screen',
                   filter: 'contrast(1.2) brightness(1.1)',
                   transition: `opacity ${animationDuration/3}s ease-in-out`
@@ -78,7 +77,7 @@ const TreatmentVisualizer = ({
                 alt={`Efecto receptor ${index + 1}`}
                 className="absolute inset-0 w-full h-full object-contain"
                 style={{ 
-                  opacity: hypnoticEffect ? (currentImage === 'receptor' ? 0.8 : 0) : 0.8,
+                  opacity: hypnoticEffect ? (currentImage === 'receptor' ? 0.8 : (currentImage === 'mix' ? 0.4 : 0)) : 0.8,
                   mixBlendMode: 'multiply',
                   filter: 'contrast(1.2) brightness(1.1)',
                   transition: `opacity ${animationDuration/3}s ease-in-out`
@@ -88,11 +87,11 @@ const TreatmentVisualizer = ({
             
             {/* Show receptor name when no images are available or when in hypnotic mode and showing receptor */}
             {receptorName && (!hasRadionicImages && !hasReceptorImages || 
-                             (hypnoticEffect && currentImage === 'receptor' && !hasReceptorImages)) && (
+                             (hypnoticEffect && (currentImage === 'receptor' || currentImage === 'mix') && !hasReceptorImages)) && (
               <div 
                 className="absolute inset-0 flex items-center justify-center"
                 style={{
-                  opacity: hypnoticEffect ? (currentImage === 'receptor' ? 1 : 0) : 1,
+                  opacity: hypnoticEffect ? ((currentImage === 'receptor' || currentImage === 'mix') ? 1 : 0) : 1,
                   transition: `opacity ${animationDuration/3}s ease-in-out`
                 }}
               >

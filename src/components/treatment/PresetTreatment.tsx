@@ -35,7 +35,7 @@ interface PresetTreatmentProps {
   setRadionicImages: (images: string[]) => void;
   receptorImages: string[];
   setReceptorImages: (images: string[]) => void;
-  currentImage: 'radionic' | 'receptor';
+  currentImage: 'radionic' | 'receptor' | 'mix';
   hypnoticEffect: boolean;
   rate1: string;
   setRate1: (value: string) => void;
