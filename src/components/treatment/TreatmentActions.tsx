@@ -42,7 +42,7 @@ const TreatmentActions = ({
           </div>
           <QuantumButton 
             onClick={startTreatment}
-            disabled={!radionicImage}
+            disabled={radionicImage === null}
           >
             <div className="flex flex-col items-center">
               <span>INICIAR</span>

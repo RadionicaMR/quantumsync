@@ -27,6 +27,9 @@ interface TreatmentControlsProps {
   startTreatment: () => void;
   stopTreatment: () => void;
   formatTime: (minutes: number) => string;
+  hypnoticSpeed?: number[];
+  setHypnoticSpeed?: (value: number[]) => void;
+  radionicImage?: string | null;
 }
 
 const TreatmentControls = ({
@@ -47,6 +50,9 @@ const TreatmentControls = ({
   startTreatment,
   stopTreatment,
   formatTime,
+  hypnoticSpeed = [10],
+  setHypnoticSpeed = () => {},
+  radionicImage = null,
 }: TreatmentControlsProps) => {
   const selectedPresetData = presets.find(p => p.id === selectedPreset);
   
@@ -73,8 +79,8 @@ const TreatmentControls = ({
           setDuration={setDuration}
           intensity={intensity}
           setIntensity={setIntensity}
-          hypnoticSpeed={[10]} // Placeholder value, not used in this component
-          setHypnoticSpeed={() => {}} // Placeholder function, not used in this component
+          hypnoticSpeed={hypnoticSpeed}
+          setHypnoticSpeed={setHypnoticSpeed}
           isPlaying={isPlaying}
         />
         
@@ -92,7 +98,7 @@ const TreatmentControls = ({
           formatTime={formatTime}
           startTreatment={startTreatment}
           stopTreatment={stopTreatment}
-          radionicImage={null} // This is needed for the button disable state, but it's not used in this component
+          radionicImage={radionicImage}
         />
         
         <TreatmentFeedbackVisual

@@ -26,7 +26,7 @@ const SettingsToggles = ({
           onCheckedChange={setUseHeadphones}
           disabled={isPlaying}
         />
-        <Label htmlFor="custom-headphones">Usar auriculares (recomendado)</Label>
+        <Label htmlFor="custom-headphones">Usar auriculares</Label>
       </div>
       
       <div className="flex items-center gap-2">

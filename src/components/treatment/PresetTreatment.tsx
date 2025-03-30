@@ -42,6 +42,8 @@ interface PresetTreatmentProps {
   setRate2: (value: string) => void;
   rate3: string;
   setRate3: (value: string) => void;
+  hypnoticSpeed: number[];
+  setHypnoticSpeed: (value: number[]) => void;
 }
 
 const PresetTreatment = ({
@@ -80,6 +82,8 @@ const PresetTreatment = ({
   setRate2,
   rate3,
   setRate3,
+  hypnoticSpeed,
+  setHypnoticSpeed,
 }: PresetTreatmentProps) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -112,6 +116,9 @@ const PresetTreatment = ({
             startTreatment={startTreatment}
             stopTreatment={stopTreatment}
             formatTime={formatTime}
+            radionicImage={radionicImage}
+            hypnoticSpeed={hypnoticSpeed}
+            setHypnoticSpeed={setHypnoticSpeed}
           />
           
           {/* Moved image uploaders inside the main Card */}
@@ -173,6 +180,7 @@ const PresetTreatment = ({
               rate1={rate1}
               rate2={rate2}
               rate3={rate3}
+              hypnoticSpeed={hypnoticSpeed}
             />
           </Card>
         )}
