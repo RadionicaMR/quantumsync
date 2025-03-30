@@ -40,6 +40,9 @@ const ManifestVisualizer = ({
   const hasReceptorImage = !!receptorImage;
   const hasImages = hasPatternImage || hasReceptorImage;
   const hasContent = hasImages || receptorName || intention;
+  
+  // Calculate rate animation speed based on visual speed
+  const rateAnimationDuration = Math.max(5, 15 - visualSpeed[0]);
 
   return (
     <div className="mt-6 relative overflow-hidden rounded-lg bg-white aspect-square">
@@ -116,7 +119,7 @@ const ManifestVisualizer = ({
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="relative w-full h-full max-w-[90%] max-h-[90%]">
             {rate1 && (
-              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded text-sm md:text-base" 
+              <div className="absolute text-blue-400 font-mono bg-black/60 px-3 py-2 rounded text-sm md:text-base shadow-lg border border-blue-500/30" 
                   style={{ 
                     left: '20%', 
                     top: '20%',
@@ -124,13 +127,14 @@ const ManifestVisualizer = ({
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
-                    animation: 'random-move 15s infinite alternate'
+                    animation: `random-move ${rateAnimationDuration}s infinite alternate`,
+                    textShadow: '0 0 5px rgba(59, 130, 246, 0.7)'
                   }}>
                 {rate1}
               </div>
             )}
             {rate2 && (
-              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded text-sm md:text-base"
+              <div className="absolute text-blue-400 font-mono bg-black/60 px-3 py-2 rounded text-sm md:text-base shadow-lg border border-blue-500/30"
                   style={{ 
                     left: '50%', 
                     top: '40%',
@@ -138,13 +142,14 @@ const ManifestVisualizer = ({
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
-                    animation: 'random-move 18s infinite alternate-reverse'
+                    animation: `random-move ${rateAnimationDuration + 3}s infinite alternate-reverse`,
+                    textShadow: '0 0 5px rgba(59, 130, 246, 0.7)'
                   }}>
                 {rate2}
               </div>
             )}
             {rate3 && (
-              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded text-sm md:text-base"
+              <div className="absolute text-blue-400 font-mono bg-black/60 px-3 py-2 rounded text-sm md:text-base shadow-lg border border-blue-500/30"
                   style={{ 
                     left: '30%', 
                     top: '60%',
@@ -152,7 +157,8 @@ const ManifestVisualizer = ({
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
-                    animation: 'random-move 20s infinite'
+                    animation: `random-move ${rateAnimationDuration + 5}s infinite`,
+                    textShadow: '0 0 5px rgba(59, 130, 246, 0.7)'
                   }}>
                 {rate3}
               </div>

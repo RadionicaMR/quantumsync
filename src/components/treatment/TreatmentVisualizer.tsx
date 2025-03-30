@@ -48,6 +48,9 @@ const TreatmentVisualizer = ({
 
   // Calculate animation speed based on hypnotic speed
   const animationDuration = Math.max(0.1, 20 / hypnoticSpeed[0]);
+  
+  // Calculate faster animation speed for RATE texts based on hypnotic speed
+  const rateAnimationDuration = Math.max(5, 15 - hypnoticSpeed[0]);
 
   return (
     <div className="relative aspect-square w-full bg-black rounded-lg overflow-hidden">
@@ -119,13 +122,11 @@ const TreatmentVisualizer = ({
         Intensidad: {intensity[0]}%
       </div>
       
-      {/* Add keyframes for random-move animation directly in styles.css */}
       {/* RATES con movimiento aleatorio dentro de la imagen */}
-      
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="relative w-full h-full max-w-[90%] max-h-[90%]">
           {rate1 && (
-            <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded text-sm md:text-base" 
+            <div className="absolute text-blue-400 font-mono bg-black/60 px-3 py-2 rounded text-sm md:text-base shadow-lg border border-blue-500/30" 
                 style={{ 
                   left: '20%',
                   top: '20%',
@@ -133,13 +134,14 @@ const TreatmentVisualizer = ({
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  animation: `random-move ${15/hypnoticSpeed[0]*10}s infinite alternate`
+                  animation: `random-move ${rateAnimationDuration}s infinite alternate`,
+                  textShadow: '0 0 5px rgba(59, 130, 246, 0.7)'
                 }}>
               {rate1}
             </div>
           )}
           {rate2 && (
-            <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded text-sm md:text-base"
+            <div className="absolute text-blue-400 font-mono bg-black/60 px-3 py-2 rounded text-sm md:text-base shadow-lg border border-blue-500/30"
                 style={{ 
                   left: '50%',
                   top: '40%',
@@ -147,13 +149,14 @@ const TreatmentVisualizer = ({
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  animation: `random-move ${18/hypnoticSpeed[0]*10}s infinite alternate-reverse`
+                  animation: `random-move ${rateAnimationDuration + 3}s infinite alternate-reverse`,
+                  textShadow: '0 0 5px rgba(59, 130, 246, 0.7)'
                 }}>
               {rate2}
             </div>
           )}
           {rate3 && (
-            <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded text-sm md:text-base"
+            <div className="absolute text-blue-400 font-mono bg-black/60 px-3 py-2 rounded text-sm md:text-base shadow-lg border border-blue-500/30"
                 style={{ 
                   left: '30%',
                   top: '60%',
@@ -161,7 +164,8 @@ const TreatmentVisualizer = ({
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  animation: `random-move ${20/hypnoticSpeed[0]*10}s infinite`
+                  animation: `random-move ${rateAnimationDuration + 5}s infinite`,
+                  textShadow: '0 0 5px rgba(59, 130, 246, 0.7)'
                 }}>
               {rate3}
             </div>
