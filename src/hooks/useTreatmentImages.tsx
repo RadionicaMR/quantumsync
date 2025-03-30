@@ -21,12 +21,27 @@ export const useTreatmentImages = () => {
     if (hasRadionicImages && hasReceptorImages) {
       setHypnoticEffect(true);
       
+      // Detenemos cualquier temporizador existente antes de crear uno nuevo
+      if (hypnoticTimerRef.current) {
+        clearInterval(hypnoticTimerRef.current);
+      }
+      
       // La velocidad del efecto hipnótico se calcula inversamente: valores más altos = transición más rápida
-      const switchInterval = 1000 / (hypnoticSpeed[0] * 0.5);
+      // Ajustamos para que sea más notorio
+      const switchInterval = 1000 / hypnoticSpeed[0];
       
       hypnoticTimerRef.current = setInterval(() => {
         setCurrentImage(prev => prev === 'radionic' ? 'receptor' : 'radionic');
       }, switchInterval);
+      
+      console.log("Hypnotic effect started with speed:", hypnoticSpeed[0], "interval:", switchInterval);
+    } else {
+      console.log("Cannot start hypnotic effect: missing images", {
+        hasRadionicImages,
+        hasReceptorImages,
+        radionicImage,
+        receptorImage
+      });
     }
   };
 
@@ -36,15 +51,22 @@ export const useTreatmentImages = () => {
       hypnoticTimerRef.current = null;
     }
     setHypnoticEffect(false);
+    console.log("Hypnotic effect stopped");
   };
 
   useEffect(() => {
+    // If hypnotic effect is active and speed changes, restart the effect
+    if (hypnoticEffect) {
+      startHypnoticEffect();
+    }
+    
+    // Cleanup on unmount
     return () => {
       if (hypnoticTimerRef.current) {
         clearInterval(hypnoticTimerRef.current);
       }
     };
-  }, []);
+  }, [hypnoticSpeed]);
 
   return {
     visualFeedback,

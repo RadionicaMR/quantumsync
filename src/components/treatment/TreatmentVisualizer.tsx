@@ -61,10 +61,10 @@ const TreatmentVisualizer = ({
                 alt={`Efecto radiónico ${index + 1}`}
                 className="absolute inset-0 w-full h-full object-contain"
                 style={{ 
-                  opacity: hypnoticEffect && currentImage === 'receptor' ? 0.3 : 0.7 / radionicImagesArray.length,
+                  opacity: hypnoticEffect && currentImage === 'receptor' ? 0 : 1,
                   mixBlendMode: 'screen',
                   filter: 'contrast(1.2) brightness(1.1)',
-                  transition: `opacity ${animationDuration}s ease-in-out`
+                  transition: `opacity ${animationDuration/2}s ease-in-out`
                 }}
               />
             ))}
@@ -76,10 +76,10 @@ const TreatmentVisualizer = ({
                 alt={`Efecto receptor ${index + 1}`}
                 className="absolute inset-0 w-full h-full object-contain"
                 style={{ 
-                  opacity: hypnoticEffect && currentImage === 'radionic' ? 0.3 : 0.7 / receptorImagesArray.length,
+                  opacity: hypnoticEffect && currentImage === 'radionic' ? 0 : 1,
                   mixBlendMode: 'multiply',
                   filter: 'contrast(1.2) brightness(1.1)',
-                  transition: `opacity ${animationDuration}s ease-in-out`
+                  transition: `opacity ${animationDuration/2}s ease-in-out`
                 }}
               />
             ))}
@@ -96,7 +96,7 @@ const TreatmentVisualizer = ({
       
       {/* Información y RATES */}
       <div className="absolute bottom-3 left-3 text-xs md:text-sm text-white z-20 font-mono bg-black/40 px-2 py-1 rounded">
-        Frecuencia: {frequency[0]} Hz · Intensidad: {intensity[0]}%
+        Intensidad: {intensity[0]}%
       </div>
       
       {/* Add keyframes for random-move animation directly in styles.css */}
@@ -146,20 +146,6 @@ const TreatmentVisualizer = ({
               {rate3}
             </div>
           )}
-        </div>
-      </div>
-      
-      {/* Texto de frecuencia que titila junto con las imágenes */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="flex flex-col items-center max-w-[80%] z-20">
-          <div 
-            className="text-white text-center font-semibold text-lg md:text-xl lg:text-2xl line-clamp-3 bg-black/30 px-3 py-2 rounded"
-            style={{ 
-              animation: `pulse ${animationDuration * 2}s infinite alternate ease-in-out`
-            }}
-          >
-            Frecuencia: {frequency[0]} Hz
-          </div>
         </div>
       </div>
     </div>
