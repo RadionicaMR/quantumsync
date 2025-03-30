@@ -29,7 +29,10 @@ const TreatmentActions = ({
             variant="outline"
             onClick={stopTreatment}
           >
-            Detener Tratamiento
+            <div className="flex flex-col items-center">
+              <span>DETENER</span>
+              <span>TRATAMIENTO</span>
+            </div>
           </QuantumButton>
         </>
       ) : (
@@ -41,7 +44,10 @@ const TreatmentActions = ({
             onClick={startTreatment}
             disabled={!radionicImage}
           >
-            Iniciar Tratamiento
+            <div className="flex flex-col items-center">
+              <span>INICIAR</span>
+              <span>TRATAMIENTO</span>
+            </div>
           </QuantumButton>
         </>
       )}
