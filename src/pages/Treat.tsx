@@ -70,6 +70,8 @@ const Treat = () => {
                 setRate2={treatment.setRate2}
                 rate3={treatment.rate3}
                 setRate3={treatment.setRate3}
+                hypnoticSpeed={treatment.hypnoticSpeed}
+                setHypnoticSpeed={treatment.setHypnoticSpeed}
               />
             </TabsContent>
             
