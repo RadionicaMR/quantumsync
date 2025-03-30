@@ -1,16 +1,17 @@
-import { useState, useRef } from 'react';
-import { Image, Upload, Trash2, Plus } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+
+import React, { useRef, useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { Plus, Trash2, Upload } from 'lucide-react';
+import { Label } from '@/components/ui/label';
 
 interface ImageUploaderProps {
   title: string;
   subtitle: string;
   image: string | null;
   setImage: (image: string | null) => void;
-  images?: string[];
-  setImages?: (images: string[]) => void; 
+  images: string[];
+  setImages: (images: string[]) => void;
   isPlaying: boolean;
-  className?: string;
   maxImages?: number;
 }
 
@@ -19,142 +20,180 @@ const ImageUploader = ({
   subtitle,
   image,
   setImage,
-  images = [],
-  setImages = () => {},
+  images,
+  setImages,
   isPlaying,
-  className = '',
-  maxImages = 3,
+  maxImages = 3
 }: ImageUploaderProps) => {
+  const [activeTab, setActiveTab] = useState<'single' | 'multiple'>('single');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const multipleFileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files || files.length === 0) return;
-    
-    if (images.length + files.length > maxImages) {
-      toast({
-        title: "Límite de imágenes excedido",
-        description: `Solo puedes subir hasta ${maxImages} imágenes.`,
-      });
-      return;
-    }
-    
-    // For backward compatibility, keep the first image in the single image state
-    const firstFile = files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImage(reader.result as string);
-    };
-    reader.readAsDataURL(firstFile);
-    
-    // Process all files for the images array
-    Array.from(files).forEach(file => {
-      const multiReader = new FileReader();
-      multiReader.onloadend = () => {
-        setImages([...images, multiReader.result as string]);
+  const handleSingleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result as string);
       };
-      multiReader.readAsDataURL(file);
-    });
-    
-    toast({
-      title: "Imágenes cargadas",
-      description: `Se han subido ${files.length} imagen(es) correctamente.`,
-    });
+      reader.readAsDataURL(file);
+    }
   };
 
-  const triggerImageUpload = () => {
-    if (fileInputRef.current) {
+  const handleMultipleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      // Limit to maxImages
+      const filesToProcess = Array.from(files).slice(0, maxImages);
+      
+      Promise.all(filesToProcess.map(file => {
+        return new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            resolve(reader.result as string);
+          };
+          reader.readAsDataURL(file);
+        });
+      })).then(newImages => {
+        setImages(prevImages => {
+          const combined = [...prevImages, ...newImages];
+          return combined.slice(0, maxImages); // Ensure we don't exceed maxImages
+        });
+      });
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setImages(images.filter((_, i) => i !== index));
+  };
+
+  const triggerFileInput = () => {
+    if (activeTab === 'single' && fileInputRef.current && !isPlaying) {
       fileInputRef.current.click();
+    } else if (activeTab === 'multiple' && multipleFileInputRef.current && !isPlaying) {
+      multipleFileInputRef.current.click();
     }
-  };
-
-  const deleteImage = (e: React.MouseEvent, index: number) => {
-    // Stop propagation to prevent triggering parent div click events
-    e.stopPropagation();
-    
-    if (isPlaying) return;
-    
-    const newImages = [...images];
-    newImages.splice(index, 1);
-    setImages(newImages);
-    
-    // Update the single image state if needed
-    if (index === 0) {
-      setImage(newImages.length > 0 ? newImages[0] : null);
-    }
-    
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-    
-    toast({
-      title: "Imagen eliminada",
-      description: "La imagen ha sido eliminada correctamente.",
-    });
   };
 
   return (
-    <div className={className}>
-      <h4 className="font-medium mb-3">{title}</h4>
-      <div className="border-2 border-dashed border-border rounded-lg p-4 text-center">
-        {images.length > 0 ? (
-          <div className="space-y-3">
-            {images.map((img, index) => (
-              <div key={index} className="relative h-28 w-full overflow-hidden rounded-lg">
+    <Card className="w-full overflow-hidden">
+      <div className="p-4 bg-muted/50 border-b">
+        <h3 className="font-semibold">{title}</h3>
+      </div>
+      
+      <div className="p-4">
+        <div className="flex space-x-2 mb-4">
+          <button
+            className={`px-3 py-1 rounded-full text-sm ${activeTab === 'single' ? 'bg-primary text-white' : 'bg-muted'}`}
+            onClick={() => setActiveTab('single')}
+            disabled={isPlaying}
+          >
+            Imagen Única
+          </button>
+          <button
+            className={`px-3 py-1 rounded-full text-sm ${activeTab === 'multiple' ? 'bg-primary text-white' : 'bg-muted'}`}
+            onClick={() => setActiveTab('multiple')}
+            disabled={isPlaying}
+          >
+            Múltiples Imágenes
+          </button>
+        </div>
+        
+        {activeTab === 'single' && (
+          <div
+            className="border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer"
+            onClick={isPlaying ? undefined : triggerFileInput}
+          >
+            {image ? (
+              <div className="relative">
                 <img 
-                  src={img} 
-                  alt={`${title} ${index + 1}`}
-                  className={`w-full h-full object-contain ${isPlaying ? 'animate-pulse' : ''}`}
-                  style={{ opacity: isPlaying ? '0.7' : '1' }}
+                  src={image}
+                  alt={title}
+                  className="max-h-40 mx-auto object-contain rounded"
                 />
-                <div className="absolute top-2 right-2 flex space-x-2">
+                {!isPlaying && (
                   <button
-                    onClick={(e) => deleteImage(e, index)}
-                    className="bg-red-500/70 text-white p-2 rounded-full hover:bg-red-600/90 transition-colors"
-                    disabled={isPlaying}
-                    title="Eliminar imagen"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setImage(null);
+                    }}
+                    className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
                   >
                     <Trash2 size={16} />
                   </button>
-                </div>
+                )}
               </div>
-            ))}
-            {images.length < maxImages && (
-              <button
-                onClick={triggerImageUpload}
-                disabled={isPlaying}
-                className="mt-2 flex items-center justify-center w-full py-2 bg-muted hover:bg-muted/80 rounded-md transition-colors"
-              >
-                <Plus size={16} className="mr-2" />
-                Añadir imagen ({images.length}/{maxImages})
-              </button>
+            ) : (
+              <div className="py-8">
+                <Upload className="mx-auto h-10 w-10 text-muted-foreground mb-2" />
+                <p className="font-medium">{subtitle}</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Arrastra o selecciona una imagen
+                </p>
+              </div>
             )}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleSingleImageUpload}
+              accept="image/*"
+              className="hidden"
+              disabled={isPlaying}
+            />
           </div>
-        ) : (
-          <div 
-            onClick={() => !isPlaying && triggerImageUpload()}
-            className="cursor-pointer flex flex-col items-center justify-center h-44 space-y-3"
-          >
-            <div className="w-14 h-14 bg-muted rounded-full flex items-center justify-center">
-              <Image className="w-7 h-7 text-muted-foreground" />
+        )}
+        
+        {activeTab === 'multiple' && (
+          <div className="space-y-3">
+            <div className="grid grid-cols-3 gap-2">
+              {images.map((img, idx) => (
+                <div key={idx} className="relative aspect-square bg-muted/30 rounded overflow-hidden">
+                  <img
+                    src={img}
+                    alt={`${title} ${idx + 1}`}
+                    className="w-full h-full object-contain"
+                  />
+                  {!isPlaying && (
+                    <button
+                      onClick={() => removeImage(idx)}
+                      className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  )}
+                </div>
+              ))}
+              
+              {images.length < maxImages && !isPlaying && (
+                <div
+                  className="flex items-center justify-center aspect-square bg-muted/30 rounded cursor-pointer border-2 border-dashed border-border"
+                  onClick={triggerFileInput}
+                >
+                  <Plus className="h-8 w-8 text-muted-foreground" />
+                </div>
+              )}
             </div>
-            <div>
-              <p className="font-medium">{subtitle}</p>
-              <p className="text-sm text-muted-foreground">Selecciona hasta {maxImages} imágenes desde tu galería</p>
+            
+            <input
+              type="file"
+              multiple
+              ref={multipleFileInputRef}
+              onChange={handleMultipleImageUpload}
+              accept="image/*"
+              className="hidden"
+              disabled={isPlaying}
+            />
+            
+            <div className="text-center text-xs text-muted-foreground">
+              {images.length} / {maxImages} imágenes
+              {images.length === 0 && (
+                <p className="mt-1">Selecciona hasta {maxImages} imágenes para un efecto hipnótico</p>
+              )}
             </div>
           </div>
         )}
-        <input 
-          type="file"
-          ref={fileInputRef}
-          onChange={handleImageUpload}
-          accept="image/*"
-          className="hidden"
-          disabled={isPlaying}
-          multiple
-        />
       </div>
-    </div>
+    </Card>
   );
 };
 
