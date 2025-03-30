@@ -1,148 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Neon text effect */
-.neon-text {
-  @apply text-purple-200 relative;
-  text-shadow: 0 0 5px rgba(168, 85, 247, 0.5), 0 0 10px rgba(168, 85, 247, 0.25);
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+ 
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+ 
+    --primary: 222.1 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+ 
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+ 
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+ 
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+ 
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+ 
+    --ring: 222.1 83.2% 53.3%;
+ 
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+ 
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+ 
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+ 
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+ 
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.9%;
+ 
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+ 
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+ 
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+ 
+    --ring: 217.2 91.2% 59.8%;
+  }
 }
 
-/* Holographic gradient text effect */
-.holographic-gradient {
-  @apply text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-blue-300 to-purple-300 relative;
-  filter: drop-shadow(0 0 0.5rem rgba(139, 92, 246, 0.5));
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
-/* Quantum card styling */
+/* Custom styles */
 .quantum-card {
-  @apply bg-black/30 backdrop-blur-md border border-purple-500/20 shadow-lg shadow-purple-800/10 relative overflow-hidden rounded-xl;
+  @apply rounded-lg shadow-md bg-card text-card-foreground;
 }
 
-.quantum-card::before {
-  content: '';
-  @apply absolute inset-0 bg-gradient-to-r from-purple-700/10 to-blue-700/5 opacity-50;
-  z-index: -1;
+.quantum-primary {
+  @apply text-primary dark:text-primary-foreground;
 }
 
-.quantum-card-glow {
-  @apply shadow-[0_0_30px_rgba(139,92,246,0.3)];
+/* Animations */
+@keyframes slide-up {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-/* Energy field effect */
-.energy-field {
-  @apply absolute inset-0 z-0 opacity-20 pointer-events-none;
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+.slide-up {
+  animation: slide-up 0.3s ease-out forwards;
 }
 
-/* Quantum button */
-.quantum-btn {
-  @apply relative overflow-hidden rounded-xl bg-gradient-to-r from-purple-600 to-blue-500 px-4 py-2 text-white shadow-md transition-all duration-300 hover:shadow-lg;
+/* Keyframes for pulsating glow effect */
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 5px rgba(155, 135, 245, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(155, 135, 245, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(155, 135, 245, 0.5);
+  }
 }
 
-.quantum-btn::before {
-  content: '';
-  @apply absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-400 opacity-0 transition-opacity duration-300;
+/* Apply the glow animation to the button */
+.quantum-button-glow {
+  animation: pulse-glow 2s infinite;
 }
 
-.quantum-btn:hover::before {
-  @apply opacity-100;
+/* Random movement animation for rates */
+@keyframes random-move {
+  0% { transform: translate(10%, 10%); }
+  25% { transform: translate(60%, 30%); }
+  50% { transform: translate(30%, 70%); }
+  75% { transform: translate(70%, 50%); }
+  100% { transform: translate(20%, 40%); }
 }
 
-/* Glass panel effect */
-.glass-panel {
-  @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-xl shadow-md;
-}
-
-/* Animation classes */
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-.animate-pulse-soft {
-  animation: pulse-soft 3s ease-in-out infinite;
-}
-
-.animate-spin-slow {
-  animation: spin-slow 8s linear infinite;
-}
-
-/* Pendulum animations */
-.pendulum-swing {
-  transform-origin: top center;
-  animation: pendulum 2s ease-in-out infinite;
-}
-
-.pendulum-swing-left {
-  transform-origin: top center;
-  animation: pendulum-left 2s ease-in-out infinite;
-}
-
-.pendulum-swing-right {
-  transform-origin: top center;
-  animation: pendulum-right 2s ease-in-out infinite;
-}
-
-@keyframes pendulum {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(15deg); }
-  75% { transform: rotate(-15deg); }
-}
-
-@keyframes pendulum-left {
-  0%, 100% { transform: rotate(0deg); }
-  50% { transform: rotate(-20deg); }
-}
-
-@keyframes pendulum-right {
-  0%, 100% { transform: rotate(0deg); }
-  50% { transform: rotate(20deg); }
-}
-
-/* Energy Wave Animation */
-.animate-wave {
-  animation: wave 2s ease-out infinite;
-}
-
-/* Shimmer Effect */
-.animate-shimmer {
-  background-size: 1000px 100%;
-  background-image: linear-gradient(
-    to right,
-    rgba(232, 221, 255, 0.1) 8%,
-    rgba(139, 92, 246, 0.2) 18%,
-    rgba(232, 221, 255, 0.1) 33%
-  );
-  animation: shimmer 2s infinite linear;
-}
-
-/* Treatment button styles */
-.treatment-btn-active {
-  @apply bg-gradient-to-r from-purple-600 to-blue-500 text-white shadow-lg shadow-purple-500/30 border-transparent rounded-xl;
-}
-
-.treatment-btn-inactive {
-  @apply bg-black/40 border-purple-500/30 text-purple-300 rounded-xl;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes pulse-soft {
+/* Pulse animation for treatment elements */
+@keyframes pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes wave {
-  0% { transform: scale(0); opacity: 1; }
-  100% { transform: scale(1); opacity: 0; }
-}
-
-@keyframes shimmer {
-  0% { background-position: -500px 0; }
-  100% { background-position: 500px 0; }
+  50% { opacity: 0.6; }
 }

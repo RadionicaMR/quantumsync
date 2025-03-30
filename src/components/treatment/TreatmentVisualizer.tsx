@@ -38,40 +38,45 @@ const TreatmentVisualizer = ({
   const radionicImagesArray = radionicImages.length > 0 ? radionicImages : (radionicImage ? [radionicImage] : []);
   const receptorImagesArray = receptorImages.length > 0 ? receptorImages : (receptorImage ? [receptorImage] : []);
 
-  const hasImages = radionicImagesArray.length > 0 || receptorImagesArray.length > 0;
+  const hasRadionicImages = radionicImagesArray.length > 0;
+  const hasReceptorImages = receptorImagesArray.length > 0;
+  const hasImages = hasRadionicImages || hasReceptorImages;
 
   return (
-    <div className="mt-4 relative aspect-square w-full bg-white rounded-lg overflow-hidden">
-      {/* Efectos con las imágenes */}
-      {hasImages && hypnoticEffect && (
+    <div className="relative aspect-square w-full bg-black rounded-lg overflow-hidden">
+      {/* Show blended images */}
+      {hasImages && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-          {currentImage === 'radionic' && radionicImagesArray.map((img, index) => (
-            <img 
-              key={`radionic-${index}`}
-              src={img}
-              alt={`Efecto radiónico ${index + 1}`}
-              className="absolute inset-0 w-full h-full object-contain transition-opacity duration-100 animate-pulse"
-              style={{ 
-                opacity: 0.8 / radionicImagesArray.length,
-                filter: 'contrast(1.2) brightness(1.1)',
-                animationDelay: `${index * 0.3}s`
-              }}
-            />
-          ))}
-          
-          {currentImage === 'receptor' && receptorImagesArray.map((img, index) => (
-            <img 
-              key={`receptor-${index}`}
-              src={img}
-              alt={`Efecto receptor ${index + 1}`}
-              className="absolute inset-0 w-full h-full object-contain transition-opacity duration-100 animate-pulse"
-              style={{ 
-                opacity: 0.8 / receptorImagesArray.length,
-                filter: 'contrast(1.2) brightness(1.1)',
-                animationDelay: `${index * 0.3}s`
-              }}
-            />
-          ))}
+          {/* Always show a blend of both images instead of alternating */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            {hasRadionicImages && radionicImagesArray.map((img, index) => (
+              <img 
+                key={`radionic-${index}`}
+                src={img}
+                alt={`Efecto radiónico ${index + 1}`}
+                className="absolute inset-0 w-full h-full object-contain"
+                style={{ 
+                  opacity: 0.7 / radionicImagesArray.length,
+                  mixBlendMode: 'screen',
+                  filter: 'contrast(1.2) brightness(1.1)',
+                }}
+              />
+            ))}
+            
+            {hasReceptorImages && receptorImagesArray.map((img, index) => (
+              <img 
+                key={`receptor-${index}`}
+                src={img}
+                alt={`Efecto receptor ${index + 1}`}
+                className="absolute inset-0 w-full h-full object-contain"
+                style={{ 
+                  opacity: 0.7 / receptorImagesArray.length,
+                  mixBlendMode: 'multiply',
+                  filter: 'contrast(1.2) brightness(1.1)',
+                }}
+              />
+            ))}
+          </div>
         </div>
       )}
       
@@ -88,54 +93,62 @@ const TreatmentVisualizer = ({
       </div>
       
       {/* RATES con movimiento aleatorio dentro de la imagen */}
-      {(rate1 || rate2 || rate3) && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="relative w-full h-full max-w-[90%] max-h-[90%]">
-            {rate1 && (
-              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded text-sm md:text-base" 
-                  style={{ 
-                    left: '20%',
-                    top: '20%',
-                    maxWidth: '80%',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    animation: 'random-move 15s infinite alternate'
-                  }}>
-                {rate1}
-              </div>
-            )}
-            {rate2 && (
-              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded text-sm md:text-base"
-                  style={{ 
-                    left: '50%',
-                    top: '40%',
-                    maxWidth: '80%',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    animation: 'random-move 18s infinite alternate-reverse'
-                  }}>
-                {rate2}
-              </div>
-            )}
-            {rate3 && (
-              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded text-sm md:text-base"
-                  style={{ 
-                    left: '30%',
-                    top: '60%',
-                    maxWidth: '80%',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    animation: 'random-move 20s infinite'
-                  }}>
-                {rate3}
-              </div>
-            )}
-          </div>
+      <style jsx>{`
+        @keyframes random-move {
+          0% { transform: translate(10%, 10%); }
+          25% { transform: translate(60%, 30%); }
+          50% { transform: translate(30%, 70%); }
+          75% { transform: translate(70%, 50%); }
+          100% { transform: translate(20%, 40%); }
+        }
+      `}</style>
+      
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="relative w-full h-full max-w-[90%] max-h-[90%]">
+          {rate1 && (
+            <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded text-sm md:text-base" 
+                style={{ 
+                  left: '20%',
+                  top: '20%',
+                  maxWidth: '80%',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  animation: 'random-move 15s infinite alternate'
+                }}>
+              {rate1}
+            </div>
+          )}
+          {rate2 && (
+            <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded text-sm md:text-base"
+                style={{ 
+                  left: '50%',
+                  top: '40%',
+                  maxWidth: '80%',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  animation: 'random-move 18s infinite alternate-reverse'
+                }}>
+              {rate2}
+            </div>
+          )}
+          {rate3 && (
+            <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded text-sm md:text-base"
+                style={{ 
+                  left: '30%',
+                  top: '60%',
+                  maxWidth: '80%',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  animation: 'random-move 20s infinite'
+                }}>
+              {rate3}
+            </div>
+          )}
         </div>
-      )}
+      </div>
       
       {/* Texto de frecuencia que titila junto con las imágenes */}
       <div className="absolute inset-0 flex items-center justify-center">
