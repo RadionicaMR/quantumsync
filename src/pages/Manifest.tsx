@@ -259,8 +259,14 @@ const Manifest = () => {
         <div className="container mx-auto">
           <Tabs defaultValue="presets" className="w-full" onValueChange={handleTabChange}>
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
-              <TabsTrigger value="presets">Patrones Preestablecidos</TabsTrigger>
-              <TabsTrigger value="custom">Patrón Personalizado</TabsTrigger>
+              <TabsTrigger value="presets" className="flex flex-col">
+                <span>Patrones</span>
+                <span>Preestablecidos</span>
+              </TabsTrigger>
+              <TabsTrigger value="custom" className="flex flex-col">
+                <span>Patrón</span>
+                <span>Personalizado</span>
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="presets" className="w-full">

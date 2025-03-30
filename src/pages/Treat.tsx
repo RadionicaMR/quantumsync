@@ -179,8 +179,14 @@ const Treat = () => {
         <div className="container mx-auto">
           <Tabs defaultValue="presets" className="w-full">
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
-              <TabsTrigger value="presets">Preajustes de Frecuencia</TabsTrigger>
-              <TabsTrigger value="custom">Tratamiento Personalizado</TabsTrigger>
+              <TabsTrigger value="presets" className="flex flex-col">
+                <span>Preajustes</span>
+                <span>de Frecuencia</span>
+              </TabsTrigger>
+              <TabsTrigger value="custom" className="flex flex-col">
+                <span>Tratamiento</span>
+                <span>Personalizado</span>
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="presets" className="w-full">

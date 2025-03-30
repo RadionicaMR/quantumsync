@@ -59,15 +59,17 @@ const DiagnosisTabs: React.FC<DiagnosisTabsProps> = ({ isMobile }) => {
         <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-4 md:mb-6 bg-quantum-dark/30 border border-quantum-primary/20">
           <TabsTrigger 
             value="pendulum" 
-            className="data-[state=active]:bg-quantum-primary/20 data-[state=active]:text-white"
+            className="flex flex-col data-[state=active]:bg-quantum-primary/20 data-[state=active]:text-white"
           >
-            Péndulo Virtual
+            <span>Péndulo</span>
+            <span>Virtual</span>
           </TabsTrigger>
           <TabsTrigger 
             value="dowsing"
-            className="data-[state=active]:bg-quantum-primary/20 data-[state=active]:text-white"
+            className="flex flex-col data-[state=active]:bg-quantum-primary/20 data-[state=active]:text-white"
           >
-            Escáner Energético
+            <span>Escáner</span>
+            <span>Energético</span>
           </TabsTrigger>
         </TabsList>
         
