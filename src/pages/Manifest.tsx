@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Upload, Volume2, VolumeX, Clock, Trash2 } from 'lucide-react';
@@ -20,6 +19,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { toast } from "@/components/ui/use-toast";
+import RateInputs from '@/components/treatment/RateInputs';
 
 const Manifest = () => {
   // Estados para la manifestación
@@ -35,6 +35,10 @@ const Manifest = () => {
   const [currentImage, setCurrentImage] = useState<'pattern' | 'receptor' | 'mix'>('pattern');
   const [exposureTime, setExposureTime] = useState([5]); // Changed to minutes now
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
+  // Nuevos estados para RATES
+  const [rate1, setRate1] = useState('');
+  const [rate2, setRate2] = useState('');
+  const [rate3, setRate3] = useState('');
   
   // Referencias para elementos DOM y audio
   const patternFileInputRef = useRef<HTMLInputElement>(null);
@@ -331,7 +335,7 @@ const Manifest = () => {
                             <Label className="mb-2 block">Velocidad de Visualización: {visualSpeed[0]}</Label>
                             <Slider
                               min={1}
-                              max={30} // Aumentado el máximo para una visualización más rápida
+                              max={30}
                               step={1}
                               value={visualSpeed}
                               onValueChange={setVisualSpeed}
@@ -353,6 +357,19 @@ const Manifest = () => {
                               onValueChange={setExposureTime}
                               disabled={isManifestActive}
                               className="mb-4"
+                            />
+                          </div>
+
+                          {/* Nuevos campos RATE */}
+                          <div className="mt-6">
+                            <RateInputs 
+                              rate1={rate1}
+                              setRate1={setRate1}
+                              rate2={rate2}
+                              setRate2={setRate2}
+                              rate3={rate3}
+                              setRate3={setRate3}
+                              isPlaying={isManifestActive}
                             />
                           </div>
 
@@ -500,6 +517,50 @@ const Manifest = () => {
                                 {intention}
                               </div>
                             </div>
+
+                            {/* RATES girando en círculo */}
+                            {(rate1 || rate2 || rate3) && (
+                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <div className="relative w-64 h-64">
+                                  {rate1 && (
+                                    <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded animate-spin-slow" 
+                                        style={{ 
+                                          left: '50%', 
+                                          top: '10%',
+                                          transform: 'translateX(-50%) rotate(0deg)', 
+                                          transformOrigin: 'center 10rem' 
+                                        }}>
+                                      {rate1}
+                                    </div>
+                                  )}
+                                  {rate2 && (
+                                    <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded animate-spin-slow"
+                                        style={{ 
+                                          left: '50%', 
+                                          top: '10%',
+                                          transform: 'translateX(-50%) rotate(120deg)', 
+                                          transformOrigin: 'center 10rem',
+                                          animationDelay: '0.5s',
+                                          animationDirection: 'reverse'
+                                        }}>
+                                      {rate2}
+                                    </div>
+                                  )}
+                                  {rate3 && (
+                                    <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded animate-spin-slow"
+                                        style={{ 
+                                          left: '50%', 
+                                          top: '10%',
+                                          transform: 'translateX(-50%) rotate(240deg)', 
+                                          transformOrigin: 'center 10rem',
+                                          animationDelay: '1s'
+                                        }}>
+                                      {rate3}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
@@ -636,6 +697,18 @@ const Manifest = () => {
                       </div>
                     </div>
 
+                    {/* Nuevos campos RATE */}
+                    <div className="mt-6">
+                      <RateInputs 
+                        rate1={rate1}
+                        setRate1={setRate1}
+                        rate2={rate2}
+                        setRate2={setRate2}
+                        rate3={rate3}
+                        setRate3={setRate3}
+                        isPlaying={isManifestActive}
+                      />
+                    </div>
                   </div>
                   
                   <div className="lg:col-span-2">
@@ -684,7 +757,7 @@ const Manifest = () => {
                           <Label className="mb-2 block">Velocidad de Visualización: {visualSpeed[0]}</Label>
                           <Slider
                             min={1}
-                            max={30} // Aumentado el máximo para una visualización más rápida
+                            max={30}
                             step={1}
                             value={visualSpeed}
                             onValueChange={setVisualSpeed}
@@ -755,146 +828,4 @@ const Manifest = () => {
                             
                             {currentImage === 'receptor' && receptorImage && (
                               <img 
-                                src={receptorImage}
-                                alt="Imagen del receptor"
-                                className="max-h-full max-w-full object-contain opacity-80 transition-opacity duration-300"
-                                style={{ animation: `pulse ${exposureTime[0] / 3}s infinite alternate` }}
-                              />
-                            )}
-                            
-                            {currentImage === 'mix' && (
-                              <>
-                                {/* Superposición de ambas imágenes */}
-                                {patternImage && (
-                                  <img 
-                                    src={patternImage}
-                                    alt="Mezcla de imágenes"
-                                    className="absolute inset-0 max-h-full max-w-full object-contain opacity-40 mix-blend-overlay"
-                                    style={{ animation: `pulse ${exposureTime[0] / 3}s infinite alternate` }}
-                                  />
-                                )}
-                                
-                                {receptorImage && (
-                                  <img 
-                                    src={receptorImage}
-                                    alt="Mezcla de imágenes"
-                                    className="absolute inset-0 max-h-full max-w-full object-contain opacity-40 mix-blend-multiply"
-                                    style={{ animation: `pulse ${exposureTime[0] / 3}s infinite alternate` }}
-                                  />
-                                )}
-                              </>
-                            )}
-                            
-                            {/* Texto de la intención con estilo más sutil */}
-                            <div 
-                              className="absolute inset-0 flex items-center justify-center text-white font-medium text-xl opacity-60 p-4 text-center"
-                              style={{
-                                animation: `textPulse ${60/visualSpeed[0]}s alternate infinite ease-in-out`,
-                                textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 16px rgba(155,135,245,0.6)'
-                              }}
-                            >
-                              {intention}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </section>
-
-      <section className="py-12 px-4 bg-quantum-gradient-soft">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Cómo Funciona la Manifestación Cuántica</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              QuantumSync utiliza principios de manifestación cuántica y radiónica para amplificar tus intenciones a nivel energético.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="quantum-card p-6">
-              <div className="w-12 h-12 rounded-full bg-quantum-gradient-soft text-quantum-primary flex items-center justify-center mb-4 mx-auto">
-                1
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-center">Define tu Intención</h3>
-              <p className="text-muted-foreground text-center">
-                Establece claramente qué deseas manifestar, siendo específico y positivo en tu formulación.
-              </p>
-            </Card>
-            
-            <Card className="quantum-card p-6">
-              <div className="w-12 h-12 rounded-full bg-quantum-gradient-soft text-quantum-primary flex items-center justify-center mb-4 mx-auto">
-                2
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-center">Amplifica con Patrones Radiónicos</h3>
-              <p className="text-muted-foreground text-center">
-                Los patrones geométricos actúan como amplificadores energéticos para tu intención en el campo cuántico.
-              </p>
-            </Card>
-            
-            <Card className="quantum-card p-6">
-              <div className="w-12 h-12 rounded-full bg-quantum-gradient-soft text-quantum-primary flex items-center justify-center mb-4 mx-auto">
-                3
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-center">Activa la Manifestación</h3>
-              <p className="text-muted-foreground text-center">
-                Mediante la visualización activa y las frecuencias sonoras, tu intención se programa en la matriz de la realidad.
-              </p>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-12 px-4">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Patrones Radiónicos Avanzados</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Explora nuestra biblioteca de patrones radiónicos para diferentes propósitos de manifestación.
-            </p>
-          </div>
-          
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full max-w-4xl mx-auto"
-          >
-            <CarouselContent>
-              {patterns.map((pattern) => (
-                <CarouselItem key={pattern.id} className="md:basis-1/2 lg:basis-1/3">
-                  <Card className="quantum-card h-full">
-                    <div className="p-1">
-                      <div className="h-48 flex items-center justify-center p-6">
-                        <div className="relative w-full h-full">
-                          <div className="absolute inset-0 rounded-full bg-quantum-gradient-soft opacity-30 animate-pulse-soft"></div>
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="text-2xl font-bold holographic-gradient">{pattern.name}</div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="p-4 text-center">
-                        <h4 className="font-medium mb-2">{pattern.name}</h4>
-                        <p className="text-sm text-muted-foreground">{pattern.description}</p>
-                      </div>
-                    </div>
-                  </Card>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-          </Carousel>
-        </div>
-      </section>
-    </Layout>
-  );
-};
-
-export default Manifest;
+                                src={

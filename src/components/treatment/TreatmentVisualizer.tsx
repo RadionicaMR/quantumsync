@@ -58,11 +58,50 @@ const TreatmentVisualizer = ({
       <div className="absolute bottom-3 left-3 text-xs md:text-sm text-white z-20 font-mono bg-black/40 px-2 py-1 rounded">
         Frecuencia: {frequency[0]} Hz · Intensidad: {intensity[0]}%
       </div>
-      <div className="absolute top-3 right-3 flex space-x-4 text-sm font-mono bg-black/40 px-2 py-1 rounded z-20">
-        <span className="animate-pulse">{rate1}</span>
-        <span className="animate-pulse" style={{ animationDelay: '0.2s' }}>{rate2}</span>
-        <span className="animate-pulse" style={{ animationDelay: '0.4s' }}>{rate3}</span>
-      </div>
+      
+      {/* RATES girando en círculo */}
+      {(rate1 || rate2 || rate3) && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="relative w-64 h-64">
+            {rate1 && (
+              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded animate-spin-slow" 
+                  style={{ 
+                    left: '50%', 
+                    top: '10%',
+                    transform: 'translateX(-50%) rotate(0deg)', 
+                    transformOrigin: 'center 10rem' 
+                  }}>
+                {rate1}
+              </div>
+            )}
+            {rate2 && (
+              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded animate-spin-slow"
+                  style={{ 
+                    left: '50%', 
+                    top: '10%',
+                    transform: 'translateX(-50%) rotate(120deg)', 
+                    transformOrigin: 'center 10rem',
+                    animationDelay: '0.5s',
+                    animationDirection: 'reverse'
+                  }}>
+                {rate2}
+              </div>
+            )}
+            {rate3 && (
+              <div className="absolute text-white font-mono bg-black/40 px-2 py-1 rounded animate-spin-slow"
+                  style={{ 
+                    left: '50%', 
+                    top: '10%',
+                    transform: 'translateX(-50%) rotate(240deg)', 
+                    transformOrigin: 'center 10rem',
+                    animationDelay: '1s'
+                  }}>
+                {rate3}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
