@@ -146,7 +146,7 @@ const About = () => {
                   <div className="absolute inset-0 bg-quantum-primary/10 rounded-full animate-pulse-soft"></div>
                   <div className="relative z-10 bg-white dark:bg-card p-4 rounded-xl shadow-xl">
                     <img 
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                      src="/lovable-uploads/bfbeb5d4-24e2-405c-86c8-9d1c408d09fc.png" 
                       alt="Mauricio Ramos - Fundador" 
                       className="rounded-lg w-full h-auto"
                     />
