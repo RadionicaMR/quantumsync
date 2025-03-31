@@ -1,6 +1,6 @@
-
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
 import FeatureCard from '@/components/FeatureCard';
@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/card';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState(0);
+  const navigate = useNavigate();
 
   const testimonials = [
     {
@@ -135,8 +136,13 @@ const Index = () => {
         subtitle="QuantumSync combina ciencia, tecnología y bienestar para ayudarte a equilibrar tu energía y alcanzar tus objetivos."
       >
         <div className="flex flex-col sm:flex-row gap-4 mt-4">
-          <QuantumButton size="lg">Comenzar</QuantumButton>
-          <QuantumButton variant="outline" size="lg">Saber Más</QuantumButton>
+          <QuantumButton size="lg" onClick={() => navigate('/diagnose')}>Comenzar</QuantumButton>
+          <QuantumButton variant="outline" size="lg" onClick={() => {
+            const aboutSection = document.querySelector('#about-section');
+            if (aboutSection) {
+              aboutSection.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}>Saber Más</QuantumButton>
         </div>
       </HeroSection>
 
@@ -171,7 +177,7 @@ const Index = () => {
       </section>
 
       {/* About Section */}
-      <section className="py-16 px-4 bg-quantum-gradient-soft">
+      <section id="about-section" className="py-16 px-4 bg-quantum-gradient-soft">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -183,7 +189,7 @@ const Index = () => {
               <p className="text-muted-foreground mb-6">
                 Nuestra esencia radica en integrar tecnología avanzada con conocimientos tradicionales y modernos sobre energía y vibraciones. Sabemos que la energía es la base de todo en el universo, y QuantumSync te da la oportunidad de conectarte con ella de manera práctica y efectiva.
               </p>
-              <QuantumButton>Conoce Nuestra Misión</QuantumButton>
+              <QuantumButton onClick={() => navigate('/about')}>Conoce Nuestra Misión</QuantumButton>
             </div>
             <div className="relative">
               <div className="absolute inset-0 bg-quantum-primary/10 rounded-full animate-pulse-soft"></div>
@@ -314,38 +320,16 @@ const Index = () => {
               <p className="text-muted-foreground mb-6">
                 QuantumSync no es solo una herramienta para transformar tu vida, sino también una oportunidad para generar ingresos. Nuestro plan de compensación está diseñado para recompensar tus esfuerzos en la promoción de la aplicación, creando un modelo justo y escalable.
               </p>
-              <p className="text-muted-foreground mb-6">
-                Como usuario directo, ganas $4 por cada venta que realices. Por cada afiliado que invites, recibes $3 por cada venta que ellos realicen. Además, ganas $2 por cada venta de afiliados de segundo nivel y $1 por cada venta de tercer nivel.
-              </p>
-              <QuantumButton>Conviértete en Afiliado</QuantumButton>
+              <QuantumButton onClick={() => navigate('/affiliate')}>Conviértete en Afiliado (MUY PRONTO)</QuantumButton>
             </div>
             <div className="relative">
               <div className="absolute inset-0 bg-quantum-primary/10 rounded-full animate-pulse-soft"></div>
-              <div className="relative z-10 bg-white dark:bg-card p-6 rounded-xl shadow-xl">
-                <h3 className="text-xl font-semibold mb-4">Ejemplo de Ingresos Mensuales</h3>
-                <ul className="space-y-4">
-                  <li className="flex items-start gap-2">
-                    <div className="w-6 h-6 rounded-full bg-quantum-primary text-white flex items-center justify-center flex-shrink-0 mt-0.5">1</div>
-                    <div>
-                      <p className="font-medium">Primer Mes: $1,020</p>
-                      <p className="text-sm text-muted-foreground">30 ventas directas ($120) + 10 afiliados con 30 ventas cada uno ($900)</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-6 h-6 rounded-full bg-quantum-primary text-white flex items-center justify-center flex-shrink-0 mt-0.5">2</div>
-                    <div>
-                      <p className="font-medium">Segundo Mes: $7,020</p>
-                      <p className="text-sm text-muted-foreground">Ingresos continuos del primer mes + 100 afiliados de segundo nivel con 30 ventas cada uno ($6,000)</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-6 h-6 rounded-full bg-quantum-primary text-white flex items-center justify-center flex-shrink-0 mt-0.5">3</div>
-                    <div>
-                      <p className="font-medium">Tercer Mes: $37,020</p>
-                      <p className="text-sm text-muted-foreground">Ingresos anteriores + 1,000 afiliados de tercer nivel con 30 ventas cada uno ($30,000)</p>
-                    </div>
-                  </li>
-                </ul>
+              <div className="relative z-10 bg-white dark:bg-card p-4 rounded-xl shadow-xl">
+                <img 
+                  src="https://images.unsplash.com/photo-1513682121497-80211f36a7d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                  alt="Persona feliz ganando dinero" 
+                  className="rounded-lg w-full h-auto"
+                />
               </div>
             </div>
           </div>
@@ -360,10 +344,16 @@ const Index = () => {
             Descarga QuantumSync hoy y comienza tu viaje hacia un mejor bienestar, energía equilibrada y nuevas posibilidades.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-quantum-primary font-medium px-6 py-3 rounded-full shadow-lg hover:bg-white/90 transition-colors">
-              Descargar Ahora
+            <button 
+              className="bg-white text-quantum-primary font-medium px-6 py-3 rounded-full shadow-lg hover:bg-white/90 transition-colors"
+              onClick={() => navigate('/diagnose')}
+            >
+              Comienza Ahora
             </button>
-            <button className="border-2 border-white text-white font-medium px-6 py-3 rounded-full hover:bg-white/10 transition-colors">
+            <button 
+              className="border-2 border-white text-white font-medium px-6 py-3 rounded-full hover:bg-white/10 transition-colors"
+              onClick={() => navigate('/about')}
+            >
               Saber Más
             </button>
           </div>
