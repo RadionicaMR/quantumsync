@@ -29,7 +29,8 @@ export const useTreatmentImages = () => {
       }
       
       // Configuramos la velocidad basada en el valor del deslizador
-      const switchInterval = Math.max(100, 2000 / hypnoticSpeed[0]);
+      // Faster speed (higher value) = shorter interval time
+      const switchInterval = 2000 / Math.max(1, hypnoticSpeed[0]);
       
       console.log("Starting hypnotic effect with speed:", hypnoticSpeed[0], "interval:", switchInterval);
       

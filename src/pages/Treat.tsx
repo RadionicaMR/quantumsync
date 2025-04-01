@@ -17,21 +17,25 @@ const Treat = () => {
   const treatment = useTreatment();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("presets");
+  const [diagnosisImported, setDiagnosisImported] = useState(false);
   
   // Check if we're coming from diagnosis page
   useEffect(() => {
-    if (location.state?.fromDiagnosis) {
+    if (location.state?.fromDiagnosis && !diagnosisImported) {
       const { personName, diagnosisArea, diagnosisResult } = location.state;
       
       // Set the receptor name from the diagnosis
       if (personName) {
         treatment.setReceptorName(personName);
         
-        // Show toast notification
+        // Show toast notification only once when first loading the page
         toast({
           title: "Diagnóstico importado",
           description: `Importando datos del diagnóstico de ${diagnosisArea} para ${personName}`,
         });
+        
+        // Mark as imported to prevent showing the toast again
+        setDiagnosisImported(true);
       }
     }
   }, [location.state, treatment]);

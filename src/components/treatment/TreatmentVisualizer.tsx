@@ -46,11 +46,14 @@ const TreatmentVisualizer = ({
   const hasReceptorImages = receptorImagesArray.length > 0;
   const hasImages = hasRadionicImages || hasReceptorImages || receptorName.trim().length > 0;
 
-  // Calculate animation speed based on hypnotic speed
+  // Calculate animation speed based on hypnotic speed - faster speed = shorter duration
   const animationDuration = Math.max(0.1, 20 / hypnoticSpeed[0]);
   
   // Calculate faster animation speed for RATE texts based on hypnotic speed
   const rateAnimationDuration = Math.max(5, 15 - hypnoticSpeed[0]);
+
+  // Pulse animation duration based on hypnotic speed
+  const pulseDuration = Math.max(0.5, 5 - (hypnoticSpeed[0] / 4));
 
   return (
     <div className="relative aspect-square w-full bg-black rounded-lg overflow-hidden">
@@ -70,7 +73,8 @@ const TreatmentVisualizer = ({
                     (currentImage === 'radionic' ? 0.9 : (currentImage === 'mix' ? 0.6 : 0)) : 0.9,
                   mixBlendMode: 'screen',
                   filter: 'contrast(1.2) brightness(1.1)',
-                  transition: `opacity ${animationDuration/3}s ease-in-out`
+                  transition: `opacity ${animationDuration/3}s ease-in-out`,
+                  animation: hypnoticEffect ? `pulse ${pulseDuration}s infinite alternate ease-in-out` : 'none'
                 }}
               />
             ))}
@@ -86,7 +90,8 @@ const TreatmentVisualizer = ({
                     (currentImage === 'receptor' ? 0.9 : (currentImage === 'mix' ? 0.6 : 0)) : 0.9,
                   mixBlendMode: 'multiply',
                   filter: 'contrast(1.2) brightness(1.1)',
-                  transition: `opacity ${animationDuration/3}s ease-in-out`
+                  transition: `opacity ${animationDuration/3}s ease-in-out`,
+                  animation: hypnoticEffect ? `pulse ${pulseDuration}s infinite alternate-reverse ease-in-out` : 'none'
                 }}
               />
             ))}
@@ -98,7 +103,8 @@ const TreatmentVisualizer = ({
                 style={{
                   opacity: hypnoticEffect ? 
                     ((currentImage === 'receptor' || currentImage === 'mix') ? 1 : 0) : 1,
-                  transition: `opacity ${animationDuration/3}s ease-in-out`
+                  transition: `opacity ${animationDuration/3}s ease-in-out`,
+                  animation: hypnoticEffect ? `pulse ${pulseDuration}s infinite alternate` : 'none'
                 }}
               >
                 <div className="text-2xl font-bold text-white bg-black/50 px-6 py-4 rounded-lg">
