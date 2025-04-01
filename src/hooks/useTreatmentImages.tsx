@@ -18,7 +18,7 @@ export const useTreatmentImages = () => {
   const startHypnoticEffect = () => {
     // Consideramos ya sea imágenes cargadas o un nombre de receptor
     const hasRadionicImagesOrName = radionicImages.length > 0 || radionicImage;
-    const hasReceptorImagesOrName = receptorImages.length > 0 || receptorImage || receptorName;
+    const hasReceptorImagesOrName = receptorImages.length > 0 || receptorImage || receptorName.trim().length > 0;
     
     if (hasRadionicImagesOrName || hasReceptorImagesOrName) {
       setHypnoticEffect(true);
@@ -39,12 +39,9 @@ export const useTreatmentImages = () => {
       
       hypnoticTimerRef.current = setInterval(() => {
         setCurrentImage(prev => {
-          switch(prev) {
-            case 'radionic': return 'receptor';
-            case 'receptor': return 'mix';
-            case 'mix': return 'radionic';
-            default: return 'radionic';
-          }
+          if (prev === 'radionic') return 'receptor';
+          if (prev === 'receptor') return 'radionic';
+          return 'radionic';
         });
       }, switchInterval);
     } else {

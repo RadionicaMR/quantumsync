@@ -61,7 +61,7 @@ const TreatmentVisualizer = ({
       {/* Show blended images */}
       {hasImages && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-          {/* Radionic Images */}
+          {/* Radionic Images - Only show when current is radionic or mix */}
           {(currentImage === 'radionic' || currentImage === 'mix') && hasRadionicImages && (
             <div className="absolute inset-0 flex items-center justify-center z-10">
               {radionicImagesArray.map((img, index) => (
@@ -71,7 +71,7 @@ const TreatmentVisualizer = ({
                   alt={`Efecto radiónico ${index + 1}`}
                   className="absolute inset-0 w-full h-full object-contain"
                   style={{ 
-                    opacity: currentImage === 'mix' ? 0.6 : 1,
+                    opacity: 1,
                     mixBlendMode: 'screen',
                     filter: 'contrast(1.2) brightness(1.1)',
                     transition: `opacity ${animationDuration/2}s ease-in-out`,
@@ -82,7 +82,7 @@ const TreatmentVisualizer = ({
             </div>
           )}
           
-          {/* Receptor Images */}
+          {/* Receptor Images - Only show when current is receptor or mix */}
           {(currentImage === 'receptor' || currentImage === 'mix') && (
             <div className="absolute inset-0 flex items-center justify-center z-20">
               {/* Show receptor images if available */}
@@ -93,7 +93,7 @@ const TreatmentVisualizer = ({
                   alt={`Efecto receptor ${index + 1}`}
                   className="absolute inset-0 w-full h-full object-contain"
                   style={{ 
-                    opacity: currentImage === 'mix' ? 0.6 : 1,
+                    opacity: 1,
                     mixBlendMode: 'multiply',
                     filter: 'contrast(1.2) brightness(1.1)',
                     transition: `opacity ${animationDuration/2}s ease-in-out`,
@@ -103,11 +103,11 @@ const TreatmentVisualizer = ({
               ))}
               
               {/* Show receptor name when needed */}
-              {hasReceptorName && (!hasReceptorImages || currentImage === 'receptor') && (
+              {hasReceptorName && (!hasReceptorImages) && (
                 <div 
                   className="absolute inset-0 flex items-center justify-center"
                   style={{
-                    opacity: currentImage === 'mix' ? 0.6 : 1,
+                    opacity: 1,
                     transition: `opacity ${animationDuration/2}s ease-in-out`,
                     animation: `pulse ${pulseDuration}s infinite alternate`
                   }}
