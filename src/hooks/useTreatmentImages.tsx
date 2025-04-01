@@ -37,15 +37,18 @@ export const useTreatmentImages = () => {
       // Importante: establecemos 'mix' inicialmente para mostrar ambas imágenes
       setCurrentImage('mix');
       
-      // Crear el intervalo para alternar entre imágenes
+      // Crear el intervalo para alternar entre imágenes similar a la página de manifestación
       hypnoticTimerRef.current = setInterval(() => {
         setCurrentImage(prev => {
           // Si tenemos ambas imágenes disponibles, alternamos entre los tres estados
           if ((radionicImages.length > 0 || radionicImage) && 
               (receptorImages.length > 0 || receptorImage || receptorName)) {
-            if (prev === 'radionic') return 'receptor';
-            if (prev === 'receptor') return 'mix';
-            return 'radionic';
+            switch(prev) {
+              case 'radionic': return 'receptor';
+              case 'receptor': return 'mix';
+              case 'mix': return 'radionic';
+              default: return 'radionic';
+            }
           }
           // Si solo tenemos imágenes radiónicas, alternamos entre 'radionic' y 'mix'
           else if (radionicImages.length > 0 || radionicImage) {

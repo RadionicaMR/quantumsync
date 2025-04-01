@@ -62,49 +62,84 @@ const TreatmentVisualizer = ({
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
           {/* Show images with appropriate animation based on hypnoticEffect */}
           <div className="absolute inset-0 flex items-center justify-center">
-            {hasRadionicImages && radionicImagesArray.map((img, index) => (
+            {/* Mostrar imagen según el estado actual */}
+            {currentImage === 'radionic' && hasRadionicImages && radionicImagesArray.map((img, index) => (
               <img 
                 key={`radionic-${index}`}
                 src={img}
                 alt={`Efecto radiónico ${index + 1}`}
                 className="absolute inset-0 w-full h-full object-contain"
                 style={{ 
-                  opacity: hypnoticEffect ? 
-                    (currentImage === 'radionic' ? 0.9 : (currentImage === 'mix' ? 0.6 : 0)) : 0.9,
+                  opacity: 0.9,
                   mixBlendMode: 'screen',
                   filter: 'contrast(1.2) brightness(1.1)',
                   transition: `opacity ${animationDuration/3}s ease-in-out`,
-                  animation: hypnoticEffect ? `pulse ${pulseDuration}s infinite alternate ease-in-out` : 'none'
+                  animation: `pulse ${pulseDuration}s infinite alternate ease-in-out`
                 }}
               />
             ))}
             
-            {hasReceptorImages && receptorImagesArray.map((img, index) => (
+            {currentImage === 'receptor' && hasReceptorImages && receptorImagesArray.map((img, index) => (
               <img 
                 key={`receptor-${index}`}
                 src={img}
                 alt={`Efecto receptor ${index + 1}`}
                 className="absolute inset-0 w-full h-full object-contain"
                 style={{ 
-                  opacity: hypnoticEffect ? 
-                    (currentImage === 'receptor' ? 0.9 : (currentImage === 'mix' ? 0.6 : 0)) : 0.9,
+                  opacity: 0.9,
                   mixBlendMode: 'multiply',
                   filter: 'contrast(1.2) brightness(1.1)',
                   transition: `opacity ${animationDuration/3}s ease-in-out`,
-                  animation: hypnoticEffect ? `pulse ${pulseDuration}s infinite alternate-reverse ease-in-out` : 'none'
+                  animation: `pulse ${pulseDuration}s infinite alternate-reverse ease-in-out`
                 }}
               />
             ))}
             
-            {/* Show receptor name when no images are available or when in hypnotic mode and showing receptor */}
-            {receptorName && (!hasReceptorImages) && (
+            {currentImage === 'mix' && (
+              <>
+                {/* Superposición de ambas imágenes */}
+                {hasRadionicImages && radionicImagesArray.map((img, index) => (
+                  <img 
+                    key={`radionic-mix-${index}`}
+                    src={img}
+                    alt={`Mezcla de imágenes radiónicas ${index + 1}`}
+                    className="absolute inset-0 w-full h-full object-contain"
+                    style={{ 
+                      opacity: 0.6,
+                      mixBlendMode: 'screen',
+                      filter: 'contrast(1.2) brightness(1.1)',
+                      transition: `opacity ${animationDuration/3}s ease-in-out`,
+                      animation: `pulse ${pulseDuration}s infinite alternate ease-in-out`
+                    }}
+                  />
+                ))}
+                
+                {hasReceptorImages && receptorImagesArray.map((img, index) => (
+                  <img 
+                    key={`receptor-mix-${index}`}
+                    src={img}
+                    alt={`Mezcla de imágenes receptoras ${index + 1}`}
+                    className="absolute inset-0 w-full h-full object-contain"
+                    style={{ 
+                      opacity: 0.6,
+                      mixBlendMode: 'multiply',
+                      filter: 'contrast(1.2) brightness(1.1)',
+                      transition: `opacity ${animationDuration/3}s ease-in-out`,
+                      animation: `pulse ${pulseDuration}s infinite alternate-reverse ease-in-out`
+                    }}
+                  />
+                ))}
+              </>
+            )}
+            
+            {/* Show receptor name when no images are available or when in receptor mode */}
+            {receptorName && (!hasReceptorImages || currentImage === 'receptor') && (
               <div 
                 className="absolute inset-0 flex items-center justify-center"
                 style={{
-                  opacity: hypnoticEffect ? 
-                    ((currentImage === 'receptor' || currentImage === 'mix') ? 1 : 0) : 1,
+                  opacity: currentImage === 'mix' ? 0.8 : 1,
                   transition: `opacity ${animationDuration/3}s ease-in-out`,
-                  animation: hypnoticEffect ? `pulse ${pulseDuration}s infinite alternate` : 'none'
+                  animation: `pulse ${pulseDuration}s infinite alternate`
                 }}
               >
                 <div className="text-2xl font-bold text-white bg-black/50 px-6 py-4 rounded-lg">
