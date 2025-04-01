@@ -9,7 +9,7 @@ export const useTreatmentImages = () => {
   const [receptorImages, setReceptorImages] = useState<string[]>([]);
   const [hypnoticEffect, setHypnoticEffect] = useState(false);
   const [hypnoticSpeed, setHypnoticSpeed] = useState([10]); // Velocidad de oscilación (1-20)
-  const [currentImage, setCurrentImage] = useState<'radionic' | 'receptor' | 'mix'>('mix'); // Comenzamos con 'mix' para ver ambas imágenes
+  const [currentImage, setCurrentImage] = useState<'radionic' | 'receptor' | 'mix'>('mix');
   const [receptorName, setReceptorName] = useState<string>('');
   
   const hypnoticTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -34,29 +34,16 @@ export const useTreatmentImages = () => {
       
       console.log("Starting hypnotic effect with speed:", hypnoticSpeed[0], "interval:", switchInterval);
       
-      // Importante: establecemos 'mix' inicialmente para mostrar ambas imágenes
-      setCurrentImage('mix');
+      // Iniciamos con radionic para asegurar la secuencia completa
+      setCurrentImage('radionic');
       
-      // Crear el intervalo para alternar entre imágenes similar a la página de manifestación
       hypnoticTimerRef.current = setInterval(() => {
         setCurrentImage(prev => {
-          // Si tenemos ambas imágenes disponibles, alternamos entre los tres estados
-          if ((radionicImages.length > 0 || radionicImage) && 
-              (receptorImages.length > 0 || receptorImage || receptorName)) {
-            switch(prev) {
-              case 'radionic': return 'receptor';
-              case 'receptor': return 'mix';
-              case 'mix': return 'radionic';
-              default: return 'radionic';
-            }
-          }
-          // Si solo tenemos imágenes radiónicas, alternamos entre 'radionic' y 'mix'
-          else if (radionicImages.length > 0 || radionicImage) {
-            return prev === 'radionic' ? 'mix' : 'radionic';
-          }
-          // Si solo tenemos imágenes de receptor o nombre, alternamos entre 'receptor' y 'mix'
-          else {
-            return prev === 'receptor' ? 'mix' : 'receptor';
+          switch(prev) {
+            case 'radionic': return 'receptor';
+            case 'receptor': return 'mix';
+            case 'mix': return 'radionic';
+            default: return 'radionic';
           }
         });
       }, switchInterval);
@@ -77,6 +64,7 @@ export const useTreatmentImages = () => {
       hypnoticTimerRef.current = null;
     }
     setHypnoticEffect(false);
+    setCurrentImage('mix'); // Reset to mix view when stopped
     console.log("Hypnotic effect stopped");
   };
 
