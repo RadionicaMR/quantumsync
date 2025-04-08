@@ -1,13 +1,13 @@
 
 import { useState } from 'react';
 import Layout from '@/components/Layout';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsMobileOnly } from '@/hooks/use-mobile';
 import DiagnosisHeader from '@/components/quantum/DiagnosisHeader';
 import DiagnosisTabs from '@/components/quantum/DiagnosisTabs';
 import DiagnosisFooter from '@/components/quantum/DiagnosisFooter';
 
 const Diagnose = () => {
-  const { isMobile } = useIsMobile();
+  const isMobile = useIsMobileOnly();
 
   return (
     <Layout>

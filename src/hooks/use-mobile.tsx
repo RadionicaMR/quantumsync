@@ -33,3 +33,9 @@ export function useIsMobile() {
     isIOS
   }
 }
+
+// Add a simplified version for components that only need the boolean
+export function useIsMobileOnly(): boolean {
+  const { isMobile } = useIsMobile()
+  return isMobile
+}
