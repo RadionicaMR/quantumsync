@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Square } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface RateInputsProps {
   rate1: string;
@@ -27,29 +28,41 @@ const RateInputs = ({
   const [isGenerating1, setIsGenerating1] = useState(false);
   const [isGenerating2, setIsGenerating2] = useState(false);
   const [isGenerating3, setIsGenerating3] = useState(false);
+  const { isIOS } = useIsMobile();
   
   // Function to generate a random 9-digit number
   const generateRandomNumber = () => {
     return Math.floor(100000000 + Math.random() * 900000000).toString();
   };
   
-  // Set up interval effects for each button
-  const handleMouseDown = (setIsGenerating: (val: boolean) => void, setRate: (val: string) => void) => {
+  // Handle both mouse and touch events for button interactions
+  const handleInteractionStart = (setIsGenerating: (val: boolean) => void, setRate: (val: string) => void) => {
     if (isPlaying) return;
     
     setIsGenerating(true);
+    setRate(generateRandomNumber()); // Generate initial number immediately
+    
     const intervalId = setInterval(() => {
       setRate(generateRandomNumber());
-    }, 50); // Update every 50ms for a fast visual effect
+    }, 150); // Slower update (was 50ms before, now 150ms for a slower visual effect)
     
-    // Cleanup function that runs when mouse is released
-    const handleMouseUp = () => {
-      clearInterval(intervalId);
+    // Cleanup function that runs when interaction ends
+    const handleInteractionEnd = () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
       setIsGenerating(false);
-      document.removeEventListener('mouseup', handleMouseUp);
+      
+      // Remove all event listeners
+      document.removeEventListener('mouseup', handleInteractionEnd);
+      document.removeEventListener('touchend', handleInteractionEnd);
+      document.removeEventListener('touchcancel', handleInteractionEnd);
     };
     
-    document.addEventListener('mouseup', handleMouseUp);
+    // Add all event listeners for both mouse and touch
+    document.addEventListener('mouseup', handleInteractionEnd);
+    document.addEventListener('touchend', handleInteractionEnd);
+    document.addEventListener('touchcancel', handleInteractionEnd);
   };
   
   return (
@@ -71,8 +84,12 @@ const RateInputs = ({
             variant="outline"
             size="icon"
             disabled={isPlaying}
-            onMouseDown={() => handleMouseDown(setIsGenerating1, setRate1)}
-            className={`min-w-10 h-10 ${isGenerating1 ? 'bg-quantum-primary/20' : ''}`}
+            onMouseDown={() => handleInteractionStart(setIsGenerating1, setRate1)}
+            onTouchStart={(e) => {
+              e.preventDefault(); // Prevent default to avoid double triggers
+              handleInteractionStart(setIsGenerating1, setRate1);
+            }}
+            className={`min-w-10 h-10 ${isGenerating1 ? 'bg-quantum-primary/20' : ''} touch-manipulation`}
             aria-label="Generar RATE 1 aleatorio"
           >
             <Square className="h-5 w-5" />
@@ -97,8 +114,12 @@ const RateInputs = ({
             variant="outline"
             size="icon"
             disabled={isPlaying}
-            onMouseDown={() => handleMouseDown(setIsGenerating2, setRate2)}
-            className={`min-w-10 h-10 ${isGenerating2 ? 'bg-quantum-primary/20' : ''}`}
+            onMouseDown={() => handleInteractionStart(setIsGenerating2, setRate2)}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              handleInteractionStart(setIsGenerating2, setRate2);
+            }}
+            className={`min-w-10 h-10 ${isGenerating2 ? 'bg-quantum-primary/20' : ''} touch-manipulation`}
             aria-label="Generar RATE 2 aleatorio"
           >
             <Square className="h-5 w-5" />
@@ -123,8 +144,12 @@ const RateInputs = ({
             variant="outline"
             size="icon"
             disabled={isPlaying}
-            onMouseDown={() => handleMouseDown(setIsGenerating3, setRate3)}
-            className={`min-w-10 h-10 ${isGenerating3 ? 'bg-quantum-primary/20' : ''}`}
+            onMouseDown={() => handleInteractionStart(setIsGenerating3, setRate3)}
+            onTouchStart={(e) => {
+              e.preventDefault();
+              handleInteractionStart(setIsGenerating3, setRate3);
+            }}
+            className={`min-w-10 h-10 ${isGenerating3 ? 'bg-quantum-primary/20' : ''} touch-manipulation`}
             aria-label="Generar RATE 3 aleatorio"
           >
             <Square className="h-5 w-5" />

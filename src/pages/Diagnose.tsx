@@ -7,7 +7,7 @@ import DiagnosisTabs from '@/components/quantum/DiagnosisTabs';
 import DiagnosisFooter from '@/components/quantum/DiagnosisFooter';
 
 const Diagnose = () => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
 
   return (
     <Layout>
