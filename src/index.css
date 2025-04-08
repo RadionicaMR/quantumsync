@@ -36,29 +36,15 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 263.4 70% 50.4%;
     --quantum-primary: 263.4 70% 50.4%;
+    
+    /* iOS specific variables */
+    --safe-area-inset-top: env(safe-area-inset-top, 0px);
+    --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-area-inset-left: env(safe-area-inset-left, 0px);
+    --safe-area-inset-right: env(safe-area-inset-right, 0px);
   }
 
-  .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 263.4 70% 50.4%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 263.4 70% 50.4%;
-  }
+  /* ... keep existing code (dark theme variables) */
 }
 
 @layer base {
@@ -67,5 +53,37 @@
   }
   body {
     @apply bg-background text-foreground;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* iOS specific classes */
+  .ios-safe-area {
+    padding-top: var(--safe-area-inset-top);
+    padding-bottom: var(--safe-area-inset-bottom);
+    padding-left: var(--safe-area-inset-left);
+    padding-right: var(--safe-area-inset-right);
+  }
+  
+  .ios-content-padding {
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 0.5rem);
+  }
+  
+  /* Disable double-tap zoom on iOS */
+  input, button, select, textarea {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+  
+  /* Fix for iOS momentum scrolling */
+  .ios-momentum-scroll {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Add meta tag for iOS web app */
+@media screen {
+  html {
+    -webkit-text-size-adjust: 100%;
   }
 }

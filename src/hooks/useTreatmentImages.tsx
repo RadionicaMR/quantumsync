@@ -1,5 +1,6 @@
 
 import { useState, useRef, useEffect } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export const useTreatmentImages = () => {
   const [visualFeedback, setVisualFeedback] = useState(true);
@@ -13,6 +14,7 @@ export const useTreatmentImages = () => {
   const [receptorName, setReceptorName] = useState<string>('');
   
   const hypnoticTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const { isIOS } = useIsMobile();
 
   // Función para el efecto hipnótico
   const startHypnoticEffect = () => {
@@ -37,13 +39,46 @@ export const useTreatmentImages = () => {
       // Iniciamos con radionic para asegurar la secuencia completa
       setCurrentImage('radionic');
       
-      hypnoticTimerRef.current = setInterval(() => {
-        setCurrentImage(prev => {
-          if (prev === 'radionic') return 'receptor';
-          if (prev === 'receptor') return 'radionic';
-          return 'radionic';
-        });
-      }, switchInterval);
+      // Use requestAnimationFrame for iOS to avoid background throttling
+      if (isIOS) {
+        let lastTime = performance.now();
+        let frameId: number;
+        
+        const animate = (currentTime: number) => {
+          const elapsed = currentTime - lastTime;
+          
+          if (elapsed > switchInterval) {
+            setCurrentImage(prev => {
+              if (prev === 'radionic') return 'receptor';
+              if (prev === 'receptor') return 'radionic';
+              return 'radionic';
+            });
+            lastTime = currentTime;
+          }
+          
+          frameId = requestAnimationFrame(animate);
+        };
+        
+        frameId = requestAnimationFrame(animate);
+        
+        // Store the cancelAnimationFrame function in a ref-compatible way
+        hypnoticTimerRef.current = {
+          unref: () => {},
+          ref: () => {},
+          hasRef: () => false,
+          refresh: () => hypnoticTimerRef.current,
+          [Symbol.toPrimitive]: () => frameId
+        } as any;
+      } else {
+        // Standard interval for non-iOS devices
+        hypnoticTimerRef.current = setInterval(() => {
+          setCurrentImage(prev => {
+            if (prev === 'radionic') return 'receptor';
+            if (prev === 'receptor') return 'radionic';
+            return 'radionic';
+          });
+        }, switchInterval);
+      }
     } else {
       console.log("Cannot start hypnotic effect: missing images or receptor name", {
         hasRadionicImagesOrName,
@@ -57,13 +92,30 @@ export const useTreatmentImages = () => {
 
   const stopHypnoticEffect = () => {
     if (hypnoticTimerRef.current) {
-      clearInterval(hypnoticTimerRef.current);
+      if (isIOS) {
+        cancelAnimationFrame(Number(hypnoticTimerRef.current));
+      } else {
+        clearInterval(hypnoticTimerRef.current);
+      }
       hypnoticTimerRef.current = null;
     }
     setHypnoticEffect(false);
     setCurrentImage('mix'); // Reset to mix view when stopped
     console.log("Hypnotic effect stopped");
   };
+
+  // Cleanup function to ensure all animation resources are released
+  useEffect(() => {
+    return () => {
+      if (hypnoticTimerRef.current) {
+        if (isIOS) {
+          cancelAnimationFrame(Number(hypnoticTimerRef.current));
+        } else {
+          clearInterval(hypnoticTimerRef.current);
+        }
+      }
+    };
+  }, [isIOS]);
 
   // Reinicia el efecto hipnótico si cambia la velocidad
   useEffect(() => {
@@ -75,10 +127,14 @@ export const useTreatmentImages = () => {
     // Cleanup on unmount
     return () => {
       if (hypnoticTimerRef.current) {
-        clearInterval(hypnoticTimerRef.current);
+        if (isIOS) {
+          cancelAnimationFrame(Number(hypnoticTimerRef.current));
+        } else {
+          clearInterval(hypnoticTimerRef.current);
+        }
       }
     };
-  }, [hypnoticSpeed]);
+  }, [hypnoticSpeed, isIOS]);
 
   return {
     visualFeedback,

@@ -1,4 +1,6 @@
 
+import { useIsMobile } from '@/hooks/use-mobile';
+
 interface TreatmentVisualizerProps {
   isPlaying: boolean;
   visualFeedback: boolean;
@@ -34,6 +36,8 @@ const TreatmentVisualizer = ({
   hypnoticSpeed = [10],
   receptorName = '',
 }: TreatmentVisualizerProps) => {
+  const { isIOS } = useIsMobile();
+  
   if (!isPlaying || !visualFeedback) {
     return null;
   }
@@ -57,7 +61,7 @@ const TreatmentVisualizer = ({
   const pulseDuration = Math.max(0.5, 5 - (hypnoticSpeed[0] / 4));
 
   return (
-    <div className="relative aspect-square w-full bg-black rounded-lg overflow-hidden">
+    <div className={`relative aspect-square w-full bg-black rounded-lg overflow-hidden ${isIOS ? 'ios-momentum-scroll' : ''}`}>
       {/* Show blended images */}
       {hasImages && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
