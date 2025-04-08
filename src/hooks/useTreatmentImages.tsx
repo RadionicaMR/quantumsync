@@ -13,10 +13,11 @@ export const useTreatmentImages = () => {
   const [currentImage, setCurrentImage] = useState<'radionic' | 'receptor' | 'mix'>('mix');
   const [receptorName, setReceptorName] = useState<string>('');
   
-  const hypnoticTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const { isIOS } = useIsMobile();
+  const hypnoticTimerRef = useRef<number | NodeJS.Timeout | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
+  const { isIOS, isSafari } = useIsMobile();
 
-  // Función para el efecto hipnótico
+  // Función mejorada para el efecto hipnótico - optimizada para Safari
   const startHypnoticEffect = () => {
     // Consideramos ya sea imágenes cargadas o un nombre de receptor
     const hasRadionicImagesOrName = radionicImages.length > 0 || radionicImage;
@@ -25,10 +26,8 @@ export const useTreatmentImages = () => {
     if (hasRadionicImagesOrName || hasReceptorImagesOrName) {
       setHypnoticEffect(true);
       
-      // Detenemos cualquier temporizador existente antes de crear uno nuevo
-      if (hypnoticTimerRef.current) {
-        clearInterval(hypnoticTimerRef.current);
-      }
+      // Limpieza de temporizadores previos
+      stopHypnoticEffect();
       
       // Configuramos la velocidad basada en el valor del deslizador
       // Faster speed (higher value) = shorter interval time
@@ -39,10 +38,9 @@ export const useTreatmentImages = () => {
       // Iniciamos con radionic para asegurar la secuencia completa
       setCurrentImage('radionic');
       
-      // Use requestAnimationFrame for iOS to avoid background throttling
-      if (isIOS) {
+      // Usamos requestAnimationFrame para dispositivos iOS y Safari para mejor rendimiento
+      if (isIOS || isSafari) {
         let lastTime = performance.now();
-        let frameId: number;
         
         const animate = (currentTime: number) => {
           const elapsed = currentTime - lastTime;
@@ -56,19 +54,10 @@ export const useTreatmentImages = () => {
             lastTime = currentTime;
           }
           
-          frameId = requestAnimationFrame(animate);
+          animationFrameRef.current = requestAnimationFrame(animate);
         };
         
-        frameId = requestAnimationFrame(animate);
-        
-        // Store the cancelAnimationFrame function in a ref-compatible way
-        hypnoticTimerRef.current = {
-          unref: () => {},
-          ref: () => {},
-          hasRef: () => false,
-          refresh: () => hypnoticTimerRef.current,
-          [Symbol.toPrimitive]: () => frameId
-        } as any;
+        animationFrameRef.current = requestAnimationFrame(animate);
       } else {
         // Standard interval for non-iOS devices
         hypnoticTimerRef.current = setInterval(() => {
@@ -91,31 +80,33 @@ export const useTreatmentImages = () => {
   };
 
   const stopHypnoticEffect = () => {
+    // Limpieza optimizada para todos los navegadores
     if (hypnoticTimerRef.current) {
-      if (isIOS) {
-        cancelAnimationFrame(Number(hypnoticTimerRef.current));
-      } else {
-        clearInterval(hypnoticTimerRef.current);
-      }
+      clearInterval(hypnoticTimerRef.current as NodeJS.Timeout);
       hypnoticTimerRef.current = null;
     }
+    
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+    
     setHypnoticEffect(false);
     setCurrentImage('mix'); // Reset to mix view when stopped
-    console.log("Hypnotic effect stopped");
   };
 
-  // Cleanup function to ensure all animation resources are released
+  // Cleanup function mejorada para Safari
   useEffect(() => {
     return () => {
       if (hypnoticTimerRef.current) {
-        if (isIOS) {
-          cancelAnimationFrame(Number(hypnoticTimerRef.current));
-        } else {
-          clearInterval(hypnoticTimerRef.current);
-        }
+        clearInterval(hypnoticTimerRef.current as NodeJS.Timeout);
+      }
+      
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [isIOS]);
+  }, []);
 
   // Reinicia el efecto hipnótico si cambia la velocidad
   useEffect(() => {
@@ -123,18 +114,7 @@ export const useTreatmentImages = () => {
       console.log("Hypnotic speed changed, restarting effect with speed:", hypnoticSpeed[0]);
       startHypnoticEffect();
     }
-    
-    // Cleanup on unmount
-    return () => {
-      if (hypnoticTimerRef.current) {
-        if (isIOS) {
-          cancelAnimationFrame(Number(hypnoticTimerRef.current));
-        } else {
-          clearInterval(hypnoticTimerRef.current);
-        }
-      }
-    };
-  }, [hypnoticSpeed, isIOS]);
+  }, [hypnoticSpeed]);
 
   return {
     visualFeedback,

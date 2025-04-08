@@ -1,12 +1,15 @@
+
 import * as React from "react"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import { useIsMobileOnly } from "@/hooks/use-mobile"
-import { SidebarContext, SidebarState } from "@/hooks/use-sidebar"
-
-const SIDEBAR_COOKIE_NAME = "sidebar:state"
-const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
-const SIDEBAR_KEYBOARD_SHORTCUT = "b"
+import { 
+  SidebarContext, 
+  SidebarState, 
+  setSidebarCookie,
+  getSidebarCookie,
+  SIDEBAR_KEYBOARD_SHORTCUT
+} from "@/hooks/use-sidebar"
 
 export const SidebarProvider = React.forwardRef<
   HTMLDivElement,
@@ -32,9 +35,15 @@ export const SidebarProvider = React.forwardRef<
     const isMobile = useIsMobileOnly()
     const [openMobile, setOpenMobile] = React.useState(false)
 
+    // Inicializar el estado con el valor de la cookie si existe
+    const initializeOpenState = React.useCallback(() => {
+      const savedState = getSidebarCookie();
+      return savedState === "true" ? true : defaultOpen;
+    }, [defaultOpen]);
+
     // This is the internal state of the sidebar.
     // We use openProp and setOpenProp for control from outside the component.
-    const [_open, _setOpen] = React.useState(defaultOpen)
+    const [_open, _setOpen] = React.useState(initializeOpenState)
     const open = openProp ?? _open
     const setOpen = React.useCallback(
       (value: boolean | ((value: boolean) => boolean)) => {
@@ -45,8 +54,8 @@ export const SidebarProvider = React.forwardRef<
           _setOpen(openState)
         }
 
-        // This sets the cookie to keep the sidebar state.
-        document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+        // Usar la función mejorada para Safari
+        setSidebarCookie(openState.toString());
       },
       [setOpenProp, open]
     )
@@ -58,20 +67,27 @@ export const SidebarProvider = React.forwardRef<
         : setOpen((open) => !open)
     }, [isMobile, setOpen, setOpenMobile])
 
-    // Adds a keyboard shortcut to toggle the sidebar.
+    // Adds a keyboard shortcut to toggle the sidebar, mejorado para Safari
     React.useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
+        // Comprobar que no estamos en un input o textarea
+        const activeElement = document.activeElement;
+        const isInput = activeElement instanceof HTMLInputElement || 
+                        activeElement instanceof HTMLTextAreaElement;
+        
         if (
-          event.key === SIDEBAR_KEYBOARD_SHORTCUT &&
+          !isInput &&
+          event.key.toLowerCase() === SIDEBAR_KEYBOARD_SHORTCUT &&
           (event.metaKey || event.ctrlKey)
         ) {
-          event.preventDefault()
-          toggleSidebar()
+          event.preventDefault();
+          toggleSidebar();
         }
       }
 
-      window.addEventListener("keydown", handleKeyDown)
-      return () => window.removeEventListener("keydown", handleKeyDown)
+      // Usar passive: true para mejor rendimiento en dispositivos táctiles
+      window.addEventListener("keydown", handleKeyDown, { passive: false });
+      return () => window.removeEventListener("keydown", handleKeyDown);
     }, [toggleSidebar])
 
     // We add a state so that we can do data-state="expanded" or "collapsed".

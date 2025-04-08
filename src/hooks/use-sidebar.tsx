@@ -28,4 +28,24 @@ export function useSidebar() {
   return context
 }
 
-export { SidebarContext }
+// Función de utilidad para gestionar cookies de manera segura en Safari
+export function setSidebarCookie(value: string) {
+  try {
+    document.cookie = `${SIDEBAR_COOKIE_NAME}=${value}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}; SameSite=Lax`;
+  } catch (e) {
+    console.warn("Error setting sidebar cookie:", e);
+  }
+}
+
+// Función para leer cookies de manera segura en Safari
+export function getSidebarCookie(): string | null {
+  try {
+    const match = document.cookie.match(new RegExp(`(^| )${SIDEBAR_COOKIE_NAME}=([^;]+)`));
+    return match ? match[2] : null;
+  } catch (e) {
+    console.warn("Error reading sidebar cookie:", e);
+    return null;
+  }
+}
+
+export { SidebarContext, SIDEBAR_KEYBOARD_SHORTCUT }

@@ -8,11 +8,20 @@
     <meta name="description" content="Lovable Generated Project" />
     <meta name="author" content="Lovable" />
 
-    <!-- iOS specific meta tags -->
+    <!-- iOS específicos y optimizaciones Safari -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="QuantumSync" />
     <meta name="format-detection" content="telephone=no" />
+    
+    <!-- Prevención de cacheo agresivo en Safari -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    
+    <!-- DNS Prefetch para acelerar cargas en Safari -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//cdn.gpteng.co">
     
     <meta property="og:title" content="Lovable Generated Project" />
     <meta property="og:description" content="Lovable Generated Project" />
@@ -22,6 +31,29 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@lovable_dev" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    
+    <!-- Optimización para Safari - carga diferida de estilos no críticos -->
+    <style>
+      /* Estilos críticos de precarga para Safari */
+      body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      .is-safari {
+        /* Optimizaciones específicas para Safari */
+        -webkit-overflow-scrolling: touch;
+        -webkit-transform: translateZ(0);
+        -webkit-backface-visibility: hidden;
+      }
+      .is-ios {
+        /* Safe areas para iOS */
+        padding-top: env(safe-area-inset-top, 0);
+        padding-bottom: env(safe-area-inset-bottom, 0);
+      }
+      :root {
+        -webkit-text-size-adjust: 100%;
+      }
+    </style>
   </head>
 
   <body>
@@ -29,5 +61,33 @@
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Script para mejorar rendimiento en Safari -->
+    <script>
+      // Detectar Safari y aplicar optimizaciones
+      (function() {
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+        
+        if (isSafari || isIOS) {
+          // Prevenir scrolling elástico en Safari
+          document.addEventListener('touchmove', function(e) {
+            if (e.scale !== 1) {
+              e.preventDefault();
+            }
+          }, { passive: false });
+          
+          // Fix para problemas de enfoque de inputs en iOS
+          document.addEventListener('touchend', function(e) {
+            const target = e.target as HTMLElement;
+            if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT')) {
+              // No hacer nada, dejar que el navegador maneje el enfoque
+            } else {
+              e.preventDefault();
+            }
+          }, { passive: false });
+        }
+      })();
+    </script>
   </body>
 </html>
