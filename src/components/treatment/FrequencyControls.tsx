@@ -1,7 +1,7 @@
 
 import { Slider } from '@/components/ui/slider';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface FrequencyControlsProps {
   frequency: number[];
@@ -26,6 +26,50 @@ const FrequencyControls = ({
   setHypnoticSpeed,
   isPlaying,
 }: FrequencyControlsProps) => {
+  const [frequencyInput, setFrequencyInput] = useState(frequency[0].toString());
+
+  // Update input when frequency slider changes
+  useEffect(() => {
+    setFrequencyInput(frequency[0].toString());
+  }, [frequency[0]]);
+
+  // Parse input with support for decimal comma
+  const parseFrequencyInput = (value: string): number => {
+    // Replace comma with dot for proper parsing
+    const normalizedValue = value.replace(',', '.');
+    const parsed = parseFloat(normalizedValue);
+    
+    if (isNaN(parsed)) return 0;
+    if (parsed < 0) return 0;
+    if (parsed > 10000) return 10000;
+    
+    return parsed;
+  };
+
+  // Handle input changes
+  const handleFrequencyInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    setFrequencyInput(inputValue);
+    
+    // Only update actual frequency when input is valid
+    if (inputValue.trim() !== '' && inputValue !== ',') {
+      const parsedValue = parseFrequencyInput(inputValue);
+      setFrequency([parsedValue]);
+    }
+  };
+
+  // Handle blur to ensure valid value
+  const handleFrequencyInputBlur = () => {
+    if (frequencyInput.trim() === '' || frequencyInput === ',') {
+      setFrequency([0]);
+      setFrequencyInput('0');
+    } else {
+      const parsedValue = parseFrequencyInput(frequencyInput);
+      setFrequency([parsedValue]);
+      setFrequencyInput(parsedValue.toString().replace('.', ','));
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -33,27 +77,21 @@ const FrequencyControls = ({
           <h4 className="font-medium">Frecuencia:</h4>
           <div className="flex items-center">
             <Input
-              type="number"
-              value={frequency[0]}
-              onChange={(e) => {
-                const value = parseInt(e.target.value);
-                if (!isNaN(value) && value >= 20 && value <= 20000) {
-                  setFrequency([value]);
-                }
-              }}
+              type="text"
+              value={frequencyInput}
+              onChange={handleFrequencyInputChange}
+              onBlur={handleFrequencyInputBlur}
               disabled={isPlaying}
               className="w-24 ml-2"
-              min={20}
-              max={20000}
             />
             <span className="ml-2 text-sm text-muted-foreground">Hz</span>
           </div>
         </div>
         <Slider
           defaultValue={frequency}
-          min={20}
-          max={20000}
-          step={1}
+          min={0}
+          max={10000}
+          step={0.1}
           value={frequency}
           onValueChange={setFrequency}
           disabled={isPlaying}

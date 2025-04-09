@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Volume2, VolumeX, Clock } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -58,6 +58,50 @@ const ManifestControls = ({
   formatTimeRemaining,
   canStart
 }: ManifestControlsProps) => {
+  const [frequencyInput, setFrequencyInput] = useState(manifestFrequency[0].toString());
+
+  // Update input when frequency slider changes
+  useEffect(() => {
+    setFrequencyInput(manifestFrequency[0].toString());
+  }, [manifestFrequency[0]]);
+
+  // Parse input with support for decimal comma
+  const parseFrequencyInput = (value: string): number => {
+    // Replace comma with dot for proper parsing
+    const normalizedValue = value.replace(',', '.');
+    const parsed = parseFloat(normalizedValue);
+    
+    if (isNaN(parsed)) return 0;
+    if (parsed < 0) return 0;
+    if (parsed > 10000) return 10000;
+    
+    return parsed;
+  };
+
+  // Handle input changes
+  const handleFrequencyInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    setFrequencyInput(inputValue);
+    
+    // Only update actual frequency when input is valid
+    if (inputValue.trim() !== '' && inputValue !== ',') {
+      const parsedValue = parseFrequencyInput(inputValue);
+      setManifestFrequency([parsedValue]);
+    }
+  };
+
+  // Handle blur to ensure valid value
+  const handleFrequencyInputBlur = () => {
+    if (frequencyInput.trim() === '' || frequencyInput === ',') {
+      setManifestFrequency([0]);
+      setFrequencyInput('0');
+    } else {
+      const parsedValue = parseFrequencyInput(frequencyInput);
+      setManifestFrequency([parsedValue]);
+      setFrequencyInput(parsedValue.toString().replace('.', ','));
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="mb-6">
@@ -76,18 +120,12 @@ const ManifestControls = ({
             <Label>Frecuencia de Manifestación:</Label>
             <div className="flex items-center">
               <Input
-                type="number"
-                value={manifestFrequency[0]}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value);
-                  if (!isNaN(value) && value >= 100 && value <= 963) {
-                    setManifestFrequency([value]);
-                  }
-                }}
+                type="text"
+                value={frequencyInput}
+                onChange={handleFrequencyInputChange}
+                onBlur={handleFrequencyInputBlur}
                 disabled={isManifestActive}
                 className="w-24 ml-2"
-                min={100}
-                max={963}
               />
               <span className="ml-2 text-sm text-muted-foreground">Hz</span>
               <Switch
@@ -103,9 +141,9 @@ const ManifestControls = ({
             </div>
           </div>
           <Slider
-            min={100}
-            max={963}
-            step={1}
+            min={0}
+            max={10000}
+            step={0.1}
             value={manifestFrequency}
             onValueChange={setManifestFrequency}
             disabled={isManifestActive}
