@@ -40,6 +40,7 @@ const Login = () => {
     setError('');
 
     try {
+      console.log(`Intentando iniciar sesión con: ${email} / ${password}`);
       const success = await login(email, password);
       
       if (success) {

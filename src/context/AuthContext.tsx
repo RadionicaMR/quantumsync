@@ -53,12 +53,31 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return true;
       }
       
+      // Acceso especial para el usuario específico
+      if (email === 'germancastroc25@gmail.com' && password === 'german2025') {
+        const specialUser: User = {
+          email,
+          name: 'German Castro',
+          isAdmin: false
+        };
+        setUser(specialUser);
+        localStorage.setItem('user', JSON.stringify(specialUser));
+        return true;
+      }
+      
       // Verificar si el usuario existe en la lista de usuarios
       const storedUsersList = localStorage.getItem('usersList');
       
       if (storedUsersList) {
         const usersList = JSON.parse(storedUsersList);
-        const foundUser = usersList.find((u: any) => u.email === email && u.password === password);
+        console.log("Lista de usuarios:", usersList);
+        
+        // Comparación sin distinguir mayúsculas y minúsculas para el email
+        const foundUser = usersList.find((u: any) => 
+          u.email.toLowerCase() === email.toLowerCase() && u.password === password
+        );
+        
+        console.log("Usuario encontrado:", foundUser);
         
         if (foundUser) {
           const loggedUser: User = {
@@ -72,6 +91,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
       }
       
+      // Si llegamos aquí, no se encontró el usuario
+      console.log("No se encontró el usuario");
       return false;
     } catch (error) {
       console.error('Error during login:', error);
