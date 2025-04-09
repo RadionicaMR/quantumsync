@@ -2,11 +2,32 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import InfoCard from './InfoCard';
+import { useLocation } from 'react-router-dom';
 
 const InfoSection = () => {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const location = useLocation();
   
-  const infoCards = [
+  // Different info cards based on the current page
+  const manifestCards = [
+    {
+      step: 1,
+      title: "Selecciona el Área de Enfoque",
+      description: "Elige un patrón radiónico para manifestar abundancia, salud, amor u otra área de tu vida que desees transformar."
+    },
+    {
+      step: 2,
+      title: "Programa tu Intención",
+      description: "Define claramente qué deseas manifestar e incorpora rates o gráficos radiónicos para amplificar la energía de tu intención."
+    },
+    {
+      step: 3,
+      title: "Configura Tiempo y Frecuencia",
+      description: "Establece los parámetros de exposición y repite el proceso regularmente hasta lograr la manifestación de tus deseos."
+    }
+  ];
+
+  const diagnoseCards = [
     {
       step: 1,
       title: "Selecciona Área de Enfoque",
@@ -24,6 +45,18 @@ const InfoSection = () => {
     }
   ];
 
+  // Determine which cards to show based on the current page
+  const isManifestPage = location.pathname.includes('/manifest');
+  const infoCards = isManifestPage ? manifestCards : diagnoseCards;
+  
+  // Get appropriate subtitle based on page
+  const getSubtitle = () => {
+    if (isManifestPage) {
+      return "Nuestra plataforma te permite configurar intenciones específicas y amplificarlas a través del campo cuántico para atraer tus deseos a la realidad.";
+    }
+    return "Nuestras herramientas de diagnóstico utilizan principios de radiónica y medicina energética para ayudarte a identificar desequilibrios.";
+  };
+
   return (
     <section className="py-12 px-4 bg-quantum-gradient-soft">
       <div className="container mx-auto">
@@ -36,7 +69,7 @@ const InfoSection = () => {
         >
           <h2 className="text-3xl font-bold mb-4">Cómo Funciona</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Nuestras herramientas de diagnóstico utilizan principios de radiónica y medicina energética para ayudarte a identificar desequilibrios.
+            {getSubtitle()}
           </p>
         </motion.div>
         
