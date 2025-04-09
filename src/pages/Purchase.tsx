@@ -140,13 +140,7 @@ const Purchase = () => {
             <Card className="p-6">
               <h2 className="text-2xl font-bold mb-4">Confirmar redirección</h2>
               <p className="mb-6 text-muted-foreground">
-                Serás redirigido a la página de pago de {selectedOption === 'argentina' ? 'Mercado Pago' : 'PayPal'}.
-                Después de completar tu pago, regresa a esta página para crear tu cuenta.
-              </p>
-              <p className="mb-6 text-sm bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-                <strong>Importante:</strong> Para acceder a tu cuenta después del pago, necesitarás registrarte en nuestra página
-                con la misma dirección de correo electrónico que uses para el pago. Por favor, regresa a&nbsp;
-                <span className="font-medium">https://tu-proyecto.lovable.app/register</span> después de completar tu pago.
+                Vas a ser dirigido a una página de pago de MercadoPago Argentina. Si al finalizar el pago no eres redirigido automaticamente a la pagina de registro, comunícate con nosotros al email: quantumsyncdigital@gmail.com, y rápidamente estaremos en contacto contigo.
               </p>
               <div className="flex gap-3">
                 <Button 
