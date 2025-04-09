@@ -22,6 +22,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
+    // Redirigir al Home después de cerrar sesión
     navigate('/');
   };
 

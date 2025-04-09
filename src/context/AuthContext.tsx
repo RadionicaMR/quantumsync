@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 
 interface User {
@@ -88,6 +87,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = () => {
     localStorage.removeItem('user');
     setUser(null);
+    // No añadimos la navegación aquí, porque se manejará en el componente que llama a logout
   };
 
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
