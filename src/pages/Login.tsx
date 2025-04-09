@@ -8,35 +8,59 @@ import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertCircle, Mail, Lock, LogIn } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/components/ui/use-toast';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login, isAuthenticated, user } = useAuth();
+  const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  // Redirigir si ya está autenticado
+  if (isAuthenticated) {
+    // Redirigir a admin si es administrador, de lo contrario al diagnóstico
+    if (user?.isAdmin) {
+      navigate('/admin');
+    } else {
+      navigate('/diagnose');
+    }
+    return null;
+  }
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    // Simulación de inicio de sesión para propósitos de demostración
-    setTimeout(() => {
-      // Verificar si es el usuario administrador
-      if (email === 'mauriramosgs@gmail.com' && password === 'bere1603') {
-        localStorage.setItem('user', JSON.stringify({ 
-          email, 
-          isAdmin: true,
-          name: 'Mauricio Ramos'
-        }));
-        navigate('/admin');
+    try {
+      const success = await login(email, password);
+      
+      if (success) {
+        toast({
+          title: "Inicio de sesión exitoso",
+          description: "Bienvenido a QuantumSync",
+        });
+        
+        // No necesitamos redireccionar aquí porque el componente se volverá a renderizar
+        // y la redirección se hará por el bloque condicional al inicio
       } else {
-        // Aquí se implementaría la autenticación real
         setError('Usuario o contraseña incorrectos');
+        toast({
+          variant: "destructive",
+          title: "Error de inicio de sesión",
+          description: "Usuario o contraseña incorrectos",
+        });
       }
+    } catch (err) {
+      console.error("Error durante el inicio de sesión:", err);
+      setError('Ocurrió un error al iniciar sesión');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
