@@ -47,6 +47,9 @@ const Treat = () => {
         subtitle="Aplica patrones de frecuencia dirigidos para restaurar el equilibrio y mejorar tu bienestar."
       />
 
+      {/* Sección de Cómo Funciona movida justo debajo del título */}
+      <HowItWorks />
+
       <section className="py-12 px-4">
         <div className="container mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -156,7 +159,6 @@ const Treat = () => {
         </div>
       </section>
 
-      <HowItWorks />
       <CallToAction />
     </Layout>
   );

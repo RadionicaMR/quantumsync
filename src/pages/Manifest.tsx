@@ -6,6 +6,7 @@ import PresetManifest from '@/components/manifest/PresetManifest';
 import CustomManifest from '@/components/manifest/CustomManifest';
 import { manifestPatterns } from '@/data/manifestPatterns';
 import { useManifest } from '@/hooks/useManifest';
+import InfoSection from '@/components/quantum/InfoSection';
 
 const Manifest = () => {
   const manifest = useManifest(manifestPatterns);
@@ -16,6 +17,9 @@ const Manifest = () => {
         title="Manifestación Cuántica"
         subtitle="Programa tus intenciones en el campo cuántico y atrae lo que deseas a tu realidad."
       />
+
+      {/* Sección de Cómo Funciona movida justo debajo del título */}
+      <InfoSection />
 
       <section className="py-12 px-4">
         <div className="container mx-auto">
