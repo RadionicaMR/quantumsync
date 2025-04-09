@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Volume2, VolumeX, Clock } from 'lucide-react';
+import { Volume2, VolumeX, Clock, Info } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
@@ -149,6 +149,16 @@ const ManifestControls = ({
             disabled={isManifestActive}
             className="mb-6"
           />
+          
+          {manifestSound && manifestFrequency[0] < 100 && (
+            <div className="text-sm flex items-start mb-4 p-2 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-md">
+              <Info className="text-amber-500 mr-2 flex-shrink-0 mt-0.5" size={16} />
+              <span>
+                Las frecuencias por debajo de 100 Hz pueden ser difíciles de escuchar en parlantes pequeños. 
+                Se ha mejorado la audibilidad con armónicos, pero para una experiencia óptima, usa auriculares.
+              </span>
+            </div>
+          )}
         </div>
         
         <div className="mt-4">

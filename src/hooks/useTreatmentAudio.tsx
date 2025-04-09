@@ -10,6 +10,7 @@ export const useTreatmentAudio = () => {
   const [useHeadphones, setUseHeadphones] = useState(true);
 
   const oscillatorRef = useRef<OscillatorNode | null>(null);
+  const harmonicOscillatorRef = useRef<OscillatorNode | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -44,6 +45,25 @@ export const useTreatmentAudio = () => {
       oscillator.start();
       oscillatorRef.current = oscillator;
       
+      // Si la frecuencia es baja, añadir armónico para mejorar la audibilidad en dispositivos pequeños
+      if (frequency[0] < 100) {
+        const harmonicOscillator = audioContextRef.current.createOscillator();
+        const harmonicGainNode = audioContextRef.current.createGain();
+        
+        // Crear armónico a 2x la frecuencia con menor volumen
+        harmonicOscillator.type = 'sine';
+        harmonicOscillator.frequency.value = frequency[0] * 2;
+        
+        // Volumen del armónico proporcional al volumen principal
+        harmonicGainNode.gain.value = volume * 0.75;
+        
+        harmonicOscillator.connect(harmonicGainNode);
+        harmonicGainNode.connect(audioContextRef.current.destination);
+        
+        harmonicOscillator.start();
+        harmonicOscillatorRef.current = harmonicOscillator;
+      }
+      
       // Start timer
       setTimeRemaining(duration[0]);
       timerRef.current = setInterval(() => {
@@ -70,6 +90,11 @@ export const useTreatmentAudio = () => {
       oscillatorRef.current = null;
     }
     
+    if (harmonicOscillatorRef.current) {
+      harmonicOscillatorRef.current.stop();
+      harmonicOscillatorRef.current = null;
+    }
+    
     if (audioContextRef.current) {
       audioContextRef.current.close();
       audioContextRef.current = null;
@@ -88,6 +113,9 @@ export const useTreatmentAudio = () => {
     return () => {
       if (oscillatorRef.current) {
         oscillatorRef.current.stop();
+      }
+      if (harmonicOscillatorRef.current) {
+        harmonicOscillatorRef.current.stop();
       }
       if (timerRef.current) {
         clearInterval(timerRef.current);

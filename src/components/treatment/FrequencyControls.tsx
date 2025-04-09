@@ -2,6 +2,7 @@
 import { Slider } from '@/components/ui/slider';
 import { Input } from '@/components/ui/input';
 import { useState, useEffect } from 'react';
+import { Info } from 'lucide-react';
 
 interface FrequencyControlsProps {
   frequency: number[];
@@ -97,6 +98,16 @@ const FrequencyControls = ({
           disabled={isPlaying}
           className="mb-4"
         />
+        
+        {frequency[0] < 100 && (
+          <div className="text-sm flex items-start mb-4 p-2 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-md">
+            <Info className="text-amber-500 mr-2 flex-shrink-0 mt-0.5" size={16} />
+            <span>
+              Las frecuencias por debajo de 100 Hz pueden ser difíciles de escuchar en parlantes pequeños. 
+              Se ha mejorado la audibilidad con armónicos, pero para una experiencia óptima, usa auriculares.
+            </span>
+          </div>
+        )}
         
         <div className="flex items-center justify-between mb-2">
           <h4 className="font-medium">Duración:</h4>
