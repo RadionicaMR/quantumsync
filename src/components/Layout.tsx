@@ -24,7 +24,8 @@ const Layout = ({ children }: LayoutProps) => {
       document.documentElement.style.height = '100%';
       document.body.style.height = '100%';
       document.body.style.overflowY = 'scroll';
-      document.body.style.WebkitOverflowScrolling = 'touch';
+      // Usamos una asignación tipo string para evitar el error TypeScript
+      document.body.style.setProperty('webkit-overflow-scrolling', 'touch');
       
       // Clases para iOS
       document.body.classList.add('ios-device');

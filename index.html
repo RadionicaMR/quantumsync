@@ -67,7 +67,7 @@
       // Detectar Safari y aplicar optimizaciones
       (function() {
         const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         
         if (isSafari || isIOS) {
           // Prevenir scrolling elástico en Safari
@@ -79,7 +79,7 @@
           
           // Fix para problemas de enfoque de inputs en iOS
           document.addEventListener('touchend', function(e) {
-            const target = e.target as HTMLElement;
+            const target = e.target;
             if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT')) {
               // No hacer nada, dejar que el navegador maneje el enfoque
             } else {
@@ -87,6 +87,12 @@
             }
           }, { passive: false });
         }
+        
+        // URL de redirección después del pago
+        window.REDIRECT_URL = {
+          register: "https://quantum-harmony-connect.lovable.app/register", 
+          success: "https://quantum-harmony-connect.lovable.app/register"
+        };
       })();
     </script>
   </body>
