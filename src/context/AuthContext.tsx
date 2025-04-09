@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 
 interface User {
@@ -52,27 +53,42 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return true;
       }
       
-      // Aquí implementarías la autenticación real
-      // Por ahora simulamos una autenticación simple
-      // En una implementación real, esto se conectaría con una API o servicio de autenticación
+      // Verificar si el usuario existe en la lista de usuarios
+      const storedUsersList = localStorage.getItem('usersList');
       
-      // Verificamos si el usuario existe en el "almacenamiento local" (simulación)
-      const users = [
-        { email: 'cliente@example.com', password: 'password123', name: 'Cliente Demo', isAdmin: false },
-        { email: 'ana@example.com', password: 'ana12345', name: 'Ana García', isAdmin: false }
-      ];
-      
-      const foundUser = users.find(u => u.email === email && u.password === password);
-      
-      if (foundUser) {
-        const loggedUser: User = {
-          email: foundUser.email,
-          name: foundUser.name,
-          isAdmin: foundUser.isAdmin
-        };
-        setUser(loggedUser);
-        localStorage.setItem('user', JSON.stringify(loggedUser));
-        return true;
+      if (storedUsersList) {
+        const usersList = JSON.parse(storedUsersList);
+        const foundUser = usersList.find((u: any) => u.email === email && u.password === password);
+        
+        if (foundUser) {
+          const loggedUser: User = {
+            email: foundUser.email,
+            name: foundUser.name,
+            isAdmin: false
+          };
+          setUser(loggedUser);
+          localStorage.setItem('user', JSON.stringify(loggedUser));
+          return true;
+        }
+      } else {
+        // Si no hay una lista de usuarios en localStorage, usar usuarios predeterminados
+        const defaultUsers = [
+          { email: 'cliente@example.com', password: 'password123', name: 'Cliente Demo', isAdmin: false },
+          { email: 'ana@example.com', password: 'ana12345', name: 'Ana García', isAdmin: false }
+        ];
+        
+        const foundUser = defaultUsers.find(u => u.email === email && u.password === password);
+        
+        if (foundUser) {
+          const loggedUser: User = {
+            email: foundUser.email,
+            name: foundUser.name,
+            isAdmin: foundUser.isAdmin
+          };
+          setUser(loggedUser);
+          localStorage.setItem('user', JSON.stringify(loggedUser));
+          return true;
+        }
       }
       
       return false;
@@ -94,17 +110,42 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       setLoading(true);
       
-      // Simulación de registro
-      // En una implementación real, esto se conectaría con una API o servicio de registro
+      // Comprobar si el email ya existe en la lista de usuarios
+      const storedUsersList = localStorage.getItem('usersList');
+      if (storedUsersList) {
+        const usersList = JSON.parse(storedUsersList);
+        const emailExists = usersList.some((u: any) => u.email === email);
+        
+        if (emailExists) {
+          return false; // El email ya está registrado
+        }
+      }
+      
+      // Crear nuevo usuario
       const newUser: User = {
         email,
         name,
         isAdmin: false
       };
       
-      // Guardar el usuario en localStorage
+      // Guardar el usuario en localStorage para la sesión actual
       localStorage.setItem('user', JSON.stringify(newUser));
       setUser(newUser);
+      
+      // Añadir a la lista de usuarios
+      const usersList = storedUsersList ? JSON.parse(storedUsersList) : [];
+      const newId = (usersList.length + 1).toString();
+      const currentDate = new Date().toISOString().split('T')[0];
+      
+      usersList.push({
+        id: newId,
+        name,
+        email,
+        password,
+        dateCreated: currentDate
+      });
+      
+      localStorage.setItem('usersList', JSON.stringify(usersList));
       
       return true;
     } catch (error) {

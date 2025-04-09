@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AlertCircle, User, Mail, Lock, Plus, Trash2, LogOut, UserPlus, Save, X } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useToast } from '@/components/ui/use-toast';
 
 interface AdminUser {
   id: string;
@@ -19,6 +20,7 @@ interface AdminUser {
 
 const Admin = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [user, setUser] = useState<any>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -29,6 +31,52 @@ const Admin = () => {
   });
   const [error, setError] = useState('');
 
+  // Cargar usuarios desde localStorage
+  const loadUsers = () => {
+    const storedUsersList = localStorage.getItem('usersList');
+    if (storedUsersList) {
+      try {
+        const parsedUsers = JSON.parse(storedUsersList);
+        setUsers(parsedUsers);
+      } catch (error) {
+        console.error('Error parsing users from localStorage:', error);
+        // Si hay un error, inicializamos con usuarios por defecto
+        initializeDefaultUsers();
+      }
+    } else {
+      // Si no hay usuarios guardados, inicializar con valores por defecto
+      initializeDefaultUsers();
+    }
+  };
+
+  // Inicializar con usuarios por defecto
+  const initializeDefaultUsers = () => {
+    const defaultUsers: AdminUser[] = [
+      {
+        id: '1',
+        name: 'Cliente Demo',
+        email: 'cliente@example.com',
+        password: 'password123', // En producción real, esto estaría hasheado
+        dateCreated: '2023-04-01'
+      },
+      {
+        id: '2',
+        name: 'Ana García',
+        email: 'ana@example.com',
+        password: 'ana12345',
+        dateCreated: '2023-05-15'
+      }
+    ];
+    setUsers(defaultUsers);
+    localStorage.setItem('usersList', JSON.stringify(defaultUsers));
+  };
+
+  // Guardar usuarios en localStorage
+  const saveUsers = (updatedUsers: AdminUser[]) => {
+    localStorage.setItem('usersList', JSON.stringify(updatedUsers));
+    setUsers(updatedUsers);
+  };
+
   useEffect(() => {
     // Comprobar si el usuario está autenticado y es administrador
     const storedUser = localStorage.getItem('user');
@@ -36,7 +84,7 @@ const Admin = () => {
       const parsedUser = JSON.parse(storedUser);
       if (parsedUser && parsedUser.isAdmin) {
         setUser(parsedUser);
-        // Cargar usuarios simulados
+        // Cargar usuarios
         loadUsers();
       } else {
         navigate('/login');
@@ -45,27 +93,6 @@ const Admin = () => {
       navigate('/login');
     }
   }, [navigate]);
-
-  const loadUsers = () => {
-    // Simulación de carga de usuarios para propósitos de demostración
-    const demoUsers: AdminUser[] = [
-      {
-        id: '1',
-        name: 'Cliente Demo',
-        email: 'cliente@example.com',
-        password: '********',
-        dateCreated: '2023-04-01'
-      },
-      {
-        id: '2',
-        name: 'Ana García',
-        email: 'ana@example.com',
-        password: '********',
-        dateCreated: '2023-05-15'
-      }
-    ];
-    setUsers(demoUsers);
-  };
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -85,8 +112,14 @@ const Admin = () => {
       setError('La contraseña debe tener al menos 6 caracteres');
       return;
     }
+
+    // Verificar si el email ya existe
+    if (users.some(user => user.email === newUser.email)) {
+      setError('Este correo electrónico ya está registrado');
+      return;
+    }
     
-    // Simulación de agregar un usuario
+    // Agregar nuevo usuario
     const newId = (users.length + 1).toString();
     const currentDate = new Date().toISOString().split('T')[0];
     
@@ -94,11 +127,18 @@ const Admin = () => {
       id: newId,
       name: newUser.name,
       email: newUser.email,
-      password: '********', // Ocultamos la contraseña en la interfaz
+      password: newUser.password, // Guardamos la contraseña real
       dateCreated: currentDate
     };
     
-    setUsers([...users, addedUser]);
+    const updatedUsers = [...users, addedUser];
+    saveUsers(updatedUsers);
+    
+    toast({
+      title: "Usuario agregado",
+      description: `El usuario ${newUser.name} ha sido creado exitosamente`,
+    });
+    
     setNewUser({
       name: '',
       email: '',
@@ -110,7 +150,12 @@ const Admin = () => {
   const handleDeleteUser = (id: string) => {
     // Filtrar el usuario a eliminar
     const updatedUsers = users.filter(user => user.id !== id);
-    setUsers(updatedUsers);
+    saveUsers(updatedUsers);
+    
+    toast({
+      title: "Usuario eliminado",
+      description: "El usuario ha sido eliminado exitosamente",
+    });
   };
 
   if (!user) {
@@ -253,7 +298,7 @@ const Admin = () => {
                       <TableCell className="font-medium">{user.id}</TableCell>
                       <TableCell>{user.name}</TableCell>
                       <TableCell>{user.email}</TableCell>
-                      <TableCell>{user.password}</TableCell>
+                      <TableCell>{'********'}</TableCell>
                       <TableCell>{user.dateCreated}</TableCell>
                       <TableCell className="text-right">
                         <Button 
