@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -140,7 +139,10 @@ const Purchase = () => {
             <Card className="p-6">
               <h2 className="text-2xl font-bold mb-4">Confirmar redirección</h2>
               <p className="mb-6 text-muted-foreground">
-                Vas a ser dirigido a una página de pago de MercadoPago Argentina. Si al finalizar el pago no eres redirigido automaticamente a la pagina de registro, comunícate con nosotros al email: quantumsyncdigital@gmail.com, y rápidamente estaremos en contacto contigo.
+                {selectedOption === 'argentina' 
+                  ? "Vas a ser dirigido a una página de pago de MercadoPago Argentina. Si al finalizar el pago no eres redirigido automaticamente a la pagina de registro, comunícate con nosotros al email: quantumsyncdigital@gmail.com, y rápidamente estaremos en contacto contigo."
+                  : "Vas a ser dirigido a una página de pago de Paypal. Si al finalizar el pago no eres redirigido automaticamente a la pagina de registro, comunícate con nosotros al email: quantumsyncdigital@gmail.com, y rápidamente estaremos en contacto contigo."
+                }
               </p>
               <div className="flex gap-3">
                 <Button 
