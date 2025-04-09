@@ -7,9 +7,13 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { AlertCircle, Mail, Lock, User, UserPlus, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/components/ui/use-toast';
 
 const Register = () => {
   const navigate = useNavigate();
+  const { register } = useAuth();
+  const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -18,7 +22,7 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [registered, setRegistered] = useState(false);
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -36,17 +40,30 @@ const Register = () => {
       return;
     }
 
-    // Simulación de registro para propósitos de demostración
-    setTimeout(() => {
-      // Aquí se implementaría el registro real
-      localStorage.setItem('user', JSON.stringify({ 
-        email, 
-        isAdmin: false,
-        name
-      }));
-      setRegistered(true);
+    try {
+      // Usar la función de registro del contexto de autenticación
+      const success = await register(name, email, password);
+      
+      if (success) {
+        setRegistered(true);
+        toast({
+          title: "Registro exitoso",
+          description: "Tu cuenta ha sido creada correctamente.",
+        });
+      } else {
+        setError('El correo electrónico ya está registrado o hubo un problema con el registro.');
+        toast({
+          variant: "destructive",
+          title: "Error de registro",
+          description: "No se pudo completar el registro. El correo ya puede estar en uso.",
+        });
+      }
+    } catch (error) {
+      console.error('Error durante el registro:', error);
+      setError('Ocurrió un error al registrar la cuenta.');
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   if (registered) {

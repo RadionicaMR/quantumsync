@@ -70,25 +70,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           localStorage.setItem('user', JSON.stringify(loggedUser));
           return true;
         }
-      } else {
-        // Si no hay una lista de usuarios en localStorage, usar usuarios predeterminados
-        const defaultUsers = [
-          { email: 'cliente@example.com', password: 'password123', name: 'Cliente Demo', isAdmin: false },
-          { email: 'ana@example.com', password: 'ana12345', name: 'Ana García', isAdmin: false }
-        ];
-        
-        const foundUser = defaultUsers.find(u => u.email === email && u.password === password);
-        
-        if (foundUser) {
-          const loggedUser: User = {
-            email: foundUser.email,
-            name: foundUser.name,
-            isAdmin: foundUser.isAdmin
-          };
-          setUser(loggedUser);
-          localStorage.setItem('user', JSON.stringify(loggedUser));
-          return true;
-        }
       }
       
       return false;
@@ -103,22 +84,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = () => {
     localStorage.removeItem('user');
     setUser(null);
-    // No añadimos la navegación aquí, porque se manejará en el componente que llama a logout
   };
 
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
     try {
       setLoading(true);
       
-      // Comprobar si el email ya existe en la lista de usuarios
+      // Inicializar la lista de usuarios si no existe
       const storedUsersList = localStorage.getItem('usersList');
-      if (storedUsersList) {
-        const usersList = JSON.parse(storedUsersList);
-        const emailExists = usersList.some((u: any) => u.email === email);
-        
-        if (emailExists) {
-          return false; // El email ya está registrado
-        }
+      let usersList = storedUsersList ? JSON.parse(storedUsersList) : [];
+      
+      // Comprobar si el email ya existe en la lista de usuarios
+      const emailExists = usersList.some((u: any) => u.email === email);
+      
+      if (emailExists) {
+        return false; // El email ya está registrado
       }
       
       // Crear nuevo usuario
@@ -133,7 +113,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setUser(newUser);
       
       // Añadir a la lista de usuarios
-      const usersList = storedUsersList ? JSON.parse(storedUsersList) : [];
       const newId = (usersList.length + 1).toString();
       const currentDate = new Date().toISOString().split('T')[0];
       
