@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { AlertCircle, User, Mail, Lock, Plus, Trash2, LogOut, UserPlus, Save, X } from 'lucide-react';
+import { AlertCircle, User, Mail, Lock, Plus, Trash2, LogOut, UserPlus, Save, X, Eye, EyeOff, Edit } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -24,6 +24,9 @@ const Admin = () => {
   const [user, setUser] = useState<any>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({});
+  const [editingUser, setEditingUser] = useState<string | null>(null);
+  const [newPassword, setNewPassword] = useState('');
   const [newUser, setNewUser] = useState({
     name: '',
     email: '',
@@ -156,6 +159,53 @@ const Admin = () => {
       title: "Usuario eliminado",
       description: "El usuario ha sido eliminado exitosamente",
     });
+  };
+
+  const togglePasswordVisibility = (userId: string) => {
+    setShowPasswords(prev => ({
+      ...prev,
+      [userId]: !prev[userId]
+    }));
+  };
+
+  const startPasswordEdit = (userId: string) => {
+    setEditingUser(userId);
+    const user = users.find(u => u.id === userId);
+    if (user) {
+      setNewPassword(user.password);
+    }
+  };
+
+  const saveNewPassword = (userId: string) => {
+    if (newPassword.length < 6) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "La contraseña debe tener al menos 6 caracteres",
+      });
+      return;
+    }
+
+    const updatedUsers = users.map(user => {
+      if (user.id === userId) {
+        return { ...user, password: newPassword };
+      }
+      return user;
+    });
+
+    saveUsers(updatedUsers);
+    setEditingUser(null);
+    setNewPassword('');
+
+    toast({
+      title: "Contraseña actualizada",
+      description: "La contraseña ha sido actualizada exitosamente",
+    });
+  };
+
+  const cancelPasswordEdit = () => {
+    setEditingUser(null);
+    setNewPassword('');
   };
 
   if (!user) {
@@ -298,7 +348,54 @@ const Admin = () => {
                       <TableCell className="font-medium">{user.id}</TableCell>
                       <TableCell>{user.name}</TableCell>
                       <TableCell>{user.email}</TableCell>
-                      <TableCell>{'********'}</TableCell>
+                      <TableCell>
+                        {editingUser === user.id ? (
+                          <div className="flex items-center gap-2">
+                            <Input
+                              type="text"
+                              value={newPassword}
+                              onChange={(e) => setNewPassword(e.target.value)}
+                              className="max-w-[150px]"
+                            />
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              className="h-8 w-8 p-0 text-green-500"
+                              onClick={() => saveNewPassword(user.id)}
+                            >
+                              <Save size={16} />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="ghost" 
+                              className="h-8 w-8 p-0 text-red-500"
+                              onClick={cancelPasswordEdit}
+                            >
+                              <X size={16} />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <span>{showPasswords[user.id] ? user.password : '********'}</span>
+                            <Button 
+                              size="sm"
+                              variant="ghost" 
+                              className="h-8 w-8 p-0 text-muted-foreground"
+                              onClick={() => togglePasswordVisibility(user.id)}
+                            >
+                              {showPasswords[user.id] ? <EyeOff size={16} /> : <Eye size={16} />}
+                            </Button>
+                            <Button 
+                              size="sm"
+                              variant="ghost" 
+                              className="h-8 w-8 p-0 text-blue-500"
+                              onClick={() => startPasswordEdit(user.id)}
+                            >
+                              <Edit size={16} />
+                            </Button>
+                          </div>
+                        )}
+                      </TableCell>
                       <TableCell>{user.dateCreated}</TableCell>
                       <TableCell className="text-right">
                         <Button 
