@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { AlertCircle, User, Mail, Lock, Plus, Trash2, LogOut, UserPlus, Save, X, Eye, EyeOff, Edit } from 'lucide-react';
+import { AlertCircle, User, Mail, Lock, Plus, Trash2, LogOut, Save, X, Eye, EyeOff, Edit } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -34,13 +34,37 @@ const Admin = () => {
   });
   const [error, setError] = useState('');
 
-  // Cargar usuarios desde localStorage
+  // Cargar usuarios desde localStorage - mejorado para detectar cambios
   const loadUsers = () => {
     const storedUsersList = localStorage.getItem('usersList');
     if (storedUsersList) {
       try {
         const parsedUsers = JSON.parse(storedUsersList);
-        setUsers(parsedUsers);
+        
+        // Verificar que los datos sean válidos y tengan la estructura esperada
+        if (Array.isArray(parsedUsers)) {
+          // Asegurar que cada usuario tenga los campos requeridos
+          const validUsers = parsedUsers.map((user, index) => {
+            // Si el usuario no tiene un ID, le asignamos uno
+            if (!user.id) {
+              user.id = (index + 1).toString();
+            }
+            
+            // Si el usuario no tiene fecha de creación, le asignamos la fecha actual
+            if (!user.dateCreated) {
+              user.dateCreated = new Date().toISOString().split('T')[0];
+            }
+            
+            return user;
+          });
+          
+          // Guardar la lista validada
+          setUsers(validUsers);
+          localStorage.setItem('usersList', JSON.stringify(validUsers));
+        } else {
+          console.error('El formato de los usuarios almacenados no es válido (no es un array).');
+          initializeDefaultUsers();
+        }
       } catch (error) {
         console.error('Error parsing users from localStorage:', error);
         // Si hay un error, inicializamos con usuarios por defecto
@@ -80,6 +104,26 @@ const Admin = () => {
     setUsers(updatedUsers);
   };
 
+  // Función para sincronizar cualquier usuario nuevo que se haya registrado
+  const syncRegisteredUsers = () => {
+    const storedUsersList = localStorage.getItem('usersList');
+    if (!storedUsersList) return;
+    
+    try {
+      const currentUsers = JSON.parse(storedUsersList);
+      
+      // Asegurar que el listado esté actualizado
+      saveUsers(currentUsers);
+      
+      toast({
+        title: "Lista de usuarios actualizada",
+        description: `Se han actualizado los usuarios. Total: ${currentUsers.length}`,
+      });
+    } catch (error) {
+      console.error('Error syncing registered users:', error);
+    }
+  };
+
   useEffect(() => {
     // Comprobar si el usuario está autenticado y es administrador
     const storedUser = localStorage.getItem('user');
@@ -89,6 +133,13 @@ const Admin = () => {
         setUser(parsedUser);
         // Cargar usuarios
         loadUsers();
+        
+        // Configurar un intervalo para refrescar los usuarios periódicamente
+        const interval = setInterval(() => {
+          loadUsers();
+        }, 30000); // Recargar cada 30 segundos
+        
+        return () => clearInterval(interval);
       } else {
         navigate('/login');
       }
@@ -122,15 +173,19 @@ const Admin = () => {
       return;
     }
     
-    // Agregar nuevo usuario
-    const newId = (users.length + 1).toString();
+    // Determinar el próximo ID disponible
+    const maxId = users.length > 0 
+      ? Math.max(...users.map(user => parseInt(user.id)))
+      : 0;
+    const newId = (maxId + 1).toString();
+    
     const currentDate = new Date().toISOString().split('T')[0];
     
     const addedUser: AdminUser = {
       id: newId,
       name: newUser.name,
       email: newUser.email,
-      password: newUser.password, // Guardamos la contraseña real
+      password: newUser.password,
       dateCreated: currentDate
     };
     
@@ -225,14 +280,22 @@ const Admin = () => {
             <h1 className="text-3xl font-bold mb-2">Panel de Administración</h1>
             <p className="text-muted-foreground">Bienvenido, {user.name}</p>
           </div>
-          <Button 
-            variant="outline" 
-            className="flex items-center gap-2"
-            onClick={handleLogout}
-          >
-            <LogOut size={16} />
-            Cerrar sesión
-          </Button>
+          <div className="flex gap-3">
+            <Button 
+              onClick={syncRegisteredUsers}
+              className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+            >
+              Actualizar Lista
+            </Button>
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-2"
+              onClick={handleLogout}
+            >
+              <LogOut size={16} />
+              Cerrar sesión
+            </Button>
+          </div>
         </motion.div>
 
         <motion.div
@@ -242,7 +305,12 @@ const Admin = () => {
         >
           <Card className="p-6 mb-8">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold">Gestión de Usuarios</h2>
+              <div>
+                <h2 className="text-xl font-bold">Gestión de Usuarios</h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Total de usuarios: {users.length}
+                </p>
+              </div>
               <Button 
                 className="bg-gradient-to-r from-purple-600 to-blue-500 flex items-center gap-2"
                 onClick={() => setShowAddForm(true)}
@@ -343,72 +411,80 @@ const Admin = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {users.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell className="font-medium">{user.id}</TableCell>
-                      <TableCell>{user.name}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>
-                        {editingUser === user.id ? (
-                          <div className="flex items-center gap-2">
-                            <Input
-                              type="text"
-                              value={newPassword}
-                              onChange={(e) => setNewPassword(e.target.value)}
-                              className="max-w-[150px]"
-                            />
-                            <Button 
-                              size="sm" 
-                              variant="ghost" 
-                              className="h-8 w-8 p-0 text-green-500"
-                              onClick={() => saveNewPassword(user.id)}
-                            >
-                              <Save size={16} />
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              variant="ghost" 
-                              className="h-8 w-8 p-0 text-red-500"
-                              onClick={cancelPasswordEdit}
-                            >
-                              <X size={16} />
-                            </Button>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <span>{showPasswords[user.id] ? user.password : '********'}</span>
-                            <Button 
-                              size="sm"
-                              variant="ghost" 
-                              className="h-8 w-8 p-0 text-muted-foreground"
-                              onClick={() => togglePasswordVisibility(user.id)}
-                            >
-                              {showPasswords[user.id] ? <EyeOff size={16} /> : <Eye size={16} />}
-                            </Button>
-                            <Button 
-                              size="sm"
-                              variant="ghost" 
-                              className="h-8 w-8 p-0 text-blue-500"
-                              onClick={() => startPasswordEdit(user.id)}
-                            >
-                              <Edit size={16} />
-                            </Button>
-                          </div>
-                        )}
-                      </TableCell>
-                      <TableCell>{user.dateCreated}</TableCell>
-                      <TableCell className="text-right">
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          className="h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                          onClick={() => handleDeleteUser(user.id)}
-                        >
-                          <Trash2 size={16} />
-                        </Button>
+                  {users.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                        No hay usuarios registrados
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : (
+                    users.map((user) => (
+                      <TableRow key={user.id}>
+                        <TableCell className="font-medium">{user.id}</TableCell>
+                        <TableCell>{user.name}</TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>
+                          {editingUser === user.id ? (
+                            <div className="flex items-center gap-2">
+                              <Input
+                                type="text"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                className="max-w-[150px]"
+                              />
+                              <Button 
+                                size="sm" 
+                                variant="ghost" 
+                                className="h-8 w-8 p-0 text-green-500"
+                                onClick={() => saveNewPassword(user.id)}
+                              >
+                                <Save size={16} />
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="ghost" 
+                                className="h-8 w-8 p-0 text-red-500"
+                                onClick={cancelPasswordEdit}
+                              >
+                                <X size={16} />
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <span>{showPasswords[user.id] ? user.password : '********'}</span>
+                              <Button 
+                                size="sm"
+                                variant="ghost" 
+                                className="h-8 w-8 p-0 text-muted-foreground"
+                                onClick={() => togglePasswordVisibility(user.id)}
+                              >
+                                {showPasswords[user.id] ? <EyeOff size={16} /> : <Eye size={16} />}
+                              </Button>
+                              <Button 
+                                size="sm"
+                                variant="ghost" 
+                                className="h-8 w-8 p-0 text-blue-500"
+                                onClick={() => startPasswordEdit(user.id)}
+                              >
+                                <Edit size={16} />
+                              </Button>
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell>{user.dateCreated}</TableCell>
+                        <TableCell className="text-right">
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            className="h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                            onClick={() => handleDeleteUser(user.id)}
+                          >
+                            <Trash2 size={16} />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>
