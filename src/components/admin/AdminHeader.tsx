@@ -1,15 +1,16 @@
 
 import { Button } from '@/components/ui/button';
-import { LogOut } from 'lucide-react';
+import { LogOut, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface AdminHeaderProps {
   userName: string;
+  userCount: number;
   onLogout: () => void;
   onSync: () => void;
 }
 
-const AdminHeader = ({ userName, onLogout, onSync }: AdminHeaderProps) => {
+const AdminHeader = ({ userName, userCount, onLogout, onSync }: AdminHeaderProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -20,12 +21,14 @@ const AdminHeader = ({ userName, onLogout, onSync }: AdminHeaderProps) => {
       <div>
         <h1 className="text-3xl font-bold mb-2">Panel de Administración</h1>
         <p className="text-muted-foreground">Bienvenido, {userName}</p>
+        <p className="text-sm text-green-600 mt-1">Usuarios registrados: {userCount}</p>
       </div>
       <div className="flex gap-3">
         <Button 
           onClick={onSync}
           className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
         >
+          <RefreshCw size={16} />
           Actualizar Lista
         </Button>
         <Button 

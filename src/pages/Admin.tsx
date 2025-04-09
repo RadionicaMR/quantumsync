@@ -8,7 +8,7 @@ import { Plus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { AdminUser, NewUserForm } from '@/types/admin';
-import { loadUsers, addUser, deleteUser, updateUserPassword } from '@/utils/userStorage';
+import { loadUsers, addUser, deleteUser, updateUserPassword, synchronizeAllUsers } from '@/utils/userStorage';
 import AdminHeader from '@/components/admin/AdminHeader';
 import AddUserForm from '@/components/admin/AddUserForm';
 import UsersTable from '@/components/admin/UsersTable';
@@ -28,12 +28,12 @@ const Admin = () => {
       const parsedUser = JSON.parse(storedUser);
       if (parsedUser && parsedUser.isAdmin) {
         setUser(parsedUser);
-        // Load users
-        setUsers(loadUsers());
+        // Load users with the enhanced synchronization
+        syncRegisteredUsers();
         
         // Set up an interval to refresh users periodically
         const interval = setInterval(() => {
-          setUsers(loadUsers());
+          syncRegisteredUsers();
         }, 30000); // Reload every 30 seconds
         
         return () => clearInterval(interval);
@@ -52,7 +52,7 @@ const Admin = () => {
 
   const handleAddUser = (newUserData: NewUserForm) => {
     // Check if the email already exists
-    if (users.some(user => user.email === newUserData.email)) {
+    if (users.some(user => user.email.toLowerCase() === newUserData.email.toLowerCase())) {
       toast({
         variant: "destructive",
         title: "Error",
@@ -88,7 +88,7 @@ const Admin = () => {
   };
 
   const syncRegisteredUsers = () => {
-    const updatedUsers = loadUsers();
+    const updatedUsers = synchronizeAllUsers();
     setUsers(updatedUsers);
     
     toast({
@@ -106,6 +106,7 @@ const Admin = () => {
       <div className="container mx-auto px-4 py-16">
         <AdminHeader 
           userName={user.name} 
+          userCount={users.length}
           onLogout={handleLogout} 
           onSync={syncRegisteredUsers} 
         />
