@@ -47,12 +47,13 @@ const TreatmentActions = ({
             }
           </div>
           <QuantumButton 
+            className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
             onClick={startTreatment}
             disabled={!canStartTreatment}
           >
             <div className="flex flex-col items-center">
-              <span>INICIAR</span>
-              <span>TRATAMIENTO</span>
+              <span>ADQUIERE</span>
+              <span>QUANTUMSYNC</span>
             </div>
           </QuantumButton>
         </>

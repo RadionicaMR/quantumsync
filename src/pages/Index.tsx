@@ -130,7 +130,7 @@ const Index = () => {
         subtitle="QuantumSync combina ciencia, tecnología y bienestar para ayudarte a equilibrar tu energía y alcanzar tus objetivos."
       >
         <div className="flex flex-col sm:flex-row gap-4 mt-4">
-          <QuantumButton size="lg" onClick={() => navigate('/purchase')}>Comenzar</QuantumButton>
+          <QuantumButton size="lg" onClick={() => navigate('/purchase')}>Adquiere QuantumSync</QuantumButton>
           <QuantumButton variant="outline" size="lg" onClick={() => {
             const aboutSection = document.querySelector('#about-section');
             if (aboutSection) {
@@ -146,6 +146,14 @@ const Index = () => {
       {/* Misión y Visión */}
       <section className="py-16 px-4">
         <div className="container mx-auto text-center">
+          <div className="flex justify-center mb-8">
+            <QuantumButton 
+              className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
+              onClick={() => navigate('/purchase')}
+            >
+              Adquiere QuantumSync
+            </QuantumButton>
+          </div>
           <h2 className="text-3xl font-bold mb-4">Nuestra Misión y Visión</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
             En QuantumSync, estamos dedicados a hacer que el bienestar energético sea accesible para todos a través de tecnología innovadora.
@@ -215,6 +223,14 @@ const Index = () => {
       {/* Core Values */}
       <section className="py-16 px-4">
         <div className="container mx-auto">
+          <div className="flex justify-center mb-8">
+            <QuantumButton 
+              className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
+              onClick={() => navigate('/purchase')}
+            >
+              Adquiere QuantumSync
+            </QuantumButton>
+          </div>
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Nuestros Valores Fundamentales</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -291,13 +307,85 @@ const Index = () => {
       </section>
 
       {/* Benefits Section */}
-      <BenefitsSection benefitItems={benefitItems} />
+      <section className="py-16 px-4">
+        <div className="container mx-auto">
+          <div className="flex justify-center mb-8">
+            <QuantumButton 
+              className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
+              onClick={() => navigate('/purchase')}
+            >
+              Adquiere QuantumSync
+            </QuantumButton>
+          </div>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Experimenta Beneficios Reales</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              QuantumSync ofrece mejoras tangibles en múltiples áreas de tu vida.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {benefitItems.map((benefit, index) => (
+              <Card key={index} className="quantum-card p-6">
+                <h3 className="text-xl font-semibold mb-2">{benefit.title}</h3>
+                <p className="text-muted-foreground">{benefit.description}</p>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Founder Section */}
       <FounderSection />
 
       {/* Testimonials */}
-      <TestimonialsSection testimonials={testimonials} />
+      <section className="py-16 px-4 bg-quantum-gradient-soft">
+        <div className="container mx-auto">
+          <div className="flex justify-center mb-8">
+            <QuantumButton 
+              className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
+              onClick={() => navigate('/purchase')}
+            >
+              Adquiere QuantumSync
+            </QuantumButton>
+          </div>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Lo que Dicen Nuestros Usuarios</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Descubre cómo QuantumSync ha transformado la vida de personas de diferentes ámbitos.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <motion.div 
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <Card className="quantum-card p-6 h-full flex flex-col">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
+                      <img 
+                        src={testimonial.image} 
+                        alt={testimonial.name} 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">{testimonial.name}</h3>
+                      <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                    </div>
+                  </div>
+                  <p className="text-muted-foreground flex-grow">{testimonial.content}</p>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* CTA Section */}
       <CTASection />

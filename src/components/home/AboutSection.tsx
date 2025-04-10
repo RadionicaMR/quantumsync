@@ -18,7 +18,12 @@ const AboutSection = () => {
             <p className="text-muted-foreground mb-6">
               Nuestra esencia radica en integrar tecnología avanzada con conocimientos tradicionales y modernos sobre energía y vibraciones. Sabemos que la energía es la base de todo en el universo, y QuantumSync te da la oportunidad de conectarte con ella de manera práctica y efectiva.
             </p>
-            <QuantumButton onClick={() => navigate('/about')}>Conoce Nuestra Misión</QuantumButton>
+            <QuantumButton 
+              className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
+              onClick={() => navigate('/purchase')}
+            >
+              Adquiere QuantumSync
+            </QuantumButton>
           </div>
           <div className="relative">
             <div className="absolute inset-0 bg-quantum-primary/10 rounded-full animate-pulse-soft"></div>

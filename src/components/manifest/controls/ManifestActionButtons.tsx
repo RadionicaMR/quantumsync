@@ -42,10 +42,11 @@ const ManifestActionButtons = ({
             {canStart ? 'Listo para iniciar manifestación' : 'Selecciona un patrón para continuar'}
           </div>
           <QuantumButton 
+            className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
             onClick={startManifestation}
             disabled={!canStart || !intention.trim()}
           >
-            Activar Manifestación
+            Adquiere QuantumSync
           </QuantumButton>
         </>
       )}

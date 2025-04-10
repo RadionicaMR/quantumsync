@@ -13,10 +13,10 @@ const CTASection = () => {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button 
-            className="bg-white text-quantum-primary font-medium px-6 py-3 rounded-full shadow-lg hover:bg-white/90 transition-colors"
-            onClick={() => navigate('/diagnose')}
+            className="bg-orange-500 text-white font-medium px-6 py-3 rounded-full shadow-lg hover:bg-orange-600 transition-colors glow-orange"
+            onClick={() => navigate('/purchase')}
           >
-            Comienza Ahora
+            Adquiere QuantumSync
           </button>
           <button 
             className="border-2 border-white text-white font-medium px-6 py-3 rounded-full hover:bg-white/10 transition-colors"

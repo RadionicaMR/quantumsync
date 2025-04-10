@@ -16,7 +16,12 @@ const DiagnosisFooter = () => {
           <p className="text-muted-foreground max-w-2xl mx-auto mb-6 md:mb-8">
             Después del diagnóstico, pasa a nuestro módulo de tratamiento para abordar cualquier desequilibrio con terapia de frecuencia dirigida.
           </p>
-          <QuantumButton onClick={() => navigate('/treat')}>Explorar Tratamientos</QuantumButton>
+          <QuantumButton 
+            className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
+            onClick={() => navigate('/purchase')}
+          >
+            Adquiere QuantumSync
+          </QuantumButton>
         </div>
       </section>
     </>

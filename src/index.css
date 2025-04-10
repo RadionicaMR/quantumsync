@@ -87,3 +87,15 @@
     -webkit-text-size-adjust: 100%;
   }
 }
+
+/* Neon glow effects */
+.glow-orange {
+  box-shadow: 0 0 10px #F97316, 0 0 20px rgba(249, 115, 22, 0.5);
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+}
+
+.glow-orange:hover {
+  box-shadow: 0 0 15px #F97316, 0 0 30px rgba(249, 115, 22, 0.7);
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
