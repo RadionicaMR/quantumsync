@@ -1,6 +1,7 @@
 
 import { ReactNode } from 'react';
 import DowsingRing from './quantum/DowsingRing';
+import EnergyCircle from './EnergyCircle';
 
 interface HeroSectionProps {
   title: string;
@@ -10,6 +11,40 @@ interface HeroSectionProps {
   align?: 'left' | 'center' | 'right';
   energyCircles?: number;
 }
+
+const BackgroundStar = ({ index }: { index: number }) => {
+  const randomSize = Math.random() * 2 + 1;
+  
+  return (
+    <div
+      key={`distant-star-${index}`}
+      className="absolute rounded-full animate-pulse-soft"
+      style={{
+        top: `${Math.random() * 100}%`,
+        left: `${Math.random() * 100}%`,
+        width: `${randomSize}px`,
+        height: `${randomSize}px`,
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        animationDelay: `${Math.random() * 5}s`,
+        animationDuration: `${Math.random() * 3 + 2}s`,
+      }}
+    />
+  );
+};
+
+const GalacticBackground = () => {
+  return (
+    <div className="absolute inset-0 z-0 bg-black">
+      {/* Nebulosa cósmica */}
+      <div className="absolute inset-0 opacity-40 bg-gradient-to-br from-purple-900 via-blue-900 to-black mix-blend-multiply"></div>
+      
+      {/* Estrellas distantes - reducidas */}
+      {Array.from({ length: 20 }).map((_, i) => (
+        <BackgroundStar key={i} index={i} />
+      ))}
+    </div>
+  );
+};
 
 const HeroSection = ({ 
   title, 
@@ -28,27 +63,7 @@ const HeroSection = ({
   return (
     <div className={`relative w-full overflow-hidden py-6 md:py-10 px-4 bg-quantum-dark/90 ${className}`}>
       {/* Fondo galáctico */}
-      <div className="absolute inset-0 z-0 bg-black">
-        {/* Nebulosa cósmica */}
-        <div className="absolute inset-0 opacity-40 bg-gradient-to-br from-purple-900 via-blue-900 to-black mix-blend-multiply"></div>
-        
-        {/* Estrellas distantes - reducidas */}
-        {Array.from({ length: 20 }).map((_, i) => (
-          <div
-            key={`distant-star-${i}`}
-            className="absolute rounded-full animate-pulse-soft"
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              width: `${Math.random() * 2 + 1}px`,
-              height: `${Math.random() * 2 + 1}px`,
-              backgroundColor: 'rgba(255, 255, 255, 0.8)',
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${Math.random() * 3 + 2}s`,
-            }}
-          />
-        ))}
-      </div>
+      <GalacticBackground />
       
       {/* Anillos dowsing decorativos - smaller and fewer */}
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] opacity-30 pointer-events-none">

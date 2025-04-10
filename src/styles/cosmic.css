@@ -44,3 +44,13 @@
   80% { transform: translate(-10%, -15%); }
   90% { transform: translate(20%, -5%); }
 }
+
+/* Energy Circle Styles */
+.energy-circle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.2;
+  filter: blur(30px);
+  animation: random-move infinite linear;
+  pointer-events: none;
+}
