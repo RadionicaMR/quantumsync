@@ -1,5 +1,6 @@
 
 import { useNavigate } from 'react-router-dom';
+import QuantumButton from '@/components/QuantumButton';
 
 const CTASection = () => {
   const navigate = useNavigate();
@@ -11,19 +12,14 @@ const CTASection = () => {
         <p className="max-w-2xl mx-auto mb-8 text-white/80">
           Descarga QuantumSync hoy y comienza tu viaje hacia un mejor bienestar, energía equilibrada y nuevas posibilidades.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button 
-            className="bg-orange-500 text-white font-medium px-6 py-3 rounded-full shadow-lg hover:bg-orange-600 transition-colors glow-orange"
+        <div className="flex justify-center">
+          <QuantumButton 
+            size="lg"
+            className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
             onClick={() => navigate('/purchase')}
           >
             Adquiere QuantumSync
-          </button>
-          <button 
-            className="border-2 border-white text-white font-medium px-6 py-3 rounded-full hover:bg-white/10 transition-colors"
-            onClick={() => navigate('/about')}
-          >
-            Saber Más
-          </button>
+          </QuantumButton>
         </div>
       </div>
     </section>

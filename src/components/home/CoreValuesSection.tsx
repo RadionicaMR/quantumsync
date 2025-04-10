@@ -37,6 +37,7 @@ const CoreValuesSection = ({ values }: CoreValuesSectionProps) => {
         <div className="flex justify-center mb-8">
           <QuantumButton 
             className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
+            size="lg"
             onClick={() => navigate('/purchase')}
           >
             Adquiere QuantumSync

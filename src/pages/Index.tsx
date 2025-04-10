@@ -53,14 +53,10 @@ const Index = () => {
         title="Transforma Tu Vida a Través de la Tecnología de Frecuencia Cuántica"
         subtitle="QuantumSync combina ciencia, tecnología y bienestar para ayudarte a equilibrar tu energía y alcanzar tus objetivos."
       >
-        <div className="flex flex-col sm:flex-row gap-4 mt-4">
-          <QuantumButton size="lg" onClick={() => navigate('/purchase')}>Adquiere QuantumSync</QuantumButton>
-          <QuantumButton variant="outline" size="lg" onClick={() => {
-            const aboutSection = document.querySelector('#about-section');
-            if (aboutSection) {
-              aboutSection.scrollIntoView({ behavior: 'smooth' });
-            }
-          }}>Saber Más</QuantumButton>
+        <div className="flex justify-center mt-4">
+          <QuantumButton size="lg" className="bg-orange-500 hover:bg-orange-600 text-white glow-orange" onClick={() => navigate('/purchase')}>
+            Adquiere QuantumSync
+          </QuantumButton>
         </div>
       </HeroSection>
 

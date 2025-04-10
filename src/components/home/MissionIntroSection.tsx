@@ -6,11 +6,12 @@ const MissionIntroSection = () => {
   const navigate = useNavigate();
   
   return (
-    <section className="py-16 px-4">
+    <section className="py-8 px-4">
       <div className="container mx-auto text-center">
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-6">
           <QuantumButton 
             className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
+            size="lg"
             onClick={() => navigate('/purchase')}
           >
             Adquiere QuantumSync
