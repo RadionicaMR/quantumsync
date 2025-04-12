@@ -61,6 +61,12 @@ const ImageUploader = ({
     }
   };
 
+  const handleAddSingleImageToMultiple = (newImage: string) => {
+    if (images.length < maxImages) {
+      setImages([...images, newImage]);
+    }
+  };
+
   return (
     <Card className="w-full overflow-hidden">
       <div className="p-4 bg-muted/50 border-b">
@@ -108,6 +114,7 @@ const ImageUploader = ({
               onAddImageClick={triggerMultipleFileInput}
               isDisabled={isPlaying}
               maxImages={maxImages}
+              onImageAdded={handleAddSingleImageToMultiple}
             />
             
             <input

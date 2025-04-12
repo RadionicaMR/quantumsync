@@ -2,6 +2,7 @@
 import React, { useRef } from 'react';
 import { Upload, Trash2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
+import GoogleDriveUploader from '@/components/shared/GoogleDriveUploader';
 
 interface ImageUploaderProps {
   label: string;
@@ -85,6 +86,22 @@ const ImageUploader = ({
                 {description}
               </p>
             )}
+            <div className="mt-4 flex justify-center space-x-2">
+              <button 
+                className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary/90"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  triggerImageUpload();
+                }}
+                disabled={isDisabled}
+              >
+                Subir desde PC
+              </button>
+              <GoogleDriveUploader 
+                onImageSelected={setImage} 
+                isDisabled={isDisabled} 
+              />
+            </div>
           </div>
         )}
         <input 

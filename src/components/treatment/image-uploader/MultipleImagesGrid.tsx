@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Plus, Trash2 } from 'lucide-react';
+import GoogleDriveUploader from '@/components/shared/GoogleDriveUploader';
 
 interface MultipleImagesGridProps {
   images: string[];
@@ -8,6 +9,7 @@ interface MultipleImagesGridProps {
   onAddImageClick: () => void;
   isDisabled: boolean;
   maxImages: number;
+  onImageAdded: (image: string) => void;
 }
 
 const MultipleImagesGrid = ({ 
@@ -15,8 +17,11 @@ const MultipleImagesGrid = ({
   onRemoveImage, 
   onAddImageClick, 
   isDisabled, 
-  maxImages 
+  maxImages,
+  onImageAdded
 }: MultipleImagesGridProps) => {
+  const canAddMoreImages = images.length < maxImages;
+  
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-3 gap-2">
@@ -38,7 +43,7 @@ const MultipleImagesGrid = ({
           </div>
         ))}
         
-        {images.length < maxImages && !isDisabled && (
+        {canAddMoreImages && !isDisabled && (
           <div
             className="flex items-center justify-center aspect-square bg-muted/30 rounded cursor-pointer border-2 border-dashed border-border"
             onClick={onAddImageClick}
@@ -54,6 +59,22 @@ const MultipleImagesGrid = ({
           <p className="mt-1">Selecciona hasta {maxImages} imágenes para un efecto hipnótico</p>
         )}
       </div>
+      
+      {canAddMoreImages && !isDisabled && (
+        <div className="flex justify-center space-x-2 mt-2">
+          <button 
+            className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary/90"
+            onClick={onAddImageClick}
+            disabled={isDisabled}
+          >
+            Subir desde PC
+          </button>
+          <GoogleDriveUploader 
+            onImageSelected={onImageAdded} 
+            isDisabled={isDisabled} 
+          />
+        </div>
+      )}
     </div>
   );
 };
