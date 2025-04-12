@@ -46,7 +46,7 @@ const ManifestActionButtons = ({
             onClick={startManifestation}
             disabled={!canStart || !intention.trim()}
           >
-            Adquiere QuantumSync
+            INICIAR MANIFESTACIÓN
           </QuantumButton>
         </>
       )}

@@ -52,8 +52,8 @@ const TreatmentActions = ({
             disabled={!canStartTreatment}
           >
             <div className="flex flex-col items-center">
-              <span>ADQUIERE</span>
-              <span>QUANTUMSYNC</span>
+              <span>INICIAR</span>
+              <span>TRATAMIENTO</span>
             </div>
           </QuantumButton>
         </>

@@ -45,7 +45,7 @@ const ManifestActions = ({
             disabled={!patternImage}
           >
             <div className="flex flex-col items-center">
-              <span>ACTIVAR</span>
+              <span>INICIAR</span>
               <span>MANIFESTACIÓN</span>
             </div>
           </QuantumButton>
