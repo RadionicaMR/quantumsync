@@ -3,6 +3,18 @@ import React, { useState } from 'react';
 import { Cloud } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+// Add type declarations for the Google API
+declare global {
+  interface Window {
+    gapi: {
+      load: (api: string, callback: () => void) => void;
+      picker: {
+        [key: string]: any;
+      };
+    };
+  }
+}
+
 interface GoogleDriveUploaderProps {
   onImageSelected: (imageUrl: string) => void;
   isDisabled?: boolean;
