@@ -42,7 +42,11 @@ const GoogleDriveUploader = ({ onImageSelected, isDisabled = false }: GoogleDriv
     });
   };
 
-  const openGoogleDrivePicker = async () => {
+  const openGoogleDrivePicker = async (e: React.MouseEvent) => {
+    // Prevent event propagation to parent elements
+    e.stopPropagation();
+    e.preventDefault();
+    
     if (isDisabled) return;
     
     setIsLoading(true);
