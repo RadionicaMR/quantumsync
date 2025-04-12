@@ -1,7 +1,6 @@
 
 import React, { useRef } from 'react';
 import { Plus, Trash2, Upload } from 'lucide-react';
-import GoogleDriveUploader from '@/components/shared/GoogleDriveUploader';
 
 interface SingleImageUploaderProps {
   image: string | null;
@@ -61,7 +60,7 @@ const SingleImageUploader = ({
           <p className="text-sm text-muted-foreground mt-1">
             Arrastra o selecciona una imagen
           </p>
-          <div className="mt-4 flex justify-center space-x-2">
+          <div className="mt-4 flex justify-center">
             <button 
               className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary/90"
               onClick={(e) => {
@@ -72,10 +71,6 @@ const SingleImageUploader = ({
             >
               Subir desde PC
             </button>
-            <GoogleDriveUploader 
-              onImageSelected={onImageChange} 
-              isDisabled={isDisabled} 
-            />
           </div>
         </div>
       )}

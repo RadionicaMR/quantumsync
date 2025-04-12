@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import GoogleDriveUploader from '@/components/shared/GoogleDriveUploader';
 
 interface MultipleImagesGridProps {
   images: string[];
@@ -61,7 +60,7 @@ const MultipleImagesGrid = ({
       </div>
       
       {canAddMoreImages && !isDisabled && (
-        <div className="flex justify-center space-x-2 mt-2">
+        <div className="flex justify-center mt-2">
           <button 
             className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary/90"
             onClick={onAddImageClick}
@@ -69,10 +68,6 @@ const MultipleImagesGrid = ({
           >
             Subir desde PC
           </button>
-          <GoogleDriveUploader 
-            onImageSelected={onImageAdded} 
-            isDisabled={isDisabled} 
-          />
         </div>
       )}
     </div>
