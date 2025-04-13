@@ -19,8 +19,12 @@ interface CustomManifestProps {
   setIntention: (value: string) => void;
   patternImage: string | null;
   setPatternImage: (image: string | null) => void;
+  patternImages: string[];
+  setPatternImages: (images: string[]) => void;
   receptorImage: string | null;
   setReceptorImage: (image: string | null) => void;
+  receptorImages: string[];
+  setReceptorImages: (images: string[]) => void;
   manifestSound: boolean;
   setManifestSound: (value: boolean) => void;
   manifestFrequency: number[];
@@ -51,8 +55,12 @@ const CustomManifest = ({
   setIntention,
   patternImage,
   setPatternImage,
+  patternImages,
+  setPatternImages,
   receptorImage,
   setReceptorImage,
+  receptorImages,
+  setReceptorImages,
   manifestSound,
   setManifestSound,
   manifestFrequency,
@@ -82,15 +90,21 @@ const CustomManifest = ({
         <div className="lg:col-span-1">
           <h3 className="text-xl font-semibold mb-4">Carga tu Patrón Radiónico</h3>
           
-          <ImageUploader
-            label="Subir Patrón Radiónico"
-            image={patternImage}
-            setImage={setPatternImage}
-            isDisabled={isManifestActive}
-            description="Sube tu propio diseño desde tu galería"
-          />
+          <div className="mb-6">
+            <ImageUploader
+              label="Subir Patrón Radiónico"
+              image={patternImage}
+              setImage={setPatternImage}
+              isDisabled={isManifestActive}
+              description="Sube tu propio diseño desde tu galería"
+              isMultiple={true}
+              images={patternImages}
+              setImages={setPatternImages}
+              maxImages={3}
+            />
+          </div>
           
-          <div className="mt-6">
+          <div className="mb-6">
             <ReceptorNameInput 
               receptorName={receptorName}
               setReceptorName={setReceptorName}
@@ -98,13 +112,17 @@ const CustomManifest = ({
             />
           </div>
 
-          <div className="mt-6">
+          <div>
             <ImageUploader
               label="Imagen del RECEPTOR"
               image={receptorImage}
               setImage={setReceptorImage}
               isDisabled={isManifestActive}
               description="Selecciona una imagen relacionada con tu objetivo"
+              isMultiple={true}
+              images={receptorImages}
+              setImages={setReceptorImages}
+              maxImages={3}
             />
           </div>
         </div>
@@ -135,14 +153,16 @@ const CustomManifest = ({
               startManifestation={startManifestation}
               stopManifestation={stopManifestation}
               formatTimeRemaining={formatTimeRemaining}
-              canStart={!!patternImage || !!receptorName.trim()}
+              canStart={patternImages.length > 0 || !!receptorName.trim()}
             />
             
             <ManifestVisualizer
               isActive={isManifestActive}
               currentImage={currentImage}
               patternImage={patternImage}
+              patternImages={patternImages}
               receptorImage={receptorImage}
+              receptorImages={receptorImages}
               selectedPattern=""
               patterns={patterns}
               intention={intention}

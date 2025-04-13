@@ -7,6 +7,8 @@ export const useManifestState = (): ManifestState & {
   setVisualSpeed: (value: number[]) => void;
   setPatternImage: (value: string | null) => void;
   setReceptorImage: (value: string | null) => void;
+  setPatternImages: (value: string[]) => void;
+  setReceptorImages: (value: string[]) => void;
   setActiveTab: (value: string) => void;
   setManifestSound: (value: boolean) => void;
   setManifestFrequency: (value: number[]) => void;
@@ -25,6 +27,9 @@ export const useManifestState = (): ManifestState & {
   const [visualSpeed, setVisualSpeed] = useState([10]);
   const [patternImage, setPatternImage] = useState<string | null>(null);
   const [receptorImage, setReceptorImage] = useState<string | null>(null);
+  // New state for multiple images
+  const [patternImages, setPatternImages] = useState<string[]>([]);
+  const [receptorImages, setReceptorImages] = useState<string[]>([]);
   const [selectedPattern, setSelectedPattern] = useState('');
   const [activeTab, setActiveTab] = useState("presets");
   const [manifestSound, setManifestSound] = useState(true);
@@ -43,6 +48,8 @@ export const useManifestState = (): ManifestState & {
     visualSpeed,
     patternImage,
     receptorImage,
+    patternImages,
+    receptorImages,
     selectedPattern,
     activeTab,
     manifestSound,
@@ -60,6 +67,8 @@ export const useManifestState = (): ManifestState & {
     setVisualSpeed,
     setPatternImage,
     setReceptorImage,
+    setPatternImages,
+    setReceptorImages,
     setSelectedPattern,
     setActiveTab,
     setManifestSound,

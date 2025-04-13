@@ -1,13 +1,13 @@
 
-import { ManifestPattern } from '@/data/manifestPatterns';
-
-// Define all shared types for the manifest hooks
 export interface ManifestState {
   intention: string;
   isManifestActive: boolean;
   visualSpeed: number[];
   patternImage: string | null;
   receptorImage: string | null;
+  // New properties for multiple images
+  patternImages: string[];
+  receptorImages: string[];
   selectedPattern: string;
   activeTab: string;
   manifestSound: boolean;
@@ -19,17 +19,4 @@ export interface ManifestState {
   rate1: string;
   rate2: string;
   rate3: string;
-}
-
-export interface ManifestAudio {
-  oscillatorRef: React.MutableRefObject<OscillatorNode | null>;
-  audioContextRef: React.MutableRefObject<AudioContext | null>;
-  startAudio: (frequency: number) => void;
-  stopAudio: () => void;
-}
-
-export interface ManifestTimers {
-  hypnoticTimerRef: React.MutableRefObject<NodeJS.Timeout | null>;
-  exposureTimerRef: React.MutableRefObject<NodeJS.Timeout | null>;
-  countdownTimerRef: React.MutableRefObject<NodeJS.Timeout | null>;
 }

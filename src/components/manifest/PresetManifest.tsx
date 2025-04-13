@@ -42,6 +42,8 @@ interface PresetManifestProps {
   currentImage: 'pattern' | 'receptor' | 'mix';
   receptorImage: string | null;
   setReceptorImage: (image: string | null) => void;
+  receptorImages: string[];
+  setReceptorImages: (images: string[]) => void;
   receptorName: string;
   setReceptorName: (name: string) => void;
 }
@@ -74,6 +76,8 @@ const PresetManifest = ({
   currentImage,
   receptorImage,
   setReceptorImage,
+  receptorImages,
+  setReceptorImages,
   receptorName,
   setReceptorName
 }: PresetManifestProps) => {
@@ -114,7 +118,7 @@ const PresetManifest = ({
                 startManifestation={startManifestation}
                 stopManifestation={stopManifestation}
                 formatTimeRemaining={formatTimeRemaining}
-                canStart={!!selectedPattern || !!receptorName.trim()}
+                canStart={!!selectedPattern || !!receptorName.trim() || receptorImages.length > 0}
               />
               
               {/* Nombre del RECEPTOR */}
@@ -134,6 +138,10 @@ const PresetManifest = ({
                   setImage={setReceptorImage}
                   isDisabled={isManifestActive}
                   description="Selecciona una imagen relacionada con tu objetivo"
+                  isMultiple={true}
+                  images={receptorImages}
+                  setImages={setReceptorImages}
+                  maxImages={3}
                 />
               </div>
               
@@ -142,6 +150,7 @@ const PresetManifest = ({
                 currentImage={currentImage}
                 patternImage={null}
                 receptorImage={receptorImage}
+                receptorImages={receptorImages}
                 selectedPattern={selectedPattern}
                 patterns={patterns}
                 intention={intention}

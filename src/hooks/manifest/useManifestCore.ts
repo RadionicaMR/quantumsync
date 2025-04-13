@@ -34,8 +34,15 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
   // Start manifestation
   const startManifestation = () => {
     // Can start with a pattern, image, or receptor name
-    if ((state.activeTab === "presets" && !state.selectedPattern && !state.receptorName) || 
-        (state.activeTab === "custom" && !state.patternImage && !state.receptorName)) return;
+    const hasPattern = state.activeTab === "presets" 
+      ? !!state.selectedPattern 
+      : (state.patternImage !== null || state.patternImages.length > 0);
+      
+    const hasReceptor = state.receptorName.trim() !== "" || 
+                      state.receptorImage !== null || 
+                      state.receptorImages.length > 0;
+    
+    if (!hasPattern && !hasReceptor) return;
     
     // Start sound if enabled
     if (state.manifestSound) {
@@ -45,47 +52,44 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
     // Start hypnotic effect with increased speed
     const switchInterval = 1000 / (state.visualSpeed[0] * 3);
     
-    // Can start with a pattern, image, or receptor name
-    if (state.patternImage || state.selectedPattern || state.receptorImage || state.receptorName) {
-      // Start hypnotic effect that alternates between pattern, receptor and mix
-      timers.hypnoticTimerRef.current = setInterval(() => {
-        state.setCurrentImage((prev) => {
-          switch(prev) {
-            case 'pattern': return 'receptor';
-            case 'receptor': return 'mix';
-            case 'mix': return 'pattern';
-            default: return 'pattern';
-          }
-        });
-      }, switchInterval);
+    // Start hypnotic effect that alternates between pattern, receptor and mix
+    timers.hypnoticTimerRef.current = setInterval(() => {
+      state.setCurrentImage((prev) => {
+        switch(prev) {
+          case 'pattern': return 'receptor';
+          case 'receptor': return 'mix';
+          case 'mix': return 'pattern';
+          default: return 'pattern';
+        }
+      });
+    }, switchInterval);
 
-      // Set exposure timer
-      const exposureTimeInMs = state.exposureTime[0] * 60 * 1000; // convert to milliseconds
-      state.setTimeRemaining(state.exposureTime[0]);
-      
-      // Start countdown
-      timers.countdownTimerRef.current = setInterval(() => {
-        state.setTimeRemaining((prev) => {
-          if (prev !== null && prev > 0) {
-            return prev - 1/60; // Decrement 1 second (1/60 of a minute)
-          }
-          return prev;
-        });
-      }, 1000);
-      
-      // Set timer to stop manifestation
-      if (timers.exposureTimerRef.current) {
-        clearTimeout(timers.exposureTimerRef.current);
-      }
-      
-      timers.exposureTimerRef.current = setTimeout(() => {
-        stopManifestation();
-        toast({
-          title: "Manifestación completada",
-          description: `Tu intención "${state.intention}" ha sido completamente programada.`,
-        });
-      }, exposureTimeInMs);
+    // Set exposure timer
+    const exposureTimeInMs = state.exposureTime[0] * 60 * 1000; // convert to milliseconds
+    state.setTimeRemaining(state.exposureTime[0]);
+    
+    // Start countdown
+    timers.countdownTimerRef.current = setInterval(() => {
+      state.setTimeRemaining((prev) => {
+        if (prev !== null && prev > 0) {
+          return prev - 1/60; // Decrement 1 second (1/60 of a minute)
+        }
+        return prev;
+      });
+    }, 1000);
+    
+    // Set timer to stop manifestation
+    if (timers.exposureTimerRef.current) {
+      clearTimeout(timers.exposureTimerRef.current);
     }
+    
+    timers.exposureTimerRef.current = setTimeout(() => {
+      stopManifestation();
+      toast({
+        title: "Manifestación completada",
+        description: `Tu intención "${state.intention}" ha sido completamente programada.`,
+      });
+    }, exposureTimeInMs);
     
     state.setIsManifestActive(true);
   };

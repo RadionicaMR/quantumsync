@@ -69,6 +69,8 @@ const Manifest = () => {
                 currentImage={manifest.currentImage}
                 receptorImage={manifest.receptorImage}
                 setReceptorImage={manifest.setReceptorImage}
+                receptorImages={manifest.receptorImages}
+                setReceptorImages={manifest.setReceptorImages}
                 receptorName={manifest.receptorName}
                 setReceptorName={manifest.setReceptorName}
               />
@@ -81,8 +83,12 @@ const Manifest = () => {
                 setIntention={manifest.setIntention}
                 patternImage={manifest.patternImage}
                 setPatternImage={manifest.setPatternImage}
+                patternImages={manifest.patternImages}
+                setPatternImages={manifest.setPatternImages}
                 receptorImage={manifest.receptorImage}
                 setReceptorImage={manifest.setReceptorImage}
+                receptorImages={manifest.receptorImages}
+                setReceptorImages={manifest.setReceptorImages}
                 manifestSound={manifest.manifestSound}
                 setManifestSound={manifest.setManifestSound}
                 manifestFrequency={manifest.manifestFrequency}
