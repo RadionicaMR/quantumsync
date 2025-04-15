@@ -19,10 +19,11 @@ const IntentionInput = ({
       <Textarea 
         id="intention" 
         placeholder="Escribe tu intención con claridad y precisión..."
-        className="min-h-[100px] quantum-input"
+        className="quantum-input"
         value={intention}
         onChange={(e) => setIntention(e.target.value)}
         disabled={isDisabled}
+        rows={4}
       />
     </div>
   );
