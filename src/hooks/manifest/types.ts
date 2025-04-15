@@ -20,3 +20,16 @@ export interface ManifestState {
   rate2: string;
   rate3: string;
 }
+
+export interface ManifestAudio {
+  oscillatorRef: React.RefObject<OscillatorNode | null>;
+  audioContextRef: React.RefObject<AudioContext | null>;
+  startAudio: (frequency: number) => void;
+  stopAudio: () => void;
+}
+
+export interface ManifestTimers {
+  hypnoticTimerRef: React.RefObject<NodeJS.Timeout | null>;
+  exposureTimerRef: React.RefObject<NodeJS.Timeout | null>;
+  countdownTimerRef: React.RefObject<NodeJS.Timeout | null>;
+}
