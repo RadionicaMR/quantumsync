@@ -2,7 +2,7 @@
 import React, { useRef, useEffect } from "react";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import { Play, CircleStop, FilePlus, Mic, Stop, Trash2 } from "lucide-react";
+import { Play, CircleStop, FilePlus, Mic, Trash2 } from "lucide-react"; // Removed Stop import
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 
 interface AudioSubliminalControlsProps {
@@ -109,7 +109,7 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
             disabled={isDisabled}
             className="flex items-center gap-1 px-3 py-2 rounded bg-red-600 text-white animate-pulse"
           >
-            <Stop className="w-4 h-4" />
+            <CircleStop className="w-4 h-4" />
             Detener ({isRecording ? "Grabando..." : ""})
           </button>
         )}
@@ -182,3 +182,4 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
 };
 
 export default AudioSubliminalControls;
+
