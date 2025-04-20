@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import ManifestControls from './ManifestControls';
@@ -195,6 +196,7 @@ const CustomManifest = ({
               receptorImages={receptorImages}
               selectedPattern=""
               patterns={patterns}
+              manifestPatterns={patterns}
               intention={intention}
               visualSpeed={visualSpeed}
               exposureTime={exposureTime}

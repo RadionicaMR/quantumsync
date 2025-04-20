@@ -153,6 +153,7 @@ const PresetManifest = ({
                 receptorImages={receptorImages}
                 selectedPattern={selectedPattern}
                 patterns={patterns}
+                manifestPatterns={patterns}
                 intention={intention}
                 visualSpeed={visualSpeed}
                 exposureTime={exposureTime}
