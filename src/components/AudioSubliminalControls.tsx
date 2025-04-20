@@ -1,8 +1,8 @@
 
-import React from "react";
+import React, { useRef } from "react";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import { Play, CircleStop } from "lucide-react";
+import { Play, CircleStop, FilePlus } from "lucide-react";
 
 interface AudioSubliminalControlsProps {
   audioFile: File | null;
@@ -27,6 +27,8 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
   isDisabled = false,
   maxVolume = 20,
 }) => {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       setAudioFile(e.target.files[0]);
@@ -37,17 +39,34 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
     setAudioFile(null);
   };
 
+  const handleButtonClick = () => {
+    if (!isDisabled && !isPlaying) {
+      fileInputRef.current?.click();
+    }
+  };
+
   return (
     <div className="space-y-2 border border-zinc-200 p-3 rounded-xl mt-2 bg-muted/20">
       <Label className="mb-1 block font-semibold">Audio Subliminal (opcional)</Label>
+
       <div className="flex gap-3 items-center flex-wrap">
         <input
           type="file"
           accept=".mp3,audio/mp3"
           onChange={handleFileChange}
           disabled={isDisabled || isPlaying}
-          className="block file:px-3 file:py-2 file:rounded file:bg-quantum-primary file:text-white file:mr-3"
+          ref={fileInputRef}
+          className="hidden"
         />
+        <button
+          type="button"
+          onClick={handleButtonClick}
+          disabled={isDisabled || isPlaying}
+          className="flex items-center gap-1 px-3 py-2 rounded bg-quantum-primary text-white hover:bg-quantum-primary/90 focus:outline focus:ring-2 focus:ring-quantum-primary"
+        >
+          <FilePlus className="w-4 h-4" />
+          Seleccionar archivo
+        </button>
         {audioFile && (
           <>
             <button
@@ -62,6 +81,7 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
           </>
         )}
       </div>
+
       {audioFile && (
         <div className="flex items-center gap-3">
           <button
@@ -84,6 +104,7 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
           <span className="ml-2 text-xs">Volumen: {audioVolume}</span>
         </div>
       )}
+
       <p className="text-xs text-muted-foreground">
         Puedes dejar el volumen en 0 (inaudible) para que funcione como audio subliminal.
       </p>
