@@ -1,140 +1,143 @@
-import { useState, useRef, useEffect } from 'react';
 
-export const useTreatmentAudio = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [frequency, setFrequency] = useState([528]);
-  const [duration, setDuration] = useState([5]);
-  const [intensity, setIntensity] = useState([50]);
-  const [timeRemaining, setTimeRemaining] = useState(0);
-  const [useHeadphones, setUseHeadphones] = useState(true);
+import { useState, useEffect } from 'react';
+import { useTreatmentAudio } from './useTreatmentAudio';
+import { useTreatmentImages } from './useTreatmentImages';
+import { useTreatmentRates } from './useTreatmentRates';
+import { toast } from '@/components/ui/use-toast';
 
-  const oscillatorRef = useRef<OscillatorNode | null>(null);
-  const harmonicOscillatorRef = useRef<OscillatorNode | null>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+// Define and export the TreatmentPreset type
+export interface TreatmentPreset {
+  id: string;
+  name: string;
+  frequency: number;
+  description: string;
+  duration: number;
+}
 
-  const formatTime = (minutes: number) => {
-    const mins = Math.floor(minutes);
-    const secs = Math.round((minutes - mins) * 60);
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+// Main treatment hook that combines all the other hooks
+export const useTreatment = () => {
+  // State for the treatment
+  const [selectedPreset, setSelectedPreset] = useState('');
+  const [visualFeedback, setVisualFeedback] = useState(true);
+  const [hypnoticEffect, setHypnoticEffect] = useState(false);
+  const [receptorName, setReceptorName] = useState('');
+  const [hypnoticSpeed, setHypnoticSpeed] = useState([10]);
+  
+  // Custom hooks
+  const audio = useTreatmentAudio();
+  const images = useTreatmentImages();
+  const rates = useTreatmentRates();
+  
+  // Audio file upload state (new)
+  const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [audioVolume, setAudioVolume] = useState(10);
+  
+  // Audio element reference
+  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
+  
+  // Select a preset
+  const selectPreset = (preset: TreatmentPreset) => {
+    setSelectedPreset(preset.id);
+    audio.setFrequency([preset.frequency]);
+    audio.setDuration([preset.duration]);
   };
-
-  const startAudio = () => {
-    if (isPlaying) return;
+  
+  // Start the treatment
+  const startTreatment = () => {
+    if (audio.isPlaying) return;
     
-    try {
-      // Initialize audio context
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-      audioContextRef.current = new AudioContext();
-      
-      // Create oscillator
-      const oscillator = audioContextRef.current.createOscillator();
-      const gainNode = audioContextRef.current.createGain();
-      
-      oscillator.type = 'sine';
-      oscillator.frequency.value = frequency[0];
-      
-      // Set volume based on intensity
-      const volume = intensity[0] / 100 * 0.3; // max volume 0.3 to protect hearing
-      gainNode.gain.value = volume;
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContextRef.current.destination);
-      
-      oscillator.start();
-      oscillatorRef.current = oscillator;
-      
-      // Si la frecuencia es baja, añadir armónico para mejorar la audibilidad en dispositivos pequeños
-      if (frequency[0] < 100) {
-        const harmonicOscillator = audioContextRef.current.createOscillator();
-        const harmonicGainNode = audioContextRef.current.createGain();
-        
-        // Crear armónico a 2x la frecuencia con menor volumen
-        harmonicOscillator.type = 'sine';
-        harmonicOscillator.frequency.value = frequency[0] * 2;
-        
-        // Volumen del armónico proporcional al volumen principal
-        harmonicGainNode.gain.value = volume * 0.75;
-        
-        harmonicOscillator.connect(harmonicGainNode);
-        harmonicGainNode.connect(audioContextRef.current.destination);
-        
-        harmonicOscillator.start();
-        harmonicOscillatorRef.current = harmonicOscillator;
-      }
-      
-      // Start timer
-      setTimeRemaining(duration[0]);
-      timerRef.current = setInterval(() => {
-        setTimeRemaining(prev => {
-          const newTime = prev - 1/60;
-          if (newTime <= 0) {
-            stopAudio();
-            return 0;
-          }
-          return newTime;
-        });
-      }, 1000);
-      
-      setIsPlaying(true);
-    } catch (error) {
-      console.error("Error al iniciar el tratamiento de audio:", error);
-      alert("No se pudo iniciar el tratamiento de audio. Por favor, asegúrate de que tu dispositivo admite la API Web Audio.");
+    // Start the frequency audio
+    audio.startAudio();
+    
+    // Set hypnotic effect
+    setHypnoticEffect(true);
+    
+    // Play uploaded audio file if exists
+    if (audioFile && !audioElement) {
+      const newAudio = new Audio(URL.createObjectURL(audioFile));
+      newAudio.loop = true;
+      // Convert custom volume to standard HTML audio volume (0-1)
+      newAudio.volume = audioVolume / 20;
+      newAudio.play().catch(err => {
+        console.error("Error playing uploaded audio:", err);
+      });
+      setAudioElement(newAudio);
     }
+    
+    // Show toast notification
+    const target = receptorName ? ` para ${receptorName}` : '';
+    toast({
+      title: "Tratamiento iniciado",
+      description: `Aplicando frecuencia de ${audio.frequency[0]}Hz${target}`,
+    });
   };
-
-  const stopAudio = () => {
-    if (oscillatorRef.current) {
-      oscillatorRef.current.stop();
-      oscillatorRef.current = null;
+  
+  // Stop the treatment
+  const stopTreatment = () => {
+    // Stop the frequency audio
+    audio.stopAudio();
+    
+    // Stop hypnotic effect
+    setHypnoticEffect(false);
+    
+    // Stop uploaded audio file if playing
+    if (audioElement) {
+      audioElement.pause();
+      setAudioElement(null);
     }
     
-    if (harmonicOscillatorRef.current) {
-      harmonicOscillatorRef.current.stop();
-      harmonicOscillatorRef.current = null;
-    }
-    
-    if (audioContextRef.current) {
-      audioContextRef.current.close();
-      audioContextRef.current = null;
-    }
-    
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    
-    setIsPlaying(false);
+    // Show toast notification
+    toast({
+      title: "Tratamiento detenido",
+      description: "El tratamiento de frecuencia ha sido detenido.",
+    });
   };
-
-  // Cleanup on component unmount
+  
+  // Update audio element volume when volume changes
+  useEffect(() => {
+    if (audioElement) {
+      audioElement.volume = audioVolume / 20;
+    }
+  }, [audioVolume, audioElement]);
+  
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (oscillatorRef.current) {
-        oscillatorRef.current.stop();
-      }
-      if (harmonicOscillatorRef.current) {
-        harmonicOscillatorRef.current.stop();
-      }
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
+      if (audioElement) {
+        audioElement.pause();
       }
     };
   }, []);
-
+  
   return {
-    isPlaying,
-    frequency,
-    setFrequency,
-    duration,
-    setDuration,
-    intensity,
-    setIntensity,
-    timeRemaining,
-    useHeadphones,
-    setUseHeadphones,
-    formatTime,
-    startAudio,
-    stopAudio
+    // Audio treatment
+    ...audio,
+    
+    // Images
+    ...images,
+    
+    // Rates
+    ...rates,
+    
+    // Treatment control
+    selectedPreset,
+    visualFeedback,
+    setVisualFeedback,
+    hypnoticEffect,
+    receptorName,
+    setReceptorName,
+    hypnoticSpeed,
+    setHypnoticSpeed,
+    
+    // Actions
+    selectPreset,
+    startTreatment,
+    stopTreatment,
+    
+    // Uploaded audio (new)
+    audioFile,
+    setAudioFile,
+    audioVolume,
+    setAudioVolume,
   };
 };
