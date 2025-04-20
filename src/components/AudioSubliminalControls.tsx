@@ -40,6 +40,7 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
   return (
     <div className="space-y-2 border border-zinc-200 p-3 rounded-xl mt-2 bg-muted/20">
       <Label className="mb-1 block font-semibold">Audio Subliminal (opcional)</Label>
+      {/* Texto colocado justo debajo del título */}
       {!audioFile && (
         <span className="text-xs text-zinc-400 select-none block mb-2">
           Ningún archivo seleccionado
