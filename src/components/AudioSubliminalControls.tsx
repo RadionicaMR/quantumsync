@@ -48,6 +48,11 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
           disabled={isDisabled || isPlaying}
           className="block file:px-3 file:py-2 file:rounded file:bg-quantum-primary file:text-white file:mr-3"
         />
+        {!audioFile && (
+          <span className="text-xs text-zinc-400 select-none whitespace-nowrap">
+            Ningún archivo seleccionado
+          </span>
+        )}
         {audioFile && (
           <>
             <button
