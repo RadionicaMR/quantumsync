@@ -40,6 +40,11 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
   return (
     <div className="space-y-2 border border-zinc-200 p-3 rounded-xl mt-2 bg-muted/20">
       <Label className="mb-1 block font-semibold">Audio Subliminal (opcional)</Label>
+      {!audioFile && (
+        <span className="text-xs text-zinc-400 select-none block mb-2">
+          Ningún archivo seleccionado
+        </span>
+      )}
       <div className="flex gap-3 items-center flex-wrap">
         <input
           type="file"
@@ -48,11 +53,6 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
           disabled={isDisabled || isPlaying}
           className="block file:px-3 file:py-2 file:rounded file:bg-quantum-primary file:text-white file:mr-3"
         />
-        {!audioFile && (
-          <span className="text-xs text-zinc-400 select-none whitespace-nowrap">
-            Ningún archivo seleccionado
-          </span>
-        )}
         {audioFile && (
           <>
             <button
