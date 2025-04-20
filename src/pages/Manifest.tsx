@@ -1,3 +1,4 @@
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
@@ -6,7 +7,6 @@ import CustomManifest from '@/components/manifest/CustomManifest';
 import { manifestPatterns } from '@/data/manifestPatterns';
 import { useManifest } from '@/hooks/useManifest';
 import InfoSection from '@/components/quantum/InfoSection';
-import AudioUploader from "@/components/AudioUploader";
 
 const Manifest = () => {
   const manifest = useManifest(manifestPatterns);
@@ -76,17 +76,6 @@ const Manifest = () => {
             </TabsContent>
             
             <TabsContent value="custom" className="w-full">
-              <div className="max-w-lg mx-auto mb-8">
-                <AudioUploader
-                  audioFile={manifest.audioFile}
-                  setAudioFile={manifest.setAudioFile}
-                  audioVolume={manifest.audioVolume}
-                  setAudioVolume={manifest.setAudioVolume}
-                  isDisabled={manifest.isManifestActive}
-                  label="Audio subliminal opcional (MP3)"
-                  maxVolume={20}
-                />
-              </div>
               <CustomManifest 
                 patterns={manifestPatterns}
                 intention={manifest.intention}
@@ -121,6 +110,13 @@ const Manifest = () => {
                 currentImage={manifest.currentImage}
                 receptorName={manifest.receptorName}
                 setReceptorName={manifest.setReceptorName}
+                audioFile={manifest.audioFile}
+                setAudioFile={manifest.setAudioFile}
+                audioVolume={manifest.audioVolume}
+                setAudioVolume={manifest.setAudioVolume}
+                audioSubliminalPlaying={manifest.audioSubliminalPlaying}
+                playSubliminalAudio={manifest.playSubliminalAudio}
+                stopSubliminalAudio={manifest.stopSubliminalAudio}
               />
             </TabsContent>
           </Tabs>

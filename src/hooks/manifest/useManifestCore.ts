@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useManifestState } from './useManifestState';
 import { useManifestAudio } from './useManifestAudio';
 import { useManifestTimers } from './useManifestTimers';
@@ -18,50 +18,63 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
   } = useManifestTimers();
   const utils = useManifestUtils();
 
-  // NUEVO: Audio uploader state
+  // Audio uploader state y control manual
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [audioVolume, setAudioVolume] = useState(20);
-  
-  // Handle tab change
-  const handleTabChange = (value: string) => {
-    if (state.isManifestActive) {
-      stopManifestation();
+  const [audioSubliminalPlaying, setAudioSubliminalPlaying] = useState(false);
+  const audioElementRef = useRef<HTMLAudioElement | null>(null);
+
+  // Función para reproducir audio subliminal
+  const playSubliminalAudio = () => {
+    if (audioFile && !audioSubliminalPlaying) {
+      const elem = new Audio(URL.createObjectURL(audioFile));
+      elem.volume = audioVolume / 20;
+      elem.loop = true;
+      elem.play().then(() => {
+        setAudioSubliminalPlaying(true);
+        audioElementRef.current = elem;
+      }).catch((err) => {
+        setAudioSubliminalPlaying(false);
+        audioElementRef.current = null;
+        console.error("No se puede reproducir el audio subliminal:", err);
+      });
+      // fallback, en caso de rechazar el play...
     }
-    state.setActiveTab(value);
-    state.setSelectedPattern('');
   };
 
-  // Select pattern
-  const selectPattern = (patternId: string) => {
-    if (state.isManifestActive) {
-      stopManifestation();
+  // Función para detener audio subliminal
+  const stopSubliminalAudio = () => {
+    if (audioElementRef.current) {
+      audioElementRef.current.pause();
+      audioElementRef.current = null;
     }
-    
-    state.setSelectedPattern(patternId);
+    setAudioSubliminalPlaying(false);
   };
 
-  // Start manifestation
+  // Iniciar Manifestación: comienza audio subliminal si disponible
   const startManifestation = () => {
-    // Can start with a pattern, image, or receptor name
     const hasPattern = state.activeTab === "presets" 
       ? !!state.selectedPattern 
       : (state.patternImage !== null || state.patternImages.length > 0);
-      
+
     const hasReceptor = state.receptorName.trim() !== "" || 
-                      state.receptorImage !== null || 
-                      state.receptorImages.length > 0;
-    
+                    state.receptorImage !== null || 
+                    state.receptorImages.length > 0;
+
     if (!hasPattern && !hasReceptor) return;
-    
+
     // Start sound if enabled
     if (state.manifestSound) {
       startAudio(state.manifestFrequency[0]);
     }
 
-    // Start hypnotic effect with increased speed
+    // AUDIO SUBLIMINAL (nuevo): inicia audio si fue subido
+    if (audioFile) {
+      playSubliminalAudio();
+    }
+
     const switchInterval = 1000 / (state.visualSpeed[0] * 3);
-    
-    // Start hypnotic effect that alternates between pattern, receptor and mix
+
     const hypnoticTimer = setInterval(() => {
       state.setCurrentImage((prev) => {
         switch(prev) {
@@ -72,26 +85,21 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
         }
       });
     }, switchInterval);
-    
     setHypnoticTimer(hypnoticTimer);
 
-    // Set exposure timer
-    const exposureTimeInMs = state.exposureTime[0] * 60 * 1000; // convert to milliseconds
+    const exposureTimeInMs = state.exposureTime[0] * 60 * 1000;
     state.setTimeRemaining(state.exposureTime[0]);
-    
-    // Start countdown
+
     const countdownTimer = setInterval(() => {
       state.setTimeRemaining((prev) => {
         if (prev !== null && prev > 0) {
-          return prev - 1/60; // Decrement 1 second (1/60 of a minute)
+          return prev - 1/60;
         }
         return prev;
       });
     }, 1000);
-    
     setCountdownTimer(countdownTimer);
-    
-    // Set timer to stop manifestation
+
     const exposureTimer = setTimeout(() => {
       stopManifestation();
       toast({
@@ -99,62 +107,63 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
         description: `Tu intención "${state.intention}" ha sido completamente programada.`,
       });
     }, exposureTimeInMs);
-    
     setExposureTimer(exposureTimer);
-    
+
     state.setIsManifestActive(true);
   };
 
-  // Stop manifestation
+  // Detener Manifestación: para audio subliminal si está en reproducción
   const stopManifestation = () => {
     stopAudio();
     clearAllTimers();
     state.setTimeRemaining(null);
     state.setIsManifestActive(false);
+    stopSubliminalAudio();
   };
 
-  // Cleanup on unmount
+  // Limpieza al desmontar
   useEffect(() => {
     return () => {
       stopAudio();
       clearAllTimers();
+      stopSubliminalAudio();
     };
   }, []);
 
-  // Play/pause uploaded audio based on manifest activation
+  // Volumen en caliente sobre elemento activo
   useEffect(() => {
-    let currentAudio: HTMLAudioElement | null = null;
-    if (audioFile && state.isManifestActive) {
-      currentAudio = new Audio(URL.createObjectURL(audioFile));
-      currentAudio.volume = audioVolume / 20;
-      currentAudio.loop = true;
-      currentAudio.play();
+    if (audioElementRef.current) {
+      audioElementRef.current.volume = audioVolume / 20;
     }
-    return () => {
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio = null;
-      }
-    };
-    // eslint-disable-next-line
-  }, [audioFile, state.isManifestActive]);
-
-  // Volume change on the fly
-  useEffect(() => {
-    // No need to change here—handled by uploader component
   }, [audioVolume]);
 
   return {
     ...state,
     ...utils,
-    handleTabChange,
-    selectPattern,
+    handleTabChange: (val: string) => {
+      if (state.isManifestActive) {
+        stopManifestation();
+      }
+      state.setActiveTab(val);
+      state.setSelectedPattern('');
+      stopSubliminalAudio();
+    },
+    selectPattern: (patternId: string) => {
+      if (state.isManifestActive) {
+        stopManifestation();
+      }
+      state.setSelectedPattern(patternId);
+      stopSubliminalAudio();
+    },
     startManifestation,
     stopManifestation,
-    // NUEVO:
+    // Audio Subliminal
     audioFile,
     setAudioFile,
     audioVolume,
     setAudioVolume,
+    audioSubliminalPlaying,
+    playSubliminalAudio,
+    stopSubliminalAudio,
   };
 };

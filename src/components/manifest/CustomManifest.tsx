@@ -5,6 +5,7 @@ import ManifestControls from './ManifestControls';
 import ManifestVisualizer from './ManifestVisualizer';
 import ImageUploader from './ImageUploader';
 import ReceptorNameInput from './ReceptorNameInput';
+import AudioSubliminalControls from '../AudioSubliminalControls';
 
 interface Pattern {
   id: string;
@@ -47,6 +48,14 @@ interface CustomManifestProps {
   currentImage: 'pattern' | 'receptor' | 'mix';
   receptorName: string;
   setReceptorName: (name: string) => void;
+  // NUEVO audio props:
+  audioFile: File | null;
+  setAudioFile: (file: File | null) => void;
+  audioVolume: number;
+  setAudioVolume: (vol: number) => void;
+  audioSubliminalPlaying: boolean;
+  playSubliminalAudio: () => void;
+  stopSubliminalAudio: () => void;
 }
 
 const CustomManifest = ({
@@ -82,7 +91,14 @@ const CustomManifest = ({
   formatTimeRemaining,
   currentImage,
   receptorName,
-  setReceptorName
+  setReceptorName,
+  audioFile,
+  setAudioFile,
+  audioVolume,
+  setAudioVolume,
+  audioSubliminalPlaying,
+  playSubliminalAudio,
+  stopSubliminalAudio,
 }: CustomManifestProps) => {
   return (
     <Card className="quantum-card p-6">
@@ -123,6 +139,21 @@ const CustomManifest = ({
               images={receptorImages}
               setImages={setReceptorImages}
               maxImages={3}
+            />
+          </div>
+
+          {/* AudioSubliminalControls debajo de las imágenes del receptor */}
+          <div className="mt-6">
+            <AudioSubliminalControls
+              audioFile={audioFile}
+              setAudioFile={setAudioFile}
+              audioVolume={audioVolume}
+              setAudioVolume={setAudioVolume}
+              isPlaying={audioSubliminalPlaying}
+              playAudio={playSubliminalAudio}
+              stopAudio={stopSubliminalAudio}
+              isDisabled={isManifestActive}
+              maxVolume={20}
             />
           </div>
         </div>
@@ -181,3 +212,4 @@ const CustomManifest = ({
 };
 
 export default CustomManifest;
+
