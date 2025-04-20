@@ -1,129 +1,83 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Layout from '@/components/Layout';
-import HeroSection from '@/components/HeroSection';
-import PresetManifest from '@/components/manifest/PresetManifest';
-import CustomManifest from '@/components/manifest/CustomManifest';
-import { manifestPatterns } from '@/data/manifestPatterns';
-import { useManifest } from '@/hooks/useManifest';
-import InfoSection from '@/components/quantum/InfoSection';
+
+import { useManifestCore } from "@/hooks/manifest/useManifestCore";
+import { manifestPatterns } from "@/data/manifestPatterns";
+import Layout from "@/components/Layout";
+import ManifestControls from "@/components/manifest/ManifestControls";
+import ManifestVisualizer from "@/components/manifest/ManifestVisualizer";
+import AudioSubliminalControls from "@/components/AudioSubliminalControls";
 
 const Manifest = () => {
-  const manifest = useManifest(manifestPatterns);
+  const manifest = useManifestCore(manifestPatterns);
 
   return (
     <Layout>
-      <HeroSection
-        title="Manifestación Cuántica"
-        subtitle="Programa tus intenciones en el campo cuántico y atrae lo que deseas a tu realidad."
-      />
+      <div className="container mx-auto py-12 px-4">
+        <h1 className="text-3xl font-bold mb-4">Manifestación Cuántica</h1>
+        <p className="text-muted-foreground mb-10">
+          Utiliza frecuencias, imágenes y tu intención para potenciar tu manifestación.
+        </p>
 
-      <InfoSection />
-
-      <section className="py-12 px-4">
-        <div className="container mx-auto">
-          <Tabs
-            defaultValue="presets"
-            className="w-full"
-            onValueChange={manifest.handleTabChange}
-            value={manifest.activeTab}
-          >
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
-              <TabsTrigger value="presets" className="flex flex-col">
-                <span>Patrones</span>
-                <span>Preestablecidos</span>
-              </TabsTrigger>
-              <TabsTrigger value="custom" className="flex flex-col">
-                <span>Patrón</span>
-                <span>Personalizado</span>
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="presets" className="w-full">
-              <PresetManifest
-                patterns={manifestPatterns}
-                selectedPattern={manifest.selectedPattern}
-                intention={manifest.intention}
-                setIntention={manifest.setIntention}
-                manifestSound={manifest.manifestSound}
-                setManifestSound={manifest.setManifestSound}
-                manifestFrequency={manifest.manifestFrequency}
-                setManifestFrequency={manifest.setManifestFrequency}
-                visualSpeed={manifest.visualSpeed}
-                setVisualSpeed={manifest.setVisualSpeed}
-                exposureTime={manifest.exposureTime}
-                setExposureTime={manifest.setExposureTime}
-                rate1={manifest.rate1}
-                setRate1={manifest.setRate1}
-                rate2={manifest.rate2}
-                setRate2={manifest.setRate2}
-                rate3={manifest.rate3}
-                setRate3={manifest.setRate3}
-                isManifestActive={manifest.isManifestActive}
-                timeRemaining={manifest.timeRemaining}
-                startManifestation={manifest.startManifestation}
-                stopManifestation={manifest.stopManifestation}
-                formatTimeRemaining={manifest.formatTimeRemaining}
-                // We don't pass audio props here as PresetManifest doesn't handle audio
-                onSelectPattern={manifest.selectPattern}
-                currentImage={manifest.currentImage}
-                receptorImage={manifest.receptorImage}
-                setReceptorImage={manifest.setReceptorImage}
-                receptorImages={manifest.receptorImages}
-                setReceptorImages={manifest.setReceptorImages}
-                receptorName={manifest.receptorName}
-                setReceptorName={manifest.setReceptorName}
-              />
-            </TabsContent>
-
-            <TabsContent value="custom" className="w-full">
-              <CustomManifest
-                patterns={manifestPatterns}
-                intention={manifest.intention}
-                setIntention={manifest.setIntention}
-                patternImage={manifest.patternImage}
-                setPatternImage={manifest.setPatternImage}
-                patternImages={manifest.patternImages}
-                setPatternImages={manifest.setPatternImages}
-                receptorImage={manifest.receptorImage}
-                setReceptorImage={manifest.setReceptorImage}
-                receptorImages={manifest.receptorImages}
-                setReceptorImages={manifest.setReceptorImages}
-                manifestSound={manifest.manifestSound}
-                setManifestSound={manifest.setManifestSound}
-                manifestFrequency={manifest.manifestFrequency}
-                setManifestFrequency={manifest.setManifestFrequency}
-                visualSpeed={manifest.visualSpeed}
-                setVisualSpeed={manifest.setVisualSpeed}
-                exposureTime={manifest.exposureTime}
-                setExposureTime={manifest.setExposureTime}
-                rate1={manifest.rate1}
-                setRate1={manifest.setRate1}
-                rate2={manifest.rate2}
-                setRate2={manifest.setRate2}
-                rate3={manifest.rate3}
-                setRate3={manifest.setRate3}
-                isManifestActive={manifest.isManifestActive}
-                timeRemaining={manifest.timeRemaining}
-                startManifestation={manifest.startManifestation}
-                stopManifestation={manifest.stopManifestation}
-                formatTimeRemaining={manifest.formatTimeRemaining}
-                currentImage={manifest.currentImage}
-                receptorName={manifest.receptorName}
-                setReceptorName={manifest.setReceptorName}
-                audioFile={manifest.audioFile}
-                setAudioFile={manifest.setAudioFile}
-                audioVolume={manifest.audioVolume}
-                setAudioVolume={manifest.setAudioVolume}
-                audioSubliminalPlaying={manifest.audioSubliminalPlaying}
-                playSubliminalAudio={manifest.playSubliminalAudio}
-                stopSubliminalAudio={manifest.stopSubliminalAudio}
-              />
-            </TabsContent>
-          </Tabs>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div>
+            <ManifestControls
+              intention={manifest.intention}
+              setIntention={manifest.setIntention}
+              manifestSound={manifest.manifestSound}
+              setManifestSound={manifest.setManifestSound}
+              manifestFrequency={manifest.manifestFrequency}
+              setManifestFrequency={manifest.setManifestFrequency}
+              visualSpeed={manifest.visualSpeed}
+              setVisualSpeed={manifest.setVisualSpeed}
+              exposureTime={manifest.exposureTime}
+              setExposureTime={manifest.setExposureTime}
+              rate1={manifest.rate1}
+              setRate1={manifest.setRate1}
+              rate2={manifest.rate2}
+              setRate2={manifest.setRate2}
+              rate3={manifest.rate3}
+              setRate3={manifest.setRate3}
+              isManifestActive={manifest.isManifestActive}
+              timeRemaining={manifest.timeRemaining}
+              startManifestation={manifest.startManifestation}
+              stopManifestation={manifest.stopManifestation}
+              formatTimeRemaining={manifest.formatTimeRemaining}
+              canStart={manifest.canStart}
+            />
+            {/* Audio Subliminal Controls: recording and upload */}
+            <AudioSubliminalControls
+              audioFile={manifest.audioFile}
+              setAudioFile={manifest.setAudioFile}
+              audioVolume={manifest.audioVolume}
+              setAudioVolume={manifest.setAudioVolume}
+              isPlaying={manifest.audioSubliminalPlaying}
+              playAudio={manifest.playSubliminalAudio}
+              stopAudio={manifest.stopSubliminalAudio}
+              maxVolume={20}
+            />
+          </div>
+          <div>
+            <ManifestVisualizer
+              isManifestActive={manifest.isManifestActive}
+              manifestPatterns={manifestPatterns}
+              selectedPattern={manifest.selectedPattern}
+              patternImage={manifest.patternImage}
+              patternImages={manifest.patternImages}
+              receptorImage={manifest.receptorImage}
+              receptorImages={manifest.receptorImages}
+              intention={manifest.intention}
+              currentImage={manifest.currentImage}
+              visualSpeed={manifest.visualSpeed}
+              timeRemaining={manifest.timeRemaining}
+              rate1={manifest.rate1}
+              rate2={manifest.rate2}
+              rate3={manifest.rate3}
+            />
+          </div>
         </div>
-      </section>
+      </div>
     </Layout>
   );
 };
 
 export default Manifest;
+
