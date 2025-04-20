@@ -1,5 +1,4 @@
-
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useManifestState } from './useManifestState';
 import { useManifestAudio } from './useManifestAudio';
 import { useManifestTimers } from './useManifestTimers';
@@ -18,6 +17,10 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
     ...timers 
   } = useManifestTimers();
   const utils = useManifestUtils();
+
+  // NUEVO: Audio uploader state
+  const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [audioVolume, setAudioVolume] = useState(20);
   
   // Handle tab change
   const handleTabChange = (value: string) => {
@@ -54,7 +57,7 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
     if (state.manifestSound) {
       startAudio(state.manifestFrequency[0]);
     }
-    
+
     // Start hypnotic effect with increased speed
     const switchInterval = 1000 / (state.visualSpeed[0] * 3);
     
@@ -118,12 +121,40 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
     };
   }, []);
 
+  // Play/pause uploaded audio based on manifest activation
+  useEffect(() => {
+    let currentAudio: HTMLAudioElement | null = null;
+    if (audioFile && state.isManifestActive) {
+      currentAudio = new Audio(URL.createObjectURL(audioFile));
+      currentAudio.volume = audioVolume / 20;
+      currentAudio.loop = true;
+      currentAudio.play();
+    }
+    return () => {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+      }
+    };
+    // eslint-disable-next-line
+  }, [audioFile, state.isManifestActive]);
+
+  // Volume change on the fly
+  useEffect(() => {
+    // No need to change here—handled by uploader component
+  }, [audioVolume]);
+
   return {
     ...state,
     ...utils,
     handleTabChange,
     selectPattern,
     startManifestation,
-    stopManifestation
+    stopManifestation,
+    // NUEVO:
+    audioFile,
+    setAudioFile,
+    audioVolume,
+    setAudioVolume,
   };
 };

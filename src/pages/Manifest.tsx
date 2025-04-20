@@ -1,4 +1,3 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
@@ -7,6 +6,7 @@ import CustomManifest from '@/components/manifest/CustomManifest';
 import { manifestPatterns } from '@/data/manifestPatterns';
 import { useManifest } from '@/hooks/useManifest';
 import InfoSection from '@/components/quantum/InfoSection';
+import AudioUploader from "@/components/AudioUploader";
 
 const Manifest = () => {
   const manifest = useManifest(manifestPatterns);
@@ -18,7 +18,6 @@ const Manifest = () => {
         subtitle="Programa tus intenciones en el campo cuántico y atrae lo que deseas a tu realidad."
       />
 
-      {/* Sección de Cómo Funciona movida justo debajo del título */}
       <InfoSection />
 
       <section className="py-12 px-4">
@@ -77,6 +76,17 @@ const Manifest = () => {
             </TabsContent>
             
             <TabsContent value="custom" className="w-full">
+              <div className="max-w-lg mx-auto mb-8">
+                <AudioUploader
+                  audioFile={manifest.audioFile}
+                  setAudioFile={manifest.setAudioFile}
+                  audioVolume={manifest.audioVolume}
+                  setAudioVolume={manifest.setAudioVolume}
+                  isDisabled={manifest.isManifestActive}
+                  label="Audio subliminal opcional (MP3)"
+                  maxVolume={20}
+                />
+              </div>
               <CustomManifest 
                 patterns={manifestPatterns}
                 intention={manifest.intention}

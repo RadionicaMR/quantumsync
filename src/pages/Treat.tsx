@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -12,6 +11,7 @@ import PresetTreatment from '@/components/treatment/preset/PresetTreatment';
 import { treatmentPresets } from '@/data/treatmentPresets';
 import { useTreatment } from '@/hooks/useTreatment';
 import { toast } from '@/components/ui/use-toast';
+import AudioUploader from '@/components/AudioUploader';
 
 const Treat = () => {
   const treatment = useTreatment();
@@ -65,6 +65,7 @@ const Treat = () => {
             </TabsList>
             
             <TabsContent value="presets" className="w-full">
+              {/* Puedes poner el Uploader también aquí si el usuario lo desea en ambas pestañas */}
               <PresetTreatment
                 presets={treatmentPresets}
                 selectedPreset={treatment.selectedPreset}
@@ -109,6 +110,17 @@ const Treat = () => {
             
             <TabsContent value="custom" className="w-full">
               <Card className="quantum-card p-6">
+                <div className="mb-8 max-w-lg mx-auto">
+                  <AudioUploader
+                    audioFile={treatment.audioFile}
+                    setAudioFile={treatment.setAudioFile}
+                    audioVolume={treatment.audioVolume}
+                    setAudioVolume={treatment.setAudioVolume}
+                    isDisabled={treatment.isPlaying}
+                    label="Audio subliminal opcional (MP3)"
+                    maxVolume={20}
+                  />
+                </div>
                 <div className="">
                   <h3 className="text-xl font-semibold mb-4">Diseñador de Frecuencias Personalizadas</h3>
                   <p className="text-muted-foreground mb-8">
