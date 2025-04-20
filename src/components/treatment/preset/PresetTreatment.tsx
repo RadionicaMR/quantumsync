@@ -41,6 +41,13 @@ interface PresetTreatmentProps {
   setHypnoticSpeed: (value: number[]) => void;
   receptorName?: string;
   setReceptorName?: (name: string) => void;
+  audioFile: File | null;
+  setAudioFile: (file: File | null) => void;
+  audioVolume: number;
+  setAudioVolume: (vol: number) => void;
+  audioSubliminalPlaying: boolean;
+  playSubliminalAudio: () => void;
+  stopSubliminalAudio: () => void;
 }
 
 const PresetTreatment = ({
@@ -82,6 +89,13 @@ const PresetTreatment = ({
   setHypnoticSpeed,
   receptorName = '',
   setReceptorName = () => {},
+  audioFile,
+  setAudioFile,
+  audioVolume,
+  setAudioVolume,
+  audioSubliminalPlaying,
+  playSubliminalAudio,
+  stopSubliminalAudio,
 }: PresetTreatmentProps) => {
   // Organize props into logical groups for better readability
   const controlProps = {
@@ -101,7 +115,14 @@ const PresetTreatment = ({
     stopTreatment,
     hypnoticSpeed,
     setHypnoticSpeed,
-    receptorName
+    receptorName,
+    audioFile,
+    setAudioFile,
+    audioVolume,
+    setAudioVolume,
+    audioSubliminalPlaying,
+    playSubliminalAudio,
+    stopSubliminalAudio
   };
 
   const imageProps = {
