@@ -105,22 +105,20 @@ const Treat = () => {
                 setHypnoticSpeed={treatment.setHypnoticSpeed}
                 receptorName={treatment.receptorName}
                 setReceptorName={treatment.setReceptorName}
+                // PASAR controles de audio
+                audioFile={treatment.audioFile}
+                setAudioFile={treatment.setAudioFile}
+                audioVolume={treatment.audioVolume}
+                setAudioVolume={treatment.setAudioVolume}
+                audioSubliminalPlaying={treatment.audioSubliminalPlaying}
+                playSubliminalAudio={treatment.playSubliminalAudio}
+                stopSubliminalAudio={treatment.stopSubliminalAudio}
               />
             </TabsContent>
             
             <TabsContent value="custom" className="w-full">
               <Card className="quantum-card p-6">
-                <div className="mb-8 max-w-lg mx-auto">
-                  <AudioUploader
-                    audioFile={treatment.audioFile}
-                    setAudioFile={treatment.setAudioFile}
-                    audioVolume={treatment.audioVolume}
-                    setAudioVolume={treatment.setAudioVolume}
-                    isDisabled={treatment.isPlaying}
-                    label="Audio subliminal opcional (MP3)"
-                    maxVolume={20}
-                  />
-                </div>
+                {/* REMOVIDO EL ANTIGUO AudioUploader de aquí */}
                 <div className="">
                   <h3 className="text-xl font-semibold mb-4">Diseñador de Frecuencias Personalizadas</h3>
                   <p className="text-muted-foreground mb-8">
@@ -163,6 +161,14 @@ const Treat = () => {
                     stopTreatment={treatment.stopTreatment}
                     receptorName={treatment.receptorName}
                     setReceptorName={treatment.setReceptorName}
+                    // PASAR controles de audio
+                    audioFile={treatment.audioFile}
+                    setAudioFile={treatment.setAudioFile}
+                    audioVolume={treatment.audioVolume}
+                    setAudioVolume={treatment.setAudioVolume}
+                    audioSubliminalPlaying={treatment.audioSubliminalPlaying}
+                    playSubliminalAudio={treatment.playSubliminalAudio}
+                    stopSubliminalAudio={treatment.stopSubliminalAudio}
                   />
                 </div>
               </Card>

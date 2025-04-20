@@ -1,4 +1,3 @@
-
 import FrequencyControls from './FrequencyControls';
 import RateInputs from './RateInputs';
 import ImageGrid from './ImageGrid';
@@ -6,6 +5,7 @@ import SettingsToggles from './SettingsToggles';
 import TreatmentActions from './TreatmentActions';
 import TreatmentVisualizer from './TreatmentVisualizer';
 import ReceptorNameInput from './ReceptorNameInput';
+import AudioSubliminalControls from '../AudioSubliminalControls';
 
 interface CustomTreatmentProps {
   frequency: number[];
@@ -43,6 +43,13 @@ interface CustomTreatmentProps {
   stopTreatment: () => void;
   receptorName?: string;
   setReceptorName?: (name: string) => void;
+  audioFile: File | null;
+  setAudioFile: (file: File | null) => void;
+  audioVolume: number;
+  setAudioVolume: (vol: number) => void;
+  audioSubliminalPlaying: boolean;
+  playSubliminalAudio: () => void;
+  stopSubliminalAudio: () => void;
 }
 
 const CustomTreatment = (props: CustomTreatmentProps) => {
@@ -82,6 +89,13 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
     stopTreatment,
     receptorName = '',
     setReceptorName = () => {},
+    audioFile,
+    setAudioFile,
+    audioVolume,
+    setAudioVolume,
+    audioSubliminalPlaying,
+    playSubliminalAudio,
+    stopSubliminalAudio,
   } = props;
 
   return (
@@ -132,6 +146,18 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
             receptorImages={receptorImages}
             setReceptorImages={setReceptorImages}
             isPlaying={isPlaying}
+          />
+
+          {/* Audio Subliminal controls - debajo de imagenes */}
+          <AudioSubliminalControls
+            audioFile={audioFile}
+            setAudioFile={setAudioFile}
+            audioVolume={audioVolume}
+            setAudioVolume={setAudioVolume}
+            isPlaying={isPlaying}
+            playAudio={playSubliminalAudio}
+            stopAudio={stopSubliminalAudio}
+            maxVolume={20}
           />
           
           <SettingsToggles 

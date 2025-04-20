@@ -1,4 +1,3 @@
-
 import { Card } from '@/components/ui/card';
 import { TreatmentPreset } from '@/hooks/useTreatment';
 import PresetSelector from '../PresetSelector';
@@ -8,6 +7,7 @@ import ImageUploaderSection from './ImageUploaderSection';
 import RateSection from './RateSection';
 import ReceptorSection from './ReceptorSection';
 import TreatmentVisualizerSection from './TreatmentVisualizerSection';
+import AudioSubliminalControls from '@/components/AudioSubliminalControls';
 
 interface PresetTreatmentLayoutProps {
   presets: TreatmentPreset[];
@@ -32,6 +32,13 @@ interface PresetTreatmentLayoutProps {
     hypnoticSpeed: number[];
     setHypnoticSpeed: (value: number[]) => void;
     receptorName: string;
+    audioFile: File | null;
+    setAudioFile: (file: File | null) => void;
+    audioVolume: number;
+    setAudioVolume: (vol: number) => void;
+    audioSubliminalPlaying: boolean;
+    playSubliminalAudio: () => void;
+    stopSubliminalAudio: () => void;
   };
   imageProps: {
     radionicImage: string | null;
@@ -74,20 +81,15 @@ const PresetTreatmentLayout = ({
     intensity, setIntensity, useHeadphones, setUseHeadphones,
     visualFeedback, setVisualFeedback, timeRemaining, formatTime,
     startTreatment, stopTreatment, hypnoticSpeed, setHypnoticSpeed,
-    receptorName
+    receptorName,
+    audioFile,
+    setAudioFile,
+    audioVolume,
+    setAudioVolume,
+    audioSubliminalPlaying,
+    playSubliminalAudio,
+    stopSubliminalAudio
   } = controlProps;
-  
-  const {
-    radionicImage, setRadionicImage, receptorImage, setReceptorImage,
-    radionicImages, setRadionicImages, receptorImages, setReceptorImages,
-    currentImage, hypnoticEffect
-  } = imageProps;
-  
-  const {
-    rate1, setRate1, rate2, setRate2, rate3, setRate3
-  } = rateProps;
-  
-  const { setReceptorName } = receptorProps;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -124,32 +126,43 @@ const PresetTreatmentLayout = ({
             setHypnoticSpeed={setHypnoticSpeed}
             receptorName={receptorName}
           />
-          
+
           <ImageUploaderSection 
             isPlaying={isPlaying}
-            radionicImage={radionicImage}
-            setRadionicImage={setRadionicImage}
-            receptorImage={receptorImage}
-            setReceptorImage={setReceptorImage}
-            radionicImages={radionicImages}
-            setRadionicImages={setRadionicImages}
-            receptorImages={receptorImages}
-            setReceptorImages={setReceptorImages}
+            radionicImage={imageProps.radionicImage}
+            setRadionicImage={imageProps.setRadionicImage}
+            receptorImage={imageProps.receptorImage}
+            setReceptorImage={imageProps.setReceptorImage}
+            radionicImages={imageProps.radionicImages}
+            setRadionicImages={imageProps.setRadionicImages}
+            receptorImages={imageProps.receptorImages}
+            setReceptorImages={imageProps.setReceptorImages}
+          />
+
+          <AudioSubliminalControls
+            audioFile={audioFile}
+            setAudioFile={setAudioFile}
+            audioVolume={audioVolume}
+            setAudioVolume={setAudioVolume}
+            isPlaying={isPlaying}
+            playAudio={playSubliminalAudio}
+            stopAudio={stopSubliminalAudio}
+            maxVolume={20}
           />
 
           <ReceptorSection
-            receptorName={receptorName}
-            setReceptorName={setReceptorName}
+            receptorName={receptorProps.receptorName}
+            setReceptorName={receptorProps.setReceptorName}
             isPlaying={isPlaying}
           />
 
           <RateSection
-            rate1={rate1}
-            setRate1={setRate1}
-            rate2={rate2}
-            setRate2={setRate2}
-            rate3={rate3}
-            setRate3={setRate3}
+            rate1={rateProps.rate1}
+            setRate1={rateProps.setRate1}
+            rate2={rateProps.rate2}
+            setRate2={rateProps.setRate2}
+            rate3={rateProps.rate3}
+            setRate3={rateProps.setRate3}
             isPlaying={isPlaying}
           />
         </Card>
@@ -157,17 +170,17 @@ const PresetTreatmentLayout = ({
         <TreatmentVisualizerSection 
           isPlaying={isPlaying}
           visualFeedback={visualFeedback}
-          radionicImage={radionicImage}
-          receptorImage={receptorImage}
-          radionicImages={radionicImages}
-          receptorImages={receptorImages}
-          currentImage={currentImage}
-          hypnoticEffect={hypnoticEffect}
+          radionicImage={imageProps.radionicImage}
+          receptorImage={imageProps.receptorImage}
+          radionicImages={imageProps.radionicImages}
+          receptorImages={imageProps.receptorImages}
+          currentImage={imageProps.currentImage}
+          hypnoticEffect={imageProps.hypnoticEffect}
           frequency={frequency}
           intensity={intensity}
-          rate1={rate1}
-          rate2={rate2}
-          rate3={rate3}
+          rate1={rateProps.rate1}
+          rate2={rateProps.rate2}
+          rate3={rateProps.rate3}
           hypnoticSpeed={hypnoticSpeed}
           receptorName={receptorName}
         />
