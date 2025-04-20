@@ -9,6 +9,12 @@ import AudioSubliminalControls from "@/components/AudioSubliminalControls";
 const Manifest = () => {
   const manifest = useManifestCore(manifestPatterns);
 
+  // Computed property for canStart
+  const canStart = manifest.intention.trim() !== "" && 
+                 (manifest.selectedPattern !== "" || 
+                  manifest.patternImage !== null || 
+                  manifest.patternImages.length > 0);
+
   return (
     <Layout>
       <div className="container mx-auto py-12 px-4">
@@ -41,7 +47,7 @@ const Manifest = () => {
               startManifestation={manifest.startManifestation}
               stopManifestation={manifest.stopManifestation}
               formatTimeRemaining={manifest.formatTimeRemaining}
-              canStart={manifest.canStart}
+              canStart={canStart}
             />
             {/* Audio Subliminal Controls: recording and upload */}
             <AudioSubliminalControls
@@ -57,7 +63,7 @@ const Manifest = () => {
           </div>
           <div>
             <ManifestVisualizer
-              isManifestActive={manifest.isManifestActive}
+              isActive={manifest.isManifestActive}
               manifestPatterns={manifestPatterns}
               selectedPattern={manifest.selectedPattern}
               patternImage={manifest.patternImage}
@@ -67,10 +73,11 @@ const Manifest = () => {
               intention={manifest.intention}
               currentImage={manifest.currentImage}
               visualSpeed={manifest.visualSpeed}
-              timeRemaining={manifest.timeRemaining}
+              exposureTime={manifest.exposureTime}
               rate1={manifest.rate1}
               rate2={manifest.rate2}
               rate3={manifest.rate3}
+              patterns={manifestPatterns}
             />
           </div>
         </div>
@@ -80,4 +87,3 @@ const Manifest = () => {
 };
 
 export default Manifest;
-

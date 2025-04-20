@@ -10,6 +10,7 @@ interface ManifestVisualizerProps {
   receptorImages?: string[];
   selectedPattern: string;
   patterns: Array<{ id: string; name: string; description: string; image: string }>;
+  manifestPatterns: Array<{ id: string; name: string; description: string; image: string }>;
   intention: string;
   visualSpeed: number[];
   exposureTime: number[];
@@ -28,6 +29,7 @@ const ManifestVisualizer = ({
   receptorImages = [],
   selectedPattern,
   patterns,
+  manifestPatterns,
   intention,
   visualSpeed,
   exposureTime,
@@ -74,7 +76,8 @@ const ManifestVisualizer = ({
       return patternImage;
     }
     if (selectedPattern) {
-      return patterns.find(p => p.id === selectedPattern)?.image;
+      const patternsToUse = patterns || manifestPatterns;
+      return patternsToUse.find(p => p.id === selectedPattern)?.image;
     }
     return null;
   };
