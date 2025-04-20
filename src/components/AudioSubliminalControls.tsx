@@ -2,7 +2,7 @@
 import React from "react";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import { Play, Stop } from "lucide-react";
+import { Play, CircleStop } from "lucide-react";
 
 interface AudioSubliminalControlsProps {
   audioFile: File | null;
@@ -71,7 +71,7 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
             className="p-2 rounded-xl border border-zinc-200 bg-white shadow hover:bg-zinc-100 focus:outline focus:ring-2 focus:ring-quantum-primary"
             aria-label={isPlaying ? "Detener audio" : "Reproducir audio"}
           >
-            {isPlaying ? <Stop className="w-5 h-5 text-red-500" /> : <Play className="w-5 h-5 text-green-600" />}
+            {isPlaying ? <CircleStop className="w-5 h-5 text-red-500" /> : <Play className="w-5 h-5 text-green-600" />}
           </button>
           <Slider
             min={0}

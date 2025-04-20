@@ -1,4 +1,3 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
@@ -10,7 +9,7 @@ import InfoSection from '@/components/quantum/InfoSection';
 
 const Manifest = () => {
   const manifest = useManifest(manifestPatterns);
-  
+
   return (
     <Layout>
       <HeroSection
@@ -22,9 +21,9 @@ const Manifest = () => {
 
       <section className="py-12 px-4">
         <div className="container mx-auto">
-          <Tabs 
-            defaultValue="presets" 
-            className="w-full" 
+          <Tabs
+            defaultValue="presets"
+            className="w-full"
             onValueChange={manifest.handleTabChange}
             value={manifest.activeTab}
           >
@@ -38,9 +37,9 @@ const Manifest = () => {
                 <span>Personalizado</span>
               </TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="presets" className="w-full">
-              <PresetManifest 
+              <PresetManifest
                 patterns={manifestPatterns}
                 selectedPattern={manifest.selectedPattern}
                 intention={manifest.intention}
@@ -64,6 +63,7 @@ const Manifest = () => {
                 startManifestation={manifest.startManifestation}
                 stopManifestation={manifest.stopManifestation}
                 formatTimeRemaining={manifest.formatTimeRemaining}
+                // We don't pass audio props here as PresetManifest doesn't handle audio
                 onSelectPattern={manifest.selectPattern}
                 currentImage={manifest.currentImage}
                 receptorImage={manifest.receptorImage}
@@ -74,9 +74,9 @@ const Manifest = () => {
                 setReceptorName={manifest.setReceptorName}
               />
             </TabsContent>
-            
+
             <TabsContent value="custom" className="w-full">
-              <CustomManifest 
+              <CustomManifest
                 patterns={manifestPatterns}
                 intention={manifest.intention}
                 setIntention={manifest.setIntention}
