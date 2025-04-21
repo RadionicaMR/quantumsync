@@ -19,6 +19,7 @@ const Admin = () => {
   const [user, setUser] = useState<any>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [loading, setLoading] = useState(true);
   
   // Load data and check authentication
   useEffect(() => {
@@ -28,12 +29,12 @@ const Admin = () => {
       const parsedUser = JSON.parse(storedUser);
       if (parsedUser && parsedUser.isAdmin) {
         setUser(parsedUser);
-        // Load users with the enhanced synchronization
-        syncRegisteredUsers();
+        // Cargamos los usuarios inmediatamente
+        loadAllUsers();
         
         // Set up an interval to refresh users periodically
         const interval = setInterval(() => {
-          syncRegisteredUsers();
+          loadAllUsers();
         }, 30000); // Reload every 30 seconds
         
         return () => clearInterval(interval);
@@ -44,6 +45,25 @@ const Admin = () => {
       navigate('/login');
     }
   }, [navigate]);
+
+  // Función dedicada para cargar usuarios
+  const loadAllUsers = async () => {
+    setLoading(true);
+    try {
+      const allUsers = synchronizeAllUsers();
+      console.log('Usuarios cargados en el panel de admin:', allUsers);
+      setUsers(allUsers);
+    } catch (error) {
+      console.error('Error al cargar usuarios:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "No se pudieron cargar los usuarios.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -88,12 +108,11 @@ const Admin = () => {
   };
 
   const syncRegisteredUsers = () => {
-    const updatedUsers = synchronizeAllUsers();
-    setUsers(updatedUsers);
+    loadAllUsers();
     
     toast({
       title: "Lista de usuarios actualizada",
-      description: `Se han actualizado los usuarios. Total: ${updatedUsers.length}`,
+      description: `Se han actualizado los usuarios. Total: ${users.length}`,
     });
   };
 
@@ -140,12 +159,18 @@ const Admin = () => {
                 onCancel={() => setShowAddForm(false)}
               />
             )}
-
-            <UsersTable 
-              users={users}
-              onDeleteUser={handleDeleteUser}
-              onUpdatePassword={handleUpdatePassword}
-            />
+            
+            {loading ? (
+              <div className="flex justify-center items-center py-10">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+              </div>
+            ) : (
+              <UsersTable 
+                users={users}
+                onDeleteUser={handleDeleteUser}
+                onUpdatePassword={handleUpdatePassword}
+              />
+            )}
           </Card>
         </motion.div>
       </div>

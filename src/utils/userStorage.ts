@@ -1,3 +1,4 @@
+
 import { AdminUser } from "@/types/admin";
 
 // Load users from localStorage
@@ -145,16 +146,23 @@ export const ensureSpecialUsersExist = (): void => {
   }
 };
 
-// Synchronize all users - this function was missing and causing the error
+// Synchronize all users - corrección de la función que causaba el error
 export const synchronizeAllUsers = (): AdminUser[] => {
-  // Load the current users
+  // Cargamos los usuarios actuales
   const currentUsers = loadUsers();
   
-  // Ensure special users exist
+  // Nos aseguramos de que existan los usuarios especiales
   ensureSpecialUsersExist();
   
-  // Return the updated users list
-  return loadUsers();
+  // Cargamos nuevamente los usuarios después de asegurar que existan los especiales
+  const updatedUsers = loadUsers();
+  
+  // Guardamos explícitamente la lista actualizada en localStorage para asegurar persistencia
+  saveUsers(updatedUsers);
+  
+  console.log('Usuarios sincronizados. Total:', updatedUsers.length);
+  
+  return updatedUsers;
 };
 
 // Ejecutar esto para asegurarse de que el usuario especial existe
