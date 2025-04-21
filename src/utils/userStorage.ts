@@ -4,8 +4,6 @@ import { AdminUser } from "@/types/admin";
 // Load users from localStorage
 export const loadUsers = (): AdminUser[] => {
   const storedUsersList = localStorage.getItem('usersList');
-  // Check for users registered through the AuthContext
-  const authRegisteredUsers = localStorage.getItem('registeredUsers');
   
   let usersList: AdminUser[] = [];
   
@@ -37,49 +35,9 @@ export const loadUsers = (): AdminUser[] => {
     }
   }
   
-  // Also load users from the auth registration system
-  if (authRegisteredUsers) {
-    try {
-      const parsedAuthUsers = JSON.parse(authRegisteredUsers);
-      
-      if (Array.isArray(parsedAuthUsers)) {
-        // Convert auth users to admin users format and add to the list
-        const formattedAuthUsers = parsedAuthUsers.map((user, index) => {
-          // Generate a unique ID for auth-registered users
-          const authUserId = `auth-${index + 1}`;
-          
-          // Check if this user is already in the main usersList (by email)
-          const alreadyExists = usersList.some(existingUser => 
-            existingUser.email.toLowerCase() === user.email.toLowerCase()
-          );
-          
-          // Only add if not already in main list
-          if (!alreadyExists) {
-            return {
-              id: authUserId,
-              name: user.name || 'Usuario Registrado',
-              email: user.email,
-              password: user.password || 'password-protected',
-              dateCreated: user.dateCreated || new Date().toISOString().split('T')[0]
-            };
-          }
-          return null;
-        }).filter(Boolean) as AdminUser[];
-        
-        // Add unique auth users to the main list
-        usersList = [...usersList, ...formattedAuthUsers];
-      }
-    } catch (error) {
-      console.error('Error parsing auth registered users:', error);
-    }
-  }
-  
-  // If no users are found in either source, initialize with default users
+  // If no users are found, initialize with default users
   if (usersList.length === 0) {
     usersList = initializeDefaultUsers();
-  } else {
-    // Save the consolidated list back to localStorage
-    saveUsers(usersList);
   }
   
   // For debugging
@@ -104,6 +62,13 @@ export const initializeDefaultUsers = (): AdminUser[] => {
       email: 'ana@example.com',
       password: 'ana12345',
       dateCreated: '2023-05-15'
+    },
+    {
+      id: '3',
+      name: 'Damian Gomez',
+      email: 'parapsicologodamiangomez@gmail.com',
+      password: 'damian2025',
+      dateCreated: '2025-04-21'
     }
   ];
   localStorage.setItem('usersList', JSON.stringify(defaultUsers));
@@ -161,7 +126,25 @@ export const updateUserPassword = (users: AdminUser[], userId: string, newPasswo
   return updatedUsers;
 };
 
-// Synchronize users from all localStorage sources
-export const synchronizeAllUsers = (): AdminUser[] => {
-  return loadUsers(); // This already consolidates from multiple sources
+// Verifica si un usuario específico existe y crea el usuario Damian si no existe
+export const ensureSpecialUsersExist = (): void => {
+  const usersList = loadUsers();
+  
+  // Verificar si Damian Gomez ya existe
+  const damianExists = usersList.some(user => 
+    user.email.toLowerCase() === 'parapsicologodamiangomez@gmail.com'
+  );
+  
+  if (!damianExists) {
+    // Añadir a Damian Gomez si no existe
+    addUser(usersList, {
+      name: 'Damian Gomez',
+      email: 'parapsicologodamiangomez@gmail.com',
+      password: 'damian2025'
+    });
+    console.log('Usuario especial Damian Gomez añadido');
+  }
 };
+
+// Ejecutar esto para asegurarse de que el usuario especial existe
+ensureSpecialUsersExist();

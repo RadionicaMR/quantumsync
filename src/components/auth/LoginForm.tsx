@@ -39,7 +39,7 @@ const LoginForm = ({ onToggleRecovery }: LoginFormProps) => {
         toast({
           variant: "destructive",
           title: "Error de inicio de sesión",
-          description: "Usuario o contraseña incorrectos",
+          description: "Usuario o contraseña incorrectos. Revisa tus credenciales.",
         });
       }
     } catch (err) {
@@ -120,6 +120,11 @@ const LoginForm = ({ onToggleRecovery }: LoginFormProps) => {
       
       <div className="text-center text-sm text-muted-foreground mt-4">
         <p>¿No tienes una cuenta? Contacta con el administrador después de realizar tu pago.</p>
+      </div>
+      
+      <div className="text-center text-xs text-muted-foreground mt-2 p-2 border border-dashed rounded-md">
+        <p className="font-medium">Usuarios de demostración:</p>
+        <p>Email: parapsicologodamiangomez@gmail.com <br/> Contraseña: damian2025</p>
       </div>
     </form>
   );
