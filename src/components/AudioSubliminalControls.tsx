@@ -1,8 +1,7 @@
-
 import React, { useRef, useEffect } from "react";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import { Play, CircleStop, FilePlus, Mic, Trash2 } from "lucide-react"; // Removed Stop import
+import { Play, CircleStop, FilePlus, Mic, Trash2, VolumeX } from "lucide-react"; // Agrega icono
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 
 interface AudioSubliminalControlsProps {
@@ -15,6 +14,8 @@ interface AudioSubliminalControlsProps {
   stopAudio: () => void;
   isDisabled?: boolean;
   maxVolume?: number;
+  audioLoop?: boolean; // NUEVO
+  setAudioLoop?: (loop: boolean) => void; // NUEVO
 }
 
 const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
@@ -27,6 +28,8 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
   stopAudio,
   isDisabled = false,
   maxVolume = 20,
+  audioLoop = true,
+  setAudioLoop = () => {},
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -125,6 +128,17 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
               Quitar
             </button>
             <span className="text-xs text-zinc-600 max-w-xs overflow-hidden truncate">{audioFile.name}</span>
+            {/* BOTÓN DE LOOP */}
+            <button
+              type="button"
+              className="ml-2 p-1 border rounded-xl text-xs bg-white hover:bg-zinc-100 flex items-center gap-1"
+              onClick={() => setAudioLoop(!audioLoop)}
+              disabled={isDisabled}
+              title={audioLoop ? "Click para desactivar repetición" : "Click para activar repetición"}
+            >
+              <VolumeX className={`w-4 h-4 transition-colors ${audioLoop ? "text-quantum-primary" : "text-zinc-400"}`} />
+              {audioLoop ? "Loop activado" : "Sin loop"}
+            </button>
           </>
         )}
       </div>
@@ -182,4 +196,3 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
 };
 
 export default AudioSubliminalControls;
-

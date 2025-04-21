@@ -31,6 +31,7 @@ export const useTreatment = () => {
   // Audio file upload state (renamed for clarity)
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [audioVolume, setAudioVolume] = useState(10);
+  const [audioLoop, setAudioLoop] = useState(true); // Nuevo estado para loop
   // Subliminal audio element and play state
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
   const [audioSubliminalPlaying, setAudioSubliminalPlaying] = useState(false);
@@ -46,7 +47,7 @@ export const useTreatment = () => {
   const playSubliminalAudio = () => {
     if (audioFile && !audioSubliminalPlaying) {
       const newAudio = new Audio(URL.createObjectURL(audioFile));
-      newAudio.loop = true;
+      newAudio.loop = audioLoop;
       newAudio.volume = audioVolume / 20;
       newAudio.play().catch(err => {
         console.error("Error playing uploaded audio:", err);
@@ -97,6 +98,13 @@ export const useTreatment = () => {
     });
   };
 
+  // Update loop property en caliente
+  useEffect(() => {
+    if (audioElement) {
+      audioElement.loop = audioLoop;
+    }
+  }, [audioLoop, audioElement]);
+
   // Actualizar el volumen del audio subliminal cuando cambie el volumen
   useEffect(() => {
     if (audioElement) {
@@ -140,5 +148,7 @@ export const useTreatment = () => {
     audioSubliminalPlaying,
     playSubliminalAudio,
     stopSubliminalAudio,
+    audioLoop,
+    setAudioLoop,
   };
 };

@@ -22,6 +22,7 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [audioVolume, setAudioVolume] = useState(20);
   const [audioSubliminalPlaying, setAudioSubliminalPlaying] = useState(false);
+  const [audioLoop, setAudioLoop] = useState(true); // Nuevo estado del loop
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
 
   // Función para reproducir audio subliminal
@@ -29,7 +30,7 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
     if (audioFile && !audioSubliminalPlaying) {
       const elem = new Audio(URL.createObjectURL(audioFile));
       elem.volume = audioVolume / 20;
-      elem.loop = true;
+      elem.loop = audioLoop; // Usar el valor actual de loop
       elem.play().then(() => {
         setAudioSubliminalPlaying(true);
         audioElementRef.current = elem;
@@ -137,6 +138,14 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
     }
   }, [audioVolume]);
 
+  // Update loop property en caliente
+  // Si cambia audioLoop y hay elemento, actualizar el loop dinámicamente
+  useEffect(() => {
+    if (audioElementRef.current) {
+      audioElementRef.current.loop = audioLoop;
+    }
+  }, [audioLoop]);
+
   return {
     ...state,
     ...utils,
@@ -165,5 +174,7 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
     audioSubliminalPlaying,
     playSubliminalAudio,
     stopSubliminalAudio,
+    audioLoop,
+    setAudioLoop,
   };
 };
