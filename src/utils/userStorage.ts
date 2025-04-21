@@ -1,4 +1,3 @@
-
 import { AdminUser } from "@/types/admin";
 
 // Load users from localStorage
@@ -144,6 +143,18 @@ export const ensureSpecialUsersExist = (): void => {
     });
     console.log('Usuario especial Damian Gomez añadido');
   }
+};
+
+// Synchronize all users - this function was missing and causing the error
+export const synchronizeAllUsers = (): AdminUser[] => {
+  // Load the current users
+  const currentUsers = loadUsers();
+  
+  // Ensure special users exist
+  ensureSpecialUsersExist();
+  
+  // Return the updated users list
+  return loadUsers();
 };
 
 // Ejecutar esto para asegurarse de que el usuario especial existe
