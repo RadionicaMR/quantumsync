@@ -1,7 +1,8 @@
+
 import React, { useRef, useEffect } from "react";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import { Play, CircleStop, FilePlus, Mic, Trash2, VolumeX } from "lucide-react"; // Agrega icono
+import { Play, CircleStop, FilePlus, Mic, Trash2, Repeat } from "lucide-react"; // Reemplazamos VolumeX por Repeat
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 
 interface AudioSubliminalControlsProps {
@@ -136,7 +137,7 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
               disabled={isDisabled}
               title={audioLoop ? "Click para desactivar repetición" : "Click para activar repetición"}
             >
-              <VolumeX className={`w-4 h-4 transition-colors ${audioLoop ? "text-quantum-primary" : "text-zinc-400"}`} />
+              <Repeat className={`w-4 h-4 transition-colors ${audioLoop ? "text-quantum-primary" : "text-zinc-400"}`} />
               {audioLoop ? "Loop activado" : "Sin loop"}
             </button>
           </>
@@ -196,3 +197,4 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
 };
 
 export default AudioSubliminalControls;
+
