@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, LogIn, User, LogOut } from 'lucide-react';
@@ -41,6 +40,9 @@ const Navbar = () => {
             <>
               <Link to="/diagnose" className="neon-text hover:text-primary transition-colors text-sm md:text-base">
                 Diagnóstico
+              </Link>
+              <Link to="/balance-chakras" className="neon-text hover:text-primary transition-colors text-sm md:text-base">
+                Equilibrar Chakras
               </Link>
               <Link to="/treat" className="neon-text hover:text-primary transition-colors text-sm md:text-base">
                 Tratamiento
@@ -129,6 +131,13 @@ const Navbar = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Diagnóstico
+              </Link>
+              <Link 
+                to="/balance-chakras" 
+                className="neon-text hover:text-primary transition-colors py-1"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Equilibrar Chakras
               </Link>
               <Link 
                 to="/treat" 
