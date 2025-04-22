@@ -31,50 +31,51 @@ const DowsingScannerVisualization: React.FC<DowsingScannerVisualizationProps> = 
         />
       </div>
       
-      {/* Chakra indicators on the right side */}
-      <div className="absolute right-2 w-1/4 h-full flex flex-col justify-between py-8">
+      {/* Chakra indicators positioned over the image */}
+      <div className="absolute left-0 w-3/4 h-full">
         {chakras.map((chakra, index) => (
-          <div 
+          <motion.div
             key={chakra.name}
-            className="flex items-center"
+            className="absolute right-0 flex items-center gap-2"
+            style={{
+              top: `${chakra.yPosition}%`,
+              transform: 'translateY(-50%)',
+              zIndex: 10
+            }}
+            initial={{ scale: 0.8, opacity: 0.7 }}
+            animate={{ 
+              scale: scanning ? [0.8, 1.2, 0.8] : 0.8, 
+              opacity: scanning ? [0.7, 1, 0.7] : 1 
+            }}
+            transition={{ 
+              repeat: scanning ? Infinity : 0, 
+              duration: 2,
+              delay: index * 0.3 
+            }}
           >
-            <motion.div
-              className="flex items-center gap-2"
-              initial={{ scale: 0.8, opacity: 0.7 }}
-              animate={{ 
-                scale: scanning ? [0.8, 1.2, 0.8] : 0.8, 
-                opacity: scanning ? [0.7, 1, 0.7] : 1 
-              }}
-              transition={{ 
-                repeat: scanning ? Infinity : 0, 
-                duration: 2,
-                delay: index * 0.3 
+            <div 
+              className="w-2.5 h-2.5 rounded-full flex items-center justify-center"
+              style={{ 
+                backgroundColor: chakra.color,
+                boxShadow: `0 0 10px ${chakra.color}` 
               }}
             >
-              <div 
-                className="w-3 h-3 rounded-full flex items-center justify-center"
-                style={{ 
-                  backgroundColor: chakra.color,
-                  boxShadow: `0 0 10px ${chakra.color}` 
-                }}
+              <div className="w-1 h-1 rounded-full bg-white opacity-70"></div>
+            </div>
+            
+            <span className="text-xs font-medium whitespace-nowrap">{chakra.name}</span>
+            
+            {scanComplete && chakra.state && (
+              <motion.div
+                className="ml-2 bg-black/70 text-white px-2 py-1 rounded-md text-xs font-medium"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.2 }}
               >
-                <div className="w-1.5 h-1.5 rounded-full bg-white opacity-70"></div>
-              </div>
-              
-              <span className="text-xs font-medium whitespace-nowrap">{chakra.name}</span>
-              
-              {scanComplete && chakra.state && (
-                <motion.div
-                  className="ml-2 bg-black/70 text-white px-2 py-1 rounded-md text-xs font-medium"
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.2 }}
-                >
-                  {chakra.state}
-                </motion.div>
-              )}
-            </motion.div>
-          </div>
+                {chakra.state}
+              </motion.div>
+            )}
+          </motion.div>
         ))}
       </div>
       
