@@ -10,6 +10,7 @@ import { Play, Square, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from "@/components/ui/use-toast";
 import { Progress } from "@/components/ui/progress";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import QuantumButton from '@/components/QuantumButton';
 import ChakraHeader from '@/components/quantum/ChakraHeader';
 import ChakraFigure from '@/components/quantum/ChakraFigure';
@@ -24,6 +25,9 @@ interface LocationState {
   }>;
 }
 
+// Opciones de equilibrado
+type BalanceOption = 'all' | 'blocked';
+
 const BalanceChakras = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -35,9 +39,28 @@ const BalanceChakras = () => {
   const [currentChakra, setCurrentChakra] = useState<ChakraName | ''>('');
   const [progress, setProgress] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const [balanceOption, setBalanceOption] = useState<BalanceOption>('all');
   
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const { playChakraSound, stopSound } = useChakraAudio();
+  
+  // Prepare chakras to balance based on the selected option
+  const getChakrasToBalance = () => {
+    if (balanceOption === 'all') {
+      return [...CHAKRA_ORDER];
+    } else {
+      // If we have diagnosis data, only include chakras that need balancing
+      if (state.chakraStates && state.chakraStates.length > 0) {
+        return CHAKRA_ORDER.filter(chakraName => {
+          const chakraData = state.chakraStates?.find(c => c.name === chakraName);
+          return chakraData && (chakraData.state === 'CERRADO' || chakraData.state === 'BLOQUEADO');
+        });
+      } else {
+        // If no diagnosis data, fall back to all chakras
+        return [...CHAKRA_ORDER];
+      }
+    }
+  };
   
   // Start the balancing process
   const startBalancing = () => {
@@ -50,8 +73,18 @@ const BalanceChakras = () => {
       return;
     }
     
+    const chakrasToBalance = getChakrasToBalance();
+    
+    if (chakrasToBalance.length === 0) {
+      toast({
+        title: "No hay chakras para equilibrar",
+        description: "Todos los chakras ya están equilibrados.",
+      });
+      return;
+    }
+    
     setIsPlaying(true);
-    setCurrentChakra(CHAKRA_ORDER[0]);
+    setCurrentChakra(chakrasToBalance[0]);
     setProgress(0);
     setCompleted(false);
     
@@ -60,7 +93,7 @@ const BalanceChakras = () => {
       description: `Armonizando chakras para ${personName}...`,
     });
     
-    playChakraSound(CHAKRA_ORDER[0]);
+    playChakraSound(chakrasToBalance[0]);
   };
   
   // Stop the process
@@ -88,6 +121,7 @@ const BalanceChakras = () => {
       clearInterval(timerRef.current);
     }
     
+    const chakrasToBalance = getChakrasToBalance();
     const chakraDuration = duration[0] * 60 * 1000;
     const updateInterval = 100;
     let elapsedTime = 0;
@@ -98,10 +132,10 @@ const BalanceChakras = () => {
       setProgress(newProgress);
       
       if (newProgress >= 100) {
-        const currentIndex = CHAKRA_ORDER.indexOf(currentChakra as ChakraName);
+        const currentIndex = chakrasToBalance.indexOf(currentChakra as ChakraName);
         
-        if (currentIndex < CHAKRA_ORDER.length - 1) {
-          const nextChakra = CHAKRA_ORDER[currentIndex + 1];
+        if (currentIndex < chakrasToBalance.length - 1) {
+          const nextChakra = chakrasToBalance[currentIndex + 1];
           setCurrentChakra(nextChakra);
           setProgress(0);
           elapsedTime = 0;
@@ -132,7 +166,10 @@ const BalanceChakras = () => {
         timerRef.current = null;
       }
     };
-  }, [isPlaying, currentChakra, duration]);
+  }, [isPlaying, currentChakra, duration, balanceOption]);
+  
+  // Display chakra states if coming from diagnosis
+  const hasChakraStates = state.chakraStates && state.chakraStates.some(c => c.state);
   
   return (
     <Layout>
@@ -166,6 +203,56 @@ const BalanceChakras = () => {
                 disabled={isPlaying}
               />
             </div>
+            
+            {/* Opciones de equilibrado */}
+            <div className="mb-6">
+              <Label className="block mb-2">
+                Opción de equilibrado
+              </Label>
+              <RadioGroup 
+                value={balanceOption} 
+                onValueChange={(value) => setBalanceOption(value as BalanceOption)}
+                className="flex flex-col space-y-2"
+                disabled={isPlaying}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="all" id="option-all" />
+                  <Label htmlFor="option-all" className="cursor-pointer">
+                    Equilibrar todos los chakras
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="blocked" id="option-blocked" />
+                  <Label htmlFor="option-blocked" className="cursor-pointer">
+                    Equilibrar solo chakras cerrados o bloqueados
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+            
+            {/* Muestra los estados de los chakras si vienen del diagnóstico */}
+            {hasChakraStates && balanceOption === 'blocked' && (
+              <div className="mb-6 p-4 bg-gray-100 rounded-lg">
+                <h3 className="font-medium mb-2">Resultados del diagnóstico:</h3>
+                <ul className="text-sm space-y-1">
+                  {state.chakraStates?.map((chakra) => (
+                    <li key={chakra.name} className="flex items-center">
+                      <span 
+                        className="w-3 h-3 rounded-full mr-2" 
+                        style={{ backgroundColor: CHAKRA_COLORS[chakra.name as ChakraName] }}
+                      ></span>
+                      <span>{chakra.name}: </span>
+                      <span className={`ml-1 font-medium ${
+                        chakra.state === 'EQUILIBRADO' ? 'text-green-600' : 
+                        chakra.state === 'CERRADO' ? 'text-amber-600' : 'text-red-600'
+                      }`}>
+                        {chakra.state}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             
             <div className="mb-8">
               <Label className="block mb-2">

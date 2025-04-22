@@ -1,7 +1,8 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
-import { Bell, Play, Wand2 } from 'lucide-react';
+import { Bell, Play, Wand2, Square } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import QuantumButton from '@/components/QuantumButton';
 import DowsingRing from './DowsingRing';
@@ -11,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 // Define los posibles estados de los chakras
-type ChakraState = 'EQUILIBRADO' | 'ABIERTO' | 'CERRADO' | 'BLOQUEADO';
+type ChakraState = 'EQUILIBRADO' | 'CERRADO' | 'BLOQUEADO';
 
 // Define la estructura de un chakra
 interface Chakra {
@@ -71,6 +72,21 @@ const DowsingScanner = () => {
     });
   };
   
+  // Función para detener el escaneo
+  const stopScan = () => {
+    if (scanning) {
+      setScanning(false);
+      setScanComplete(false);
+      setProgress(0);
+      
+      toast({
+        title: "Escáner Detenido",
+        description: "El proceso de escaneo ha sido interrumpido.",
+        variant: "destructive"
+      });
+    }
+  };
+  
   // Efecto para actualizar el progreso durante el escaneo
   useEffect(() => {
     if (!scanning) return;
@@ -91,8 +107,8 @@ const DowsingScanner = () => {
         setScanning(false);
         setScanComplete(true);
         
-        // Generar resultados de los chakras
-        const chakraStates: ChakraState[] = ['EQUILIBRADO', 'ABIERTO', 'CERRADO', 'BLOQUEADO'];
+        // Generar resultados de los chakras - limitado a las tres opciones
+        const chakraStates: ChakraState[] = ['EQUILIBRADO', 'CERRADO', 'BLOQUEADO'];
         const updatedChakras = chakras.map(chakra => ({
           ...chakra,
           state: chakraStates[Math.floor(Math.random() * chakraStates.length)]
@@ -148,64 +164,71 @@ const DowsingScanner = () => {
           />
         </div>
         
-        <div className="relative w-64 mx-auto mb-8 h-96">
+        <div className="relative w-full mx-auto mb-8 h-96 flex">
           {/* Human figure background */}
-          <div className="absolute inset-0 rounded-xl overflow-hidden">
+          <div className="absolute left-0 w-3/4 h-full rounded-xl overflow-hidden">
             <img 
               src="/lovable-uploads/398a244d-cfb8-44ba-9036-e14561fe19d0.png"
               alt="Chakra visualization"
-              className="w-full h-full object-contain"
+              className="h-full object-contain mx-auto"
             />
           </div>
           
-          {/* Chakras */}
-          {chakras.map((chakra, index) => (
-            <motion.div
-              key={chakra.name}
-              className="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center"
-              style={{ 
-                top: `${chakra.yPosition}%`,
-                zIndex: 3
-              }}
-              initial={{ scale: 0.8, opacity: 0.7 }}
-              animate={{ 
-                scale: [0.8, 1.2, 0.8], 
-                opacity: scanning ? [0.7, 1, 0.7] : 1 
-              }}
-              transition={{ 
-                repeat: scanning ? Infinity : 0, 
-                duration: 2,
-                delay: index * 0.3 
-              }}
-            >
+          {/* Chakra indicators on the right side */}
+          <div className="absolute right-0 w-1/4 h-full flex flex-col justify-center items-start">
+            {chakras.map((chakra, index) => (
               <div 
-                className="w-8 h-8 rounded-full flex items-center justify-center"
+                key={chakra.name}
+                className="flex items-center mb-2 relative"
                 style={{ 
-                  backgroundColor: chakra.color,
-                  boxShadow: `0 0 15px ${chakra.color}` 
+                  marginTop: index === 0 ? '0' : '8px'
                 }}
               >
-                <div className="w-5 h-5 rounded-full bg-white opacity-70"></div>
-              </div>
-              
-              {/* Estado del chakra (después del escaneo) */}
-              {scanComplete && chakra.state && (
                 <motion.div
-                  className="ml-12 bg-black/70 text-white px-3 py-1 rounded-md text-sm font-medium whitespace-nowrap"
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.2 }}
+                  className="flex items-center"
+                  initial={{ scale: 0.8, opacity: 0.7 }}
+                  animate={{ 
+                    scale: [0.8, 1.2, 0.8], 
+                    opacity: scanning ? [0.7, 1, 0.7] : 1 
+                  }}
+                  transition={{ 
+                    repeat: scanning ? Infinity : 0, 
+                    duration: 2,
+                    delay: index * 0.3 
+                  }}
                 >
-                  {chakra.state}
+                  <div 
+                    className="w-6 h-6 rounded-full flex items-center justify-center mr-2"
+                    style={{ 
+                      backgroundColor: chakra.color,
+                      boxShadow: `0 0 10px ${chakra.color}` 
+                    }}
+                  >
+                    <div className="w-3 h-3 rounded-full bg-white opacity-70"></div>
+                  </div>
+                  
+                  <span className="text-xs font-medium whitespace-nowrap">{chakra.name}</span>
+                  
+                  {/* Estado del chakra (después del escaneo) */}
+                  {scanComplete && chakra.state && (
+                    <motion.div
+                      className="ml-2 bg-black/70 text-white px-2 py-1 rounded-md text-xs font-medium"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.2 }}
+                    >
+                      {chakra.state}
+                    </motion.div>
+                  )}
                 </motion.div>
-              )}
-            </motion.div>
-          ))}
+              </div>
+            ))}
+          </div>
           
           {/* Barra de escaneo */}
           {scanning && (
             <motion.div 
-              className="absolute left-0 right-0 h-1 bg-gradient-to-r from-quantum-primary/20 via-quantum-primary to-quantum-primary/20"
+              className="absolute left-0 w-3/4 h-1 bg-gradient-to-r from-quantum-primary/20 via-quantum-primary to-quantum-primary/20"
               style={{ 
                 top: scanBarPosition,
                 boxShadow: '0 0 10px rgba(155, 135, 245, 0.7)'
@@ -227,7 +250,7 @@ const DowsingScanner = () => {
           )}
         </div>
         
-        <div className="flex flex-col gap-4 items-center">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
           {!scanning && !scanComplete && (
             <QuantumButton 
               onClick={startScan} 
@@ -236,6 +259,16 @@ const DowsingScanner = () => {
             >
               <Play size={16} />
               Iniciar Escaneo
+            </QuantumButton>
+          )}
+          
+          {scanning && (
+            <QuantumButton 
+              onClick={stopScan}
+              className="bg-red-500 text-white hover:bg-red-600"
+            >
+              <Square size={16} />
+              Detener Escaneo
             </QuantumButton>
           )}
           
