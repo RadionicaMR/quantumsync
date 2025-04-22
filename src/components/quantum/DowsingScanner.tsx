@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
@@ -150,21 +149,13 @@ const DowsingScanner = () => {
         </div>
         
         <div className="relative w-64 mx-auto mb-8 h-96">
-          {/* Imagen de fondo de figura humana */}
-          <div className="absolute inset-0 bg-gradient-to-b from-quantum-dark/10 to-quantum-dark/30 rounded-xl overflow-hidden">
-            <svg 
-              viewBox="0 0 200 400" 
-              className="h-full w-full opacity-40"
-              style={{ mixBlendMode: 'luminosity' }}
-            >
-              <path d="M100,30 C130,30 130,10 100,10 C70,10 70,30 100,30 Z" fill="#ddd" /> {/* Cabeza */}
-              <rect x="95" y="30" width="10" height="40" fill="#ddd" /> {/* Cuello */}
-              <path d="M60,70 L140,70 L130,170 L70,170 Z" fill="#ddd" /> {/* Torso */}
-              <path d="M70,170 L50,290 L70,290 L80,170 Z" fill="#ddd" /> {/* Pierna izquierda */}
-              <path d="M130,170 L150,290 L130,290 L120,170 Z" fill="#ddd" /> {/* Pierna derecha */}
-              <path d="M140,70 L170,120 L150,120 L130,90 Z" fill="#ddd" /> {/* Brazo derecho */}
-              <path d="M60,70 L30,120 L50,120 L70,90 Z" fill="#ddd" /> {/* Brazo izquierdo */}
-            </svg>
+          {/* Human figure background */}
+          <div className="absolute inset-0 rounded-xl overflow-hidden">
+            <img 
+              src="/lovable-uploads/398a244d-cfb8-44ba-9036-e14561fe19d0.png"
+              alt="Chakra visualization"
+              className="w-full h-full object-contain"
+            />
           </div>
           
           {/* Chakras */}
