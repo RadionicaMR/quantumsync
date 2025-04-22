@@ -12,41 +12,10 @@ import { toast } from "@/components/ui/use-toast";
 import { Progress } from "@/components/ui/progress";
 import QuantumButton from '@/components/QuantumButton';
 import ChakraHeader from '@/components/quantum/ChakraHeader';
+import ChakraFigure from '@/components/quantum/ChakraFigure';
+import { useChakraAudio } from '@/hooks/useChakraAudio';
+import { CHAKRA_ORDER, CHAKRA_COLORS, CHAKRA_FREQUENCIES, type ChakraName } from '@/constants/chakraData';
 
-// Definir las frecuencias de los chakras
-const CHAKRA_FREQUENCIES = {
-  'Raíz': 396,
-  'Sacro': 417,
-  'Plexo Solar': 528,
-  'Corazón': 639,
-  'Garganta': 741,
-  'Tercer Ojo': 852,
-  'Corona': 963
-};
-
-// Definir los colores de los chakras
-const CHAKRA_COLORS = {
-  'Corona': '#A675F5',
-  'Tercer Ojo': '#5E5DF0',
-  'Garganta': '#3498DB',
-  'Corazón': '#2ECC71',
-  'Plexo Solar': '#F1C40F',
-  'Sacro': '#E67E22',
-  'Raíz': '#E74C3C'
-};
-
-// Definir las posiciones de los chakras
-const CHAKRA_POSITIONS = {
-  'Corona': 10,
-  'Tercer Ojo': 20,
-  'Garganta': 30,
-  'Corazón': 42,
-  'Plexo Solar': 55,
-  'Sacro': 68,
-  'Raíz': 82
-};
-
-// Interfaz para los datos de estado pasados desde la página anterior
 interface LocationState {
   personName?: string;
   chakraStates?: Array<{
@@ -61,81 +30,16 @@ const BalanceChakras = () => {
   const state = location.state as LocationState || {};
   
   const [personName, setPersonName] = useState(state.personName || '');
-  const [duration, setDuration] = useState([1]); // Duración en minutos (1-5)
+  const [duration, setDuration] = useState([1]);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentChakra, setCurrentChakra] = useState('');
+  const [currentChakra, setCurrentChakra] = useState<ChakraName | ''>('');
   const [progress, setProgress] = useState(0);
   const [completed, setCompleted] = useState(false);
   
-  const audioContext = useRef<AudioContext | null>(null);
-  const oscillator = useRef<OscillatorNode | null>(null);
-  const gainNode = useRef<GainNode | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const { playChakraSound, stopSound } = useChakraAudio();
   
-  // Ordenar los chakras de abajo hacia arriba (de Raíz a Corona)
-  const chakraOrder = [
-    'Raíz', 
-    'Sacro', 
-    'Plexo Solar', 
-    'Corazón', 
-    'Garganta', 
-    'Tercer Ojo', 
-    'Corona'
-  ];
-  
-  // Inicializar el contexto de audio si está disponible
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.AudioContext) {
-      audioContext.current = new AudioContext();
-      gainNode.current = audioContext.current.createGain();
-      gainNode.current.gain.value = 0.3; // Volumen moderado
-      gainNode.current.connect(audioContext.current.destination);
-    } else {
-      console.error('Web Audio API no soportada en este navegador');
-    }
-    
-    return () => {
-      stopSound();
-      if (audioContext.current && audioContext.current.state !== 'closed') {
-        audioContext.current.close();
-      }
-    };
-  }, []);
-  
-  // Función para reproducir la frecuencia de un chakra
-  const playChakraSound = (chakraName: string) => {
-    if (!audioContext.current || audioContext.current.state === 'closed') {
-      audioContext.current = new AudioContext();
-      gainNode.current = audioContext.current.createGain();
-      gainNode.current.gain.value = 0.3;
-      gainNode.current.connect(audioContext.current.destination);
-    }
-    
-    // Detener cualquier sonido actual
-    stopSound();
-    
-    // Crear y configurar un nuevo oscilador
-    if (audioContext.current && gainNode.current) {
-      oscillator.current = audioContext.current.createOscillator();
-      oscillator.current.type = 'sine'; // Usar onda sinusoidal para un tono más puro
-      oscillator.current.frequency.value = CHAKRA_FREQUENCIES[chakraName as keyof typeof CHAKRA_FREQUENCIES];
-      oscillator.current.connect(gainNode.current);
-      oscillator.current.start();
-      
-      console.log(`Reproduciendo frecuencia ${CHAKRA_FREQUENCIES[chakraName as keyof typeof CHAKRA_FREQUENCIES]} Hz para chakra ${chakraName}`);
-    }
-  };
-  
-  // Función para detener el sonido
-  const stopSound = () => {
-    if (oscillator.current) {
-      oscillator.current.stop();
-      oscillator.current.disconnect();
-      oscillator.current = null;
-    }
-  };
-  
-  // Iniciar el proceso de equilibrio de chakras
+  // Start the balancing process
   const startBalancing = () => {
     if (!personName.trim()) {
       toast({
@@ -147,7 +51,7 @@ const BalanceChakras = () => {
     }
     
     setIsPlaying(true);
-    setCurrentChakra(chakraOrder[0]);
+    setCurrentChakra(CHAKRA_ORDER[0]);
     setProgress(0);
     setCompleted(false);
     
@@ -156,17 +60,15 @@ const BalanceChakras = () => {
       description: `Armonizando chakras para ${personName}...`,
     });
     
-    // Iniciar con el primer chakra
-    playChakraSound(chakraOrder[0]);
+    playChakraSound(CHAKRA_ORDER[0]);
   };
   
-  // Detener el proceso
+  // Stop the process
   const stopBalancing = () => {
     setIsPlaying(false);
     setCurrentChakra('');
     stopSound();
     
-    // Limpiar el intervalo si existe
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
@@ -178,17 +80,16 @@ const BalanceChakras = () => {
     });
   };
   
-  // Manejar el avance a través de los chakras
+  // Handle chakra progression
   useEffect(() => {
     if (!isPlaying || !currentChakra) return;
     
-    // Limpiar cualquier intervalo anterior
     if (timerRef.current) {
       clearInterval(timerRef.current);
     }
     
-    const chakraDuration = duration[0] * 60 * 1000; // Convertir minutos a milisegundos
-    const updateInterval = 100; // Actualizar cada 100ms
+    const chakraDuration = duration[0] * 60 * 1000;
+    const updateInterval = 100;
     let elapsedTime = 0;
     
     timerRef.current = setInterval(() => {
@@ -196,17 +97,14 @@ const BalanceChakras = () => {
       const newProgress = Math.min(100, (elapsedTime / chakraDuration) * 100);
       setProgress(newProgress);
       
-      // Cuando se completa el tiempo para este chakra
       if (newProgress >= 100) {
-        // Encontrar el índice actual y pasar al siguiente chakra
-        const currentIndex = chakraOrder.indexOf(currentChakra);
+        const currentIndex = CHAKRA_ORDER.indexOf(currentChakra as ChakraName);
         
-        if (currentIndex < chakraOrder.length - 1) {
-          // Pasar al siguiente chakra
-          const nextChakra = chakraOrder[currentIndex + 1];
+        if (currentIndex < CHAKRA_ORDER.length - 1) {
+          const nextChakra = CHAKRA_ORDER[currentIndex + 1];
           setCurrentChakra(nextChakra);
           setProgress(0);
-          elapsedTime = 0; // Reiniciar el tiempo transcurrido
+          elapsedTime = 0;
           playChakraSound(nextChakra);
           
           toast({
@@ -214,7 +112,6 @@ const BalanceChakras = () => {
             description: `Ahora armonizando el chakra ${nextChakra}...`,
           });
         } else {
-          // Proceso completado
           clearInterval(timerRef.current as NodeJS.Timeout);
           timerRef.current = null;
           setIsPlaying(false);
@@ -235,7 +132,7 @@ const BalanceChakras = () => {
         timerRef.current = null;
       }
     };
-  }, [isPlaying, currentChakra, duration, chakraOrder]);
+  }, [isPlaying, currentChakra, duration]);
   
   return (
     <Layout>
@@ -291,83 +188,18 @@ const BalanceChakras = () => {
               </div>
             </div>
             
-            <div className="relative w-full max-w-xs mx-auto h-96 mb-8">
-              {/* Imagen de fondo de figura humana */}
-              <div className="absolute inset-0 bg-gradient-to-b from-quantum-dark/10 to-quantum-dark/30 rounded-xl overflow-hidden">
-                <svg 
-                  viewBox="0 0 200 400" 
-                  className="h-full w-full opacity-40"
-                  style={{ mixBlendMode: 'luminosity' }}
-                >
-                  <path d="M100,30 C130,30 130,10 100,10 C70,10 70,30 100,30 Z" fill="#ddd" /> {/* Cabeza */}
-                  <rect x="95" y="30" width="10" height="40" fill="#ddd" /> {/* Cuello */}
-                  <path d="M60,70 L140,70 L130,170 L70,170 Z" fill="#ddd" /> {/* Torso */}
-                  <path d="M70,170 L50,290 L70,290 L80,170 Z" fill="#ddd" /> {/* Pierna izquierda */}
-                  <path d="M130,170 L150,290 L130,290 L120,170 Z" fill="#ddd" /> {/* Pierna derecha */}
-                  <path d="M140,70 L170,120 L150,120 L130,90 Z" fill="#ddd" /> {/* Brazo derecho */}
-                  <path d="M60,70 L30,120 L50,120 L70,90 Z" fill="#ddd" /> {/* Brazo izquierdo */}
-                </svg>
-              </div>
-              
-              {/* Chakras */}
-              {chakraOrder.map((chakraName) => {
-                const isActive = currentChakra === chakraName;
-                const yPosition = CHAKRA_POSITIONS[chakraName as keyof typeof CHAKRA_POSITIONS];
-                const color = CHAKRA_COLORS[chakraName as keyof typeof CHAKRA_COLORS];
-                
-                return (
-                  <motion.div
-                    key={chakraName}
-                    className="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center"
-                    style={{ 
-                      top: `${yPosition}%`,
-                      zIndex: 3
-                    }}
-                    initial={{ scale: 0.8, opacity: 0.7 }}
-                    animate={{ 
-                      scale: isActive ? [0.8, 1.5, 0.8] : 0.8, 
-                      opacity: isActive ? [0.7, 1, 0.7] : 0.7,
-                      boxShadow: isActive ? `0 0 30px ${color}` : 'none'
-                    }}
-                    transition={{ 
-                      repeat: isActive ? Infinity : 0, 
-                      duration: 2
-                    }}
-                  >
-                    <div 
-                      className="w-8 h-8 rounded-full flex items-center justify-center"
-                      style={{ 
-                        backgroundColor: color,
-                        boxShadow: isActive ? `0 0 15px ${color}` : 'none'
-                      }}
-                    >
-                      <div className="w-5 h-5 rounded-full bg-white opacity-70"></div>
-                    </div>
-                    
-                    {isActive && (
-                      <motion.div
-                        className="ml-14 bg-black/70 text-white px-3 py-1 rounded-md text-sm font-medium whitespace-nowrap"
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                      >
-                        {chakraName} - {CHAKRA_FREQUENCIES[chakraName as keyof typeof CHAKRA_FREQUENCIES]} Hz
-                      </motion.div>
-                    )}
-                  </motion.div>
-                );
-              })}
-            </div>
+            <ChakraFigure currentChakra={currentChakra} />
             
             {isPlaying && (
               <div className="w-full max-w-xs mx-auto mb-8 text-center">
                 <p className="text-sm mb-1">
-                  Armonizando chakra {currentChakra} ({CHAKRA_FREQUENCIES[currentChakra as keyof typeof CHAKRA_FREQUENCIES]} Hz)
+                  Armonizando chakra {currentChakra} ({CHAKRA_FREQUENCIES[currentChakra as ChakraName]} Hz)
                 </p>
                 <Progress 
                   value={progress} 
                   className="h-2 w-full bg-gray-200 rounded-full overflow-hidden"
                   style={{
-                    "--progress-foreground": CHAKRA_COLORS[currentChakra as keyof typeof CHAKRA_COLORS]
+                    "--progress-foreground": CHAKRA_COLORS[currentChakra as ChakraName]
                   } as React.CSSProperties}
                 />
                 <p className="text-xs text-muted-foreground mt-1">
