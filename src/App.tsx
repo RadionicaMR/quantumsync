@@ -15,6 +15,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Purchase from "./pages/Purchase";
 import Admin from "./pages/Admin";
+import BalanceChakras from "./pages/BalanceChakras"; // Importamos la nueva página
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 
@@ -51,6 +52,12 @@ const App = () => (
               <Route path="/manifest" element={
                 <ProtectedRoute>
                   <Manifest />
+                </ProtectedRoute>
+              } />
+              {/* Nueva ruta para equilibrar chakras */}
+              <Route path="/balance-chakras" element={
+                <ProtectedRoute>
+                  <BalanceChakras />
                 </ProtectedRoute>
               } />
               <Route path="/affiliate" element={

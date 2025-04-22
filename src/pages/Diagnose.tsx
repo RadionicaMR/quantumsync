@@ -1,5 +1,4 @@
 
-import { useState } from 'react';
 import Layout from '@/components/Layout';
 import { useIsMobileOnly } from '@/hooks/use-mobile';
 import DiagnosisHeader from '@/components/quantum/DiagnosisHeader';
@@ -14,7 +13,7 @@ const Diagnose = () => {
     <Layout>
       <DiagnosisHeader />
       
-      {/* Sección de Cómo Funciona movida justo debajo del título */}
+      {/* Sección de Cómo Funciona justo debajo del título */}
       <InfoSection />
 
       <section className="py-4 md:py-6 px-4 bg-gradient-to-b from-quantum-dark/70 to-background">
