@@ -9,6 +9,7 @@ import { Slider } from '@/components/ui/slider';
 import { Play, Square, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from "@/components/ui/use-toast";
+import { Progress } from "@/components/ui/progress";
 import QuantumButton from '@/components/QuantumButton';
 import ChakraHeader from '@/components/quantum/ChakraHeader';
 
@@ -69,6 +70,7 @@ const BalanceChakras = () => {
   const audioContext = useRef<AudioContext | null>(null);
   const oscillator = useRef<OscillatorNode | null>(null);
   const gainNode = useRef<GainNode | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
   
   // Ordenar los chakras de abajo hacia arriba (de Raíz a Corona)
   const chakraOrder = [
@@ -164,6 +166,12 @@ const BalanceChakras = () => {
     setCurrentChakra('');
     stopSound();
     
+    // Limpiar el intervalo si existe
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    
     toast({
       title: "Proceso detenido",
       description: "Armonización de chakras interrumpida.",
@@ -174,14 +182,18 @@ const BalanceChakras = () => {
   useEffect(() => {
     if (!isPlaying || !currentChakra) return;
     
-    const chakraDuration = duration[0] * 60 * 1000; // Convertir minutos a milisegundos
-    const intervalTime = 100; // Actualizar cada 100ms
-    const steps = chakraDuration / intervalTime;
-    let currentStep = 0;
+    // Limpiar cualquier intervalo anterior
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
     
-    const timer = setInterval(() => {
-      currentStep++;
-      const newProgress = Math.min(100, (currentStep / steps) * 100);
+    const chakraDuration = duration[0] * 60 * 1000; // Convertir minutos a milisegundos
+    const updateInterval = 100; // Actualizar cada 100ms
+    let elapsedTime = 0;
+    
+    timerRef.current = setInterval(() => {
+      elapsedTime += updateInterval;
+      const newProgress = Math.min(100, (elapsedTime / chakraDuration) * 100);
       setProgress(newProgress);
       
       // Cuando se completa el tiempo para este chakra
@@ -194,6 +206,7 @@ const BalanceChakras = () => {
           const nextChakra = chakraOrder[currentIndex + 1];
           setCurrentChakra(nextChakra);
           setProgress(0);
+          elapsedTime = 0; // Reiniciar el tiempo transcurrido
           playChakraSound(nextChakra);
           
           toast({
@@ -202,7 +215,8 @@ const BalanceChakras = () => {
           });
         } else {
           // Proceso completado
-          clearInterval(timer);
+          clearInterval(timerRef.current as NodeJS.Timeout);
+          timerRef.current = null;
           setIsPlaying(false);
           setCompleted(true);
           stopSound();
@@ -213,9 +227,14 @@ const BalanceChakras = () => {
           });
         }
       }
-    }, intervalTime);
+    }, updateInterval);
     
-    return () => clearInterval(timer);
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
   }, [isPlaying, currentChakra, duration, chakraOrder]);
   
   return (
@@ -344,15 +363,13 @@ const BalanceChakras = () => {
                 <p className="text-sm mb-1">
                   Armonizando chakra {currentChakra} ({CHAKRA_FREQUENCIES[currentChakra as keyof typeof CHAKRA_FREQUENCIES]} Hz)
                 </p>
-                <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                  <motion.div 
-                    className="h-full rounded-full" 
-                    style={{ 
-                      width: `${progress}%`,
-                      backgroundColor: CHAKRA_COLORS[currentChakra as keyof typeof CHAKRA_COLORS]
-                    }}
-                  />
-                </div>
+                <Progress 
+                  value={progress} 
+                  className="h-2 w-full bg-gray-200 rounded-full overflow-hidden"
+                  style={{
+                    "--progress-foreground": CHAKRA_COLORS[currentChakra as keyof typeof CHAKRA_COLORS]
+                  } as React.CSSProperties}
+                />
                 <p className="text-xs text-muted-foreground mt-1">
                   Progreso: {Math.round(progress)}%
                 </p>
