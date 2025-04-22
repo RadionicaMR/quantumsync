@@ -31,15 +31,16 @@ const DowsingScannerVisualization: React.FC<DowsingScannerVisualizationProps> = 
         />
       </div>
       
-      {/* Chakra indicators positioned over the image */}
+      {/* Chakra indicators positioned directly on the human figure */}
       <div className="absolute left-0 w-3/4 h-full">
         {chakras.map((chakra, index) => (
           <motion.div
             key={chakra.name}
-            className="absolute right-0 flex items-center gap-2"
+            className="absolute flex items-center gap-2"
             style={{
               top: `${chakra.yPosition}%`,
-              transform: 'translateY(-50%)',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
               zIndex: 10
             }}
             initial={{ scale: 0.8, opacity: 0.7 }}
