@@ -10,18 +10,19 @@ interface ChakraFigureProps {
 const ChakraFigure = ({ currentChakra }: ChakraFigureProps) => {
   return (
     <div className="relative w-full max-w-xs mx-auto h-96 mb-8">
-      {/* Human figure with blurred edges */}
-      <div className="absolute inset-0 rounded-xl overflow-hidden">
-        <div className="relative w-full h-full">
-          <img 
-            src="/lovable-uploads/398a244d-cfb8-44ba-9036-e14561fe19d0.png"
-            alt="Chakra visualization"
-            className="w-full h-full object-contain blur-[1px]"
-          />
-        </div>
+      {/* Container with blurred edges */}
+      <div className="absolute inset-0 rounded-xl bg-black/5 backdrop-blur-[2px]" />
+      
+      {/* Human figure container - clear, no blur */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <img 
+          src="/lovable-uploads/398a244d-cfb8-44ba-9036-e14561fe19d0.png"
+          alt="Chakra visualization"
+          className="h-full object-contain"
+        />
       </div>
       
-      {/* Chakra points - repositioned closer to the edge */}
+      {/* Chakra points - positioned at the edge */}
       {(Object.keys(CHAKRA_POSITIONS) as ChakraName[]).map((chakraName) => {
         const isActive = currentChakra === chakraName;
         const yPosition = CHAKRA_POSITIONS[chakraName];
@@ -30,7 +31,7 @@ const ChakraFigure = ({ currentChakra }: ChakraFigureProps) => {
         return (
           <motion.div
             key={chakraName}
-            className="absolute right-2 transform flex items-center gap-2"
+            className="absolute right-0 transform flex items-center gap-2"
             style={{ 
               top: `${yPosition}%`,
               zIndex: 3
@@ -46,13 +47,13 @@ const ChakraFigure = ({ currentChakra }: ChakraFigureProps) => {
             }}
           >
             <div 
-              className="w-4 h-4 rounded-full flex items-center justify-center"
+              className="w-3 h-3 rounded-full flex items-center justify-center"
               style={{ 
                 backgroundColor: color,
                 boxShadow: isActive ? `0 0 15px ${color}` : `0 0 10px ${color}` 
               }}
             >
-              <div className="w-2 h-2 rounded-full bg-white opacity-70"></div>
+              <div className="w-1.5 h-1.5 rounded-full bg-white opacity-70"></div>
             </div>
             
             {isActive && (
@@ -72,3 +73,4 @@ const ChakraFigure = ({ currentChakra }: ChakraFigureProps) => {
 };
 
 export default ChakraFigure;
+

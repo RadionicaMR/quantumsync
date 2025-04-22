@@ -166,18 +166,19 @@ const DowsingScanner = () => {
         </div>
         
         <div className="relative w-full mx-auto mb-8 h-96 flex">
-          {/* Human figure with blurred edges */}
-          <div className="absolute left-0 w-3/4 h-full rounded-xl overflow-hidden">
-            <div className="relative w-full h-full">
-              <img 
-                src="/lovable-uploads/398a244d-cfb8-44ba-9036-e14561fe19d0.png"
-                alt="Chakra visualization"
-                className="h-full object-contain mx-auto blur-[1px]"
-              />
-            </div>
+          {/* Container with blurred edges */}
+          <div className="absolute left-0 w-3/4 h-full rounded-xl bg-black/5 backdrop-blur-[2px]" />
+          
+          {/* Human figure container - clear, no blur */}
+          <div className="absolute left-0 w-3/4 h-full flex items-center justify-center">
+            <img 
+              src="/lovable-uploads/398a244d-cfb8-44ba-9036-e14561fe19d0.png"
+              alt="Chakra visualization"
+              className="h-full object-contain"
+            />
           </div>
           
-          {/* Chakra indicators on the right side - adjusted spacing */}
+          {/* Chakra indicators on the right side */}
           <div className="absolute right-2 w-1/4 h-full flex flex-col justify-between py-8">
             {chakras.map((chakra, index) => (
               <div 
@@ -188,7 +189,7 @@ const DowsingScanner = () => {
                   className="flex items-center gap-2"
                   initial={{ scale: 0.8, opacity: 0.7 }}
                   animate={{ 
-                    scale: isActive ? [0.8, 1.2, 0.8] : 0.8, 
+                    scale: scanning ? [0.8, 1.2, 0.8] : 0.8, 
                     opacity: scanning ? [0.7, 1, 0.7] : 1 
                   }}
                   transition={{ 
@@ -198,13 +199,13 @@ const DowsingScanner = () => {
                   }}
                 >
                   <div 
-                    className="w-4 h-4 rounded-full flex items-center justify-center"
+                    className="w-3 h-3 rounded-full flex items-center justify-center"
                     style={{ 
                       backgroundColor: chakra.color,
                       boxShadow: `0 0 10px ${chakra.color}` 
                     }}
                   >
-                    <div className="w-2 h-2 rounded-full bg-white opacity-70"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-white opacity-70"></div>
                   </div>
                   
                   <span className="text-xs font-medium whitespace-nowrap">{chakra.name}</span>
@@ -224,7 +225,7 @@ const DowsingScanner = () => {
             ))}
           </div>
           
-          {/* Barra de escaneo */}
+          {/* Scanning bar - adjusted width to match the image */}
           {scanning && (
             <motion.div 
               className="absolute left-0 w-3/4 h-1 bg-gradient-to-r from-quantum-primary/20 via-quantum-primary to-quantum-primary/20"
