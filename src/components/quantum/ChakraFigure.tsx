@@ -10,16 +10,18 @@ interface ChakraFigureProps {
 const ChakraFigure = ({ currentChakra }: ChakraFigureProps) => {
   return (
     <div className="relative w-full max-w-xs mx-auto h-96 mb-8">
-      {/* Human figure background */}
+      {/* Human figure with blurred edges */}
       <div className="absolute inset-0 rounded-xl overflow-hidden">
-        <img 
-          src="/lovable-uploads/398a244d-cfb8-44ba-9036-e14561fe19d0.png"
-          alt="Chakra visualization"
-          className="w-full h-full object-contain"
-        />
+        <div className="relative w-full h-full">
+          <img 
+            src="/lovable-uploads/398a244d-cfb8-44ba-9036-e14561fe19d0.png"
+            alt="Chakra visualization"
+            className="w-full h-full object-contain blur-[1px]"
+          />
+        </div>
       </div>
       
-      {/* Chakra points */}
+      {/* Chakra points - repositioned closer to the edge */}
       {(Object.keys(CHAKRA_POSITIONS) as ChakraName[]).map((chakraName) => {
         const isActive = currentChakra === chakraName;
         const yPosition = CHAKRA_POSITIONS[chakraName];
@@ -28,25 +30,34 @@ const ChakraFigure = ({ currentChakra }: ChakraFigureProps) => {
         return (
           <motion.div
             key={chakraName}
-            className="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center"
+            className="absolute right-2 transform flex items-center gap-2"
             style={{ 
               top: `${yPosition}%`,
               zIndex: 3
             }}
             initial={{ scale: 0.8, opacity: 0.7 }}
             animate={{ 
-              scale: isActive ? [0.8, 1.5, 0.8] : 0.8, 
-              opacity: isActive ? [0.7, 1, 0.7] : 0.7,
-              boxShadow: isActive ? `0 0 30px ${color}` : 'none'
+              scale: isActive ? [0.8, 1.2, 0.8] : 0.8, 
+              opacity: isActive ? [0.7, 1, 0.7] : 0.7
             }}
             transition={{ 
               repeat: isActive ? Infinity : 0, 
               duration: 2
             }}
           >
+            <div 
+              className="w-4 h-4 rounded-full flex items-center justify-center"
+              style={{ 
+                backgroundColor: color,
+                boxShadow: isActive ? `0 0 15px ${color}` : `0 0 10px ${color}` 
+              }}
+            >
+              <div className="w-2 h-2 rounded-full bg-white opacity-70"></div>
+            </div>
+            
             {isActive && (
               <motion.div
-                className="ml-14 bg-black/70 text-white px-3 py-1 rounded-md text-sm font-medium whitespace-nowrap"
+                className="bg-black/70 text-white px-2 py-1 rounded-md text-xs font-medium whitespace-nowrap"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
               >

@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
@@ -139,6 +138,8 @@ const DowsingScanner = () => {
   const scanBarPosition = scanning ? 
     `${Math.min(82, (progress / 100) * 72 + 10)}%` : '10%';
   
+  const isActive = true;
+  
   return (
     <Card className="quantum-card p-6">
       <motion.div 
@@ -165,30 +166,29 @@ const DowsingScanner = () => {
         </div>
         
         <div className="relative w-full mx-auto mb-8 h-96 flex">
-          {/* Human figure background */}
+          {/* Human figure with blurred edges */}
           <div className="absolute left-0 w-3/4 h-full rounded-xl overflow-hidden">
-            <img 
-              src="/lovable-uploads/398a244d-cfb8-44ba-9036-e14561fe19d0.png"
-              alt="Chakra visualization"
-              className="h-full object-contain mx-auto"
-            />
+            <div className="relative w-full h-full">
+              <img 
+                src="/lovable-uploads/398a244d-cfb8-44ba-9036-e14561fe19d0.png"
+                alt="Chakra visualization"
+                className="h-full object-contain mx-auto blur-[1px]"
+              />
+            </div>
           </div>
           
-          {/* Chakra indicators on the right side */}
-          <div className="absolute right-0 w-1/4 h-full flex flex-col justify-center items-start">
+          {/* Chakra indicators on the right side - adjusted spacing */}
+          <div className="absolute right-2 w-1/4 h-full flex flex-col justify-between py-8">
             {chakras.map((chakra, index) => (
               <div 
                 key={chakra.name}
-                className="flex items-center mb-2 relative"
-                style={{ 
-                  marginTop: index === 0 ? '0' : '8px'
-                }}
+                className="flex items-center"
               >
                 <motion.div
-                  className="flex items-center"
+                  className="flex items-center gap-2"
                   initial={{ scale: 0.8, opacity: 0.7 }}
                   animate={{ 
-                    scale: [0.8, 1.2, 0.8], 
+                    scale: isActive ? [0.8, 1.2, 0.8] : 0.8, 
                     opacity: scanning ? [0.7, 1, 0.7] : 1 
                   }}
                   transition={{ 
@@ -198,18 +198,17 @@ const DowsingScanner = () => {
                   }}
                 >
                   <div 
-                    className="w-6 h-6 rounded-full flex items-center justify-center mr-2"
+                    className="w-4 h-4 rounded-full flex items-center justify-center"
                     style={{ 
                       backgroundColor: chakra.color,
                       boxShadow: `0 0 10px ${chakra.color}` 
                     }}
                   >
-                    <div className="w-3 h-3 rounded-full bg-white opacity-70"></div>
+                    <div className="w-2 h-2 rounded-full bg-white opacity-70"></div>
                   </div>
                   
                   <span className="text-xs font-medium whitespace-nowrap">{chakra.name}</span>
                   
-                  {/* Estado del chakra (después del escaneo) */}
                   {scanComplete && chakra.state && (
                     <motion.div
                       className="ml-2 bg-black/70 text-white px-2 py-1 rounded-md text-xs font-medium"
