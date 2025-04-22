@@ -4,7 +4,7 @@ import PendulumVisual from './PendulumVisual';
 import DiagnosisResult from './DiagnosisResult';
 import PersonNameInput from './PersonNameInput';
 import DiagnosisStandby from './DiagnosisStandby';
-import { useDiagnosis } from '@/hooks/useDiagnosis';
+import { useDiagnosis } from '@/hooks/diagnosis/useDiagnosis';
 import { RecentDiagnosisResult } from '@/hooks/useDiagnosisCache';
 import { useNavigate } from 'react-router-dom';
 
