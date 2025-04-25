@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -232,7 +231,7 @@ const BalanceChakras = () => {
             
             {/* Muestra los estados de los chakras si vienen del diagnóstico */}
             {hasChakraStates && balanceOption === 'blocked' && (
-              <div className="mb-6 p-4 bg-gray-100 rounded-lg">
+              <div className="mb-6 p-4 bg-background/50 rounded-lg">
                 <h3 className="font-medium mb-2">Resultados del diagnóstico:</h3>
                 <ul className="text-sm space-y-1">
                   {state.chakraStates?.map((chakra) => (

@@ -98,11 +98,29 @@ export const useDowsingScanner = () => {
         setScanning(false);
         setScanComplete(true);
         
+        // Ensure at least 4 chakras are balanced
         const chakraStates: ChakraState[] = ['EQUILIBRADO', 'CERRADO', 'BLOQUEADO'];
-        const updatedChakras = chakras.map(chakra => ({
-          ...chakra,
-          state: chakraStates[Math.floor(Math.random() * chakraStates.length)]
-        }));
+        const updatedChakras = [...chakras];
+        
+        // First, randomly set 4 chakras to "EQUILIBRADO"
+        const indices = Array.from({ length: chakras.length }, (_, i) => i);
+        for (let i = 0; i < 4; i++) {
+          const randomIndex = Math.floor(Math.random() * indices.length);
+          const selectedIndex = indices.splice(randomIndex, 1)[0];
+          updatedChakras[selectedIndex] = {
+            ...updatedChakras[selectedIndex],
+            state: 'EQUILIBRADO'
+          };
+        }
+        
+        // For the remaining chakras, randomly assign any state
+        indices.forEach(index => {
+          updatedChakras[index] = {
+            ...updatedChakras[index],
+            state: chakraStates[Math.floor(Math.random() * chakraStates.length)]
+          };
+        });
+        
         setChakras(updatedChakras);
         
         toast({
