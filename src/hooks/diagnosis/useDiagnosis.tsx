@@ -7,6 +7,8 @@ import { UseDiagnosisProps } from './types';
 import { useDiagnosisState } from './useDiagnosisState';
 import { usePendulumAnimation } from './usePendulumAnimation';
 import { useDiagnosisResults } from './useDiagnosisResults';
+import { usePendulumDiagnosis } from './usePendulumDiagnosis';
+import { useMotionDiagnosis } from './useMotionDiagnosis';
 
 export const useDiagnosis = ({
   useCameraMode,
@@ -17,12 +19,29 @@ export const useDiagnosis = ({
   addResultToCache
 }: UseDiagnosisProps) => {
   const [isMobileDevice, setIsMobileDevice] = useState(false);
-  const { detectMotion, requestPermission, calibrateDevice } = useDeviceMotion();
-  const { startPendulumSound, stopPendulumSound } = usePendulumAudio();
+  const { stopPendulumSound } = usePendulumAudio();
   const diagnosisState = useDiagnosisState();
-  const { startPendulumSwing, stopPendulumSwing } = usePendulumAnimation();
-  const { generateResult } = useDiagnosisResults();
+  const { stopPendulumSwing } = usePendulumAnimation();
 
+  // Create pendulum diagnosis instance
+  const { startPendulum } = usePendulumDiagnosis({
+    pendulumSound,
+    updateDiagnosisState: diagnosisState.updateState,
+    personName,
+    addResultToCache
+  });
+
+  // Create motion diagnosis instance
+  const { handleMotionDiagnosis, handleDiagnosisError } = useMotionDiagnosis({
+    useCameraMode,
+    pendulumSound,
+    setCameraResult,
+    personName,
+    updateDiagnosisState: diagnosisState.updateState,
+    addResultToCache
+  });
+
+  // Check if it's a mobile device
   useEffect(() => {
     const checkMobile = () => {
       const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
@@ -33,6 +52,7 @@ export const useDiagnosis = ({
     checkMobile();
   }, []);
 
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       stopPendulumSound();
@@ -40,69 +60,25 @@ export const useDiagnosis = ({
         stopPendulumSwing(diagnosisState.swingIntervalId);
       }
     };
-  }, [diagnosisState.swingIntervalId, stopPendulumSound]);
+  }, [diagnosisState.swingIntervalId, stopPendulumSound, stopPendulumSwing]);
 
-  const startPendulum = async (area: string) => {
-    console.log(`Iniciando diagnóstico para: ${area}`);
+  // Main function to handle diagnosis process
+  const startMotionDiagnosis = async (area: string) => {
+    // Check if there's a recent result for this area
     const recentResult = getRecentResult(area);
     
-    if (recentResult) {
-      console.log(`Usando resultado reciente para ${area}: ${recentResult.result} (${recentResult.percentage}%)`);
-      diagnosisState.updateState({
-        diagnosisResult: recentResult.result,
-        diagnosisPercentage: recentResult.percentage
-      });
-      return;
-    }
-
-    diagnosisState.updateState({
-      isPendulumSwinging: true,
-      diagnosisResult: null
-    });
-    setCameraResult(null);
-
-    if (pendulumSound) {
-      startPendulumSound();
-    }
-
-    const { interval, angle } = startPendulumSwing();
-    diagnosisState.updateState({ 
-      swingIntervalId: interval,
-      pendulumAngle: angle
-    });
-
-    const duration = Math.random() * 3000 + 3000;
-    setTimeout(() => {
-      stopPendulumSwing(interval);
-      diagnosisState.updateState({
-        swingIntervalId: null,
-        isPendulumSwinging: false,
-        pendulumAngle: 0
-      });
-
-      const result = generateResult(area, personName);
-      diagnosisState.updateState({
-        diagnosisResult: result.result,
-        diagnosisPercentage: result.percentage
-      });
-
-      addResultToCache(result);
-      stopPendulumSound();
-    }, duration);
-  };
-
-  const startMotionDiagnosis = async (area: string) => {
-    if (!useCameraMode) {
-      startPendulum(area);
-      return;
-    }
-
-    const recentResult = getRecentResult(area);
     if (recentResult) {
       handleRecentResult(recentResult, area);
       return;
     }
 
+    // Choose between camera mode or standard pendulum
+    if (!useCameraMode) {
+      startPendulum(area);
+      return;
+    }
+
+    // Handle motion-based diagnosis
     try {
       await handleMotionDiagnosis(area);
     } catch (error) {
@@ -110,6 +86,7 @@ export const useDiagnosis = ({
     }
   };
 
+  // Helper function to handle recent results
   const handleRecentResult = (recentResult: any, area: string) => {
     console.log(`Usando resultado reciente para ${area}: ${recentResult.result} (${recentResult.percentage}%)`);
     diagnosisState.updateState({
@@ -122,76 +99,6 @@ export const useDiagnosis = ({
     } else {
       setCameraResult(recentResult.result === "Alto" ? "SI" : "NO");
     }
-  };
-
-  const handleMotionDiagnosis = async (area: string) => {
-    setCameraResult(null);
-    diagnosisState.updateState({
-      processingCamera: true,
-      isPendulumSwinging: true
-    });
-
-    const { interval, angle } = startPendulumSwing();
-    diagnosisState.updateState({ swingIntervalId: interval, pendulumAngle: angle });
-
-    const hasPermission = await requestPermission();
-    if (!hasPermission) {
-      throw new Error("Permission denied");
-    }
-
-    calibrateDevice();
-    if (pendulumSound) startPendulumSound();
-
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast({
-      title: "Análisis en curso",
-      description: "Mantenga el dispositivo mientras se realiza el análisis...",
-    });
-
-    const hasSignificantMotion = await detectMotion(5000, 6.5);
-    const result = generateResult(area, personName);
-    
-    handleMotionResult(hasSignificantMotion, result, area);
-  };
-
-  const handleMotionResult = (hasSignificantMotion: boolean, result: any, area: string) => {
-    if (area === "Chakras") {
-      setCameraResult(hasSignificantMotion ? "SI" : "NO");
-    } else {
-      setCameraResult(hasSignificantMotion ? "SI" : "NO");
-    }
-
-    diagnosisState.updateState({
-      diagnosisResult: result.result,
-      diagnosisPercentage: result.percentage,
-      processingCamera: false,
-      isPendulumSwinging: false
-    });
-
-    addResultToCache(result);
-    stopPendulumSound();
-  };
-
-  const handleDiagnosisError = (area: string) => {
-    console.error("Error durante el diagnóstico con movimiento");
-    toast({
-      title: "Error",
-      description: "Ocurrió un error durante el análisis de movimiento.",
-      variant: "destructive"
-    });
-
-    setCameraResult("NO");
-    const result = generateResult(area, personName);
-    
-    diagnosisState.updateState({
-      diagnosisResult: result.result,
-      diagnosisPercentage: result.percentage,
-      processingCamera: false,
-      isPendulumSwinging: false
-    });
-
-    addResultToCache(result);
   };
 
   return {
