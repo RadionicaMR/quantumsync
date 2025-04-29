@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from 'react-router-dom';
+import { hasRecentBalancing } from '@/utils/chakraBalanceStorage';
 
 // Define the types
 export type ChakraState = 'EQUILIBRADO' | 'CERRADO' | 'BLOQUEADO';
@@ -98,35 +99,53 @@ export const useDowsingScanner = () => {
         setScanning(false);
         setScanComplete(true);
         
-        // Ensure at least 4 chakras are balanced
-        const chakraStates: ChakraState[] = ['EQUILIBRADO', 'CERRADO', 'BLOQUEADO'];
-        const updatedChakras = [...chakras];
+        // Check if the person has had their chakras balanced recently
+        const wasBalanced = hasRecentBalancing(personName);
         
-        // First, randomly set 4 chakras to "EQUILIBRADO"
-        const indices = Array.from({ length: chakras.length }, (_, i) => i);
-        for (let i = 0; i < 4; i++) {
-          const randomIndex = Math.floor(Math.random() * indices.length);
-          const selectedIndex = indices.splice(randomIndex, 1)[0];
-          updatedChakras[selectedIndex] = {
-            ...updatedChakras[selectedIndex],
-            state: 'EQUILIBRADO'
-          };
+        if (wasBalanced) {
+          // If previously balanced, all chakras are balanced
+          const allBalancedChakras = chakras.map(chakra => ({
+            ...chakra,
+            state: 'EQUILIBRADO' as ChakraState
+          }));
+          
+          setChakras(allBalancedChakras);
+          
+          toast({
+            title: "Chakras en Armonía",
+            description: `Los chakras de ${personName} están equilibrados por una sesión reciente.`,
+          });
+        } else {
+          // Regular random assignment with at least 4 balanced chakras
+          const updatedChakras = [...chakras];
+          const chakraStates: ChakraState[] = ['EQUILIBRADO', 'CERRADO', 'BLOQUEADO'];
+          
+          // First, randomly set 4 chakras to "EQUILIBRADO"
+          const indices = Array.from({ length: chakras.length }, (_, i) => i);
+          for (let i = 0; i < 4; i++) {
+            const randomIndex = Math.floor(Math.random() * indices.length);
+            const selectedIndex = indices.splice(randomIndex, 1)[0];
+            updatedChakras[selectedIndex] = {
+              ...updatedChakras[selectedIndex],
+              state: 'EQUILIBRADO'
+            };
+          }
+          
+          // For the remaining chakras, randomly assign any state
+          indices.forEach(index => {
+            updatedChakras[index] = {
+              ...updatedChakras[index],
+              state: chakraStates[Math.floor(Math.random() * chakraStates.length)]
+            };
+          });
+          
+          setChakras(updatedChakras);
+          
+          toast({
+            title: "Escáner Completado",
+            description: `Resultados disponibles para ${personName}`,
+          });
         }
-        
-        // For the remaining chakras, randomly assign any state
-        indices.forEach(index => {
-          updatedChakras[index] = {
-            ...updatedChakras[index],
-            state: chakraStates[Math.floor(Math.random() * chakraStates.length)]
-          };
-        });
-        
-        setChakras(updatedChakras);
-        
-        toast({
-          title: "Escáner Completado",
-          description: `Resultados disponibles para ${personName}`,
-        });
       }
     }, interval);
     

@@ -13,7 +13,7 @@ interface ChakraResultsProps {
 
 const ChakraResults = ({ chakraStates }: ChakraResultsProps) => {
   return (
-    <div className="mb-6 p-4 bg-background/50 rounded-lg">
+    <div className="mb-6 p-4 rounded-lg bg-transparent">
       <h3 className="font-medium mb-2">Resultados del diagnóstico:</h3>
       <ul className="text-sm space-y-1">
         {chakraStates.map((chakra) => (

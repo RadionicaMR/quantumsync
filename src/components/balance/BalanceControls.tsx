@@ -2,6 +2,7 @@
 import { Check, Play, Square } from 'lucide-react';
 import { motion } from 'framer-motion';
 import QuantumButton from '@/components/QuantumButton';
+import { addChakraBalanceSession } from '@/utils/chakraBalanceStorage';
 
 interface BalanceControlsProps {
   isPlaying: boolean;
@@ -20,6 +21,11 @@ const BalanceControls = ({
   onStop, 
   onNavigate 
 }: BalanceControlsProps) => {
+  // Record completion in storage
+  if (completed && personName) {
+    addChakraBalanceSession(personName);
+  }
+  
   return (
     <div className="flex flex-col sm:flex-row gap-4 justify-center">
       {!isPlaying && !completed ? (
