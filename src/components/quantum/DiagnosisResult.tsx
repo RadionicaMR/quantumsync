@@ -82,24 +82,7 @@ const DiagnosisResult: React.FC<DiagnosisResultProps> = ({
         )}
       </motion.div>
       
-      {/* Only show SI/NO result for mental question mode, not for area diagnosis */}
-      {cameraResult && (
-        <motion.div 
-          className="mt-4 text-xl font-bold"
-          initial={{ scale: 0, rotate: -10 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ 
-            type: "spring",
-            stiffness: 260,
-            damping: 20,
-            delay: 1.2
-          }}
-        >
-          <span className={`px-4 py-2 rounded-full ${cameraResult === 'SI' ? 'bg-green-500' : 'bg-red-500'} text-white inline-block min-w-20`}>
-            {cameraResult}
-          </span>
-        </motion.div>
-      )}
+      {/* SI/NO result display removed as requested */}
       
       <motion.div 
         className="mt-6 flex flex-col md:flex-row gap-3 justify-center"
