@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -84,8 +85,7 @@ const DiagnosisTabs: React.FC<DiagnosisTabsProps> = ({ isMobile }) => {
                   "Equilibrio Emocional", 
                   "Niveles de Estrés", 
                   "Calidad del Sueño", 
-                  "Conexión Espiritual",
-                  "Chakras"
+                  "Conexión Espiritual"
                 ]}
                 selectedArea={selectedArea}
                 onSelectArea={handleSelectArea}
