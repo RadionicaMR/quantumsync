@@ -22,6 +22,7 @@ export const useChakraTransition = () => {
     onComplete: () => void
   ) => {
     // SOLUCIÓN CRÍTICA: Reiniciar progreso para garantizar comportamiento consistente
+    console.log(`Transition from ${currentChakra} to ${nextChakra}, resetting progress to 0`);
     setProgress(0);
     
     // Notificar y reproducir sonido para el siguiente chakra
@@ -40,6 +41,9 @@ export const useChakraTransition = () => {
       console.log(`Safe onComplete executing for chakra ${nextChakra}`);
       // Reiniciar estado de transición antes de cualquier otra operación
       isTransitioning.current = false;
+      
+      // CRUCIAL FIX: Ensure progress is reset before moving on
+      setProgress(0);
       
       // Ejecutar callback original
       if (onComplete && typeof onComplete === 'function') {

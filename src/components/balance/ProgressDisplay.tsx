@@ -2,6 +2,7 @@
 import { CHAKRA_COLORS } from '@/constants/chakraData';
 import type { ChakraName } from '@/constants/chakraData';
 import { Progress } from '@/components/ui/progress';
+import { useEffect, useState } from 'react';
 
 interface ProgressDisplayProps {
   isPlaying: boolean;
@@ -11,13 +12,24 @@ interface ProgressDisplayProps {
 }
 
 const ProgressDisplay = ({ isPlaying, currentChakra, progress, frequency }: ProgressDisplayProps) => {
+  const [displayProgress, setDisplayProgress] = useState(0);
+  
+  // Reset display progress when chakra changes or progress is reset
+  useEffect(() => {
+    if (progress === 0) {
+      setDisplayProgress(0);
+    } else {
+      setDisplayProgress(progress);
+    }
+  }, [progress, currentChakra]);
+  
   if (!isPlaying || !currentChakra) return null;
   
   // Get the color for the current chakra or use a default color
   const chakraColor = currentChakra ? CHAKRA_COLORS[currentChakra] : '#4b5563';
   
   // Ensure progress is a valid number between 0 and 100
-  const safeProgress = Math.max(0, Math.min(100, progress || 0));
+  const safeProgress = Math.max(0, Math.min(100, displayProgress || 0));
 
   return (
     <div className="w-full max-w-xs mx-auto mb-8 text-center">

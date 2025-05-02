@@ -36,6 +36,9 @@ export const useChakraTimers = () => {
     
     if (!isPlaying) return;
     
+    // CRUCIAL FIX: Always set progress to 0 at the beginning of a new timer
+    setProgress(0);
+    
     // Get total duration in milliseconds
     const totalDuration = duration[0] * 60 * 1000;
     const startTime = Date.now();
@@ -101,7 +104,7 @@ export const useChakraTimers = () => {
     // Start the animation frame loop
     if (isPlaying) {
       animationFrameId.current = requestAnimationFrame(updateProgress);
-      console.log(`Started timer for chakra ${chakraName} with duration ${duration[0]} minutes`);
+      console.log(`Started timer for chakra ${chakraName} with duration ${duration[0]} minutes, progress reset to 0`);
     }
   }, [cleanupTimers]);
 
