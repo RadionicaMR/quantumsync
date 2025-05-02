@@ -41,24 +41,42 @@ export const useChakraTimers = () => {
     const startTime = Date.now();
     const endTime = startTime + totalDuration;
     
-    // CRITICAL FIX: Create a stable reference to the onComplete callback
-    const stableOnComplete = onComplete;
+    // SOLUCIÓN CRÍTICA: Ejecutar callback al finalizar usando múltiples métodos
+    const guaranteedCallback = () => {
+      try {
+        console.log(`Executing callback for chakra ${chakraName}`);
+        // Ensure we reach 100% before moving to the next chakra
+        setProgress(100);
+        
+        // Primera ejecución inmediata
+        onComplete();
+        
+        // Segunda ejecución vía RAF para sincronizar con UI
+        window.requestAnimationFrame(() => {
+          try {
+            onComplete();
+          } catch (e) {
+            console.error("Error in RAF callback:", e);
+          }
+        });
+      } catch (error) {
+        console.error("Error in callback:", error);
+        
+        // Último intento - forzar con setTimeout
+        setTimeout(() => {
+          try {
+            onComplete();
+          } catch (e) {
+            console.error("Final error in callback:", e);
+          }
+        }, 200);
+      }
+    };
     
     // Set up timer to move to next chakra when complete
     chakraTimerRef.current = setTimeout(() => {
-      // Ensure we reach 100% before moving to the next chakra
-      setProgress(100);
-      
       console.log(`Timer completed for chakra ${chakraName}, duration: ${duration[0]} minutes`);
-      
-      // CRITICAL FIX: Try to execute callback directly first
-      try {
-        console.log(`Executing immediate onComplete callback for chakra ${chakraName}`);
-        stableOnComplete();
-      } catch (error) {
-        console.error("Error executing immediate callback:", error);
-      }
-      
+      guaranteedCallback();
     }, totalDuration);
     
     // Use requestAnimationFrame for smoother progress updates
