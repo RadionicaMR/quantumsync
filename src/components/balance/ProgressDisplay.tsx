@@ -19,6 +19,8 @@ const ProgressDisplay = ({ isPlaying, currentChakra, progress, frequency }: Prog
   // Ensure progress is a valid number between 0 and 100
   const safeProgress = Math.max(0, Math.min(100, progress));
 
+  console.log(`Progress bar rendering: chakra=${currentChakra}, progress=${safeProgress}, color=${chakraColor}`);
+
   return (
     <div className="w-full max-w-xs mx-auto mb-8 text-center">
       <p className="text-sm mb-2">
