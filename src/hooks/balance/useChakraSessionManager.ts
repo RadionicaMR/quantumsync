@@ -28,7 +28,8 @@ export const useChakraSessionManager = (
     currentChakra,
     setCurrentChakra,
     progress,
-    setProgress
+    setProgress,
+    resetProgress
   } = useChakraProgress();
   
   const {
@@ -52,7 +53,8 @@ export const useChakraSessionManager = (
     cleanupTimers,
     stopSound,
     lastTransitionTime,
-    isPlayingRef // Add isPlayingRef from useChakraTransition
+    isPlayingRef, // Add isPlayingRef from useChakraTransition
+    currentChakraRef // Add currentChakraRef for debugging
   } = useChakraTransition();
 
   return {
@@ -73,6 +75,7 @@ export const useChakraSessionManager = (
     setCurrentChakra,
     progress,
     setProgress,
+    resetProgress,
     
     // Selection
     balanceOption,
@@ -93,6 +96,7 @@ export const useChakraSessionManager = (
     cleanupTimers,
     stopSound,
     lastTransitionTime,
-    isPlayingRef // Export isPlayingRef
+    isPlayingRef, // Export isPlayingRef
+    currentChakraRef // Export currentChakraRef for debugging
   };
 };

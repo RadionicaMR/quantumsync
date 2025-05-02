@@ -25,17 +25,17 @@ const ProgressDisplay = ({ isPlaying, currentChakra, progress, frequency }: Prog
       prevChakraRef.current = currentChakra;
       prevProgressRef.current = 0;
     } 
-    // Handle progress updates, with special case for 100%
+    // Handle progress updates
     else if (progress !== prevProgressRef.current) {
       console.log(`ProgressDisplay: Progress updated from ${prevProgressRef.current} to ${progress}`);
       
-      // CRITICAL FIX: Prioritize 100% progress to ensure it's shown
+      // CRITICAL FIX: Special handling for 100% to ensure transition
       if (progress === 100) {
         console.log("ProgressDisplay: 100% completion reached, ensuring display shows completion");
-        // Force immediate update to 100%
+        // Show 100% immediately
         setDisplayProgress(100);
       } else {
-        // Regular update for other progress values
+        // Regular update
         setDisplayProgress(progress);
       }
       
@@ -65,6 +65,9 @@ const ProgressDisplay = ({ isPlaying, currentChakra, progress, frequency }: Prog
             "--progress-background": "#f3f4f6"
           } as React.CSSProperties}
         />
+        <div className="text-xs mt-1 text-right">
+          {Math.round(safeProgress)}%
+        </div>
       </div>
       <p className="text-xs text-muted-foreground mt-2">
         Progreso: {Math.round(safeProgress)}%

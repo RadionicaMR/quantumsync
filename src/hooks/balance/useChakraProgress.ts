@@ -46,11 +46,12 @@ export const useChakraProgress = () => {
   // Create a wrapper for setCurrentChakra that also resets progress
   const setCurrentChakraWithReset = useCallback((chakra: ChakraName | '') => {
     console.log(`useChakraProgress: Setting current chakra to ${chakra} with automatic progress reset`);
+    setCurrentChakra(chakra);
+    
     // Only reset if chakra is actually changing
     if (chakra !== previousChakraRef.current) {
-      resetProgress();  // Reset progress first
+      resetProgress();  // Reset progress after setting chakra to prevent visual flicker
     }
-    setCurrentChakra(chakra);
   }, [resetProgress]);
 
   return {

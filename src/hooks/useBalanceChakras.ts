@@ -21,6 +21,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     setCurrentChakra,
     progress,
     setProgress,
+    resetProgress,
     balanceOption,
     setBalanceOption,
     getChakrasToBalance,
@@ -34,7 +35,8 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     handleChakraTransition,
     cleanupTimers,
     stopSound,
-    isPlayingRef  // Add the isPlayingRef from useChakraTransition
+    isPlayingRef,
+    currentChakraRef
   } = useChakraSessionManager(initialPersonName, initialChakraStates);
 
   // Get chakra sequence management functionality
@@ -42,6 +44,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     lastTransitionTime,
     setLastTransitionTime,
     lastChakraProcessed,
+    isProcessingNextChakra,
     completeSession,
     moveToNextChakra: moveToNextChakraBase
   } = useChakraSequence();
@@ -83,7 +86,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
       currentChakra,
       getChakrasToBalance,
       isTransitioning,
-      isPlayingRef,  // Pass the isPlayingRef
+      isPlayingRef,
       cleanupTimers,
       stopSound,
       setCurrentChakra,
@@ -98,7 +101,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     currentChakra,
     getChakrasToBalance,
     isTransitioning,
-    isPlayingRef,  // Include in dependencies
+    isPlayingRef,
     cleanupTimers,
     stopSound,
     setCurrentChakra,
@@ -122,7 +125,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
       lastChakraProcessed,
       setIsPlaying,
       setCurrentChakra,
-      setProgress,
+      resetProgress, // Use resetProgress instead of setProgress
       setCompleted,
       handleChakraTransition,
       moveToNextChakraInstance,
@@ -141,7 +144,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     lastChakraProcessed,
     setIsPlaying,
     setCurrentChakra,
-    setProgress,
+    resetProgress, // Include in dependencies
     setCompleted,
     handleChakraTransition,
     moveToNextChakraInstance,
@@ -149,7 +152,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     notifyMissingName,
     notifyNoChakras,
     notifyStart,
-    isPlayingRef  // Include in dependencies
+    isPlayingRef
   ]);
 
   // Create a stopBalancing callback for this specific instance
@@ -161,7 +164,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
       cleanupTimers,
       setIsPlaying,
       setCurrentChakra,
-      setProgress,
+      resetProgress, // Use resetProgress instead of setProgress
       lastChakraProcessed,
       stopSound,
       notifyStop
@@ -171,11 +174,11 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     cleanupTimers,
     setIsPlaying,
     setCurrentChakra,
-    setProgress,
+    resetProgress, // Include in dependencies
     lastChakraProcessed,
     stopSound,
     notifyStop,
-    isPlayingRef  // Include in dependencies
+    isPlayingRef
   ]);
 
   // Update isPlayingRef whenever isPlaying changes
@@ -191,6 +194,13 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
       stopSound();
     };
   }, [cleanupTimers, stopSound]);
+
+  // Add debugging hook to log chakra changes
+  useEffect(() => {
+    if (currentChakra) {
+      console.log(`Current chakra changed to: ${currentChakra}, progress: ${progress}`);
+    }
+  }, [currentChakra, progress]);
 
   return {
     personName,

@@ -10,6 +10,7 @@ export const useChakraTransition = () => {
   const isTransitioning = useRef(false);
   const lastTransitionTime = useRef<number>(0);
   const isPlayingRef = useRef<boolean>(false); // Add reference to track playing state
+  const currentChakraRef = useRef<ChakraName | ''>('');
   
   const { playChakraSound, stopSound } = useChakraAudio();
   const { cleanupTimers, startProgressTimer } = useChakraTimers();
@@ -28,6 +29,9 @@ export const useChakraTransition = () => {
       console.log("Not playing, skipping transition");
       return;
     }
+    
+    // Track current chakra for debugging
+    currentChakraRef.current = nextChakra;
     
     // Store playing state in ref for completion callbacks
     isPlayingRef.current = isPlaying;
@@ -64,9 +68,14 @@ export const useChakraTransition = () => {
       if (onComplete && typeof onComplete === 'function') {
         console.log(`Calling onComplete callback for ${nextChakra}`);
         try {
-          // Use the previously stored playing state
-          console.log(`Using stored playing state: ${isPlayingRef.current}`);
-          onComplete();
+          // Verify we're still on the same chakra
+          if (currentChakraRef.current === nextChakra) {
+            // Use the previously stored playing state
+            console.log(`Using stored playing state: ${isPlayingRef.current}`);
+            onComplete();
+          } else {
+            console.log(`Chakra changed during completion from ${nextChakra} to ${currentChakraRef.current}, skipping callback`);
+          }
         } catch (error) {
           console.error(`Error in onComplete callback for ${nextChakra}:`, error);
           // Even if callback fails, ensure we're not stuck in transition state
@@ -105,6 +114,7 @@ export const useChakraTransition = () => {
     cleanupTimers,
     stopSound,
     lastTransitionTime,
-    isPlayingRef // Export the ref so it can be accessed by other hooks
+    isPlayingRef, // Export the ref so it can be accessed by other hooks
+    currentChakraRef // Export current chakra ref for debugging
   };
 };

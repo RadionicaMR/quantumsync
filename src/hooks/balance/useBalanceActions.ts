@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import type { ChakraName } from '@/constants/chakraData';
 
 export const useBalanceActions = () => {
+  // Start balancing chakras
   const startBalancing = useCallback((
     personName: string,
     getChakrasToBalance: () => ChakraName[],
@@ -26,50 +27,52 @@ export const useBalanceActions = () => {
     duration: number[],
     notifyMissingName: () => void,
     notifyNoChakras: () => void,
-    notifyStart: (personName: string) => void
+    notifyStart: () => void
   ) => {
+    // Check if we have a person name
     if (!personName.trim()) {
       notifyMissingName();
       return;
     }
     
+    // Get chakras to balance
     const chakrasToBalance = getChakrasToBalance();
     
-    if (chakrasToBalance.length === 0) {
+    // Check if we have chakras to balance
+    if (!chakrasToBalance.length) {
       notifyNoChakras();
       return;
     }
     
-    // Clean up any existing timers
+    console.log(`Starting balancing for ${personName} with chakras: ${chakrasToBalance.join(', ')}`);
+    
+    // Cleanup any existing timers
     cleanupTimers();
     
-    // Reset transition state and time
+    // Reset state
     isTransitioning.current = false;
-    setLastTransitionTime(0);
+    setLastTransitionTime(Date.now());
     lastChakraProcessed.current = null;
     
-    // Set up initial state
-    const firstChakra = chakrasToBalance[0];
+    // Set playing state and clear completed
     setIsPlaying(true);
-    setCurrentChakra(firstChakra);
-    setProgress(0);
     setCompleted(false);
     
-    // Handle transition to first chakra
-    handleChakraTransition(
-      '',
-      firstChakra,
-      true,
-      duration,
-      setProgress,
-      moveToNextChakra
-    );
+    // Reset current chakra and progress
+    setCurrentChakra('');
+    setProgress(0);
     
-    notifyStart(personName);
+    // Notify start
+    notifyStart();
     
-    console.log(`Starting chakra balance with first chakra: ${firstChakra}`);
+    // CRITICAL FIX: Use a small timeout to ensure state updates are processed
+    setTimeout(() => {
+      // Start first chakra immediately
+      moveToNextChakra();
+    }, 500);
   }, []);
 
+  // Stop balancing chakras
   const stopBalancing = useCallback((
     cleanupTimers: () => void,
     setIsPlaying: (value: boolean) => void,
@@ -82,15 +85,16 @@ export const useBalanceActions = () => {
     // Clean up timers
     cleanupTimers();
     
+    // Stop sound
+    stopSound();
+    
     // Reset state
     setIsPlaying(false);
     setCurrentChakra('');
     setProgress(0);
     lastChakraProcessed.current = null;
     
-    // Stop audio
-    stopSound();
-    
+    // Notify stop
     notifyStop();
   }, []);
 

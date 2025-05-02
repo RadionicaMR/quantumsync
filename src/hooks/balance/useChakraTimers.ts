@@ -7,6 +7,7 @@ export const useChakraTimers = () => {
   const chakraTimerRef = useRef<NodeJS.Timeout | null>(null);
   const animationFrameId = useRef<number | null>(null);
   const isCompletingTimerRef = useRef<boolean>(false);
+  const completionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const cleanupTimers = useCallback(() => {
     console.log("Cleaning up all timers and animations");
@@ -26,6 +27,11 @@ export const useChakraTimers = () => {
       animationFrameId.current = null;
     }
     
+    if (completionTimeoutRef.current) {
+      clearTimeout(completionTimeoutRef.current);
+      completionTimeoutRef.current = null;
+    }
+    
     // Reset completion flag
     isCompletingTimerRef.current = false;
   }, []);
@@ -40,7 +46,10 @@ export const useChakraTimers = () => {
     // Clear any existing interval
     cleanupTimers();
     
-    if (!isPlaying) return;
+    if (!isPlaying) {
+      console.log("Not playing, not starting timer");
+      return;
+    }
     
     // Always set progress to 0 at the beginning of a new timer
     console.log(`useChakraTimers: Resetting progress to 0 for chakra ${chakraName} before starting timer`);
@@ -71,31 +80,22 @@ export const useChakraTimers = () => {
       // Ensure we reach 100% before moving on - GUARANTEED
       setProgress(100);
       
-      // Execute callback after a small delay to ensure UI updates
-      // CRITICAL FIX: Use a more reliable timeout for completion
-      setTimeout(() => {
-        if (onComplete && typeof onComplete === 'function') {
-          console.log(`Executing completion callback for ${chakraName}, ensuring transition to next chakra`);
-          try {
-            // CRITICAL: Store the current completion state before calling onComplete
-            const wasCompleting = isCompletingTimerRef.current;
-            onComplete();
-            // If we were completing but now we're not transitioning to the next chakra
-            if (wasCompleting && !isCompletingTimerRef.current) {
-              console.log(`Completion callback didn't trigger next transition for ${chakraName}, forcing progress to 100% again`);
-              // Force progress to 100% again just in case
-              setProgress(100);
-            }
-          } catch (error) {
-            console.error(`Error in onComplete for ${chakraName}:`, error);
-          }
-        } else {
-          console.warn(`No valid onComplete function for ${chakraName}`);
-        }
+      // CRITICAL FIX: Use a new, dedicated timeout for completion
+      // that won't be cleared by other operations
+      completionTimeoutRef.current = setTimeout(() => {
+        console.log(`Executing completion callback for ${chakraName}, ensuring transition to next chakra`);
         
-        // Reset completion flag after callback execution
-        isCompletingTimerRef.current = false;
-      }, 300); // Increased delay to ensure state updates
+        try {
+          // Call completion callback
+          onComplete();
+        } catch (error) {
+          console.error(`Error in onComplete for ${chakraName}:`, error);
+        } finally {
+          // Reset completion flag after callback execution
+          isCompletingTimerRef.current = false;
+          completionTimeoutRef.current = null;
+        }
+      }, 500); // Increased delay to ensure UI updates and state is stable
       
     }, totalDuration - 50); // Subtract a small amount to ensure it completes before the animation
     
@@ -109,19 +109,15 @@ export const useChakraTimers = () => {
       const currentTime = Date.now();
       const elapsed = currentTime - startTime;
       
-      // CRITICAL FIX: Allow progress to reach 100% at the end
+      // Allow progress to reach 99.5% at most (not 100% yet - that's for the timer)
       const timeRatio = elapsed / totalDuration;
-      const newProgress = Math.min(timeRatio * 100, 99.9);
+      const newProgress = Math.min(timeRatio * 100, 99.5);
       
       setProgress(newProgress);
       
       // Continue animation if not complete and not already in completion process
       if (currentTime < endTime && isPlaying && !isCompletingTimerRef.current) {
         animationFrameId.current = requestAnimationFrame(updateProgress);
-      } else if (currentTime >= endTime && !isCompletingTimerRef.current) {
-        // If we've reached the end time but completion hasn't started
-        console.log(`Animation frame detected end time reached for ${chakraName}`);
-        setProgress(100);
       }
     };
     
@@ -138,6 +134,7 @@ export const useChakraTimers = () => {
     animationFrameId,
     cleanupTimers,
     startProgressTimer,
-    isCompletingTimerRef
+    isCompletingTimerRef,
+    completionTimeoutRef
   };
 };

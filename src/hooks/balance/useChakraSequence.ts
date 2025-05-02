@@ -109,6 +109,9 @@ export const useChakraSequence = () => {
       const nextChakra = chakrasToBalance[currentIndex + 1];
       console.log(`Moving to next chakra: ${nextChakra}`);
       
+      // CRITICAL FIX: Store the last processed chakra before setting the next one
+      lastChakraProcessed.current = currentChakra || null;
+      
       // Update current chakra first
       setCurrentChakra(nextChakra);
       
@@ -121,9 +124,6 @@ export const useChakraSequence = () => {
         
         // Reset processing flag
         isProcessingNextChakra.current = false;
-        
-        // Record last processed
-        lastChakraProcessed.current = nextChakra;
         
         // Continue to next chakra if still playing
         if (effectiveIsPlaying) {
@@ -165,10 +165,42 @@ export const useChakraSequence = () => {
         );
       }, 200);
       
-    } else {
-      // Session completed
+    } else if (currentIndex === chakrasToBalance.length - 1) {
+      // We're on the last chakra, complete the session
+      console.log("On last chakra, completing session");
       completeSessionFn();
       isProcessingNextChakra.current = false;
+    } else {
+      // Special case: No current chakra but we have chakras to balance
+      // Start with the first one
+      if (chakrasToBalance.length > 0) {
+        const firstChakra = chakrasToBalance[0];
+        console.log(`No current chakra, starting with first: ${firstChakra}`);
+        
+        // Set current chakra
+        setCurrentChakra(firstChakra);
+        
+        // Set isTransitioning to true
+        isTransitioning.current = true;
+        
+        // Handle transition to first chakra
+        setTimeout(() => {
+          handleChakraTransition(
+            '',
+            firstChakra,
+            effectiveIsPlaying,
+            duration,
+            setProgress,
+            () => {
+              isProcessingNextChakra.current = false;
+            }
+          );
+        }, 200);
+      } else {
+        // No chakras to balance
+        completeSessionFn();
+        isProcessingNextChakra.current = false;
+      }
     }
   }, []);
 
