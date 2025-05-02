@@ -42,16 +42,21 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
         // Asignar primero la referencia para tener acceso inmediato
         audioElementRef.current = elem;
         
+        // Intentar reproducir el audio - usar evento para validar que realmente está sonando
+        elem.onplaying = () => {
+          console.log("Audio realmente está reproduciendo");
+          setAudioSubliminalPlaying(true);
+        };
+        
         // Intentar reproducir el audio
         elem.play()
           .then(() => {
-            setAudioSubliminalPlaying(true);
             console.log("Audio subliminal reproduciendo correctamente");
+            // El estado se actualizará desde el evento onplaying
           })
           .catch((err) => {
             console.error("Error al reproducir audio subliminal:", err);
             setAudioSubliminalPlaying(false);
-            // No eliminar la referencia en caso de error, mantenemos el objeto
           });
       } catch (error) {
         console.error("Error al crear el objeto de audio:", error);
@@ -161,6 +166,7 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
       stopAudio();
       clearAllTimers();
       stopSubliminalAudio();
+      audioElementRef.current = null;
     };
   }, []);
 

@@ -1,10 +1,9 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTreatmentAudio } from './useTreatmentAudio';
 import { useTreatmentImages } from './useTreatmentImages';
 import { useTreatmentRates } from './useTreatmentRates';
 import { toast } from '@/components/ui/use-toast';
-import AudioSubliminalControls from '@/components/AudioSubliminalControls';
 
 // Define and export the TreatmentPreset type
 export interface TreatmentPreset {
@@ -33,8 +32,8 @@ export const useTreatment = () => {
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [audioVolume, setAudioVolume] = useState(10);
   const [audioLoop, setAudioLoop] = useState(true);
-  // Subliminal audio element and play state
-  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
+  // Subliminal audio element reference para mejor control
+  const audioElementRef = useRef<HTMLAudioElement | null>(null);
   const [audioSubliminalPlaying, setAudioSubliminalPlaying] = useState(false);
 
   // Select a preset
@@ -49,8 +48,8 @@ export const useTreatment = () => {
     if (audioFile && !audioSubliminalPlaying) {
       try {
         // Si ya existe un elemento de audio previo, detenlo primero
-        if (audioElement) {
-          audioElement.pause();
+        if (audioElementRef.current) {
+          audioElementRef.current.pause();
         }
         
         const newAudio = new Audio(URL.createObjectURL(audioFile));
@@ -58,7 +57,7 @@ export const useTreatment = () => {
         newAudio.volume = audioVolume / 20;
         
         // Asignar primero la referencia para tener acceso inmediato
-        setAudioElement(newAudio);
+        audioElementRef.current = newAudio;
         
         // Intentar reproducir el audio
         newAudio.play()
@@ -82,8 +81,8 @@ export const useTreatment = () => {
 
   // Función para parar el audio subliminal
   const stopSubliminalAudio = () => {
-    if (audioElement) {
-      audioElement.pause();
+    if (audioElementRef.current) {
+      audioElementRef.current.pause();
       setAudioSubliminalPlaying(false);
       console.log("Audio subliminal detenido");
       // No eliminamos la referencia al elemento para poder reanudar la reproducción
@@ -94,7 +93,7 @@ export const useTreatment = () => {
   const clearAudio = () => {
     stopSubliminalAudio();
     setAudioFile(null);
-    setAudioElement(null);
+    audioElementRef.current = null;
     setAudioSubliminalPlaying(false);
     toast({
       title: "Audio eliminado",
@@ -136,23 +135,24 @@ export const useTreatment = () => {
 
   // Update loop property en caliente
   useEffect(() => {
-    if (audioElement) {
-      audioElement.loop = audioLoop;
+    if (audioElementRef.current) {
+      audioElementRef.current.loop = audioLoop;
     }
-  }, [audioLoop, audioElement]);
+  }, [audioLoop]);
 
   // Actualizar el volumen del audio subliminal cuando cambie el volumen
   useEffect(() => {
-    if (audioElement) {
-      audioElement.volume = audioVolume / 20;
+    if (audioElementRef.current) {
+      audioElementRef.current.volume = audioVolume / 20;
     }
-  }, [audioVolume, audioElement]);
+  }, [audioVolume]);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (audioElement) {
-        audioElement.pause();
+      if (audioElementRef.current) {
+        audioElementRef.current.pause();
+        audioElementRef.current = null;
       }
     };
   }, []);
@@ -186,6 +186,6 @@ export const useTreatment = () => {
     stopSubliminalAudio,
     audioLoop,
     setAudioLoop,
-    clearAudio, // Nueva función
+    clearAudio,
   };
 };
