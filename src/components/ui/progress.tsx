@@ -32,7 +32,7 @@ const Progress = React.forwardRef<
         style={{ 
           transform: `translateX(-${100 - (value || 0)}%)`,
           backgroundColor: "var(--progress-foreground)",
-          transition: "transform 0.1s linear"
+          transition: "transform 0.3s ease"
         }}
       />
     </ProgressPrimitive.Root>

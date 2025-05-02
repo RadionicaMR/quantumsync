@@ -56,11 +56,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     progressRef.current = newProgress;
     setProgress(newProgress);
     
-    if (process.env.NODE_ENV === 'development') {
-      if (Math.round(newProgress) % 10 === 0) {
-        console.log(`Progress update: ${newProgress.toFixed(1)}%`);
-      }
-    }
+    console.log(`Progress update: ${newProgress.toFixed(1)}%`);
     
     if (newProgress < 100) {
       // Continue the animation loop
