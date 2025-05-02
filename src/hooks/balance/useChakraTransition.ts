@@ -29,56 +29,63 @@ export const useChakraTransition = () => {
       return;
     }
     
+    // Set transition state
+    isTransitioning.current = true;
     lastTransitionTime.current = now;
     
-    // SOLUCIÓN CRÍTICA: Reiniciar progreso para garantizar comportamiento consistente
-    console.log(`Transition from ${currentChakra} to ${nextChakra}, resetting progress to 0`);
+    // NUEVA SOLUCIÓN: Reiniciar progreso ANTES de cualquier otra operación
+    console.log(`useChakraTransition: Transition from ${currentChakra} to ${nextChakra}, explicitly resetting progress to 0`);
     setProgress(0);
     
-    // Notificar y reproducir sonido para el siguiente chakra
-    if (currentChakra) {
-      notifyChakraChange(currentChakra as ChakraName, nextChakra);
-    }
-    
-    // SOLUCIÓN CRÍTICA: Siempre detener sonidos previos antes de reproducir nuevos
-    stopSound();
-    
-    // Reproducir sonido para el siguiente chakra
-    playChakraSound(nextChakra);
-    
-    // SOLUCIÓN CRÍTICA: Definir un callback independiente que garantice transición
-    const safeOnComplete = () => {
-      console.log(`Safe onComplete executing for chakra ${nextChakra}`);
-      // Reiniciar estado de transición antes de cualquier otra operación
-      isTransitioning.current = false;
-      
-      // CRUCIAL FIX: Ensure progress is reset before moving on
-      setProgress(0);
-      
-      // Ejecutar callback original
-      if (onComplete && typeof onComplete === 'function') {
-        try {
-          onComplete();
-        } catch (error) {
-          console.error("Error in onComplete callback:", error);
-        }
+    // SOLUCIÓN CRÍTICA: Esperar un pequeño tiempo para asegurar que la UI se actualice
+    setTimeout(() => {
+      // Notificar y reproducir sonido para el siguiente chakra
+      if (currentChakra) {
+        notifyChakraChange(currentChakra as ChakraName, nextChakra);
       }
-    };
-    
-    // Iniciar nuevo timer para este chakra si estamos reproduciendo
-    if (isPlaying) {
-      console.log(`Starting timer for chakra ${nextChakra} with duration ${duration[0]} minutes`);
-      startProgressTimer(
-        nextChakra, 
-        duration, 
-        true, 
-        setProgress, 
-        safeOnComplete
-      );
-    } else {
-      // Si no estamos reproduciendo, reiniciar bandera de transición
-      isTransitioning.current = false;
-    }
+      
+      // SOLUCIÓN CRÍTICA: Siempre detener sonidos previos antes de reproducir nuevos
+      stopSound();
+      
+      // Reproducir sonido para el siguiente chakra
+      playChakraSound(nextChakra);
+      
+      // SOLUCIÓN CRÍTICA: Definir un callback independiente que garantice transición
+      const safeOnComplete = () => {
+        console.log(`Safe onComplete executing for chakra ${nextChakra}`);
+        // Reiniciar estado de transición antes de cualquier otra operación
+        isTransitioning.current = false;
+        
+        // CRUCIAL FIX: Ensure progress is reset before moving on
+        setProgress(0);
+        
+        // Ejecutar callback original con un pequeño retraso para evitar problemas de renderizado
+        setTimeout(() => {
+          if (onComplete && typeof onComplete === 'function') {
+            try {
+              onComplete();
+            } catch (error) {
+              console.error("Error in onComplete callback:", error);
+            }
+          }
+        }, 100);
+      };
+      
+      // Iniciar nuevo timer para este chakra si estamos reproduciendo
+      if (isPlaying) {
+        console.log(`Starting timer for chakra ${nextChakra} with duration ${duration[0]} minutes`);
+        startProgressTimer(
+          nextChakra, 
+          duration, 
+          true, 
+          setProgress, 
+          safeOnComplete
+        );
+      } else {
+        // Si no estamos reproduciendo, reiniciar bandera de transición
+        isTransitioning.current = false;
+      }
+    }, 50); // Pequeño retraso para asegurar que el estado se actualice correctamente
   }, [notifyChakraChange, playChakraSound, startProgressTimer, stopSound]);
 
   return {

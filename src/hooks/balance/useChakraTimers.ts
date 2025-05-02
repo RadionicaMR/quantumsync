@@ -41,6 +41,7 @@ export const useChakraTimers = () => {
     if (!isPlaying) return;
     
     // CRUCIAL FIX: Always set progress to 0 at the beginning of a new timer
+    console.log(`useChakraTimers: Resetting progress to 0 for chakra ${chakraName} before starting timer`);
     setProgress(0);
     
     // Get total duration in milliseconds

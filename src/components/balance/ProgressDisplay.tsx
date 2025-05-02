@@ -14,18 +14,24 @@ interface ProgressDisplayProps {
 const ProgressDisplay = ({ isPlaying, currentChakra, progress, frequency }: ProgressDisplayProps) => {
   const [displayProgress, setDisplayProgress] = useState(0);
   const prevChakraRef = useRef<string>('');
+  const prevProgressRef = useRef<number>(0);
   
   // Reset display progress when chakra changes or progress is reset
   useEffect(() => {
     // Force progress reset when chakra changes
     if (currentChakra && currentChakra !== prevChakraRef.current) {
-      console.log(`Chakra changed from ${prevChakraRef.current} to ${currentChakra}, forcing progress reset`);
+      console.log(`ProgressDisplay: Chakra changed from ${prevChakraRef.current} to ${currentChakra}, forcing progress reset`);
       setDisplayProgress(0);
       prevChakraRef.current = currentChakra;
-    } else if (progress === 0) {
+      prevProgressRef.current = 0;
+    } else if (progress === 0 && prevProgressRef.current !== 0) {
+      console.log(`ProgressDisplay: Progress reset to 0 detected, updating display`);
       setDisplayProgress(0);
-    } else {
+      prevProgressRef.current = 0;
+    } else if (progress !== prevProgressRef.current) {
+      console.log(`ProgressDisplay: Progress updated from ${prevProgressRef.current} to ${progress}`);
       setDisplayProgress(progress);
+      prevProgressRef.current = progress;
     }
   }, [progress, currentChakra]);
   
