@@ -30,7 +30,7 @@ const ProgressDisplay = ({ isPlaying, currentChakra, progress, frequency }: Prog
           className="h-4 w-full"
           style={{
             "--progress-foreground": chakraColor,
-            "--progress-background": "#333"
+            "--progress-background": "#f3f4f6"
           } as React.CSSProperties}
         />
       </div>

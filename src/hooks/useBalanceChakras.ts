@@ -1,5 +1,5 @@
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import type { ChakraName } from '@/constants/chakraData';
 import { useChakraSession } from '@/hooks/balance/useChakraSession';
 import { useChakraProgress } from '@/hooks/balance/useChakraProgress';
@@ -50,21 +50,36 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     getCurrentFrequency
   } = useChakraControls();
   
+  // Estado local para asegurarnos de que el sistema no se quede atascado
+  const [lastTransitionTime, setLastTransitionTime] = useState<number>(0);
+  
   // CRITICAL FIX: Move to the next chakra with complete rewrite
   const moveToNextChakra = useCallback(() => {
     console.log("moveToNextChakra called, isPlaying:", isPlaying);
     
-    // CRITICAL FIX: If we're already processing a transition, exit
+    // CRITICAL FIX: Si ya estamos en transición, salimos para evitar llamadas duplicadas
     if (isTransitioning.current) {
       console.log("Already transitioning, skipping moveToNextChakra");
       return;
     }
     
+    // SUPER CRITICAL: Registrar el tiempo de esta transición para evitar bucles infinitos
+    const now = Date.now();
+    if ((now - lastTransitionTime) < 500) {
+      console.log("Throttling rapid transitions - waiting before processing next transition");
+      setTimeout(() => {
+        moveToNextChakra();
+      }, 1000);
+      return;
+    }
+    
+    setLastTransitionTime(now);
+    
     // Set transitioning flag immediately
     isTransitioning.current = true;
     
     try {
-      // CRITICAL FIX: Ensure we get a fresh list of chakras each time
+      // CRITICAL FIX: Obtener lista fresca de chakras cada vez
       const chakrasToBalance = getChakrasToBalance();
       console.log("Chakras to balance:", chakrasToBalance);
       
@@ -135,7 +150,8 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     setCompleted,
     setCurrentChakra,
     setIsPlaying,
-    setProgress
+    setProgress,
+    lastTransitionTime
   ]);
 
   const startBalancing = useCallback(() => {
@@ -154,8 +170,9 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     // Clean up any existing timers
     cleanupTimers();
     
-    // Reset transition state
+    // Reset transition state and time
     isTransitioning.current = false;
+    setLastTransitionTime(0);
     
     // Set initial state
     const firstChakra = chakrasToBalance[0];
@@ -191,7 +208,8 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     setCompleted,
     setCurrentChakra,
     setIsPlaying,
-    setProgress
+    setProgress,
+    setLastTransitionTime
   ]);
 
   const stopBalancing = useCallback(() => {
