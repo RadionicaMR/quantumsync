@@ -1,3 +1,4 @@
+
 import React from 'react';
 import TreatmentLeftPanel from './customTreatment/TreatmentLeftPanel';
 import TreatmentRightPanel from './customTreatment/TreatmentRightPanel';
@@ -129,6 +130,12 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
       {/* Panel derecho - Upload y visualización */}
       <div className="lg:col-span-2 w-full">
         <TreatmentRightPanel
+          frequency={frequency}
+          setFrequency={setFrequency}
+          duration={duration}
+          setDuration={setDuration}
+          intensity={intensity}
+          setIntensity={setIntensity}
           radionicImage={radionicImage}
           setRadionicImage={setRadionicImage}
           radionicImages={radionicImages}
@@ -148,13 +155,16 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
           hypnoticEffect={hypnoticEffect}
           startTreatment={startTreatment}
           stopTreatment={stopTreatment}
-          frequency={frequency}
-          intensity={intensity}
           rate1={rate1}
+          setRate1={setRate1}
           rate2={rate2}
+          setRate2={setRate2}
           rate3={rate3}
+          setRate3={setRate3}
           hypnoticSpeed={hypnoticSpeed}
+          setHypnoticSpeed={setHypnoticSpeed}
           receptorName={receptorName}
+          setReceptorName={setReceptorName}
           audioFile={audioFile}
           setAudioFile={setAudioFile}
           audioVolume={audioVolume}
