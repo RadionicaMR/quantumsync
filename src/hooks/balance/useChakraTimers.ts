@@ -48,17 +48,17 @@ export const useChakraTimers = () => {
       
       console.log(`Timer completed for chakra ${chakraName}, about to call onComplete`);
       
-      // Call the completion callback directly, without any delay
-      onComplete();
+      // Force the onComplete callback with a small timeout to ensure the UI updates first
+      setTimeout(() => {
+        if (onComplete) {
+          onComplete();
+        }
+      }, 100);
       
     }, totalDuration);
     
     // Use requestAnimationFrame for smoother progress updates
     const updateProgress = () => {
-      if (!isPlaying) {
-        return;
-      }
-      
       const currentTime = Date.now();
       const elapsed = currentTime - startTime;
       const newProgress = Math.min((elapsed / totalDuration) * 100, 100);
