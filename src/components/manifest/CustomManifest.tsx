@@ -48,7 +48,7 @@ interface CustomManifestProps {
   currentImage: 'pattern' | 'receptor' | 'mix';
   receptorName: string;
   setReceptorName: (name: string) => void;
-  // NUEVO audio props:
+  // Audio props:
   audioFile: File | null;
   setAudioFile: (file: File | null) => void;
   audioVolume: number;
@@ -56,6 +56,9 @@ interface CustomManifestProps {
   audioSubliminalPlaying: boolean;
   playSubliminalAudio: () => void;
   stopSubliminalAudio: () => void;
+  audioLoop?: boolean;
+  setAudioLoop?: (loop: boolean) => void;
+  clearAudio?: () => void; // Nueva prop para eliminar audio
 }
 
 const CustomManifest = ({
@@ -99,6 +102,9 @@ const CustomManifest = ({
   audioSubliminalPlaying,
   playSubliminalAudio,
   stopSubliminalAudio,
+  audioLoop = true,
+  setAudioLoop = () => {},
+  clearAudio = () => {}, // Implementación por defecto
 }: CustomManifestProps) => {
   return (
     <Card className="quantum-card p-6">
@@ -142,7 +148,7 @@ const CustomManifest = ({
             />
           </div>
 
-          {/* AudioSubliminalControls debajo de las imágenes del receptor */}
+          {/* AudioSubliminalControls con las nuevas props */}
           <div className="mt-6">
             <AudioSubliminalControls
               audioFile={audioFile}
@@ -154,6 +160,9 @@ const CustomManifest = ({
               stopAudio={stopSubliminalAudio}
               isDisabled={isManifestActive}
               maxVolume={20}
+              audioLoop={audioLoop}
+              setAudioLoop={setAudioLoop}
+              clearAudio={clearAudio}
             />
           </div>
         </div>

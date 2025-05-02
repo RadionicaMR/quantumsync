@@ -2,7 +2,7 @@
 import React, { useRef, useEffect } from "react";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import { Play, CircleStop, FilePlus, Mic, Trash2, Repeat } from "lucide-react"; // Reemplazamos VolumeX por Repeat
+import { Play, CircleStop, FilePlus, Mic, Trash2, Repeat } from "lucide-react";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 
 interface AudioSubliminalControlsProps {
@@ -15,8 +15,9 @@ interface AudioSubliminalControlsProps {
   stopAudio: () => void;
   isDisabled?: boolean;
   maxVolume?: number;
-  audioLoop?: boolean; // NUEVO
-  setAudioLoop?: (loop: boolean) => void; // NUEVO
+  audioLoop?: boolean;
+  setAudioLoop?: (loop: boolean) => void;
+  clearAudio?: () => void; // Nueva prop para eliminar el audio
 }
 
 const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
@@ -31,6 +32,7 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
   maxVolume = 20,
   audioLoop = true,
   setAudioLoop = () => {},
+  clearAudio = () => {}, // Implementación por defecto
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -60,8 +62,11 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
   };
 
   const handleRemove = () => {
-    setAudioFile(null);
+    clearAudio(); // Usamos la función proporcionada por props
     clearRecording();
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleButtonClick = () => {
@@ -123,9 +128,10 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
             <button
               onClick={handleRemove}
               disabled={isDisabled || isPlaying || isRecording}
-              className="text-xs text-red-500 underline"
+              className="flex items-center gap-1 px-2 py-1 rounded text-red-500 hover:bg-red-100"
               type="button"
             >
+              <Trash2 className="w-4 h-4" />
               Quitar
             </button>
             <span className="text-xs text-zinc-600 max-w-xs overflow-hidden truncate">{audioFile.name}</span>
@@ -148,17 +154,6 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
       {audioURL && (
         <div className="flex gap-2 items-center my-1">
           <audio src={audioURL} controls className="h-5" />
-          {!isRecording && (
-            <button
-              type="button"
-              onClick={clearRecording}
-              className="flex items-center gap-1 px-2 py-1 rounded bg-zinc-100 text-zinc-700 hover:bg-zinc-200 text-xs"
-              disabled={isDisabled || isPlaying}
-            >
-              <Trash2 className="w-4 h-4" />
-              Borrar grabación
-            </button>
-          )}
         </div>
       )}
 
@@ -197,4 +192,3 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
 };
 
 export default AudioSubliminalControls;
-

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useTreatmentAudio } from './useTreatmentAudio';
 import { useTreatmentImages } from './useTreatmentImages';
@@ -31,7 +32,7 @@ export const useTreatment = () => {
   // Audio file upload state (renamed for clarity)
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [audioVolume, setAudioVolume] = useState(10);
-  const [audioLoop, setAudioLoop] = useState(true); // Nuevo estado para loop
+  const [audioLoop, setAudioLoop] = useState(true);
   // Subliminal audio element and play state
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
   const [audioSubliminalPlaying, setAudioSubliminalPlaying] = useState(false);
@@ -46,14 +47,36 @@ export const useTreatment = () => {
   // Función para manejar play del audio subliminal
   const playSubliminalAudio = () => {
     if (audioFile && !audioSubliminalPlaying) {
-      const newAudio = new Audio(URL.createObjectURL(audioFile));
-      newAudio.loop = audioLoop;
-      newAudio.volume = audioVolume / 20;
-      newAudio.play().catch(err => {
-        console.error("Error playing uploaded audio:", err);
-      });
-      setAudioElement(newAudio);
-      setAudioSubliminalPlaying(true);
+      try {
+        // Si ya existe un elemento de audio previo, detenlo primero
+        if (audioElement) {
+          audioElement.pause();
+        }
+        
+        const newAudio = new Audio(URL.createObjectURL(audioFile));
+        newAudio.loop = audioLoop;
+        newAudio.volume = audioVolume / 20;
+        
+        // Asignar primero la referencia para tener acceso inmediato
+        setAudioElement(newAudio);
+        
+        // Intentar reproducir el audio
+        newAudio.play()
+          .then(() => {
+            setAudioSubliminalPlaying(true);
+            console.log("Audio subliminal reproduciendo correctamente");
+          })
+          .catch((err) => {
+            console.error("Error reproduciendo audio subliminal:", err);
+            setAudioSubliminalPlaying(false);
+            // No eliminamos la referencia en caso de error
+          });
+      } catch (error) {
+        console.error("Error al crear el objeto de audio:", error);
+        setAudioSubliminalPlaying(false);
+      }
+    } else {
+      console.log("No hay archivo de audio para reproducir o ya está reproduciendo");
     }
   };
 
@@ -61,9 +84,22 @@ export const useTreatment = () => {
   const stopSubliminalAudio = () => {
     if (audioElement) {
       audioElement.pause();
-      setAudioElement(null);
       setAudioSubliminalPlaying(false);
+      console.log("Audio subliminal detenido");
+      // No eliminamos la referencia al elemento para poder reanudar la reproducción
     }
+  };
+
+  // Función para eliminar el audio
+  const clearAudio = () => {
+    stopSubliminalAudio();
+    setAudioFile(null);
+    setAudioElement(null);
+    setAudioSubliminalPlaying(false);
+    toast({
+      title: "Audio eliminado",
+      description: "El archivo de audio subliminal ha sido eliminado",
+    });
   };
 
   // Start the treatment
@@ -150,5 +186,6 @@ export const useTreatment = () => {
     stopSubliminalAudio,
     audioLoop,
     setAudioLoop,
+    clearAudio, // Nueva función
   };
 };

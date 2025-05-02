@@ -1,3 +1,4 @@
+
 import FrequencyControls from './FrequencyControls';
 import RateInputs from './RateInputs';
 import ImageGrid from './ImageGrid';
@@ -50,6 +51,9 @@ interface CustomTreatmentProps {
   audioSubliminalPlaying: boolean;
   playSubliminalAudio: () => void;
   stopSubliminalAudio: () => void;
+  audioLoop?: boolean;
+  setAudioLoop?: (loop: boolean) => void;
+  clearAudio?: () => void;
 }
 
 const CustomTreatment = (props: CustomTreatmentProps) => {
@@ -96,6 +100,9 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
     audioSubliminalPlaying,
     playSubliminalAudio,
     stopSubliminalAudio,
+    audioLoop = true,
+    setAudioLoop = () => {},
+    clearAudio = () => {},
   } = props;
 
   return (
@@ -148,16 +155,19 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
             isPlaying={isPlaying}
           />
 
-          {/* Audio Subliminal controls - debajo de imagenes */}
+          {/* Audio Subliminal controls - con nuevas props */}
           <AudioSubliminalControls
             audioFile={audioFile}
             setAudioFile={setAudioFile}
             audioVolume={audioVolume}
             setAudioVolume={setAudioVolume}
-            isPlaying={isPlaying}
+            isPlaying={audioSubliminalPlaying}
             playAudio={playSubliminalAudio}
             stopAudio={stopSubliminalAudio}
             maxVolume={20}
+            audioLoop={audioLoop}
+            setAudioLoop={setAudioLoop}
+            clearAudio={clearAudio}
           />
           
           <SettingsToggles 

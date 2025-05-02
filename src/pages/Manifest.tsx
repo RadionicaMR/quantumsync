@@ -111,6 +111,9 @@ const Manifest = () => {
               audioSubliminalPlaying={manifest.audioSubliminalPlaying}
               playSubliminalAudio={manifest.playSubliminalAudio}
               stopSubliminalAudio={manifest.stopSubliminalAudio}
+              audioLoop={manifest.audioLoop}
+              setAudioLoop={manifest.setAudioLoop}
+              clearAudio={manifest.clearAudio}
             />
           </TabsContent>
         </Tabs>

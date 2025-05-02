@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from 'react';
 import { useManifestState } from './useManifestState';
 import { useManifestAudio } from './useManifestAudio';
@@ -22,24 +23,43 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [audioVolume, setAudioVolume] = useState(20);
   const [audioSubliminalPlaying, setAudioSubliminalPlaying] = useState(false);
-  const [audioLoop, setAudioLoop] = useState(true); // Nuevo estado del loop
+  const [audioLoop, setAudioLoop] = useState(true); // Estado del loop
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
 
   // Función para reproducir audio subliminal
   const playSubliminalAudio = () => {
     if (audioFile && !audioSubliminalPlaying) {
-      const elem = new Audio(URL.createObjectURL(audioFile));
-      elem.volume = audioVolume / 20;
-      elem.loop = audioLoop; // Usar el valor actual de loop
-      elem.play().then(() => {
-        setAudioSubliminalPlaying(true);
+      try {
+        // Si ya existe un elemento de audio previo, detenlo primero
+        if (audioElementRef.current) {
+          audioElementRef.current.pause();
+        }
+        
+        const elem = new Audio(URL.createObjectURL(audioFile));
+        elem.volume = audioVolume / 20;
+        elem.loop = audioLoop;
+        
+        // Asignar primero la referencia para tener acceso inmediato
         audioElementRef.current = elem;
-      }).catch((err) => {
+        
+        // Intentar reproducir el audio
+        elem.play()
+          .then(() => {
+            setAudioSubliminalPlaying(true);
+            console.log("Audio subliminal reproduciendo correctamente");
+          })
+          .catch((err) => {
+            console.error("Error al reproducir audio subliminal:", err);
+            setAudioSubliminalPlaying(false);
+            // No eliminar la referencia en caso de error, mantenemos el objeto
+          });
+      } catch (error) {
+        console.error("Error al crear el objeto de audio:", error);
         setAudioSubliminalPlaying(false);
         audioElementRef.current = null;
-        console.error("No se puede reproducir el audio subliminal:", err);
-      });
-      // fallback, en caso de rechazar el play...
+      }
+    } else {
+      console.log("No hay archivo de audio para reproducir o ya está reproduciendo");
     }
   };
 
@@ -47,9 +67,22 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
   const stopSubliminalAudio = () => {
     if (audioElementRef.current) {
       audioElementRef.current.pause();
-      audioElementRef.current = null;
+      // No eliminamos la referencia para poder reanudar la reproducción
+      setAudioSubliminalPlaying(false);
+      console.log("Audio subliminal detenido");
     }
+  };
+
+  // Función para eliminar el audio
+  const clearAudio = () => {
+    stopSubliminalAudio();
+    setAudioFile(null);
+    audioElementRef.current = null;
     setAudioSubliminalPlaying(false);
+    toast({
+      title: "Audio eliminado",
+      description: "El archivo de audio subliminal ha sido eliminado",
+    });
   };
 
   // Iniciar Manifestación: comienza audio subliminal si disponible
@@ -69,7 +102,7 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
       startAudio(state.manifestFrequency[0]);
     }
 
-    // AUDIO SUBLIMINAL (nuevo): inicia audio si fue subido
+    // AUDIO SUBLIMINAL: inicia audio si fue subido
     if (audioFile) {
       playSubliminalAudio();
     }
@@ -139,7 +172,6 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
   }, [audioVolume]);
 
   // Update loop property en caliente
-  // Si cambia audioLoop y hay elemento, actualizar el loop dinámicamente
   useEffect(() => {
     if (audioElementRef.current) {
       audioElementRef.current.loop = audioLoop;
@@ -176,5 +208,6 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
     stopSubliminalAudio,
     audioLoop,
     setAudioLoop,
+    clearAudio, // Nueva función para eliminar el audio
   };
 };
