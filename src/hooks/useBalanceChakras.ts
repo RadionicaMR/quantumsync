@@ -132,7 +132,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
       duration,
       notifyMissingName,
       notifyNoChakras,
-      notifyStart
+      notifyStart // Fixed here - now compatible with the updated function signature
     );
   }, [
     startBalancingBase,

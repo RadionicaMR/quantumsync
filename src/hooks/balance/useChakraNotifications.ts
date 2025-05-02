@@ -4,10 +4,11 @@ import { toast } from "@/components/ui/use-toast";
 import type { ChakraName } from '@/constants/chakraData';
 
 export const useChakraNotifications = () => {
-  const notifyStart = useCallback((personName: string) => {
+  // Modified to accept personName as optional parameter with default empty string
+  const notifyStart = useCallback((personName: string = '') => {
     toast({
       title: "Proceso iniciado",
-      description: `Armonizando chakras para ${personName}...`,
+      description: `Armonizando chakras${personName ? ` para ${personName}` : ''}...`,
     });
   }, []);
 

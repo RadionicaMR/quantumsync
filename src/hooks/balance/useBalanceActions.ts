@@ -27,7 +27,7 @@ export const useBalanceActions = () => {
     duration: number[],
     notifyMissingName: () => void,
     notifyNoChakras: () => void,
-    notifyStart: () => void
+    notifyStart: (personName?: string) => void  // Update the signature to make personName optional
   ) => {
     // Check if we have a person name
     if (!personName.trim()) {
@@ -62,8 +62,8 @@ export const useBalanceActions = () => {
     setCurrentChakra('');
     setProgress(0);
     
-    // Notify start
-    notifyStart();
+    // Notify start with the personName
+    notifyStart(personName);
     
     // CRITICAL FIX: Use a small timeout to ensure state updates are processed
     setTimeout(() => {
