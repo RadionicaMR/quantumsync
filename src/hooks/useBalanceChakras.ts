@@ -21,6 +21,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
   const progressRef = useRef(0);
   const timerRef = useRef<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
   
   const { playChakraSound, stopSound } = useChakraAudio();
   
@@ -38,8 +39,15 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     }
   }, [balanceOption, initialChakraStates]);
 
+  // Update progress animation function
   const updateProgress = useCallback(() => {
-    if (!isPlaying || !startTimeRef.current || !currentChakra) return;
+    if (!isPlaying || !startTimeRef.current || !currentChakra) {
+      if (animationFrameRef.current) {
+        window.cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+      return;
+    }
     
     const chakraDuration = duration[0] * 60 * 1000;
     const elapsedTime = Date.now() - startTimeRef.current;
@@ -55,7 +63,8 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     }
     
     if (newProgress < 100) {
-      timerRef.current = window.requestAnimationFrame(updateProgress);
+      // Continue the animation loop
+      animationFrameRef.current = window.requestAnimationFrame(updateProgress);
     } else {
       const chakrasToBalance = getChakrasToBalance();
       const currentIndex = chakrasToBalance.indexOf(currentChakra as ChakraName);
@@ -73,11 +82,12 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
           description: `Ahora armonizando el chakra ${nextChakra}...`,
         });
         
-        timerRef.current = window.requestAnimationFrame(updateProgress);
+        // Start animation for next chakra
+        animationFrameRef.current = window.requestAnimationFrame(updateProgress);
       } else {
-        if (timerRef.current) {
-          window.cancelAnimationFrame(timerRef.current);
-          timerRef.current = null;
+        if (animationFrameRef.current) {
+          window.cancelAnimationFrame(animationFrameRef.current);
+          animationFrameRef.current = null;
         }
         setIsPlaying(false);
         setCompleted(true);
@@ -111,6 +121,12 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
       return;
     }
     
+    // Cleanup any existing animation frame
+    if (animationFrameRef.current) {
+      window.cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+    
     setIsPlaying(true);
     setCurrentChakra(chakrasToBalance[0]);
     setProgress(0);
@@ -126,17 +142,14 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     playChakraSound(chakrasToBalance[0]);
     
     // Start the animation frame loop
-    if (timerRef.current) {
-      window.cancelAnimationFrame(timerRef.current);
-    }
-    timerRef.current = window.requestAnimationFrame(updateProgress);
-    
+    animationFrameRef.current = window.requestAnimationFrame(updateProgress);
   }, [personName, getChakrasToBalance, playChakraSound, updateProgress]);
 
   const stopBalancing = useCallback(() => {
-    if (timerRef.current) {
-      window.cancelAnimationFrame(timerRef.current);
-      timerRef.current = null;
+    // Cleanup animation frame
+    if (animationFrameRef.current) {
+      window.cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
     }
     
     setIsPlaying(false);
@@ -159,9 +172,9 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
   // Clean up on unmount
   useEffect(() => {
     return () => {
-      if (timerRef.current) {
-        window.cancelAnimationFrame(timerRef.current);
-        timerRef.current = null;
+      if (animationFrameRef.current) {
+        window.cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
       }
       stopSound();
     };

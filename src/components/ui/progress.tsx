@@ -8,11 +8,11 @@ const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
 >(({ className, value, style, ...props }, ref) => {
+  // Set default CSS variables if not provided
   const progressStyle = {
     ...style,
-    // Use custom CSS variables with fallbacks to default colors
-    "--progress-background": "var(--progress-background, hsl(var(--secondary)))",
-    "--progress-foreground": "var(--progress-foreground, hsl(var(--primary)))"
+    "--progress-background": style?.["--progress-background"] || "hsl(var(--secondary))",
+    "--progress-foreground": style?.["--progress-foreground"] || "hsl(var(--primary))"
   } as React.CSSProperties;
 
   return (
@@ -31,7 +31,8 @@ const Progress = React.forwardRef<
         className="h-full w-full flex-1 transition-all"
         style={{ 
           transform: `translateX(-${100 - (value || 0)}%)`,
-          backgroundColor: "var(--progress-foreground)"
+          backgroundColor: "var(--progress-foreground)",
+          transition: "transform 0.1s linear"
         }}
       />
     </ProgressPrimitive.Root>
