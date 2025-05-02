@@ -9,18 +9,20 @@ export const useChakraControls = () => {
     notifyStart, 
     notifyStop, 
     notifyCompletion, 
+    notifyChakraChange,
     notifyMissingName,
     notifyNoChakras 
   } = useChakraNotifications();
 
-  const getCurrentFrequency = (currentChakra: ChakraName | '') => {
+  const getCurrentFrequency = useCallback((currentChakra: ChakraName | ''): number => {
     return currentChakra ? CHAKRA_FREQUENCIES[currentChakra] : 0;
-  };
+  }, []);
 
   return {
     notifyStart,
     notifyStop,
     notifyCompletion,
+    notifyChakraChange,
     notifyMissingName,
     notifyNoChakras,
     getCurrentFrequency

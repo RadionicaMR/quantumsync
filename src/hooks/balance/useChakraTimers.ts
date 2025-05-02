@@ -46,28 +46,29 @@ export const useChakraTimers = () => {
       // Ensure we reach 100% before moving to the next chakra
       setProgress(100);
       
-      console.log(`Timer completed for chakra ${chakraName}, about to call onComplete`);
+      console.log(`Timer completed for chakra ${chakraName}, duration: ${duration[0]} minutes`);
       
-      // Call onComplete with a very small timeout to ensure the callback runs 
-      // after the current call stack is cleared
-      setTimeout(onComplete, 50);
-      
+      // CRITICAL FIX: Use a more reliable way to ensure onComplete runs
+      // We're using requestAnimationFrame which is more stable for timing operations after UI updates
+      requestAnimationFrame(() => {
+        console.log(`Executing onComplete callback for chakra ${chakraName}`);
+        if (typeof onComplete === 'function') {
+          onComplete();
+        }
+      });
     }, totalDuration);
     
     // Use requestAnimationFrame for smoother progress updates
     const updateProgress = () => {
       const currentTime = Date.now();
       const elapsed = currentTime - startTime;
-      const newProgress = Math.min((elapsed / totalDuration) * 100, 100);
+      const newProgress = Math.min((elapsed / totalDuration) * 100, 99); // Cap at 99% - final 100% set by timer
       
       setProgress(newProgress);
       
       // Continue animation if not complete
       if (currentTime < endTime && isPlaying) {
         animationFrameId.current = requestAnimationFrame(updateProgress);
-      } else if (newProgress >= 100) {
-        // Ensure we reach exactly 100% at the end
-        setProgress(100);
       }
     };
     

@@ -29,12 +29,15 @@ export const useChakraTransition = () => {
       notifyChakraChange(currentChakra as ChakraName, nextChakra);
     }
     
-    // Play the sound for the next chakra
+    // CRITICAL FIX: Always ensure we stop previous sounds before playing new ones
     stopSound();
+    
+    // Play the sound for the next chakra
     playChakraSound(nextChakra);
     
     // Start new timer for this chakra if we're playing
     if (isPlaying) {
+      console.log(`Starting timer for chakra ${nextChakra} with duration ${duration[0]} minutes`);
       startProgressTimer(
         nextChakra, 
         duration, 
