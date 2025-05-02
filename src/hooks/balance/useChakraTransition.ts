@@ -9,6 +9,7 @@ export const useChakraTransition = () => {
   // Reference to track if we're already transitioning
   const isTransitioning = useRef(false);
   const lastTransitionTime = useRef<number>(0);
+  const isPlayingRef = useRef<boolean>(false); // Add reference to track playing state
   
   const { playChakraSound, stopSound } = useChakraAudio();
   const { cleanupTimers, startProgressTimer } = useChakraTimers();
@@ -27,6 +28,9 @@ export const useChakraTransition = () => {
       console.log("Not playing, skipping transition");
       return;
     }
+    
+    // Store playing state in ref for completion callbacks
+    isPlayingRef.current = isPlaying;
     
     // Update timestamp first
     const now = Date.now();
@@ -60,6 +64,8 @@ export const useChakraTransition = () => {
       if (onComplete && typeof onComplete === 'function') {
         console.log(`Calling onComplete callback for ${nextChakra}`);
         try {
+          // Use the previously stored playing state
+          console.log(`Using stored playing state: ${isPlayingRef.current}`);
           onComplete();
         } catch (error) {
           console.error(`Error in onComplete callback for ${nextChakra}:`, error);
@@ -73,8 +79,8 @@ export const useChakraTransition = () => {
     
     // CRITICAL FIX: Add small delay before starting timer to ensure UI updates
     setTimeout(() => {
-      // Final check to make sure we're still playing
-      if (!isPlaying) {
+      // Check our stored playing state
+      if (!isPlayingRef.current) {
         console.log(`Aborting transition to ${nextChakra} because we're no longer playing`);
         isTransitioning.current = false;
         return;
@@ -85,7 +91,7 @@ export const useChakraTransition = () => {
       startProgressTimer(
         nextChakra, 
         duration, 
-        true, 
+        isPlayingRef.current, 
         setProgress, 
         safeOnComplete
       );
@@ -98,6 +104,7 @@ export const useChakraTransition = () => {
     handleChakraTransition,
     cleanupTimers,
     stopSound,
-    lastTransitionTime
+    lastTransitionTime,
+    isPlayingRef // Export the ref so it can be accessed by other hooks
   };
 };

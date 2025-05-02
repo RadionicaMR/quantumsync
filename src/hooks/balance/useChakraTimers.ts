@@ -77,7 +77,15 @@ export const useChakraTimers = () => {
         if (onComplete && typeof onComplete === 'function') {
           console.log(`Executing completion callback for ${chakraName}, ensuring transition to next chakra`);
           try {
+            // CRITICAL: Store the current completion state before calling onComplete
+            const wasCompleting = isCompletingTimerRef.current;
             onComplete();
+            // If we were completing but now we're not transitioning to the next chakra
+            if (wasCompleting && !isCompletingTimerRef.current) {
+              console.log(`Completion callback didn't trigger next transition for ${chakraName}, forcing progress to 100% again`);
+              // Force progress to 100% again just in case
+              setProgress(100);
+            }
           } catch (error) {
             console.error(`Error in onComplete for ${chakraName}:`, error);
           }
@@ -89,7 +97,7 @@ export const useChakraTimers = () => {
         isCompletingTimerRef.current = false;
       }, 300); // Increased delay to ensure state updates
       
-    }, totalDuration);
+    }, totalDuration - 50); // Subtract a small amount to ensure it completes before the animation
     
     // Use requestAnimationFrame for smoother progress updates
     const updateProgress = () => {
@@ -101,14 +109,19 @@ export const useChakraTimers = () => {
       const currentTime = Date.now();
       const elapsed = currentTime - startTime;
       
-      // Cap at 99% - final 100% set by timer completion
-      const newProgress = Math.min((elapsed / totalDuration) * 100, 99);
+      // CRITICAL FIX: Allow progress to reach 100% at the end
+      const timeRatio = elapsed / totalDuration;
+      const newProgress = Math.min(timeRatio * 100, 99.9);
       
       setProgress(newProgress);
       
       // Continue animation if not complete and not already in completion process
       if (currentTime < endTime && isPlaying && !isCompletingTimerRef.current) {
         animationFrameId.current = requestAnimationFrame(updateProgress);
+      } else if (currentTime >= endTime && !isCompletingTimerRef.current) {
+        // If we've reached the end time but completion hasn't started
+        console.log(`Animation frame detected end time reached for ${chakraName}`);
+        setProgress(100);
       }
     };
     

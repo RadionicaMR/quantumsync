@@ -33,7 +33,8 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     isTransitioning,
     handleChakraTransition,
     cleanupTimers,
-    stopSound
+    stopSound,
+    isPlayingRef  // Add the isPlayingRef from useChakraTransition
   } = useChakraSessionManager(initialPersonName, initialChakraStates);
 
   // Get chakra sequence management functionality
@@ -82,6 +83,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
       currentChakra,
       getChakrasToBalance,
       isTransitioning,
+      isPlayingRef,  // Pass the isPlayingRef
       cleanupTimers,
       stopSound,
       setCurrentChakra,
@@ -96,6 +98,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     currentChakra,
     getChakrasToBalance,
     isTransitioning,
+    isPlayingRef,  // Include in dependencies
     cleanupTimers,
     stopSound,
     setCurrentChakra,
@@ -107,6 +110,9 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
 
   // Create a startBalancing callback for this specific instance
   const startBalancing = useCallback(() => {
+    // Update the isPlayingRef directly when starting
+    isPlayingRef.current = true;
+    
     startBalancingBase(
       personName,
       getChakrasToBalance,
@@ -142,11 +148,15 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     duration,
     notifyMissingName,
     notifyNoChakras,
-    notifyStart
+    notifyStart,
+    isPlayingRef  // Include in dependencies
   ]);
 
   // Create a stopBalancing callback for this specific instance
   const stopBalancing = useCallback(() => {
+    // Update the isPlayingRef directly when stopping
+    isPlayingRef.current = false;
+    
     stopBalancingBase(
       cleanupTimers,
       setIsPlaying,
@@ -164,8 +174,15 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     setProgress,
     lastChakraProcessed,
     stopSound,
-    notifyStop
+    notifyStop,
+    isPlayingRef  // Include in dependencies
   ]);
+
+  // Update isPlayingRef whenever isPlaying changes
+  useEffect(() => {
+    console.log(`Updating isPlayingRef to ${isPlaying}`);
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying, isPlayingRef]);
 
   // Clean up on unmount
   useEffect(() => {

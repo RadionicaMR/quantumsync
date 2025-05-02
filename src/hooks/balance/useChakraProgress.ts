@@ -8,6 +8,7 @@ export const useChakraProgress = () => {
   const [progress, setProgress] = useState<number>(0);
   const previousChakraRef = useRef<ChakraName | ''>('');
   const progressUpdatedTimeRef = useRef<number>(Date.now());
+  const isTransitioningToNextChakra = useRef<boolean>(false);
   
   // Reset progress whenever chakra changes
   useEffect(() => {
@@ -16,12 +17,20 @@ export const useChakraProgress = () => {
       setProgress(0);
       previousChakraRef.current = currentChakra;
       progressUpdatedTimeRef.current = Date.now();
+      isTransitioningToNextChakra.current = false;
     }
   }, [currentChakra]);
 
   // Add a function to update progress with timestamp tracking
   const updateProgress = useCallback((newProgress: number) => {
-    console.log(`useChakraProgress: Setting progress to ${newProgress}`);
+    // Special case for 100% - mark that we're transitioning to next chakra
+    if (newProgress === 100) {
+      isTransitioningToNextChakra.current = true;
+      console.log(`useChakraProgress: Setting progress to ${newProgress} and marking transition to next chakra`);
+    } else {
+      console.log(`useChakraProgress: Setting progress to ${newProgress}`);
+    }
+    
     setProgress(newProgress);
     progressUpdatedTimeRef.current = Date.now();
   }, []);
@@ -31,6 +40,7 @@ export const useChakraProgress = () => {
     console.log('useChakraProgress: Explicitly resetting progress to 0');
     setProgress(0);
     progressUpdatedTimeRef.current = Date.now();
+    isTransitioningToNextChakra.current = false;
   }, []);
 
   // Create a wrapper for setCurrentChakra that also resets progress
@@ -48,6 +58,7 @@ export const useChakraProgress = () => {
     setCurrentChakra: setCurrentChakraWithReset,
     progress,
     setProgress: updateProgress,
-    resetProgress
+    resetProgress,
+    isTransitioningToNextChakra
   };
 };

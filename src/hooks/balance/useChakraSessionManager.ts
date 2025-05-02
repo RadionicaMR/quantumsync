@@ -51,7 +51,8 @@ export const useChakraSessionManager = (
     handleChakraTransition,
     cleanupTimers,
     stopSound,
-    lastTransitionTime
+    lastTransitionTime,
+    isPlayingRef // Add isPlayingRef from useChakraTransition
   } = useChakraTransition();
 
   return {
@@ -91,6 +92,7 @@ export const useChakraSessionManager = (
     handleChakraTransition,
     cleanupTimers,
     stopSound,
-    lastTransitionTime
+    lastTransitionTime,
+    isPlayingRef // Export isPlayingRef
   };
 };

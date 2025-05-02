@@ -44,6 +44,7 @@ export const useChakraSequence = () => {
     currentChakra: ChakraName | '',
     getChakrasToBalance: () => ChakraName[],
     isTransitioning: React.MutableRefObject<boolean>,
+    isPlayingRef: React.MutableRefObject<boolean>, // Add playing ref
     cleanupTimers: () => void,
     stopSound: () => void,
     setCurrentChakra: (chakra: ChakraName | '') => void,
@@ -60,6 +61,11 @@ export const useChakraSequence = () => {
     duration: number[]
   ) => {
     console.log("moveToNextChakra called, isPlaying:", isPlaying);
+    // ENHANCED: Log the stored playing state as well
+    console.log("moveToNextChakra called, isPlayingRef:", isPlayingRef.current);
+    
+    // CRITICAL FIX: Use the ref for the playing state which is more reliable during transitions
+    const effectiveIsPlaying = isPlayingRef.current || isPlaying;
     
     // CRITICAL FIX: Prevent multiple calls while processing with more robust check
     if (isProcessingNextChakra.current) {
@@ -71,7 +77,7 @@ export const useChakraSequence = () => {
     isProcessingNextChakra.current = true;
     
     // Force playing state check
-    if (!isPlaying) {
+    if (!effectiveIsPlaying) {
       console.log("Not playing anymore, skipping transition");
       isProcessingNextChakra.current = false;
       return;
@@ -120,13 +126,14 @@ export const useChakraSequence = () => {
         lastChakraProcessed.current = nextChakra;
         
         // Continue to next chakra if still playing
-        if (isPlaying) {
+        if (effectiveIsPlaying) {
           // This will be picked up by the next call
           moveToNextChakra(
-            isPlaying,
+            effectiveIsPlaying,
             nextChakra,
             getChakrasToBalance,
             isTransitioning,
+            isPlayingRef,
             cleanupTimers,
             stopSound,
             setCurrentChakra,
@@ -140,8 +147,8 @@ export const useChakraSequence = () => {
       
       // Short delay before transition to ensure UI is ready
       setTimeout(() => {
-        // Double check if we're still playing
-        if (!isPlaying) {
+        // Double check if we're still playing using the ref
+        if (!isPlayingRef.current && !isPlaying) {
           isProcessingNextChakra.current = false;
           isTransitioning.current = false;
           return;
@@ -151,7 +158,7 @@ export const useChakraSequence = () => {
         handleChakraTransition(
           currentChakra || '',
           nextChakra,
-          isPlaying,
+          effectiveIsPlaying,
           duration,
           setProgress,
           onChakraComplete
