@@ -20,12 +20,13 @@ const ProgressDisplay = ({ isPlaying, currentChakra, progress, frequency }: Prog
       <p className="text-sm mb-1">
         Armonizando chakra {currentChakra} ({frequency} Hz)
       </p>
-      <div className="bg-gray-200 h-2 w-full rounded-full overflow-hidden">
+      <div className="bg-gray-200 h-2 w-full rounded-full overflow-hidden relative">
         <div 
-          className="h-full transition-all duration-300 ease-linear"
+          className="h-full absolute left-0 top-0"
           style={{ 
             width: `${Math.max(0, Math.min(100, progress))}%`,
-            backgroundColor: chakraColor
+            backgroundColor: chakraColor,
+            transition: 'width 0.3s linear'
           }}
         />
       </div>

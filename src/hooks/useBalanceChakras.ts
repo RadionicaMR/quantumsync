@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "@/components/ui/use-toast";
 import { useChakraAudio } from '@/hooks/useChakraAudio';
@@ -17,6 +17,11 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
   const [completed, setCompleted] = useState(false);
   const [balanceOption, setBalanceOption] = useState<BalanceOption>('all');
   
+  // Refs for tracking progress animation
+  const progressRef = useRef(0);
+  const timerRef = useRef<number | null>(null);
+  const startTimeRef = useRef<number | null>(null);
+  
   const { playChakraSound, stopSound } = useChakraAudio();
   
   const getChakrasToBalance = useCallback(() => {
@@ -32,6 +37,59 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
       return [...CHAKRA_ORDER];
     }
   }, [balanceOption, initialChakraStates]);
+
+  const updateProgress = useCallback(() => {
+    if (!isPlaying || !startTimeRef.current || !currentChakra) return;
+    
+    const chakraDuration = duration[0] * 60 * 1000;
+    const elapsedTime = Date.now() - startTimeRef.current;
+    const newProgress = Math.min(100, (elapsedTime / chakraDuration) * 100);
+    
+    progressRef.current = newProgress;
+    setProgress(newProgress);
+    
+    if (process.env.NODE_ENV === 'development') {
+      if (Math.round(newProgress) % 10 === 0) {
+        console.log(`Progress update: ${newProgress.toFixed(1)}%`);
+      }
+    }
+    
+    if (newProgress < 100) {
+      timerRef.current = window.requestAnimationFrame(updateProgress);
+    } else {
+      const chakrasToBalance = getChakrasToBalance();
+      const currentIndex = chakrasToBalance.indexOf(currentChakra as ChakraName);
+      
+      if (currentIndex < chakrasToBalance.length - 1) {
+        const nextChakra = chakrasToBalance[currentIndex + 1];
+        setCurrentChakra(nextChakra);
+        setProgress(0);
+        progressRef.current = 0;
+        startTimeRef.current = Date.now();
+        playChakraSound(nextChakra);
+        
+        toast({
+          title: `Chakra ${currentChakra} armonizado`,
+          description: `Ahora armonizando el chakra ${nextChakra}...`,
+        });
+        
+        timerRef.current = window.requestAnimationFrame(updateProgress);
+      } else {
+        if (timerRef.current) {
+          window.cancelAnimationFrame(timerRef.current);
+          timerRef.current = null;
+        }
+        setIsPlaying(false);
+        setCompleted(true);
+        stopSound();
+        
+        toast({
+          title: "¡Armonización Finalizada!",
+          description: "Todos los chakras han sido equilibrados.",
+        });
+      }
+    }
+  }, [isPlaying, currentChakra, duration, getChakrasToBalance, playChakraSound, stopSound]);
 
   const startBalancing = useCallback(() => {
     if (!personName.trim()) {
@@ -56,6 +114,8 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     setIsPlaying(true);
     setCurrentChakra(chakrasToBalance[0]);
     setProgress(0);
+    progressRef.current = 0;
+    startTimeRef.current = Date.now();
     setCompleted(false);
     
     toast({
@@ -64,12 +124,26 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     });
     
     playChakraSound(chakrasToBalance[0]);
-  }, [personName, getChakrasToBalance, playChakraSound]);
+    
+    // Start the animation frame loop
+    if (timerRef.current) {
+      window.cancelAnimationFrame(timerRef.current);
+    }
+    timerRef.current = window.requestAnimationFrame(updateProgress);
+    
+  }, [personName, getChakrasToBalance, playChakraSound, updateProgress]);
 
   const stopBalancing = useCallback(() => {
+    if (timerRef.current) {
+      window.cancelAnimationFrame(timerRef.current);
+      timerRef.current = null;
+    }
+    
     setIsPlaying(false);
     setCurrentChakra('');
     setProgress(0);
+    progressRef.current = 0;
+    startTimeRef.current = null;
     stopSound();
     
     toast({
@@ -82,53 +156,16 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     navigate('/diagnose');
   }, [navigate]);
 
+  // Clean up on unmount
   useEffect(() => {
-    if (!isPlaying || !currentChakra) return;
-    
-    const chakrasToBalance = getChakrasToBalance();
-    const chakraDuration = duration[0] * 60 * 1000;
-    const updateInterval = 50; // Update more frequently for smoother animation
-    let elapsedTime = 0;
-    let progressValue = 0;
-    
-    console.log(`Starting balance for chakra ${currentChakra} with duration ${chakraDuration}ms`);
-    
-    const timer = setInterval(() => {
-      elapsedTime += updateInterval;
-      progressValue = Math.min(100, (elapsedTime / chakraDuration) * 100);
-      setProgress(progressValue);
-      
-      console.log(`Progress update: ${progressValue.toFixed(1)}%`);
-      
-      if (progressValue >= 100) {
-        const currentIndex = chakrasToBalance.indexOf(currentChakra as ChakraName);
-        
-        if (currentIndex < chakrasToBalance.length - 1) {
-          const nextChakra = chakrasToBalance[currentIndex + 1];
-          setCurrentChakra(nextChakra);
-          setProgress(0);
-          playChakraSound(nextChakra);
-          
-          toast({
-            title: `Chakra ${currentChakra} armonizado`,
-            description: `Ahora armonizando el chakra ${nextChakra}...`,
-          });
-        } else {
-          clearInterval(timer);
-          setIsPlaying(false);
-          setCompleted(true);
-          stopSound();
-          
-          toast({
-            title: "¡Armonización Finalizada!",
-            description: "Todos los chakras han sido equilibrados.",
-          });
-        }
+    return () => {
+      if (timerRef.current) {
+        window.cancelAnimationFrame(timerRef.current);
+        timerRef.current = null;
       }
-    }, updateInterval);
-    
-    return () => clearInterval(timer);
-  }, [isPlaying, currentChakra, duration, getChakrasToBalance, playChakraSound, stopSound]);
+      stopSound();
+    };
+  }, [stopSound]);
 
   return {
     personName,
