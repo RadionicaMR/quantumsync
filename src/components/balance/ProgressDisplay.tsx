@@ -12,6 +12,9 @@ interface ProgressDisplayProps {
 
 const ProgressDisplay = ({ isPlaying, currentChakra, progress, frequency }: ProgressDisplayProps) => {
   if (!isPlaying) return null;
+  
+  // Get the color for the current chakra or use a default color
+  const chakraColor = currentChakra ? CHAKRA_COLORS[currentChakra] : '#4b5563';
 
   return (
     <div className="w-full max-w-xs mx-auto mb-8 text-center">
@@ -20,9 +23,11 @@ const ProgressDisplay = ({ isPlaying, currentChakra, progress, frequency }: Prog
       </p>
       <Progress 
         value={progress} 
-        className="h-2 w-full bg-gray-200 rounded-full overflow-hidden"
-        style={{
-          "--progress-foreground": CHAKRA_COLORS[currentChakra as ChakraName]
+        className="h-2 w-full rounded-full overflow-hidden"
+        style={{ 
+          // Apply the chakra color to the progress indicator
+          "--progress-background": "rgba(229, 231, 235, 0.5)",
+          "--progress-foreground": chakraColor
         } as React.CSSProperties}
       />
       <p className="text-xs text-muted-foreground mt-1">
