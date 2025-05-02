@@ -33,33 +33,33 @@ export const useChakraTransition = () => {
     isTransitioning.current = true;
     lastTransitionTime.current = now;
     
-    // NUEVA SOLUCIÓN: Reiniciar progreso ANTES de cualquier otra operación
+    // CRITICAL FIX: Reset progress BEFORE any other operation
     console.log(`useChakraTransition: Transition from ${currentChakra} to ${nextChakra}, explicitly resetting progress to 0`);
     setProgress(0);
     
-    // SOLUCIÓN CRÍTICA: Esperar un pequeño tiempo para asegurar que la UI se actualice
+    // CRITICAL SOLUTION: Wait a small amount of time to ensure UI updates
     setTimeout(() => {
-      // Notificar y reproducir sonido para el siguiente chakra
+      // Notify and play sound for next chakra
       if (currentChakra) {
         notifyChakraChange(currentChakra as ChakraName, nextChakra);
       }
       
-      // SOLUCIÓN CRÍTICA: Siempre detener sonidos previos antes de reproducir nuevos
+      // CRITICAL SOLUTION: Always stop previous sounds before playing new ones
       stopSound();
       
-      // Reproducir sonido para el siguiente chakra
+      // Play sound for next chakra
       playChakraSound(nextChakra);
       
-      // SOLUCIÓN CRÍTICA: Definir un callback independiente que garantice transición
+      // CRITICAL SOLUTION: Define an independent callback that guarantees transition
       const safeOnComplete = () => {
         console.log(`Safe onComplete executing for chakra ${nextChakra}`);
-        // Reiniciar estado de transición antes de cualquier otra operación
+        // Reset transition state before any other operations
         isTransitioning.current = false;
         
         // CRUCIAL FIX: Ensure progress is reset before moving on
         setProgress(0);
         
-        // Ejecutar callback original con un pequeño retraso para evitar problemas de renderizado
+        // Execute original callback with a small delay to avoid rendering issues
         setTimeout(() => {
           if (onComplete && typeof onComplete === 'function') {
             try {
@@ -71,7 +71,7 @@ export const useChakraTransition = () => {
         }, 100);
       };
       
-      // Iniciar nuevo timer para este chakra si estamos reproduciendo
+      // Start new timer for this chakra if we're playing
       if (isPlaying) {
         console.log(`Starting timer for chakra ${nextChakra} with duration ${duration[0]} minutes`);
         startProgressTimer(
@@ -82,10 +82,10 @@ export const useChakraTransition = () => {
           safeOnComplete
         );
       } else {
-        // Si no estamos reproduciendo, reiniciar bandera de transición
+        // If not playing, reset transition flag
         isTransitioning.current = false;
       }
-    }, 50); // Pequeño retraso para asegurar que el estado se actualice correctamente
+    }, 50); // Small delay to ensure state updates correctly
   }, [notifyChakraChange, playChakraSound, startProgressTimer, stopSound]);
 
   return {

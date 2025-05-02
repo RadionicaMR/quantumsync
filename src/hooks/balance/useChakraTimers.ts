@@ -49,7 +49,7 @@ export const useChakraTimers = () => {
     const startTime = Date.now();
     const endTime = startTime + totalDuration;
     
-    // SOLUCIÓN CRÍTICA: Ejecutar callback al finalizar usando múltiples métodos
+    // CRITICAL FIX: Execute callback at the end using multiple methods
     const guaranteedCallback = () => {
       // Prevent duplicate executions
       if (isCompletingTimerRef.current) {
@@ -64,10 +64,10 @@ export const useChakraTimers = () => {
         // Ensure we reach 100% before moving to the next chakra
         setProgress(100);
         
-        // Primera ejecución inmediata
+        // First immediate execution
         onComplete();
         
-        // Segunda ejecución vía RAF para sincronizar con UI
+        // Second execution via RAF to synchronize with UI
         window.requestAnimationFrame(() => {
           try {
             onComplete();
@@ -81,7 +81,7 @@ export const useChakraTimers = () => {
       } catch (error) {
         console.error("Error in callback:", error);
         
-        // Último intento - forzar con setTimeout
+        // Last attempt - force with setTimeout
         setTimeout(() => {
           try {
             onComplete();
