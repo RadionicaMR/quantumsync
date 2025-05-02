@@ -1,6 +1,5 @@
 
 import { useEffect, useCallback } from 'react';
-import { CHAKRA_FREQUENCIES } from '@/constants/chakraData';
 import type { ChakraName } from '@/constants/chakraData';
 import { useChakraSession } from '@/hooks/balance/useChakraSession';
 import { useChakraProgress } from '@/hooks/balance/useChakraProgress';
@@ -51,7 +50,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     getCurrentFrequency
   } = useChakraControls();
   
-  // CRITICAL: Move to the next chakra with complete rewrite
+  // CRITICAL FIX: Move to the next chakra with complete rewrite
   const moveToNextChakra = useCallback(() => {
     console.log("moveToNextChakra called, isPlaying:", isPlaying);
     
@@ -65,7 +64,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     isTransitioning.current = true;
     
     try {
-      // Get chakras to balance - this should never change during a session
+      // CRITICAL FIX: Ensure we get a fresh list of chakras each time
       const chakrasToBalance = getChakrasToBalance();
       console.log("Chakras to balance:", chakrasToBalance);
       
@@ -114,10 +113,10 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
         
         // Record session
         recordSession();
+        
+        // Reset transitioning flag
+        isTransitioning.current = false;
       }
-      
-      // Reset transitioning flag
-      isTransitioning.current = false;
       
     } catch (error) {
       console.error("Error in moveToNextChakra:", error);

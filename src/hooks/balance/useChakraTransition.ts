@@ -21,7 +21,7 @@ export const useChakraTransition = () => {
     setProgress: (progress: number) => void,
     onComplete: () => void
   ) => {
-    // Reset progress and set next chakra
+    // CRITICAL FIX: Force reset progress to ensure consistent behavior
     setProgress(0);
     
     // Notify and play sound for the next chakra
@@ -37,13 +37,20 @@ export const useChakraTransition = () => {
     
     // Start new timer for this chakra if we're playing
     if (isPlaying) {
+      // CRITICAL FIX: Wrap the onComplete callback to force the transition state reset
+      const wrappedOnComplete = () => {
+        console.log(`Wrapped onComplete executing for ${nextChakra}`);
+        isTransitioning.current = false; // Reset transition state
+        onComplete();
+      };
+      
       console.log(`Starting timer for chakra ${nextChakra} with duration ${duration[0]} minutes`);
       startProgressTimer(
         nextChakra, 
         duration, 
         true, 
         setProgress, 
-        onComplete
+        wrappedOnComplete
       );
     }
   }, [notifyChakraChange, playChakraSound, startProgressTimer, stopSound]);

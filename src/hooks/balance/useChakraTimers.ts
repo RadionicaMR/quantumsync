@@ -48,18 +48,38 @@ export const useChakraTimers = () => {
       
       console.log(`Timer completed for chakra ${chakraName}, duration: ${duration[0]} minutes`);
       
-      // CRITICAL FIX: Use a more reliable way to ensure onComplete runs
-      // We're using requestAnimationFrame which is more stable for timing operations after UI updates
+      // CRITICAL FIX: Use multiple callback methods to guarantee execution
+      // First attempt - immediate call
+      if (typeof onComplete === 'function') {
+        console.log(`Executing immediate onComplete callback for chakra ${chakraName}`);
+        onComplete();
+      }
+      
+      // Second attempt - via requestAnimationFrame for UI sync
       requestAnimationFrame(() => {
-        console.log(`Executing onComplete callback for chakra ${chakraName}`);
+        console.log(`Executing RAF onComplete callback for chakra ${chakraName}`);
         if (typeof onComplete === 'function') {
           onComplete();
         }
       });
+      
+      // Third attempt - via setTimeout as last resort
+      setTimeout(() => {
+        console.log(`Executing setTimeout onComplete callback for chakra ${chakraName}`);
+        if (typeof onComplete === 'function') {
+          onComplete();
+        }
+      }, 100);
+      
     }, totalDuration);
     
     // Use requestAnimationFrame for smoother progress updates
     const updateProgress = () => {
+      if (!isPlaying) {
+        cancelAnimationFrame(animationFrameId.current!);
+        return;
+      }
+      
       const currentTime = Date.now();
       const elapsed = currentTime - startTime;
       const newProgress = Math.min((elapsed / totalDuration) * 100, 99); // Cap at 99% - final 100% set by timer
