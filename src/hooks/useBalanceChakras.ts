@@ -68,7 +68,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
           setProgress, 
           moveToNextChakra
         );
-      }, 100);
+      }, 300);
     } else {
       // All chakras completed
       console.log("Todos los chakras han sido armonizados");

@@ -41,11 +41,21 @@ export const useChakraTimers = () => {
     
     // Set up timer to move to next chakra when complete
     chakraTimerRef.current = setTimeout(() => {
-      onComplete();
+      // Ensure we reach 100% before moving to the next chakra
+      setProgress(100);
+      
+      // Add a small delay before moving to the next chakra to ensure animations complete
+      setTimeout(() => {
+        onComplete();
+      }, 300);
     }, totalDuration);
     
     // Use requestAnimationFrame for smoother progress updates
     const updateProgress = () => {
+      if (!isPlaying) {
+        return;
+      }
+      
       const currentTime = Date.now();
       const elapsed = currentTime - startTime;
       const newProgress = Math.min((elapsed / totalDuration) * 100, 100);
