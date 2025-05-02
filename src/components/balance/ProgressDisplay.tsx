@@ -21,15 +21,15 @@ const ProgressDisplay = ({ isPlaying, currentChakra, progress, frequency }: Prog
       <p className="text-sm mb-1">
         Armonizando chakra {currentChakra} ({frequency} Hz)
       </p>
-      <Progress 
-        value={progress} 
-        className="h-2 w-full rounded-full overflow-hidden"
-        style={{ 
-          // Apply the chakra color to the progress indicator
-          "--progress-background": "rgba(229, 231, 235, 0.5)",
-          "--progress-foreground": chakraColor
-        } as React.CSSProperties}
-      />
+      <div className="bg-gray-200 h-2 w-full rounded-full overflow-hidden">
+        <div 
+          className="h-full transition-all"
+          style={{ 
+            width: `${progress}%`,
+            backgroundColor: chakraColor
+          }}
+        />
+      </div>
       <p className="text-xs text-muted-foreground mt-1">
         Progreso: {Math.round(progress)}%
       </p>

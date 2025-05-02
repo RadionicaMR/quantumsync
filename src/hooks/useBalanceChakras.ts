@@ -69,6 +69,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
   const stopBalancing = useCallback(() => {
     setIsPlaying(false);
     setCurrentChakra('');
+    setProgress(0);
     stopSound();
     
     toast({
@@ -86,8 +87,10 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     
     const chakrasToBalance = getChakrasToBalance();
     const chakraDuration = duration[0] * 60 * 1000;
-    const updateInterval = 100;
+    const updateInterval = 100; // Update progress every 100ms for smoother animation
     let elapsedTime = 0;
+    
+    console.log(`Starting balance for chakra ${currentChakra} with duration ${chakraDuration}ms`);
     
     const timer = setInterval(() => {
       elapsedTime += updateInterval;
