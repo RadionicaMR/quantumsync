@@ -20,6 +20,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
   // Refs for tracking progress and timing
   const progressIntervalRef = useRef<number | null>(null);
   const chakraTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const animationFrameId = useRef<number | null>(null);
   const { playChakraSound, stopSound } = useChakraAudio();
   
   const getChakrasToBalance = useCallback(() => {
@@ -47,6 +48,11 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
       clearTimeout(chakraTimerRef.current);
       chakraTimerRef.current = null;
     }
+    
+    if (animationFrameId.current) {
+      cancelAnimationFrame(animationFrameId.current);
+      animationFrameId.current = null;
+    }
   }, []);
 
   // Move to the next chakra
@@ -67,21 +73,24 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
       const nextChakra = chakrasToBalance[currentIndex + 1];
       console.log(`Avanzando al siguiente chakra: ${nextChakra}`);
       
-      // Update state
-      setCurrentChakra(nextChakra);
-      setProgress(0);
-      
-      // Play next chakra sound
-      playChakraSound(nextChakra);
-      
-      // Toast notification
-      toast({
-        title: `Chakra ${currentChakra} armonizado`,
-        description: `Ahora armonizando el chakra ${nextChakra}...`,
-      });
-      
-      // Start new progress timer for this chakra
-      startProgressTimer(nextChakra);
+      // Update state with a slight delay to ensure proper rendering
+      setTimeout(() => {
+        // Update state
+        setCurrentChakra(nextChakra);
+        setProgress(0);
+        
+        // Play next chakra sound
+        playChakraSound(nextChakra);
+        
+        // Toast notification
+        toast({
+          title: `Chakra ${currentChakra} armonizado`,
+          description: `Ahora armonizando el chakra ${nextChakra}...`,
+        });
+        
+        // Start new progress timer for this chakra
+        startProgressTimer(nextChakra);
+      }, 100);
     } else {
       // All chakras completed
       console.log("Todos los chakras han sido armonizados");
@@ -103,36 +112,40 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
   // Start progress timer for the current chakra
   const startProgressTimer = useCallback((chakraName: ChakraName) => {
     // Clear any existing interval
-    if (progressIntervalRef.current) {
-      clearInterval(progressIntervalRef.current);
-    }
+    cleanupTimers();
     
     // Get total duration in milliseconds
     const totalDuration = duration[0] * 60 * 1000;
-    const updateInterval = 100; // Update progress every 100ms
-    const totalSteps = totalDuration / updateInterval;
-    let currentStep = 0;
+    const startTime = Date.now();
+    const endTime = startTime + totalDuration;
     
     // Set up timer to move to next chakra when complete
     chakraTimerRef.current = setTimeout(() => {
       moveToNextChakra();
     }, totalDuration);
     
-    // Set up progress interval
-    progressIntervalRef.current = setInterval(() => {
-      currentStep++;
-      const newProgress = (currentStep / totalSteps) * 100;
-      setProgress(Math.min(newProgress, 100));
+    // Use requestAnimationFrame for smoother progress updates
+    const updateProgress = () => {
+      const currentTime = Date.now();
+      const elapsed = currentTime - startTime;
+      const newProgress = Math.min((elapsed / totalDuration) * 100, 100);
       
-      // If we've reached 100%, clear the interval
-      if (newProgress >= 100 && progressIntervalRef.current) {
-        clearInterval(progressIntervalRef.current);
-        progressIntervalRef.current = null;
+      setProgress(newProgress);
+      
+      // Continue animation if not complete
+      if (currentTime < endTime && isPlaying) {
+        animationFrameId.current = requestAnimationFrame(updateProgress);
+      } else if (newProgress >= 100) {
+        // Ensure we reach exactly 100% at the end
+        setProgress(100);
       }
-    }, updateInterval) as unknown as number;
+    };
+    
+    // Start the animation frame loop
+    animationFrameId.current = requestAnimationFrame(updateProgress);
     
     console.log(`Started timer for chakra ${chakraName} with duration ${duration[0]} minutes`);
-  }, [duration, moveToNextChakra]);
+  }, [duration, moveToNextChakra, cleanupTimers, isPlaying]);
 
   const startBalancing = useCallback(() => {
     if (!personName.trim()) {
