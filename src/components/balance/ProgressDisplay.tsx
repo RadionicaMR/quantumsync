@@ -25,16 +25,21 @@ const ProgressDisplay = ({ isPlaying, currentChakra, progress, frequency }: Prog
       prevChakraRef.current = currentChakra;
       prevProgressRef.current = 0;
     } 
-    // Handle progress updates
+    // Handle progress updates, with special case for 100%
     else if (progress !== prevProgressRef.current) {
       console.log(`ProgressDisplay: Progress updated from ${prevProgressRef.current} to ${progress}`);
-      setDisplayProgress(progress);
-      prevProgressRef.current = progress;
       
-      // Special handling for 100% progress to ensure complete display
+      // CRITICAL FIX: Prioritize 100% progress to ensure it's shown
       if (progress === 100) {
         console.log("ProgressDisplay: 100% completion reached, ensuring display shows completion");
+        // Force immediate update to 100%
+        setDisplayProgress(100);
+      } else {
+        // Regular update for other progress values
+        setDisplayProgress(progress);
       }
+      
+      prevProgressRef.current = progress;
     }
   }, [progress, currentChakra]);
   

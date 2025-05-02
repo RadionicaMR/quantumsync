@@ -55,30 +55,46 @@ export const useChakraTimers = () => {
     const startTime = Date.now();
     const endTime = startTime + totalDuration;
     
-    // Set up timer to move to next chakra when complete
+    // CRITICAL FIX: Make sure the chakra timer completes reliably
     chakraTimerRef.current = setTimeout(() => {
       console.log(`Timer completed for chakra ${chakraName}, duration: ${totalDuration}ms`);
       
       // Flag that we're in completion process
       isCompletingTimerRef.current = true;
       
-      // Ensure we reach 100% before moving on
+      // Cancel any animation frames to avoid conflicts
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+        animationFrameId.current = null;
+      }
+      
+      // Ensure we reach 100% before moving on - GUARANTEED
       setProgress(100);
       
       // Execute callback after a small delay to ensure UI updates
+      // CRITICAL FIX: Use a more reliable timeout for completion
       setTimeout(() => {
         if (onComplete && typeof onComplete === 'function') {
-          console.log(`Executing completion callback for ${chakraName}`);
-          onComplete();
+          console.log(`Executing completion callback for ${chakraName}, ensuring transition to next chakra`);
+          try {
+            onComplete();
+          } catch (error) {
+            console.error(`Error in onComplete for ${chakraName}:`, error);
+          }
+        } else {
+          console.warn(`No valid onComplete function for ${chakraName}`);
         }
-      }, 200); // Increased delay to ensure state updates
+        
+        // Reset completion flag after callback execution
+        isCompletingTimerRef.current = false;
+      }, 300); // Increased delay to ensure state updates
       
     }, totalDuration);
     
     // Use requestAnimationFrame for smoother progress updates
     const updateProgress = () => {
-      if (!isPlaying) {
-        cancelAnimationFrame(animationFrameId.current!);
+      if (!isPlaying || isCompletingTimerRef.current) {
+        // Don't continue animation if we're completing or not playing
         return;
       }
       
@@ -86,8 +102,6 @@ export const useChakraTimers = () => {
       const elapsed = currentTime - startTime;
       
       // Cap at 99% - final 100% set by timer completion
-      // CRITICAL FIX: Make sure we never reach 100% via animation
-      // because 100% is reserved for the completion signal
       const newProgress = Math.min((elapsed / totalDuration) * 100, 99);
       
       setProgress(newProgress);
