@@ -27,7 +27,7 @@ const ProgressDisplay = ({ isPlaying, currentChakra, progress, frequency }: Prog
       <div className="relative w-full">
         <Progress 
           value={safeProgress} 
-          className="h-4 relative"
+          className="h-4"
           style={{
             "--progress-foreground": chakraColor,
             "--progress-background": "#333"
