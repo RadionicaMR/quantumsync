@@ -34,6 +34,8 @@ export const useChakraTimers = () => {
     // Clear any existing interval
     cleanupTimers();
     
+    if (!isPlaying) return;
+    
     // Get total duration in milliseconds
     const totalDuration = duration[0] * 60 * 1000;
     const startTime = Date.now();
@@ -46,8 +48,11 @@ export const useChakraTimers = () => {
       
       // Add a small delay before moving to the next chakra to ensure animations complete
       setTimeout(() => {
-        onComplete();
-      }, 300);
+        if (isPlaying) {
+          console.log(`Timer completed for chakra ${chakraName}, calling onComplete callback`);
+          onComplete();
+        }
+      }, 500);
     }, totalDuration);
     
     // Use requestAnimationFrame for smoother progress updates
@@ -72,9 +77,10 @@ export const useChakraTimers = () => {
     };
     
     // Start the animation frame loop
-    animationFrameId.current = requestAnimationFrame(updateProgress);
-    
-    console.log(`Started timer for chakra ${chakraName} with duration ${duration[0]} minutes`);
+    if (isPlaying) {
+      animationFrameId.current = requestAnimationFrame(updateProgress);
+      console.log(`Started timer for chakra ${chakraName} with duration ${duration[0]} minutes`);
+    }
   }, [cleanupTimers]);
 
   return {

@@ -21,7 +21,7 @@ const ProgressDisplay = ({ isPlaying, currentChakra, progress, frequency }: Prog
 
   return (
     <div className="w-full max-w-xs mx-auto mb-8 text-center">
-      <p className="text-sm mb-1">
+      <p className="text-sm mb-2">
         Armonizando chakra {currentChakra} ({frequency} Hz)
       </p>
       <div className="relative w-full">
@@ -34,7 +34,7 @@ const ProgressDisplay = ({ isPlaying, currentChakra, progress, frequency }: Prog
           } as React.CSSProperties}
         />
       </div>
-      <p className="text-xs text-muted-foreground mt-1">
+      <p className="text-xs text-muted-foreground mt-2">
         Progreso: {Math.round(safeProgress)}%
       </p>
     </div>
