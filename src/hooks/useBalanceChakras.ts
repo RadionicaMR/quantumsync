@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CHAKRA_FREQUENCIES } from '@/constants/chakraData';
 import type { ChakraName } from '@/constants/chakraData';
@@ -17,7 +17,9 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
   const [currentChakra, setCurrentChakra] = useState<ChakraName | ''>('');
   const [progress, setProgress] = useState(0);
   const [completed, setCompleted] = useState(false);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  // Reference to track if we're already transitioning
+  const isTransitioning = useRef(false);
   
   const { playChakraSound, stopSound } = useChakraAudio();
   const { balanceOption, setBalanceOption, getChakrasToBalance } = useChakraSelection(initialChakraStates);
@@ -31,17 +33,18 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     notifyNoChakras 
   } = useChakraNotifications();
 
-  // Move to the next chakra - this is the critical function that needs fixing
+  // Move to the next chakra - fixed implementation
   const moveToNextChakra = useCallback(() => {
     console.log("moveToNextChakra called, isPlaying:", isPlaying);
     
-    if (!isPlaying || isTransitioning) {
-      console.log("Not playing or already transitioning, skipping moveToNextChakra");
+    // Prevent multiple simultaneous calls
+    if (isTransitioning.current) {
+      console.log("Already transitioning, skipping moveToNextChakra");
       return;
     }
     
-    // Set transitioning state to prevent multiple calls
-    setIsTransitioning(true);
+    // Set transitioning flag
+    isTransitioning.current = true;
     
     const chakrasToBalance = getChakrasToBalance();
     const currentIndex = currentChakra ? chakrasToBalance.indexOf(currentChakra as ChakraName) : -1;
@@ -71,18 +74,21 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
       // Play next chakra sound
       playChakraSound(nextChakra);
       
-      // Give UI time to update before starting new timer
+      // Wait a tiny bit to ensure React has processed state updates
       setTimeout(() => {
-        // Start new progress timer for this chakra
-        startProgressTimer(
-          nextChakra, 
-          duration, 
-          true, // Force isPlaying to true to ensure the timer starts
-          setProgress, 
-          moveToNextChakra
-        );
-        setIsTransitioning(false);
-      }, 200);
+        if (isPlaying) {
+          // Start new progress timer for this chakra
+          startProgressTimer(
+            nextChakra, 
+            duration, 
+            true, // Force isPlaying to true
+            setProgress, 
+            moveToNextChakra
+          );
+        }
+        // Reset transitioning flag
+        isTransitioning.current = false;
+      }, 50);
       
     } else {
       // All chakras completed
@@ -92,7 +98,6 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
       setCompleted(true);
       setCurrentChakra('');
       setProgress(0);
-      setIsTransitioning(false);
       
       stopSound();
       notifyCompletion();
@@ -101,6 +106,9 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
       if (personName) {
         addChakraBalanceSession(personName);
       }
+      
+      // Reset transitioning flag
+      isTransitioning.current = false;
     }
   }, [
     currentChakra, 
@@ -113,8 +121,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     duration, 
     isPlaying,
     startProgressTimer,
-    personName,
-    isTransitioning
+    personName
   ]);
 
   const startBalancing = useCallback(() => {
@@ -134,7 +141,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     cleanupTimers();
     
     // Reset transition state
-    setIsTransitioning(false);
+    isTransitioning.current = false;
     
     // Set initial state
     const firstChakra = chakrasToBalance[0];
@@ -181,7 +188,6 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     setIsPlaying(false);
     setCurrentChakra('');
     setProgress(0);
-    setIsTransitioning(false);
     
     // Stop audio
     stopSound();
