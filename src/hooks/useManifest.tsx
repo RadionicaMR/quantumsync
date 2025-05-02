@@ -6,8 +6,12 @@ import { ManifestPattern } from '@/data/manifestPatterns';
 export const useManifest = (patterns: ManifestPattern[]) => {
   const manifestCore = useManifestCore(patterns);
   
-  // Provide legacy compatibility for old interface
-  return {
-    ...manifestCore
+  // Ensure visualSpeed and exposureTime are properly handled as separate controls
+  const enhancedManifestCore = {
+    ...manifestCore,
+    setVisualSpeed: manifestCore.setVisualSpeed || manifestCore.setExposureTime,
+    visualSpeed: manifestCore.visualSpeed || manifestCore.exposureTime,
   };
+  
+  return enhancedManifestCore;
 };

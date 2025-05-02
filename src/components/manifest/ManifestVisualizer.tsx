@@ -116,7 +116,7 @@ const ManifestVisualizer = ({
   const rateAnimationDuration = Math.max(5, 15 - speedValue);
 
   return (
-    <div className="mt-6 relative overflow-hidden rounded-lg bg-white aspect-square">
+    <div className="mt-6 relative overflow-hidden rounded-lg bg-card/90 dark:bg-black/40 aspect-square">
       <div className="absolute inset-0 flex items-center justify-center">
         {/* Mostrar imagen según el estado actual */}
         {currentImage === 'pattern' && hasPatternImage && (

@@ -94,7 +94,7 @@ const FrequencyControls = ({
           max={10000}
           step={0.1}
           value={frequency}
-          onValueChange={setFrequency}
+          onValueChange={(value) => setFrequency(value)}
           disabled={isPlaying}
           className="mb-4"
         />
@@ -135,7 +135,7 @@ const FrequencyControls = ({
           max={180}
           step={1}
           value={duration}
-          onValueChange={setDuration}
+          onValueChange={(value) => setDuration(value)}
           disabled={isPlaying}
           className="mb-4"
         />
@@ -147,7 +147,7 @@ const FrequencyControls = ({
           max={100}
           step={1}
           value={intensity}
-          onValueChange={setIntensity}
+          onValueChange={(value) => setIntensity(value)}
           disabled={isPlaying}
           className="mb-4"
         />
@@ -177,7 +177,7 @@ const FrequencyControls = ({
           max={20}
           step={1}
           value={hypnoticSpeed}
-          onValueChange={setHypnoticSpeed}
+          onValueChange={(value) => setHypnoticSpeed(value)}
           disabled={isPlaying}
           className="mb-4"
         />

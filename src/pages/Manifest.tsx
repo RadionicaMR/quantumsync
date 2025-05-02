@@ -14,8 +14,9 @@ const Manifest = () => {
   const [activeTab, setActiveTab] = useState("presets");
   const manifest = useManifestCore(manifestPatterns);
   
-  // Add missing properties to align with component expectations
-  const visualSpeed = manifest.exposureTime; // Using exposureTime as visualSpeed if missing
+  // Use visualSpeed from core if available, or create new state
+  const visualSpeed = manifest.visualSpeed || manifest.exposureTime; 
+  const setVisualSpeed = manifest.setVisualSpeed || manifest.setExposureTime;
   
   return (
     <Layout>
@@ -49,7 +50,7 @@ const Manifest = () => {
                 exposureTime={manifest.exposureTime}
                 setExposureTime={manifest.setExposureTime}
                 visualSpeed={visualSpeed}
-                setVisualSpeed={manifest.setExposureTime}
+                setVisualSpeed={setVisualSpeed}
                 patternImage={manifest.patternImage}
                 setPatternImage={manifest.setPatternImage}
                 receptorImage={manifest.receptorImage}
@@ -93,7 +94,7 @@ const Manifest = () => {
                 exposureTime={manifest.exposureTime}
                 setExposureTime={manifest.setExposureTime}
                 visualSpeed={visualSpeed}
-                setVisualSpeed={manifest.setExposureTime}
+                setVisualSpeed={setVisualSpeed}
                 patternImage={manifest.patternImage}
                 setPatternImage={manifest.setPatternImage}
                 receptorImage={manifest.receptorImage}
@@ -115,7 +116,11 @@ const Manifest = () => {
                 audioSubliminalPlaying={manifest.audioSubliminalPlaying}
                 playSubliminalAudio={manifest.playSubliminalAudio}
                 stopSubliminalAudio={manifest.stopSubliminalAudio}
+                audioLoop={true}
+                setAudioLoop={() => {}}
+                clearAudio={() => {}}
                 backgroundModeActive={manifest.backgroundModeActive}
+                patterns={manifestPatterns}
                 rate1={manifest.rate1}
                 rate2={manifest.rate2}
                 rate3={manifest.rate3}
@@ -124,10 +129,6 @@ const Manifest = () => {
                 setRate3={manifest.setRate3}
                 receptorName={manifest.receptorName}
                 setReceptorName={manifest.setReceptorName}
-                audioLoop={true}
-                setAudioLoop={() => {}}
-                clearAudio={() => {}}
-                patterns={manifestPatterns}
               />
             </TabsContent>
           </Tabs>

@@ -30,7 +30,7 @@ const TimingControls: React.FC<TimingControlsProps> = ({
         <Slider
           id="exposure-time"
           value={exposureTime}
-          onValueChange={setExposureTime}
+          onValueChange={(value) => setExposureTime(value)}
           min={1}
           max={30}
           step={1}
@@ -52,7 +52,7 @@ const TimingControls: React.FC<TimingControlsProps> = ({
         <Slider
           id="visual-speed"
           value={visualSpeed}
-          onValueChange={setVisualSpeed}
+          onValueChange={(value) => setVisualSpeed(value)}
           min={1}
           max={20}
           step={1}

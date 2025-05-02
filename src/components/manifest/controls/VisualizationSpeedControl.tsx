@@ -25,7 +25,7 @@ const VisualizationSpeedControl: React.FC<VisualizationSpeedControlProps> = ({
       <Slider
         id="visual-speed"
         value={visualSpeed}
-        onValueChange={setVisualSpeed}
+        onValueChange={(value) => setVisualSpeed(value)} 
         min={1}
         max={20}
         step={1}
