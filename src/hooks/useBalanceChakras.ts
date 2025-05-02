@@ -30,9 +30,14 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     notifyNoChakras 
   } = useChakraNotifications();
 
-  // Move to the next chakra
+  // Move to the next chakra - this is the critical function that needs fixing
   const moveToNextChakra = useCallback(() => {
-    if (!isPlaying) return;
+    console.log("moveToNextChakra called, isPlaying:", isPlaying);
+    
+    if (!isPlaying) {
+      console.log("Not playing, skipping moveToNextChakra");
+      return;
+    }
     
     const chakrasToBalance = getChakrasToBalance();
     const currentIndex = currentChakra ? chakrasToBalance.indexOf(currentChakra as ChakraName) : -1;
@@ -53,28 +58,23 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
       // Reset progress
       setProgress(0);
       
-      // Update state with a slight delay to ensure proper rendering
-      setTimeout(() => {
-        if (isPlaying) {
-          // Notify of the change
-          notifyChakraChange(currentChakra as ChakraName, nextChakra);
-          
-          // Update state
-          setCurrentChakra(nextChakra);
-          
-          // Play next chakra sound
-          playChakraSound(nextChakra);
-          
-          // Start new progress timer for this chakra
-          startProgressTimer(
-            nextChakra, 
-            duration, 
-            isPlaying, 
-            setProgress, 
-            moveToNextChakra
-          );
-        }
-      }, 500);
+      // Update state immediately
+      setCurrentChakra(nextChakra);
+      
+      // Notify of the change
+      notifyChakraChange(currentChakra as ChakraName, nextChakra);
+      
+      // Play next chakra sound
+      playChakraSound(nextChakra);
+      
+      // Start new progress timer for this chakra
+      startProgressTimer(
+        nextChakra, 
+        duration, 
+        true, // Force isPlaying to true to ensure the timer starts
+        setProgress, 
+        moveToNextChakra
+      );
     } else {
       // All chakras completed
       console.log("Todos los chakras han sido armonizados");
@@ -137,17 +137,14 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     
     console.log(`Iniciando equilibrio de chakras con el primer chakra: ${firstChakra}`);
     
-    // Give a small delay before starting to ensure state updates properly
-    setTimeout(() => {
-      // Start the progress timer
-      startProgressTimer(
-        firstChakra, 
-        duration, 
-        true, 
-        setProgress, 
-        moveToNextChakra
-      );
-    }, 100);
+    // Start the progress timer immediately
+    startProgressTimer(
+      firstChakra, 
+      duration, 
+      true, 
+      setProgress, 
+      moveToNextChakra
+    );
   }, [
     personName, 
     getChakrasToBalance, 

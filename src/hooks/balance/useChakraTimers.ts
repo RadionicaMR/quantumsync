@@ -46,13 +46,11 @@ export const useChakraTimers = () => {
       // Ensure we reach 100% before moving to the next chakra
       setProgress(100);
       
-      // Add a small delay before moving to the next chakra to ensure animations complete
-      setTimeout(() => {
-        if (isPlaying) {
-          console.log(`Timer completed for chakra ${chakraName}, calling onComplete callback`);
-          onComplete();
-        }
-      }, 500);
+      console.log(`Timer completed for chakra ${chakraName}, about to call onComplete`);
+      
+      // Call the completion callback directly, without any delay
+      onComplete();
+      
     }, totalDuration);
     
     // Use requestAnimationFrame for smoother progress updates
