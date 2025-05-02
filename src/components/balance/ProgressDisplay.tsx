@@ -1,5 +1,4 @@
 
-import { Progress } from "@/components/ui/progress";
 import { CHAKRA_COLORS } from '@/constants/chakraData';
 import type { ChakraName } from '@/constants/chakraData';
 
@@ -23,9 +22,9 @@ const ProgressDisplay = ({ isPlaying, currentChakra, progress, frequency }: Prog
       </p>
       <div className="bg-gray-200 h-2 w-full rounded-full overflow-hidden">
         <div 
-          className="h-full transition-all"
+          className="h-full transition-all duration-300 ease-linear"
           style={{ 
-            width: `${progress}%`,
+            width: `${Math.max(0, Math.min(100, progress))}%`,
             backgroundColor: chakraColor
           }}
         />

@@ -87,17 +87,20 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     
     const chakrasToBalance = getChakrasToBalance();
     const chakraDuration = duration[0] * 60 * 1000;
-    const updateInterval = 100; // Update progress every 100ms for smoother animation
+    const updateInterval = 50; // Update more frequently for smoother animation
     let elapsedTime = 0;
+    let progressValue = 0;
     
     console.log(`Starting balance for chakra ${currentChakra} with duration ${chakraDuration}ms`);
     
     const timer = setInterval(() => {
       elapsedTime += updateInterval;
-      const newProgress = Math.min(100, (elapsedTime / chakraDuration) * 100);
-      setProgress(newProgress);
+      progressValue = Math.min(100, (elapsedTime / chakraDuration) * 100);
+      setProgress(progressValue);
       
-      if (newProgress >= 100) {
+      console.log(`Progress update: ${progressValue.toFixed(1)}%`);
+      
+      if (progressValue >= 100) {
         const currentIndex = chakrasToBalance.indexOf(currentChakra as ChakraName);
         
         if (currentIndex < chakrasToBalance.length - 1) {
