@@ -1,25 +1,32 @@
 
-import ReceptorNameInput from '../ReceptorNameInput';
+import React from 'react';
+import { Card } from '@/components/ui/card';
+import ReceptorNameInput from '@/components/treatment/ReceptorNameInput';
 
 interface ReceptorSectionProps {
   receptorName: string;
   setReceptorName: (name: string) => void;
   isPlaying: boolean;
+  receptorImage?: string | null;
+  receptorImages?: string[];
 }
 
-const ReceptorSection = ({
+const ReceptorSection: React.FC<ReceptorSectionProps> = ({
   receptorName,
   setReceptorName,
   isPlaying,
-}: ReceptorSectionProps) => {
+  receptorImage,
+  receptorImages,
+}) => {
   return (
-    <div className="mt-6">
+    <Card className="p-6 quantum-card">
+      <h3 className="text-xl font-semibold mb-4">Datos del Receptor</h3>
       <ReceptorNameInput
         receptorName={receptorName}
         setReceptorName={setReceptorName}
         isPlaying={isPlaying}
       />
-    </div>
+    </Card>
   );
 };
 

@@ -11,6 +11,8 @@ interface ImageUploaderSectionProps {
   setRadionicImages: (images: string[]) => void;
   receptorImages: string[];
   setReceptorImages: (images: string[]) => void;
+  receptorName?: string;
+  setReceptorName?: (name: string) => void;
 }
 
 const ImageUploaderSection = ({
@@ -23,6 +25,8 @@ const ImageUploaderSection = ({
   setRadionicImages,
   receptorImages,
   setReceptorImages,
+  receptorName,
+  setReceptorName,
 }: ImageUploaderSectionProps) => {
   return (
     <div className="mt-6">

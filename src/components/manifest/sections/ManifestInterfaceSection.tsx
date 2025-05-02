@@ -1,6 +1,7 @@
 
 import ManifestVisualizer from '../ManifestVisualizer';
 import ManifestActions from '../ManifestActions';
+import { ManifestPattern } from '@/data/manifestPatterns';
 
 interface ManifestInterfaceSectionProps {
   currentImage: 'pattern' | 'receptor' | 'mix';
@@ -15,6 +16,15 @@ interface ManifestInterfaceSectionProps {
   stopManifestation: () => void;
   formatTimeRemaining: (time: number) => string;
   backgroundModeActive?: boolean;
+  // Adding the missing props
+  selectedPattern: string;
+  patterns: ManifestPattern[];
+  manifestPatterns: Record<string, string>;
+  intention: string;
+  manifestSound: boolean;
+  manifestFrequency: number[];
+  exposureTime: number[];
+  manifestSpeed: number[];
 }
 
 const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
@@ -30,6 +40,15 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
   stopManifestation,
   formatTimeRemaining,
   backgroundModeActive = false,
+  // Added missing props
+  selectedPattern,
+  patterns,
+  manifestPatterns,
+  intention,
+  manifestSound,
+  manifestFrequency,
+  exposureTime,
+  manifestSpeed,
 }) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg">
@@ -42,6 +61,14 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
         receptorImage={receptorImage}
         receptorImages={receptorImages}
         isActive={isManifestActive}
+        selectedPattern={selectedPattern}
+        patterns={patterns}
+        manifestPatterns={manifestPatterns}
+        intention={intention}
+        manifestSound={manifestSound}
+        manifestFrequency={manifestFrequency}
+        exposureTime={exposureTime}
+        manifestSpeed={manifestSpeed}
       />
       
       <ManifestActions 

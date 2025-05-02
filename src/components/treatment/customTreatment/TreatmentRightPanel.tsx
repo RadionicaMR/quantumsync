@@ -1,11 +1,12 @@
+
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import AudioSubliminalControls from '@/components/AudioSubliminalControls';
 import ImageUploader from '@/components/manifest/ImageUploader';
-import ReceptorNameInput from '@/components/ReceptorNameInput';
-import TreatmentVisualizer from './TreatmentVisualizer';
-import TreatmentActions from './TreatmentActions';
-import SettingsToggles from './SettingsToggles';
+import ReceptorNameInput from '@/components/treatment/ReceptorNameInput';
+import TreatmentVisualizer from '@/components/treatment/TreatmentVisualizer';
+import TreatmentActions from '@/components/treatment/TreatmentActions';
+import SettingsToggles from '@/components/treatment/SettingsToggles';
 
 interface TreatmentRightPanelProps {
   frequency: number[];
@@ -133,7 +134,7 @@ const TreatmentRightPanel = ({
               <ReceptorNameInput
                 receptorName={receptorName}
                 setReceptorName={setReceptorName}
-                isActive={isPlaying}
+                isPlaying={isPlaying}
               />
             </div>
             <ImageUploader
@@ -198,6 +199,7 @@ const TreatmentRightPanel = ({
           rate2={rate2}
           rate3={rate3}
           hypnoticSpeed={hypnoticSpeed}
+          isPlaying={isPlaying}
         />
         
         <div className="mt-6">

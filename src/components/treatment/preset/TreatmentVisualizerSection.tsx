@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import TreatmentVisualizer from '../TreatmentVisualizer';
-import SettingsToggles from '../SettingsToggles';
-import TreatmentActions from '../TreatmentActions';
+import TreatmentVisualizer from '@/components/treatment/TreatmentVisualizer';
+import SettingsToggles from '@/components/treatment/SettingsToggles';
+import TreatmentActions from '@/components/treatment/TreatmentActions';
 import ImageUploaderSection from './ImageUploaderSection';
 import RateSection from './RateSection';
 import ReceptorSection from './ReceptorSection';
@@ -97,6 +98,7 @@ const TreatmentVisualizerSection = ({
           rate2={rate2}
           rate3={rate3}
           hypnoticSpeed={hypnoticSpeed}
+          isPlaying={isPlaying}
         />
         
         <div className="mt-6">

@@ -1,19 +1,31 @@
 import React from 'react';
-import PresetTreatmentLayout from './PresetTreatmentLayout';
+import { Card } from '@/components/ui/card';
 import ImageUploaderSection from './ImageUploaderSection';
 import RateSection from './RateSection';
 import ReceptorSection from './ReceptorSection';
+import AudioSubliminalSection from './AudioSubliminalSection';
 import TreatmentVisualizerSection from './TreatmentVisualizerSection';
-import AudioSubliminalSection from '@/components/manifest/sections/AudioSubliminalSection';
+import { ManifestPattern } from '@/data/manifestPatterns';
 
 interface PresetTreatmentProps {
   presets: any[];
-  selectedPreset: string | null;
-  frequency: number[];
-  duration: number[];
-  intensity: number[];
-  onSelectPreset: (preset: any) => void;
+  selectedPreset: string;
   isPlaying: boolean;
+  frequency: number[];
+  setFrequency: (value: number[]) => void;
+  duration: number[];
+  setDuration: (value: number[]) => void;
+  intensity: number[];
+  setIntensity: (value: number[]) => void;
+  useHeadphones: boolean;
+  setUseHeadphones: (value: boolean) => void;
+  visualFeedback: boolean;
+  setVisualFeedback: (value: boolean) => void;
+  timeRemaining: number;
+  formatTime: (minutes: number) => string;
+  onSelectPreset: (preset: any) => void;
+  startTreatment: () => void;
+  stopTreatment: () => void;
   radionicImage: string | null;
   setRadionicImage: (image: string | null) => void;
   receptorImage: string | null;
@@ -24,10 +36,6 @@ interface PresetTreatmentProps {
   setReceptorImages: (images: string[]) => void;
   currentImage: 'radionic' | 'receptor' | 'mix';
   hypnoticEffect: boolean;
-  visualFeedback: boolean;
-  setVisualFeedback: (value: boolean) => void;
-  useHeadphones: boolean;
-  setUseHeadphones: (value: boolean) => void;
   rate1: string;
   setRate1: (value: string) => void;
   rate2: string;
@@ -36,10 +44,6 @@ interface PresetTreatmentProps {
   setRate3: (value: string) => void;
   hypnoticSpeed: number[];
   setHypnoticSpeed: (value: number[]) => void;
-  timeRemaining: number;
-  formatTime: (minutes: number) => string;
-  startTreatment: () => void;
-  stopTreatment: () => void;
   receptorName: string;
   setReceptorName: (name: string) => void;
   audioFile: File | null;
@@ -52,135 +56,75 @@ interface PresetTreatmentProps {
   backgroundModeActive?: boolean;
 }
 
-const PresetTreatment = ({
-  presets,
-  selectedPreset,
-  frequency,
-  duration,
-  intensity,
-  onSelectPreset,
-  isPlaying,
-  radionicImage,
-  setRadionicImage,
-  receptorImage,
-  setReceptorImage,
-  radionicImages,
-  setRadionicImages,
-  receptorImages,
-  setReceptorImages,
-  currentImage,
-  hypnoticEffect,
-  visualFeedback,
-  setVisualFeedback,
-  useHeadphones,
-  setUseHeadphones,
-  rate1,
-  setRate1,
-  rate2,
-  setRate2,
-  rate3,
-  setRate3,
-  hypnoticSpeed,
-  setHypnoticSpeed,
-  timeRemaining,
-  formatTime,
-  startTreatment,
-  stopTreatment,
-  receptorName,
-  setReceptorName,
-  audioFile,
-  setAudioFile,
-  audioVolume,
-  setAudioVolume,
-  audioSubliminalPlaying,
-  playSubliminalAudio,
-  stopSubliminalAudio,
-  backgroundModeActive = false,
-}: PresetTreatmentProps) => {
+const PresetTreatment = (props: PresetTreatmentProps) => {
   return (
-    <PresetTreatmentLayout
-      presets={presets}
-      selectedPreset={selectedPreset}
-      frequency={frequency}
-      duration={duration}
-      intensity={intensity}
-      onSelectPreset={onSelectPreset}
-      isPlaying={isPlaying}
-      imageUploader={
-        <ImageUploaderSection
-          radionicImage={radionicImage}
-          setRadionicImage={setRadionicImage}
-          radionicImages={radionicImages}
-          setRadionicImages={setRadionicImages}
-          receptorImage={receptorImage}
-          setReceptorImage={setReceptorImage}
-          receptorImages={receptorImages}
-          setReceptorImages={setReceptorImages}
-          isPlaying={isPlaying}
-          receptorName={receptorName}
-          setReceptorName={setReceptorName}
-        />
-      }
-      rateSection={
-        <RateSection 
-          rate1={rate1}
-          setRate1={setRate1}
-          rate2={rate2}
-          setRate2={setRate2}
-          rate3={rate3}
-          setRate3={setRate3}
-          isDisabled={isPlaying}
-        />
-      }
-      receptorSection={
-        <ReceptorSection
-          receptorName={receptorName}
-          setReceptorName={setReceptorName}
-          receptorImage={receptorImage}
-          receptorImages={receptorImages}
-          isPlaying={isPlaying}
-        />
-      }
-      visualizerSection={
-        <TreatmentVisualizerSection
-          radionicImage={radionicImage}
-          radionicImages={radionicImages}
-          receptorImage={receptorImage}
-          receptorImages={receptorImages}
-          currentImage={currentImage}
-          hypnoticEffect={hypnoticEffect}
-          visualFeedback={visualFeedback} 
-          setVisualFeedback={setVisualFeedback}
-          useHeadphones={useHeadphones}
-          setUseHeadphones={setUseHeadphones}
-          frequency={frequency}
-          intensity={intensity}
-          rate1={rate1}
-          rate2={rate2}
-          rate3={rate3}
-          hypnoticSpeed={hypnoticSpeed}
-          isPlaying={isPlaying}
-          timeRemaining={timeRemaining}
-          formatTime={formatTime}
-          startTreatment={startTreatment}
-          stopTreatment={stopTreatment}
-          receptorName={receptorName}
-          backgroundModeActive={backgroundModeActive}
-        />
-      }
-      audioSection={
-        <AudioSubliminalSection 
-          audioFile={audioFile}
-          setAudioFile={setAudioFile}
-          audioVolume={audioVolume}
-          setAudioVolume={setAudioVolume}
-          audioSubliminalPlaying={audioSubliminalPlaying}
-          playSubliminalAudio={playSubliminalAudio}
-          stopSubliminalAudio={stopSubliminalAudio}
-          isManifestActive={isPlaying}
-        />
-      }
-    />
+    <Card className="quantum-card p-6">
+      <h3 className="text-xl font-semibold mb-4">Patrón Predefinido</h3>
+      <ImageUploaderSection
+        isPlaying={props.isPlaying}
+        radionicImage={props.radionicImage}
+        setRadionicImage={props.setRadionicImage}
+        receptorImage={props.receptorImage}
+        setReceptorImage={props.setReceptorImage}
+        radionicImages={props.radionicImages}
+        setRadionicImages={props.setRadionicImages}
+        receptorImages={props.receptorImages}
+        setReceptorImages={props.setReceptorImages}
+      />
+      <RateSection
+        rate1={props.rate1}
+        setRate1={props.setRate1}
+        rate2={props.rate2}
+        setRate2={props.setRate2}
+        rate3={props.rate3}
+        setRate3={props.setRate3}
+        isPlaying={props.isPlaying}
+      />
+      <ReceptorSection
+        receptorName={props.receptorName}
+        setReceptorName={props.setReceptorName}
+        isPlaying={props.isPlaying}
+      />
+      <TreatmentVisualizerSection
+        radionicImage={props.radionicImage}
+        setRadionicImage={props.setRadionicImage}
+        radionicImages={props.radionicImages}
+        setRadionicImages={props.setRadionicImages}
+        receptorImage={props.receptorImage}
+        setReceptorImage={props.setReceptorImage}
+        receptorImages={props.receptorImages}
+        setReceptorImages={props.setReceptorImages}
+        currentImage={props.currentImage}
+        hypnoticEffect={props.hypnoticEffect}
+        visualFeedback={props.visualFeedback}
+        setVisualFeedback={props.setVisualFeedback}
+        useHeadphones={props.useHeadphones}
+        setUseHeadphones={props.setUseHeadphones}
+        frequency={props.frequency}
+        intensity={props.intensity}
+        rate1={props.rate1}
+        rate2={props.rate2}
+        rate3={props.rate3}
+        hypnoticSpeed={props.hypnoticSpeed}
+        isPlaying={props.isPlaying}
+        timeRemaining={props.timeRemaining}
+        formatTime={props.formatTime}
+        startTreatment={props.startTreatment}
+        stopTreatment={props.stopTreatment}
+        receptorName={props.receptorName}
+        backgroundModeActive={props.backgroundModeActive}
+      />
+      <AudioSubliminalSection
+        audioFile={props.audioFile}
+        setAudioFile={props.setAudioFile}
+        audioVolume={props.audioVolume}
+        setAudioVolume={props.setAudioVolume}
+        audioSubliminalPlaying={props.audioSubliminalPlaying}
+        playSubliminalAudio={props.playSubliminalAudio}
+        stopSubliminalAudio={props.stopSubliminalAudio}
+        isPlaying={props.isPlaying}
+      />
+    </Card>
   );
 };
 

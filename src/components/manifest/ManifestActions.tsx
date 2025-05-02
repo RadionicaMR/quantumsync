@@ -52,8 +52,8 @@ const ManifestActions = ({
           />
           
           <QuantumButton
-            variant="destructive"
-            className="w-full"
+            variant="outline"
+            className="w-full bg-red-500 hover:bg-red-600 text-white"
             onClick={stopManifestation}
           >
             <div className="flex items-center justify-center">
