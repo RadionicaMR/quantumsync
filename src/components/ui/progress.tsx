@@ -30,9 +30,9 @@ const Progress = React.forwardRef<
       <ProgressPrimitive.Indicator
         className="h-full w-full flex-1 transition-all"
         style={{ 
-          width: `${value || 0}%`,
+          transform: `translateX(-${100 - (value || 0)}%)`,
           backgroundColor: "var(--progress-foreground)",
-          transition: "width 0.3s ease"
+          transition: "transform 0.2s ease"
         }}
       />
     </ProgressPrimitive.Root>
