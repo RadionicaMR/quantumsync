@@ -1,11 +1,25 @@
-
-import ImageGrid from '../ImageGrid';
-import SettingsToggles from '../SettingsToggles';
-import TreatmentActions from '../TreatmentActions';
-import TreatmentVisualizer from '../TreatmentVisualizer';
-import AudioSubliminalControls from '../../AudioSubliminalControls';
+import { useState } from 'react';
+import { Card } from '@/components/ui/card';
+import AudioSubliminalControls from '@/components/AudioSubliminalControls';
+import ImageUploader from '@/components/manifest/ImageUploader';
+import ReceptorNameInput from '@/components/ReceptorNameInput';
+import TreatmentVisualizer from './TreatmentVisualizer';
+import TreatmentActions from './TreatmentActions';
+import SettingsToggles from './SettingsToggles';
 
 interface TreatmentRightPanelProps {
+  frequency: number[];
+  setFrequency: (value: number[]) => void;
+  duration: number[];
+  setDuration: (value: number[]) => void;
+  intensity: number[];
+  setIntensity: (value: number[]) => void;
+  rate1: string;
+  setRate1: (value: string) => void;
+  rate2: string;
+  setRate2: (value: string) => void;
+  rate3: string;
+  setRate3: (value: string) => void;
   radionicImage: string | null;
   setRadionicImage: (image: string | null) => void;
   radionicImages: string[];
@@ -14,6 +28,8 @@ interface TreatmentRightPanelProps {
   setReceptorImage: (image: string | null) => void;
   receptorImages: string[];
   setReceptorImages: (images: string[]) => void;
+  hypnoticSpeed: number[];
+  setHypnoticSpeed: (value: number[]) => void;
   useHeadphones: boolean;
   setUseHeadphones: (value: boolean) => void;
   visualFeedback: boolean;
@@ -25,13 +41,8 @@ interface TreatmentRightPanelProps {
   hypnoticEffect: boolean;
   startTreatment: () => void;
   stopTreatment: () => void;
-  frequency: number[];
-  intensity: number[];
-  rate1: string;
-  rate2: string;
-  rate3: string;
-  hypnoticSpeed: number[];
   receptorName: string;
+  setReceptorName: (name: string) => void;
   audioFile: File | null;
   setAudioFile: (file: File | null) => void;
   audioVolume: number;
@@ -42,9 +53,22 @@ interface TreatmentRightPanelProps {
   audioLoop?: boolean;
   setAudioLoop?: (loop: boolean) => void;
   clearAudio?: () => void;
+  backgroundModeActive?: boolean;
 }
 
 const TreatmentRightPanel = ({
+  frequency,
+  setFrequency,
+  duration,
+  setDuration,
+  intensity,
+  setIntensity,
+  rate1,
+  setRate1,
+  rate2,
+  setRate2,
+  rate3,
+  setRate3,
   radionicImage,
   setRadionicImage,
   radionicImages,
@@ -53,6 +77,8 @@ const TreatmentRightPanel = ({
   setReceptorImage,
   receptorImages,
   setReceptorImages,
+  hypnoticSpeed,
+  setHypnoticSpeed,
   useHeadphones,
   setUseHeadphones,
   visualFeedback,
@@ -64,13 +90,8 @@ const TreatmentRightPanel = ({
   hypnoticEffect,
   startTreatment,
   stopTreatment,
-  frequency,
-  intensity,
-  rate1,
-  rate2,
-  rate3,
-  hypnoticSpeed,
   receptorName,
+  setReceptorName,
   audioFile,
   setAudioFile,
   audioVolume,
@@ -81,69 +102,116 @@ const TreatmentRightPanel = ({
   audioLoop = true,
   setAudioLoop = () => {},
   clearAudio = () => {},
+  backgroundModeActive = false,
 }: TreatmentRightPanelProps) => {
   return (
-    <div className="space-y-6 w-full">
-      <ImageGrid 
-        radionicImage={radionicImage}
-        setRadionicImage={setRadionicImage}
-        radionicImages={radionicImages}
-        setRadionicImages={setRadionicImages}
-        receptorImage={receptorImage}
-        setReceptorImage={setReceptorImage}
-        receptorImages={receptorImages}
-        setReceptorImages={setReceptorImages}
-        isPlaying={isPlaying}
-      />
+    <div className="space-y-6">
+      {/* First Card: Image Uploads */}
+      <Card className="quantum-card p-6">
+        <h3 className="text-xl font-semibold mb-4">Visualización Radiónica</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Imagen radiónica */}
+          <div>
+            <h4 className="mb-2 font-medium">Patrón Radiónico</h4>
+            <ImageUploader
+              label="Subir Patrón Radiónico"
+              image={radionicImage}
+              setImage={setRadionicImage}
+              description="Carga tu propio diseño"
+              isDisabled={isPlaying}
+              isMultiple={true}
+              images={radionicImages}
+              setImages={setRadionicImages}
+              maxImages={3}
+            />
+          </div>
+          
+          {/* Imagen del receptor */}
+          <div>
+            <h4 className="mb-2 font-medium">Imagen del Receptor</h4>
+            <div className="mb-4">
+              <ReceptorNameInput
+                receptorName={receptorName}
+                setReceptorName={setReceptorName}
+                isActive={isPlaying}
+              />
+            </div>
+            <ImageUploader
+              label="Subir Imagen del Receptor"
+              image={receptorImage}
+              setImage={setReceptorImage}
+              description="Foto de la persona o situación a tratar"
+              isDisabled={isPlaying}
+              isMultiple={true}
+              images={receptorImages}
+              setImages={setReceptorImages}
+              maxImages={3}
+            />
+          </div>
+        </div>
+      </Card>
+      
+      {/* Second Card: Audio Files Upload */}
+      <Card className="quantum-card p-6">
+        <h3 className="text-xl font-semibold mb-4">Audio Subliminal (opcional)</h3>
+        <AudioSubliminalControls 
+          audioFile={audioFile}
+          setAudioFile={setAudioFile}
+          audioVolume={audioVolume}
+          setAudioVolume={setAudioVolume}
+          isPlaying={audioSubliminalPlaying}
+          playAudio={playSubliminalAudio}
+          stopAudio={stopSubliminalAudio}
+          isDisabled={isPlaying}
+          audioLoop={audioLoop}
+          setAudioLoop={setAudioLoop}
+          clearAudio={clearAudio}
+        />
+      </Card>
+      
+      {/* Third Card: Treatment Visualizer */}
+      <Card className="quantum-card p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-semibold">Visualizador de Tratamiento</h3>
+          <div>
+            <SettingsToggles 
+              useHeadphones={useHeadphones}
+              setUseHeadphones={setUseHeadphones}
+              visualFeedback={visualFeedback}
+              setVisualFeedback={setVisualFeedback}
+              isPlaying={isPlaying}
+            />
+          </div>
+        </div>
 
-      <AudioSubliminalControls
-        audioFile={audioFile}
-        setAudioFile={setAudioFile}
-        audioVolume={audioVolume}
-        setAudioVolume={setAudioVolume}
-        isPlaying={audioSubliminalPlaying}
-        playAudio={playSubliminalAudio}
-        stopAudio={stopSubliminalAudio}
-        maxVolume={20}
-        audioLoop={audioLoop}
-        setAudioLoop={setAudioLoop}
-        clearAudio={clearAudio}
-      />
-      
-      <SettingsToggles 
-        useHeadphones={useHeadphones}
-        setUseHeadphones={setUseHeadphones}
-        visualFeedback={visualFeedback}
-        setVisualFeedback={setVisualFeedback}
-        isPlaying={isPlaying}
-      />
-      
-      <TreatmentActions 
-        isPlaying={isPlaying}
-        timeRemaining={timeRemaining}
-        formatTime={formatTime}
-        startTreatment={startTreatment}
-        stopTreatment={stopTreatment}
-        receptorName={receptorName}
-      />
-      
-      <TreatmentVisualizer 
-        isPlaying={isPlaying}
-        visualFeedback={visualFeedback}
-        radionicImage={radionicImage}
-        receptorImage={receptorImage}
-        radionicImages={radionicImages}
-        receptorImages={receptorImages}
-        currentImage={currentImage}
-        hypnoticEffect={hypnoticEffect}
-        frequency={frequency}
-        intensity={intensity}
-        rate1={rate1}
-        rate2={rate2}
-        rate3={rate3}
-        hypnoticSpeed={hypnoticSpeed}
-        receptorName={receptorName}
-      />
+        <TreatmentVisualizer
+          radionicImage={radionicImage}
+          radionicImages={radionicImages}
+          receptorImage={receptorImage}
+          receptorImages={receptorImages}
+          currentImage={currentImage}
+          hypnoticEffect={hypnoticEffect}
+          visualFeedback={visualFeedback}
+          frequency={frequency}
+          intensity={intensity}
+          rate1={rate1}
+          rate2={rate2}
+          rate3={rate3}
+          hypnoticSpeed={hypnoticSpeed}
+        />
+        
+        <div className="mt-6">
+          <TreatmentActions 
+            isPlaying={isPlaying}
+            timeRemaining={timeRemaining}
+            formatTime={formatTime}
+            startTreatment={startTreatment}
+            stopTreatment={stopTreatment}
+            receptorName={receptorName}
+            backgroundModeActive={backgroundModeActive}
+          />
+        </div>
+      </Card>
     </div>
   );
 };

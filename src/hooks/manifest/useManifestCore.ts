@@ -9,9 +9,9 @@ import { useManifestNavigation } from './useManifestNavigation';
 export const useManifestCore = (patterns: ManifestPattern[]) => {
   const state = useManifestState();
   const subliminal = useManifestSubliminal();
-  const { startManifestation, stopManifestation } = useManifestSession();
+  const session = useManifestSession();
   const utils = useManifestUtils();
-  const navigation = useManifestNavigation(stopManifestation);
+  const navigation = useManifestNavigation(session.stopManifestation);
 
   return {
     // State and utils
@@ -23,10 +23,13 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
     selectPattern: navigation.selectPattern,
     
     // Session control
-    startManifestation,
-    stopManifestation,
+    startManifestation: session.startManifestation,
+    stopManifestation: session.stopManifestation,
     
     // Subliminal audio
     ...subliminal,
+    
+    // Background mode indicator
+    backgroundModeActive: session.backgroundModeActive,
   };
 };

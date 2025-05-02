@@ -8,7 +8,7 @@ import { toast } from "@/components/ui/use-toast";
 
 export const useManifestSession = () => {
   const state = useManifestState();
-  const { startAudio, stopAudio } = useManifestAudio();
+  const { startAudio, stopAudio, backgroundModeActive: audioBackgroundActive } = useManifestAudio();
   const { 
     clearAllTimers, 
     setHypnoticTimer, 
@@ -18,7 +18,8 @@ export const useManifestSession = () => {
   const { 
     playSubliminalAudio, 
     stopSubliminalAudio,
-    audioFile 
+    audioFile,
+    backgroundModeActive: subliminalBackgroundActive 
   } = useManifestSubliminal();
 
   // Iniciar Manifestación: comienza audio subliminal si disponible
@@ -46,14 +47,16 @@ export const useManifestSession = () => {
     const switchInterval = 1000 / (state.visualSpeed[0] * 3);
 
     const hypnoticTimer = setInterval(() => {
-      state.setCurrentImage((prev) => {
-        switch(prev) {
-          case 'pattern': return 'receptor';
-          case 'receptor': return 'mix';
-          case 'mix': return 'pattern';
-          default: return 'pattern';
-        }
-      });
+      if (!document.hidden) {
+        state.setCurrentImage((prev) => {
+          switch(prev) {
+            case 'pattern': return 'receptor';
+            case 'receptor': return 'mix';
+            case 'mix': return 'pattern';
+            default: return 'pattern';
+          }
+        });
+      }
     }, switchInterval);
     setHypnoticTimer(hypnoticTimer);
 
@@ -61,12 +64,14 @@ export const useManifestSession = () => {
     state.setTimeRemaining(state.exposureTime[0]);
 
     const countdownTimer = setInterval(() => {
-      state.setTimeRemaining((prev) => {
-        if (prev !== null && prev > 0) {
-          return prev - 1/60;
-        }
-        return prev;
-      });
+      if (!document.hidden) {
+        state.setTimeRemaining((prev) => {
+          if (prev !== null && prev > 0) {
+            return prev - 1/60;
+          }
+          return prev;
+        });
+      }
     }, 1000);
     setCountdownTimer(countdownTimer);
 
@@ -102,6 +107,7 @@ export const useManifestSession = () => {
 
   return {
     startManifestation,
-    stopManifestation
+    stopManifestation,
+    backgroundModeActive: audioBackgroundActive || subliminalBackgroundActive
   };
 };

@@ -8,7 +8,77 @@ export const useManifestSubliminal = () => {
   const [audioVolume, setAudioVolume] = useState(20);
   const [audioSubliminalPlaying, setAudioSubliminalPlaying] = useState(false);
   const [audioLoop, setAudioLoop] = useState(true); // Estado del loop
+  const [backgroundModeActive, setBackgroundModeActive] = useState(false);
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
+  const audioSourceRef = useRef<string | null>(null);
+
+  // Manejar cambios de visibilidad del documento
+  const handleVisibilityChange = () => {
+    if (document.hidden && audioSubliminalPlaying) {
+      console.log("App pasó a segundo plano con audio subliminal en reproducción");
+      setBackgroundModeActive(true);
+      
+      // Guardar la posición actual del audio
+      if (audioElementRef.current) {
+        const currentTime = audioElementRef.current.currentTime;
+        audioElementRef.current.pause();
+        audioElementRef.current.currentTime = currentTime;
+      }
+    } else if (!document.hidden && backgroundModeActive && audioSourceRef.current) {
+      console.log("App volvió al primer plano, restaurando audio subliminal");
+      
+      // Si estaba reproduciendo, restaurar la reproducción
+      if (audioSubliminalPlaying) {
+        if (audioElementRef.current) {
+          const currentTime = audioElementRef.current.currentTime;
+          
+          // Intentar reanudar la reproducción desde donde se quedó
+          audioElementRef.current.play()
+            .then(() => {
+              console.log("Audio subliminal reanudado con éxito");
+              setBackgroundModeActive(false);
+            })
+            .catch((err) => {
+              console.error("Error al reanudar audio subliminal:", err);
+              // Intentar crear un nuevo elemento de audio
+              if (audioFile) {
+                recreateAudioElement();
+              }
+            });
+        } else if (audioFile) {
+          // Si el elemento de audio se perdió, recrearlo
+          recreateAudioElement();
+        }
+      }
+    }
+  };
+
+  const recreateAudioElement = () => {
+    try {
+      if (!audioFile) return;
+      
+      const newAudio = new Audio(URL.createObjectURL(audioFile));
+      newAudio.loop = audioLoop;
+      newAudio.volume = audioVolume / 20;
+      
+      // Asignar la nueva referencia
+      audioElementRef.current = newAudio;
+      
+      // Intentar reproducir
+      newAudio.play()
+        .then(() => {
+          console.log("Audio subliminal recreado y reproduciendo");
+          setAudioSubliminalPlaying(true);
+          setBackgroundModeActive(false);
+        })
+        .catch((err) => {
+          console.error("Error al reproducir audio subliminal recreado:", err);
+          setAudioSubliminalPlaying(false);
+        });
+    } catch (error) {
+      console.error("Error al recrear el elemento de audio:", error);
+    }
+  };
 
   // Función para reproducir audio subliminal
   const playSubliminalAudio = () => {
@@ -19,7 +89,10 @@ export const useManifestSubliminal = () => {
           audioElementRef.current.pause();
         }
         
-        const elem = new Audio(URL.createObjectURL(audioFile));
+        const audioURL = URL.createObjectURL(audioFile);
+        audioSourceRef.current = audioURL;
+        
+        const elem = new Audio(audioURL);
         elem.volume = audioVolume / 20;
         elem.loop = audioLoop;
         
@@ -58,6 +131,7 @@ export const useManifestSubliminal = () => {
       audioElementRef.current.pause();
       // No eliminamos la referencia para poder reanudar la reproducción
       setAudioSubliminalPlaying(false);
+      setBackgroundModeActive(false);
       console.log("Audio subliminal detenido");
     }
   };
@@ -67,7 +141,9 @@ export const useManifestSubliminal = () => {
     stopSubliminalAudio();
     setAudioFile(null);
     audioElementRef.current = null;
+    audioSourceRef.current = null;
     setAudioSubliminalPlaying(false);
+    setBackgroundModeActive(false);
     toast({
       title: "Audio eliminado",
       description: "El archivo de audio subliminal ha sido eliminado",
@@ -88,13 +164,18 @@ export const useManifestSubliminal = () => {
     }
   }, [audioLoop]);
 
-  // Limpieza al desmontar
+  // Agregar listener para visibilitychange
   useEffect(() => {
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Limpieza al desmontar
     return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       stopSubliminalAudio();
       audioElementRef.current = null;
+      audioSourceRef.current = null;
     };
-  }, []);
+  }, [audioSubliminalPlaying, backgroundModeActive]);
 
   return {
     audioFile,
@@ -108,5 +189,6 @@ export const useManifestSubliminal = () => {
     stopSubliminalAudio,
     clearAudio,
     audioElementRef,
+    backgroundModeActive
   };
 };

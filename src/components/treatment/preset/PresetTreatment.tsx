@@ -1,26 +1,19 @@
-
-import { TreatmentPreset } from '@/hooks/useTreatment';
+import React from 'react';
 import PresetTreatmentLayout from './PresetTreatmentLayout';
+import ImageUploaderSection from './ImageUploaderSection';
+import RateSection from './RateSection';
+import ReceptorSection from './ReceptorSection';
+import TreatmentVisualizerSection from './TreatmentVisualizerSection';
+import AudioSubliminalSection from '@/components/manifest/sections/AudioSubliminalSection';
 
 interface PresetTreatmentProps {
-  presets: TreatmentPreset[];
-  selectedPreset: string;
-  isPlaying: boolean;
+  presets: any[];
+  selectedPreset: string | null;
   frequency: number[];
-  setFrequency: (value: number[]) => void;
   duration: number[];
-  setDuration: (value: number[]) => void;
   intensity: number[];
-  setIntensity: (value: number[]) => void;
-  useHeadphones: boolean;
-  setUseHeadphones: (value: boolean) => void;
-  visualFeedback: boolean;
-  setVisualFeedback: (value: boolean) => void;
-  timeRemaining: number;
-  formatTime: (minutes: number) => string;
-  onSelectPreset: (preset: TreatmentPreset) => void;
-  startTreatment: () => void;
-  stopTreatment: () => void;
+  onSelectPreset: (preset: any) => void;
+  isPlaying: boolean;
   radionicImage: string | null;
   setRadionicImage: (image: string | null) => void;
   receptorImage: string | null;
@@ -31,6 +24,10 @@ interface PresetTreatmentProps {
   setReceptorImages: (images: string[]) => void;
   currentImage: 'radionic' | 'receptor' | 'mix';
   hypnoticEffect: boolean;
+  visualFeedback: boolean;
+  setVisualFeedback: (value: boolean) => void;
+  useHeadphones: boolean;
+  setUseHeadphones: (value: boolean) => void;
   rate1: string;
   setRate1: (value: string) => void;
   rate2: string;
@@ -39,8 +36,12 @@ interface PresetTreatmentProps {
   setRate3: (value: string) => void;
   hypnoticSpeed: number[];
   setHypnoticSpeed: (value: number[]) => void;
-  receptorName?: string;
-  setReceptorName?: (name: string) => void;
+  timeRemaining: number;
+  formatTime: (minutes: number) => string;
+  startTreatment: () => void;
+  stopTreatment: () => void;
+  receptorName: string;
+  setReceptorName: (name: string) => void;
   audioFile: File | null;
   setAudioFile: (file: File | null) => void;
   audioVolume: number;
@@ -48,27 +49,17 @@ interface PresetTreatmentProps {
   audioSubliminalPlaying: boolean;
   playSubliminalAudio: () => void;
   stopSubliminalAudio: () => void;
+  backgroundModeActive?: boolean;
 }
 
 const PresetTreatment = ({
   presets,
   selectedPreset,
-  isPlaying,
   frequency,
-  setFrequency,
   duration,
-  setDuration,
   intensity,
-  setIntensity,
-  useHeadphones,
-  setUseHeadphones,
-  visualFeedback,
-  setVisualFeedback,
-  timeRemaining,
-  formatTime,
   onSelectPreset,
-  startTreatment,
-  stopTreatment,
+  isPlaying,
   radionicImage,
   setRadionicImage,
   receptorImage,
@@ -79,6 +70,10 @@ const PresetTreatment = ({
   setReceptorImages,
   currentImage,
   hypnoticEffect,
+  visualFeedback,
+  setVisualFeedback,
+  useHeadphones,
+  setUseHeadphones,
   rate1,
   setRate1,
   rate2,
@@ -87,8 +82,12 @@ const PresetTreatment = ({
   setRate3,
   hypnoticSpeed,
   setHypnoticSpeed,
-  receptorName = '',
-  setReceptorName = () => {},
+  timeRemaining,
+  formatTime,
+  startTreatment,
+  stopTreatment,
+  receptorName,
+  setReceptorName,
   audioFile,
   setAudioFile,
   audioVolume,
@@ -96,72 +95,91 @@ const PresetTreatment = ({
   audioSubliminalPlaying,
   playSubliminalAudio,
   stopSubliminalAudio,
+  backgroundModeActive = false,
 }: PresetTreatmentProps) => {
-  // Organize props into logical groups for better readability
-  const controlProps = {
-    frequency,
-    setFrequency,
-    duration,
-    setDuration,
-    intensity,
-    setIntensity,
-    useHeadphones,
-    setUseHeadphones,
-    visualFeedback,
-    setVisualFeedback,
-    timeRemaining,
-    formatTime,
-    startTreatment,
-    stopTreatment,
-    hypnoticSpeed,
-    setHypnoticSpeed,
-    receptorName,
-    audioFile,
-    setAudioFile,
-    audioVolume,
-    setAudioVolume,
-    audioSubliminalPlaying,
-    playSubliminalAudio,
-    stopSubliminalAudio
-  };
-
-  const imageProps = {
-    radionicImage,
-    setRadionicImage,
-    receptorImage,
-    setReceptorImage,
-    radionicImages,
-    setRadionicImages,
-    receptorImages,
-    setReceptorImages,
-    currentImage,
-    hypnoticEffect
-  };
-
-  const rateProps = {
-    rate1,
-    setRate1,
-    rate2,
-    setRate2,
-    rate3,
-    setRate3
-  };
-
-  const receptorProps = {
-    receptorName,
-    setReceptorName
-  };
-
   return (
     <PresetTreatmentLayout
       presets={presets}
       selectedPreset={selectedPreset}
-      isPlaying={isPlaying}
+      frequency={frequency}
+      duration={duration}
+      intensity={intensity}
       onSelectPreset={onSelectPreset}
-      controlProps={controlProps}
-      imageProps={imageProps}
-      rateProps={rateProps}
-      receptorProps={receptorProps}
+      isPlaying={isPlaying}
+      imageUploader={
+        <ImageUploaderSection
+          radionicImage={radionicImage}
+          setRadionicImage={setRadionicImage}
+          radionicImages={radionicImages}
+          setRadionicImages={setRadionicImages}
+          receptorImage={receptorImage}
+          setReceptorImage={setReceptorImage}
+          receptorImages={receptorImages}
+          setReceptorImages={setReceptorImages}
+          isPlaying={isPlaying}
+          receptorName={receptorName}
+          setReceptorName={setReceptorName}
+        />
+      }
+      rateSection={
+        <RateSection 
+          rate1={rate1}
+          setRate1={setRate1}
+          rate2={rate2}
+          setRate2={setRate2}
+          rate3={rate3}
+          setRate3={setRate3}
+          isDisabled={isPlaying}
+        />
+      }
+      receptorSection={
+        <ReceptorSection
+          receptorName={receptorName}
+          setReceptorName={setReceptorName}
+          receptorImage={receptorImage}
+          receptorImages={receptorImages}
+          isPlaying={isPlaying}
+        />
+      }
+      visualizerSection={
+        <TreatmentVisualizerSection
+          radionicImage={radionicImage}
+          radionicImages={radionicImages}
+          receptorImage={receptorImage}
+          receptorImages={receptorImages}
+          currentImage={currentImage}
+          hypnoticEffect={hypnoticEffect}
+          visualFeedback={visualFeedback} 
+          setVisualFeedback={setVisualFeedback}
+          useHeadphones={useHeadphones}
+          setUseHeadphones={setUseHeadphones}
+          frequency={frequency}
+          intensity={intensity}
+          rate1={rate1}
+          rate2={rate2}
+          rate3={rate3}
+          hypnoticSpeed={hypnoticSpeed}
+          isPlaying={isPlaying}
+          timeRemaining={timeRemaining}
+          formatTime={formatTime}
+          startTreatment={startTreatment}
+          stopTreatment={stopTreatment}
+          receptorName={receptorName}
+          backgroundModeActive={backgroundModeActive}
+        />
+      }
+      audioSection={
+        <AudioSubliminalSection 
+          audioFile={audioFile}
+          setAudioFile={setAudioFile}
+          audioVolume={audioVolume}
+          setAudioVolume={setAudioVolume}
+          audioSubliminalPlaying={audioSubliminalPlaying}
+          playSubliminalAudio={playSubliminalAudio}
+          stopSubliminalAudio={stopSubliminalAudio}
+          isManifestActive={isPlaying}
+        />
+      }
     />
   );
 };

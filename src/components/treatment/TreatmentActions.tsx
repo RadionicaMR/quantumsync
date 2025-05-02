@@ -1,5 +1,6 @@
 
 import QuantumButton from '@/components/QuantumButton';
+import { Smartphone } from 'lucide-react';
 
 interface TreatmentActionsProps {
   isPlaying: boolean;
@@ -8,6 +9,7 @@ interface TreatmentActionsProps {
   startTreatment: () => void;
   stopTreatment: () => void;
   receptorName?: string;
+  backgroundModeActive?: boolean;
 }
 
 const TreatmentActions = ({
@@ -17,6 +19,7 @@ const TreatmentActions = ({
   startTreatment,
   stopTreatment,
   receptorName,
+  backgroundModeActive = false,
 }: TreatmentActionsProps) => {
   // Treatment can start if at least the receptor name is filled
   const canStartTreatment = !!receptorName?.trim();
@@ -25,8 +28,15 @@ const TreatmentActions = ({
     <div className="flex items-center justify-between">
       {isPlaying ? (
         <>
-          <div className="text-quantum-primary font-medium">
-            Tratamiento en progreso: {formatTime(timeRemaining)} restante
+          <div className="text-quantum-primary font-medium flex items-center">
+            {backgroundModeActive ? (
+              <>
+                <Smartphone className="w-4 h-4 mr-2 text-orange-500" />
+                <span>Tratamiento en segundo plano: {formatTime(timeRemaining)} restante</span>
+              </>
+            ) : (
+              <span>Tratamiento en progreso: {formatTime(timeRemaining)} restante</span>
+            )}
           </div>
           <QuantumButton 
             variant="outline"

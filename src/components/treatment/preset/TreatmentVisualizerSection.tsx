@@ -1,61 +1,116 @@
-
+import React from 'react';
+import { Card } from '@/components/ui/card';
 import TreatmentVisualizer from '../TreatmentVisualizer';
+import SettingsToggles from '../SettingsToggles';
+import TreatmentActions from '../TreatmentActions';
+import ImageUploaderSection from './ImageUploaderSection';
+import RateSection from './RateSection';
+import ReceptorSection from './ReceptorSection';
+import AudioSubliminalSection from './AudioSubliminalSection';
 
 interface TreatmentVisualizerSectionProps {
-  isPlaying: boolean;
-  visualFeedback: boolean;
   radionicImage: string | null;
-  receptorImage: string | null;
+  setRadionicImage: (image: string | null) => void;
   radionicImages: string[];
+  setRadionicImages: (images: string[]) => void;
+  receptorImage: string | null;
+  setReceptorImage: (image: string | null) => void;
   receptorImages: string[];
+  setReceptorImages: (images: string[]) => void;
   currentImage: 'radionic' | 'receptor' | 'mix';
   hypnoticEffect: boolean;
+  visualFeedback: boolean;
+  setVisualFeedback: (value: boolean) => void;
+  useHeadphones: boolean;
+  setUseHeadphones: (value: boolean) => void;
   frequency: number[];
   intensity: number[];
   rate1: string;
   rate2: string;
   rate3: string;
-  hypnoticSpeed?: number[];
-  receptorName?: string;
+  hypnoticSpeed: number[];
+  isPlaying: boolean;
+  timeRemaining: number;
+  formatTime: (minutes: number) => string;
+  startTreatment: () => void;
+  stopTreatment: () => void;
+  receptorName: string;
+  backgroundModeActive?: boolean;
 }
 
 const TreatmentVisualizerSection = ({
-  isPlaying,
-  visualFeedback,
   radionicImage,
-  receptorImage,
+  setRadionicImage,
   radionicImages,
+  setRadionicImages,
+  receptorImage,
+  setReceptorImage,
   receptorImages,
+  setReceptorImages,
   currentImage,
   hypnoticEffect,
+  visualFeedback,
+  setVisualFeedback,
+  useHeadphones,
+  setUseHeadphones,
   frequency,
   intensity,
   rate1,
   rate2,
   rate3,
   hypnoticSpeed,
+  isPlaying,
+  timeRemaining,
+  formatTime,
+  startTreatment,
+  stopTreatment,
   receptorName,
+  backgroundModeActive = false,
 }: TreatmentVisualizerSectionProps) => {
   return (
-    <div>
-      <h3 className="font-semibold mb-4">Visualización del Tratamiento</h3>
-      <TreatmentVisualizer
-        isPlaying={isPlaying}
-        visualFeedback={visualFeedback}
-        radionicImage={radionicImage}
-        receptorImage={receptorImage}
-        radionicImages={radionicImages}
-        receptorImages={receptorImages}
-        currentImage={currentImage}
-        hypnoticEffect={hypnoticEffect}
-        frequency={frequency}
-        intensity={intensity}
-        rate1={rate1}
-        rate2={rate2}
-        rate3={rate3}
-        hypnoticSpeed={hypnoticSpeed}
-        receptorName={receptorName}
-      />
+    <div className="mb-8">
+      <Card className="p-6 quantum-card">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-bold">Visualizador de Tratamiento</h3>
+          <div>
+            <SettingsToggles 
+              useHeadphones={useHeadphones}
+              setUseHeadphones={setUseHeadphones}
+              visualFeedback={visualFeedback}
+              setVisualFeedback={setVisualFeedback}
+              isPlaying={isPlaying}
+            />
+          </div>
+        </div>
+        
+        <TreatmentVisualizer 
+          radionicImage={radionicImage}
+          radionicImages={radionicImages}
+          receptorImage={receptorImage}
+          receptorImages={receptorImages}
+          currentImage={currentImage}
+          hypnoticEffect={hypnoticEffect}
+          visualFeedback={visualFeedback}
+          frequency={frequency}
+          intensity={intensity}
+          rate1={rate1}
+          rate2={rate2}
+          rate3={rate3}
+          hypnoticSpeed={hypnoticSpeed}
+        />
+        
+        <div className="mt-6">
+          <TreatmentActions 
+            isPlaying={isPlaying}
+            timeRemaining={timeRemaining}
+            formatTime={formatTime}
+            startTreatment={startTreatment}
+            stopTreatment={stopTreatment}
+            receptorName={receptorName}
+            backgroundModeActive={backgroundModeActive}
+          />
+        </div>
+      </Card>
     </div>
   );
 };

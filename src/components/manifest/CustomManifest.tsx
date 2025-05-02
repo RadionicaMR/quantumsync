@@ -1,20 +1,14 @@
-
 import React from 'react';
-import { Card } from '@/components/ui/card';
-import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
+import AudioSubliminalSection from './sections/AudioSubliminalSection';
+import PatternSection from './sections/PatternSection';
+import ReceptorSection from './sections/ReceptorSection';
 import ManifestInterfaceSection from './sections/ManifestInterfaceSection';
-
-interface Pattern {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-}
+import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
 
 interface CustomManifestProps {
-  patterns: Pattern[];
+  patterns: any[];
   intention: string;
-  setIntention: (value: string) => void;
+  setIntention: (intention: string) => void;
   patternImage: string | null;
   setPatternImage: (image: string | null) => void;
   patternImages: string[];
@@ -24,28 +18,27 @@ interface CustomManifestProps {
   receptorImages: string[];
   setReceptorImages: (images: string[]) => void;
   manifestSound: boolean;
-  setManifestSound: (value: boolean) => void;
+  setManifestSound: (sound: boolean) => void;
   manifestFrequency: number[];
-  setManifestFrequency: (value: number[]) => void;
+  setManifestFrequency: (frequency: number[]) => void;
   visualSpeed: number[];
-  setVisualSpeed: (value: number[]) => void;
+  setVisualSpeed: (speed: number[]) => void;
   exposureTime: number[];
-  setExposureTime: (value: number[]) => void;
+  setExposureTime: (time: number[]) => void;
   rate1: string;
-  setRate1: (value: string) => void;
+  setRate1: (rate: string) => void;
   rate2: string;
-  setRate2: (value: string) => void;
+  setRate2: (rate: string) => void;
   rate3: string;
-  setRate3: (value: string) => void;
+  setRate3: (rate: string) => void;
   isManifestActive: boolean;
   timeRemaining: number | null;
   startManifestation: () => void;
   stopManifestation: () => void;
-  formatTimeRemaining: (minutes: number) => string;
+  formatTimeRemaining: (time: number) => string;
   currentImage: 'pattern' | 'receptor' | 'mix';
   receptorName: string;
   setReceptorName: (name: string) => void;
-  // Audio props:
   audioFile: File | null;
   setAudioFile: (file: File | null) => void;
   audioVolume: number;
@@ -53,12 +46,13 @@ interface CustomManifestProps {
   audioSubliminalPlaying: boolean;
   playSubliminalAudio: () => void;
   stopSubliminalAudio: () => void;
-  audioLoop?: boolean;
-  setAudioLoop?: (loop: boolean) => void;
-  clearAudio?: () => void;
+  audioLoop: boolean;
+  setAudioLoop: (loop: boolean) => void;
+  clearAudio: () => void;
+  backgroundModeActive?: boolean;
 }
 
-const CustomManifest = ({
+const CustomManifest: React.FC<CustomManifestProps> = ({
   patterns,
   intention,
   setIntention,
@@ -99,26 +93,42 @@ const CustomManifest = ({
   audioSubliminalPlaying,
   playSubliminalAudio,
   stopSubliminalAudio,
-  audioLoop = true,
-  setAudioLoop = () => {},
-  clearAudio = () => {},
-}: CustomManifestProps) => {
+  audioLoop,
+  setAudioLoop,
+  clearAudio,
+  backgroundModeActive = false,
+}) => {
+
+  // Calculated values
+  const canStart = intention.trim() !== "" && 
+                 (patternImage !== null || patternImages.length > 0);
+
   return (
-    <Card className="quantum-card p-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Panel: Pattern upload, receptor info, audio controls */}
-        <CustomManifestLeftPanel 
-          patternImage={patternImage}
-          setPatternImage={setPatternImage}
-          patternImages={patternImages}
-          setPatternImages={setPatternImages}
-          receptorImage={receptorImage}
-          setReceptorImage={setReceptorImage}
-          receptorImages={receptorImages}
-          setReceptorImages={setReceptorImages}
-          receptorName={receptorName}
-          setReceptorName={setReceptorName}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Panel izquierdo: configuraciones */}
+      <div className="lg:col-span-1 space-y-6">
+        <CustomManifestLeftPanel
+          intention={intention}
+          setIntention={setIntention}
+          manifestSound={manifestSound}
+          setManifestSound={setManifestSound}
+          manifestFrequency={manifestFrequency}
+          setManifestFrequency={setManifestFrequency}
+          visualSpeed={visualSpeed}
+          setVisualSpeed={setVisualSpeed}
+          exposureTime={exposureTime}
+          setExposureTime={setExposureTime}
+          rate1={rate1}
+          setRate1={setRate1}
+          rate2={rate2}
+          setRate2={setRate2}
+          rate3={rate3}
+          setRate3={setRate3}
           isManifestActive={isManifestActive}
+        />
+        
+        {/* Audio Subliminal Section */}
+        <AudioSubliminalSection 
           audioFile={audioFile}
           setAudioFile={setAudioFile}
           audioVolume={audioVolume}
@@ -126,48 +136,51 @@ const CustomManifest = ({
           audioSubliminalPlaying={audioSubliminalPlaying}
           playSubliminalAudio={playSubliminalAudio}
           stopSubliminalAudio={stopSubliminalAudio}
+          isManifestActive={isManifestActive}
           audioLoop={audioLoop}
           setAudioLoop={setAudioLoop}
           clearAudio={clearAudio}
         />
-        
-        {/* Right Panel: Intention setup and visualization */}
-        <div className="lg:col-span-2">
-          <h3 className="text-xl font-semibold mb-4">Programa tu Intención</h3>
-          
-          <ManifestInterfaceSection 
-            patterns={patterns}
-            intention={intention}
-            setIntention={setIntention}
-            manifestSound={manifestSound}
-            setManifestSound={setManifestSound}
-            manifestFrequency={manifestFrequency}
-            setManifestFrequency={setManifestFrequency}
-            visualSpeed={visualSpeed}
-            setVisualSpeed={setVisualSpeed}
-            exposureTime={exposureTime}
-            setExposureTime={setExposureTime}
-            rate1={rate1}
-            setRate1={setRate1}
-            rate2={rate2}
-            setRate2={setRate2}
-            rate3={rate3}
-            setRate3={setRate3}
-            isManifestActive={isManifestActive}
-            timeRemaining={timeRemaining}
-            startManifestation={startManifestation}
-            stopManifestation={stopManifestation}
-            formatTimeRemaining={formatTimeRemaining}
+      </div>
+      
+      {/* Panel derecho: visualización y controles principales */}
+      <div className="lg:col-span-2 space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <PatternSection 
             patternImage={patternImage}
+            setPatternImage={setPatternImage}
             patternImages={patternImages}
-            receptorImage={receptorImage}
-            receptorImages={receptorImages}
-            currentImage={currentImage}
+            setPatternImages={setPatternImages}
+            isManifestActive={isManifestActive}
+          />
+          
+          <ReceptorSection
             receptorName={receptorName}
+            setReceptorName={setReceptorName}
+            receptorImage={receptorImage}
+            setReceptorImage={setReceptorImage}
+            receptorImages={receptorImages}
+            setReceptorImages={setReceptorImages}
+            isManifestActive={isManifestActive}
           />
         </div>
+        
+        <ManifestInterfaceSection
+          currentImage={currentImage}
+          isManifestActive={isManifestActive}
+          patternImage={patternImage}
+          patternImages={patternImages}
+          receptorImage={receptorImage}
+          receptorImages={receptorImages}
+          canStart={canStart}
+          timeRemaining={timeRemaining}
+          startManifestation={startManifestation}
+          stopManifestation={stopManifestation}
+          formatTimeRemaining={formatTimeRemaining}
+          backgroundModeActive={backgroundModeActive}
+        />
       </div>
-    </Card>
+    </div>
   );
 };
 

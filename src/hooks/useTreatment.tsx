@@ -35,12 +35,77 @@ export const useTreatment = () => {
   // Subliminal audio element reference para mejor control
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
   const [audioSubliminalPlaying, setAudioSubliminalPlaying] = useState(false);
+  const [backgroundModeActive, setBackgroundModeActive] = useState(false);
+  const audioSourceRef = useRef<string | null>(null);
 
   // Select a preset
   const selectPreset = (preset: TreatmentPreset) => {
     setSelectedPreset(preset.id);
     audio.setFrequency([preset.frequency]);
     audio.setDuration([preset.duration]);
+  };
+
+  // Manejar cambios de visibilidad del documento para audio subliminal
+  const handleVisibilityChange = () => {
+    if (document.hidden && audioSubliminalPlaying) {
+      console.log("App pasó a segundo plano con audio subliminal en reproducción (tratamiento)");
+      setBackgroundModeActive(true);
+      
+      // Guardar la posición actual del audio
+      if (audioElementRef.current) {
+        const currentTime = audioElementRef.current.currentTime;
+        audioElementRef.current.pause();
+        audioElementRef.current.currentTime = currentTime;
+      }
+    } else if (!document.hidden && backgroundModeActive && audioSourceRef.current) {
+      console.log("App volvió al primer plano, restaurando audio subliminal (tratamiento)");
+      
+      // Si estaba reproduciendo, restaurar la reproducción
+      if (audioSubliminalPlaying && audioElementRef.current) {
+        audioElementRef.current.play()
+          .then(() => {
+            console.log("Audio subliminal reanudado con éxito (tratamiento)");
+            setBackgroundModeActive(false);
+          })
+          .catch((err) => {
+            console.error("Error al reanudar audio subliminal (tratamiento):", err);
+            // Intentar crear un nuevo elemento de audio
+            if (audioFile) {
+              recreateAudioElement();
+            }
+          });
+      }
+    }
+  };
+
+  const recreateAudioElement = () => {
+    try {
+      if (!audioFile) return;
+      
+      const audioURL = URL.createObjectURL(audioFile);
+      audioSourceRef.current = audioURL;
+      
+      const newAudio = new Audio(audioURL);
+      newAudio.loop = audioLoop;
+      newAudio.volume = audioVolume / 20;
+      
+      // Asignar la nueva referencia
+      audioElementRef.current = newAudio;
+      
+      // Intentar reproducir
+      newAudio.play()
+        .then(() => {
+          console.log("Audio subliminal recreado y reproduciendo (tratamiento)");
+          setAudioSubliminalPlaying(true);
+          setBackgroundModeActive(false);
+        })
+        .catch((err) => {
+          console.error("Error al reproducir audio subliminal recreado (tratamiento):", err);
+          setAudioSubliminalPlaying(false);
+        });
+    } catch (error) {
+      console.error("Error al recrear el elemento de audio (tratamiento):", error);
+    }
   };
 
   // Función para manejar play del audio subliminal
@@ -52,7 +117,10 @@ export const useTreatment = () => {
           audioElementRef.current.pause();
         }
         
-        const newAudio = new Audio(URL.createObjectURL(audioFile));
+        const audioURL = URL.createObjectURL(audioFile);
+        audioSourceRef.current = audioURL;
+        
+        const newAudio = new Audio(audioURL);
         newAudio.loop = audioLoop;
         newAudio.volume = audioVolume / 20;
         
@@ -84,6 +152,7 @@ export const useTreatment = () => {
     if (audioElementRef.current) {
       audioElementRef.current.pause();
       setAudioSubliminalPlaying(false);
+      setBackgroundModeActive(false);
       console.log("Audio subliminal detenido");
       // No eliminamos la referencia al elemento para poder reanudar la reproducción
     }
@@ -94,7 +163,9 @@ export const useTreatment = () => {
     stopSubliminalAudio();
     setAudioFile(null);
     audioElementRef.current = null;
+    audioSourceRef.current = null;
     setAudioSubliminalPlaying(false);
+    setBackgroundModeActive(false);
     toast({
       title: "Audio eliminado",
       description: "El archivo de audio subliminal ha sido eliminado",
@@ -147,15 +218,20 @@ export const useTreatment = () => {
     }
   }, [audioVolume]);
 
-  // Cleanup on unmount
+  // Agregar listener para visibilitychange
   useEffect(() => {
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Cleanup on unmount
     return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (audioElementRef.current) {
         audioElementRef.current.pause();
         audioElementRef.current = null;
       }
+      audioSourceRef.current = null;
     };
-  }, []);
+  }, [audioSubliminalPlaying, backgroundModeActive]);
 
   return {
     // Audio treatment originals
@@ -187,5 +263,7 @@ export const useTreatment = () => {
     audioLoop,
     setAudioLoop,
     clearAudio,
+    // Background mode indicator
+    backgroundModeActive: audio.backgroundModeActive || backgroundModeActive,
   };
 };

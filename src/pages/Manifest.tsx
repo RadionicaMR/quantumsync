@@ -66,6 +66,7 @@ const Manifest = () => {
               setReceptorImages={manifest.setReceptorImages}
               receptorName={manifest.receptorName}
               setReceptorName={manifest.setReceptorName}
+              backgroundModeActive={manifest.backgroundModeActive}
             />
           </TabsContent>
           
@@ -114,6 +115,7 @@ const Manifest = () => {
               audioLoop={manifest.audioLoop}
               setAudioLoop={manifest.setAudioLoop}
               clearAudio={manifest.clearAudio}
+              backgroundModeActive={manifest.backgroundModeActive}
             />
           </TabsContent>
         </Tabs>

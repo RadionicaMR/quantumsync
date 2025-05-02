@@ -1,4 +1,4 @@
-
+import React from 'react';
 import TreatmentLeftPanel from './customTreatment/TreatmentLeftPanel';
 import TreatmentRightPanel from './customTreatment/TreatmentRightPanel';
 
@@ -48,6 +48,7 @@ interface CustomTreatmentProps {
   audioLoop?: boolean;
   setAudioLoop?: (loop: boolean) => void;
   clearAudio?: () => void;
+  backgroundModeActive?: boolean;
 }
 
 const CustomTreatment = (props: CustomTreatmentProps) => {
@@ -97,6 +98,7 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
     audioLoop = true,
     setAudioLoop = () => {},
     clearAudio = () => {},
+    backgroundModeActive = false,
   } = props;
 
   return (
@@ -163,6 +165,7 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
           audioLoop={audioLoop}
           setAudioLoop={setAudioLoop}
           clearAudio={clearAudio}
+          backgroundModeActive={backgroundModeActive}
         />
       </div>
     </div>

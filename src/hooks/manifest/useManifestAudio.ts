@@ -1,14 +1,55 @@
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { ManifestAudio } from './types';
 
-export const useManifestAudio = (): ManifestAudio => {
+export const useManifestAudio = (): ManifestAudio & {
+  backgroundModeActive: boolean;
+} => {
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const harmonicOscillatorRef = useRef<OscillatorNode | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
+  const [backgroundModeActive, setBackgroundModeActive] = useState(false);
+  const currentFrequencyRef = useRef<number | null>(null);
+
+  const handleVisibilityChange = () => {
+    if (document.hidden && oscillatorRef.current !== null) {
+      console.log("App pasó a segundo plano durante manifestación, guardando estado");
+      setBackgroundModeActive(true);
+      
+      // El oscilador debe detenerse porque el AudioContext se suspende
+      if (oscillatorRef.current) {
+        oscillatorRef.current.stop();
+        oscillatorRef.current = null;
+      }
+      
+      if (harmonicOscillatorRef.current) {
+        harmonicOscillatorRef.current.stop();
+        harmonicOscillatorRef.current = null;
+      }
+      
+    } else if (!document.hidden && backgroundModeActive && currentFrequencyRef.current !== null) {
+      console.log("App volvió al primer plano, restaurando manifestación con frecuencia:", currentFrequencyRef.current);
+      
+      // Reiniciar osciladores con la frecuencia guardada
+      startAudio(currentFrequencyRef.current);
+      setBackgroundModeActive(false);
+    }
+  };
+
+  // Agregar event listener para visibilitychange
+  useEffect(() => {
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [backgroundModeActive]);
 
   const startAudio = (frequency: number) => {
     try {
+      // Guarda la frecuencia actual para restaurar si es necesario
+      currentFrequencyRef.current = frequency;
+      
       // Initialize audio context
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
       audioContextRef.current = new AudioContext();
@@ -65,6 +106,9 @@ export const useManifestAudio = (): ManifestAudio => {
       audioContextRef.current.close();
       audioContextRef.current = null;
     }
+    
+    currentFrequencyRef.current = null;
+    setBackgroundModeActive(false);
   };
 
   return {
@@ -72,5 +116,6 @@ export const useManifestAudio = (): ManifestAudio => {
     audioContextRef,
     startAudio,
     stopAudio,
+    backgroundModeActive
   };
 };
