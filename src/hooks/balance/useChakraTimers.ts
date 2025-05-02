@@ -48,8 +48,10 @@ export const useChakraTimers = () => {
       
       console.log(`Timer completed for chakra ${chakraName}, about to call onComplete`);
       
-      // Call onComplete directly - this is crucial for proper transition
-      onComplete();
+      // Call onComplete with a very small timeout to ensure the callback runs 
+      // after the current call stack is cleared
+      setTimeout(onComplete, 50);
+      
     }, totalDuration);
     
     // Use requestAnimationFrame for smoother progress updates
