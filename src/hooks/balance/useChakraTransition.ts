@@ -22,13 +22,13 @@ export const useChakraTransition = () => {
     setProgress: (progress: number) => void,
     onComplete: () => void
   ) => {
-    // CRITICAL FIX: Ensure we can transition
+    // CRITICAL CHECK: Ensure we can transition
     if (!isPlaying) {
       console.log("Not playing, skipping transition");
       return;
     }
     
-    // CRITICAL FIX: Update timestamp first
+    // Update timestamp first
     const now = Date.now();
     lastTransitionTime.current = now;
     
@@ -59,18 +59,24 @@ export const useChakraTransition = () => {
       // Call original callback
       if (onComplete && typeof onComplete === 'function') {
         console.log(`Calling onComplete callback for ${nextChakra}`);
-        setTimeout(() => {
-          try {
-            onComplete();
-          } catch (error) {
-            console.error("Error in onComplete callback:", error);
-          }
-        }, 100);
+        try {
+          onComplete();
+        } catch (error) {
+          console.error("Error in onComplete callback:", error);
+        }
       }
     };
     
-    // Start new timer for this chakra if we're playing
-    if (isPlaying) {
+    // CRITICAL FIX: Add small delay before starting timer to ensure UI updates
+    setTimeout(() => {
+      // Final check to make sure we're still playing
+      if (!isPlaying) {
+        console.log(`Aborting transition to ${nextChakra} because we're no longer playing`);
+        isTransitioning.current = false;
+        return;
+      }
+      
+      // Start new timer for this chakra
       console.log(`Starting timer for chakra ${nextChakra} with duration ${duration[0]} minutes`);
       startProgressTimer(
         nextChakra, 
@@ -79,9 +85,8 @@ export const useChakraTransition = () => {
         setProgress, 
         safeOnComplete
       );
-    } else {
-      isTransitioning.current = false;
-    }
+    }, 100);
+    
   }, [notifyChakraChange, playChakraSound, startProgressTimer, cleanupTimers, stopSound]);
 
   return {

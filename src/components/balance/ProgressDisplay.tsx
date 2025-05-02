@@ -31,9 +31,9 @@ const ProgressDisplay = ({ isPlaying, currentChakra, progress, frequency }: Prog
       setDisplayProgress(progress);
       prevProgressRef.current = progress;
       
-      // Special case for progress reset
-      if (progress === 0 && prevProgressRef.current !== 0) {
-        console.log(`ProgressDisplay: Progress reset to 0 detected`);
+      // Special handling for 100% progress to ensure complete display
+      if (progress === 100) {
+        console.log("ProgressDisplay: 100% completion reached, ensuring display shows completion");
       }
     }
   }, [progress, currentChakra]);

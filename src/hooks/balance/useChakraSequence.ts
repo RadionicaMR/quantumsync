@@ -6,6 +6,7 @@ export const useChakraSequence = () => {
   // State for transition control
   const [lastTransitionTime, setLastTransitionTime] = useState<number>(0);
   const lastChakraProcessed = useRef<string | null>(null);
+  const isProcessingNextChakra = useRef<boolean>(false);
   
   const completeSession = useCallback((
     setIsPlaying: (value: boolean) => void,
@@ -35,6 +36,7 @@ export const useChakraSequence = () => {
     // Reset transition flag
     isTransitioning.current = false;
     lastChakraProcessed.current = null;
+    isProcessingNextChakra.current = false;
   }, []);
 
   const moveToNextChakra = useCallback((
@@ -59,6 +61,23 @@ export const useChakraSequence = () => {
   ) => {
     console.log("moveToNextChakra called, isPlaying:", isPlaying);
     
+    // Prevent multiple calls while processing
+    if (isProcessingNextChakra.current) {
+      console.log("Already processing next chakra, ignoring duplicate call");
+      return;
+    }
+    
+    // Set processing flag
+    isProcessingNextChakra.current = true;
+    
+    // Force playing state check locally
+    const localIsPlaying = isPlaying;
+    if (!localIsPlaying) {
+      console.log("Not playing anymore, skipping transition");
+      isProcessingNextChakra.current = false;
+      return;
+    }
+    
     // Get updated list of chakras to balance
     const chakrasToBalance = getChakrasToBalance();
     console.log("Chakras to balance:", chakrasToBalance);
@@ -67,6 +86,7 @@ export const useChakraSequence = () => {
     if (!chakrasToBalance || chakrasToBalance.length === 0) {
       console.log("No chakras to balance, completing session");
       completeSessionFn();
+      isProcessingNextChakra.current = false;
       return;
     }
     
@@ -78,8 +98,9 @@ export const useChakraSequence = () => {
     // This ensures previous operations are completed
     setTimeout(() => {
       // Double-check if we're still playing to prevent post-stop transitions
-      if (!isPlaying) {
+      if (!localIsPlaying) {
         console.log("Not playing anymore, skipping transition");
+        isProcessingNextChakra.current = false;
         return;
       }
       
@@ -105,39 +126,47 @@ export const useChakraSequence = () => {
           handleChakraTransition(
             currentChakra || '',
             nextChakra,
-            isPlaying,
+            localIsPlaying,
             duration,
             setProgress,
-            () => moveToNextChakra(
-              isPlaying,
-              nextChakra,
-              getChakrasToBalance,
-              isTransitioning,
-              cleanupTimers,
-              stopSound,
-              setCurrentChakra,
-              setProgress,
-              handleChakraTransition,
-              completeSessionFn,
-              duration
-            )
+            () => {
+              console.log(`Chakra ${nextChakra} completed, moving to next`);
+              // Reset processing flag for next call
+              isProcessingNextChakra.current = false;
+              
+              moveToNextChakra(
+                localIsPlaying,
+                nextChakra,
+                getChakrasToBalance,
+                isTransitioning,
+                cleanupTimers,
+                stopSound,
+                setCurrentChakra,
+                setProgress,
+                handleChakraTransition,
+                completeSessionFn,
+                duration
+              );
+            }
           );
           
           // Update last chakra processed for tracking
           lastChakraProcessed.current = nextChakra;
-        }, 50);
+        }, 100);
         
       } else {
         // Session completed
         completeSessionFn();
+        isProcessingNextChakra.current = false;
       }
-    }, 100);
+    }, 200);
   }, []);
 
   return {
     lastTransitionTime,
     setLastTransitionTime,
     lastChakraProcessed,
+    isProcessingNextChakra,
     completeSession,
     moveToNextChakra
   };
