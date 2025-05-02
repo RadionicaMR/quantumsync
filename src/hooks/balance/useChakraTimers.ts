@@ -6,6 +6,7 @@ export const useChakraTimers = () => {
   const progressIntervalRef = useRef<number | null>(null);
   const chakraTimerRef = useRef<NodeJS.Timeout | null>(null);
   const animationFrameId = useRef<number | null>(null);
+  const isCompletingTimerRef = useRef<boolean>(false);
 
   const cleanupTimers = useCallback(() => {
     if (progressIntervalRef.current) {
@@ -22,6 +23,9 @@ export const useChakraTimers = () => {
       cancelAnimationFrame(animationFrameId.current);
       animationFrameId.current = null;
     }
+    
+    // Reset completion flag
+    isCompletingTimerRef.current = false;
   }, []);
 
   const startProgressTimer = useCallback((
@@ -46,6 +50,14 @@ export const useChakraTimers = () => {
     
     // SOLUCIÓN CRÍTICA: Ejecutar callback al finalizar usando múltiples métodos
     const guaranteedCallback = () => {
+      // Prevent duplicate executions
+      if (isCompletingTimerRef.current) {
+        console.log(`Timer for ${chakraName} already completing, skipping duplicate callback`);
+        return;
+      }
+      
+      isCompletingTimerRef.current = true;
+      
       try {
         console.log(`Executing callback for chakra ${chakraName}`);
         // Ensure we reach 100% before moving to the next chakra
@@ -60,6 +72,9 @@ export const useChakraTimers = () => {
             onComplete();
           } catch (e) {
             console.error("Error in RAF callback:", e);
+          } finally {
+            // Reset flag after all callbacks
+            isCompletingTimerRef.current = false;
           }
         });
       } catch (error) {
@@ -71,6 +86,9 @@ export const useChakraTimers = () => {
             onComplete();
           } catch (e) {
             console.error("Final error in callback:", e);
+          } finally {
+            // Always reset flag
+            isCompletingTimerRef.current = false;
           }
         }, 200);
       }
@@ -113,6 +131,7 @@ export const useChakraTimers = () => {
     chakraTimerRef,
     animationFrameId,
     cleanupTimers,
-    startProgressTimer
+    startProgressTimer,
+    isCompletingTimerRef
   };
 };

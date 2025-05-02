@@ -8,6 +8,7 @@ import type { ChakraName } from '@/constants/chakraData';
 export const useChakraTransition = () => {
   // Reference to track if we're already transitioning
   const isTransitioning = useRef(false);
+  const lastTransitionTime = useRef<number>(0);
   
   const { playChakraSound, stopSound } = useChakraAudio();
   const { cleanupTimers, startProgressTimer } = useChakraTimers();
@@ -21,6 +22,15 @@ export const useChakraTransition = () => {
     setProgress: (progress: number) => void,
     onComplete: () => void
   ) => {
+    // Prevent too frequent transitions (debounce)
+    const now = Date.now();
+    if ((now - lastTransitionTime.current) < 1000) {
+      console.log(`Throttling chakra transition - time since last: ${now - lastTransitionTime.current}ms`);
+      return;
+    }
+    
+    lastTransitionTime.current = now;
+    
     // SOLUCIÓN CRÍTICA: Reiniciar progreso para garantizar comportamiento consistente
     console.log(`Transition from ${currentChakra} to ${nextChakra}, resetting progress to 0`);
     setProgress(0);
@@ -75,6 +85,7 @@ export const useChakraTransition = () => {
     isTransitioning,
     handleChakraTransition,
     cleanupTimers,
-    stopSound
+    stopSound,
+    lastTransitionTime
   };
 };
