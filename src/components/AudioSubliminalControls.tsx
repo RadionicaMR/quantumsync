@@ -1,9 +1,12 @@
 
 import React, { useRef, useEffect } from "react";
-import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import { Play, CircleStop, FilePlus, Mic, Trash2, Repeat } from "lucide-react";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
+import AudioFileSelector from "./audio/AudioFileSelector";
+import AudioRecorderButton from "./audio/AudioRecorderButton";
+import AudioFileInfo from "./audio/AudioFileInfo";
+import AudioPlaybackControls from "./audio/AudioPlaybackControls";
+import AudioPreview from "./audio/AudioPreview";
 
 interface AudioSubliminalControlsProps {
   audioFile: File | null;
@@ -17,7 +20,7 @@ interface AudioSubliminalControlsProps {
   maxVolume?: number;
   audioLoop?: boolean;
   setAudioLoop?: (loop: boolean) => void;
-  clearAudio?: () => void; // Nueva prop para eliminar el audio
+  clearAudio?: () => void;
 }
 
 const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
@@ -32,10 +35,8 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
   maxVolume = 20,
   audioLoop = true,
   setAudioLoop = () => {},
-  clearAudio = () => {}, // Implementación por defecto
+  clearAudio = () => {},
 }) => {
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
   // Grabadora
   const {
     isRecording,
@@ -62,127 +63,58 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
   };
 
   const handleRemove = () => {
-    clearAudio(); // Usamos la función proporcionada por props
+    clearAudio();
     clearRecording();
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
   };
 
-  const handleButtonClick = () => {
-    if (!isDisabled && !isPlaying) {
-      fileInputRef.current?.click();
-    }
-  };
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   return (
     <div className="space-y-2 border border-zinc-200 p-3 rounded-xl mt-2 bg-muted/20">
       <Label className="mb-1 block font-semibold">Audio Subliminal (opcional)</Label>
 
       <div className="flex gap-3 items-center flex-wrap">
-        {/* File uploader */}
-        <input
-          type="file"
-          accept="audio/*"
-          onChange={handleFileChange}
-          disabled={isDisabled || isPlaying || isRecording}
-          ref={fileInputRef}
-          className="hidden"
+        <AudioFileSelector
+          isDisabled={isDisabled}
+          isPlaying={isPlaying}
+          isRecording={isRecording}
+          handleFileChange={handleFileChange}
         />
-        <button
-          type="button"
-          onClick={handleButtonClick}
-          disabled={isDisabled || isPlaying || isRecording}
-          className="flex items-center gap-1 px-3 py-2 rounded bg-quantum-primary text-white hover:bg-quantum-primary/90 focus:outline focus:ring-2 focus:ring-quantum-primary"
-        >
-          <FilePlus className="w-4 h-4" />
-          Seleccionar archivo
-        </button>
 
-        {/* GRABAR AUDIO */}
-        {!isRecording && (
-          <button
-            type="button"
-            onClick={startRecording}
-            disabled={isDisabled || isPlaying}
-            className="flex items-center gap-1 px-3 py-2 rounded bg-green-600 text-white hover:bg-green-700 focus:outline focus:ring-2 focus:ring-green-600"
-          >
-            <Mic className="w-4 h-4" />
-            Grabar audio
-          </button>
-        )}
-        {isRecording && (
-          <button
-            type="button"
-            onClick={stopRecording}
-            disabled={isDisabled}
-            className="flex items-center gap-1 px-3 py-2 rounded bg-red-600 text-white animate-pulse"
-          >
-            <CircleStop className="w-4 h-4" />
-            Detener ({isRecording ? "Grabando..." : ""})
-          </button>
-        )}
+        <AudioRecorderButton
+          isRecording={isRecording}
+          isDisabled={isDisabled}
+          isPlaying={isPlaying}
+          startRecording={startRecording}
+          stopRecording={stopRecording}
+        />
 
-        {audioFile && (
-          <>
-            <button
-              onClick={handleRemove}
-              disabled={isDisabled || isPlaying || isRecording}
-              className="flex items-center gap-1 px-2 py-1 rounded text-red-500 hover:bg-red-100"
-              type="button"
-            >
-              <Trash2 className="w-4 h-4" />
-              Quitar
-            </button>
-            <span className="text-xs text-zinc-600 max-w-xs overflow-hidden truncate">{audioFile.name}</span>
-            {/* BOTÓN DE LOOP */}
-            <button
-              type="button"
-              className="ml-2 p-1 border rounded-xl text-xs bg-white hover:bg-zinc-100 flex items-center gap-1"
-              onClick={() => setAudioLoop(!audioLoop)}
-              disabled={isDisabled}
-              title={audioLoop ? "Click para desactivar repetición" : "Click para activar repetición"}
-            >
-              <Repeat className={`w-4 h-4 transition-colors ${audioLoop ? "text-quantum-primary" : "text-zinc-400"}`} />
-              {audioLoop ? "Loop activado" : "Sin loop"}
-            </button>
-          </>
-        )}
+        <AudioFileInfo
+          audioFile={audioFile}
+          isDisabled={isDisabled}
+          isPlaying={isPlaying}
+          isRecording={isRecording}
+          audioLoop={audioLoop}
+          handleRemove={handleRemove}
+          setAudioLoop={setAudioLoop}
+        />
       </div>
 
-      {/* Vista previa del audio grabado */}
-      {audioURL && (
-        <div className="flex gap-2 items-center my-1">
-          <audio src={audioURL} controls className="h-5" />
-        </div>
-      )}
+      <AudioPreview audioURL={audioURL} />
 
-      {audioFile && (
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={isPlaying ? stopAudio : playAudio}
-            disabled={isDisabled}
-            className="p-2 rounded-xl border border-zinc-200 bg-white shadow hover:bg-zinc-100 focus:outline focus:ring-2 focus:ring-quantum-primary"
-            aria-label={isPlaying ? "Detener audio" : "Reproducir audio"}
-          >
-            {isPlaying ? (
-              <CircleStop className="w-5 h-5 text-red-500" />
-            ) : (
-              <Play className="w-5 h-5 text-green-600" />
-            )}
-          </button>
-          <Slider
-            min={0}
-            max={maxVolume}
-            value={[audioVolume]}
-            onValueChange={vals => setAudioVolume(vals[0])}
-            className="w-32"
-            disabled={isDisabled}
-          />
-          <span className="ml-2 text-xs">Volumen: {audioVolume}</span>
-        </div>
-      )}
+      <AudioPlaybackControls
+        audioFile={audioFile}
+        isPlaying={isPlaying}
+        isDisabled={isDisabled}
+        audioVolume={audioVolume}
+        maxVolume={maxVolume}
+        playAudio={playAudio}
+        stopAudio={stopAudio}
+        setAudioVolume={setAudioVolume}
+      />
 
       <p className="text-xs text-muted-foreground">
         Puedes seleccionar o grabar un audio de hasta 1 minuto. Deja el volumen en 0 para que funcione como audio subliminal.
