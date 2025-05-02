@@ -1,0 +1,93 @@
+@import './styles/quantum.css';
+@import './styles/cosmic.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
+
+  html,
+  body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    background: #000;
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+  }
+
+  body {
+    color: rgb(var(--foreground-rgb));
+    background: linear-gradient(to bottom,
+        transparent,
+        rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* ===== Scrollbar CSS ===== */
+  /* Firefox */
+  * {
+    scrollbar-width: auto;
+    scrollbar-color: #8f54f0 #0000;
+  }
+
+  /* Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #0000;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: #8f54f0;
+    border-radius: 10px;
+    border: 0px solid #0000;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+@keyframes random-move {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  25% {
+    transform: translate(10px, -5px);
+  }
+
+  50% {
+    transform: translate(-7px, 12px);
+  }
+
+  75% {
+    transform: translate(3px, 6px);
+  }
+
+  100% {
+    transform: translate(-5px, -8px);
+  }
+}

@@ -1,12 +1,12 @@
+
 import React from 'react';
-import AudioSubliminalSection from './sections/AudioSubliminalSection';
+import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
 import PatternSection from './sections/PatternSection';
 import ReceptorSection from './sections/ReceptorSection';
 import ManifestInterfaceSection from './sections/ManifestInterfaceSection';
-import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
+import { ManifestPattern } from '@/data/manifestPatterns';
 
 interface CustomManifestProps {
-  patterns: any[];
   intention: string;
   setIntention: (intention: string) => void;
   patternImage: string | null;
@@ -50,10 +50,10 @@ interface CustomManifestProps {
   setAudioLoop: (loop: boolean) => void;
   clearAudio: () => void;
   backgroundModeActive?: boolean;
+  patterns?: ManifestPattern[]; // Add missing required props
 }
 
 const CustomManifest: React.FC<CustomManifestProps> = ({
-  patterns,
   intention,
   setIntention,
   patternImage,
@@ -97,51 +97,60 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
   setAudioLoop,
   clearAudio,
   backgroundModeActive = false,
+  patterns = [],
 }) => {
-
   // Calculated values
   const canStart = intention.trim() !== "" && 
                  (patternImage !== null || patternImages.length > 0);
 
+  // Create manifest patterns record
+  const manifestPatternsRecord: Record<string, string> = {};
+  patterns.forEach(pattern => {
+    manifestPatternsRecord[pattern.id] = pattern.image;
+  });
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       {/* Panel izquierdo: configuraciones */}
-      <div className="lg:col-span-1 space-y-6">
-        <CustomManifestLeftPanel
-          intention={intention}
-          setIntention={setIntention}
-          manifestSound={manifestSound}
-          setManifestSound={setManifestSound}
-          manifestFrequency={manifestFrequency}
-          setManifestFrequency={setManifestFrequency}
-          visualSpeed={visualSpeed}
-          setVisualSpeed={setVisualSpeed}
-          exposureTime={exposureTime}
-          setExposureTime={setExposureTime}
-          rate1={rate1}
-          setRate1={setRate1}
-          rate2={rate2}
-          setRate2={setRate2}
-          rate3={rate3}
-          setRate3={setRate3}
-          isManifestActive={isManifestActive}
-        />
-        
-        {/* Audio Subliminal Section */}
-        <AudioSubliminalSection 
-          audioFile={audioFile}
-          setAudioFile={setAudioFile}
-          audioVolume={audioVolume}
-          setAudioVolume={setAudioVolume}
-          audioSubliminalPlaying={audioSubliminalPlaying}
-          playSubliminalAudio={playSubliminalAudio}
-          stopSubliminalAudio={stopSubliminalAudio}
-          isManifestActive={isManifestActive}
-          audioLoop={audioLoop}
-          setAudioLoop={setAudioLoop}
-          clearAudio={clearAudio}
-        />
-      </div>
+      <CustomManifestLeftPanel
+        intention={intention}
+        setIntention={setIntention}
+        manifestSound={manifestSound}
+        setManifestSound={setManifestSound}
+        manifestFrequency={manifestFrequency}
+        setManifestFrequency={setManifestFrequency}
+        visualSpeed={visualSpeed}
+        setVisualSpeed={setVisualSpeed}
+        exposureTime={exposureTime}
+        setExposureTime={setExposureTime}
+        rate1={rate1}
+        setRate1={setRate1}
+        rate2={rate2}
+        setRate2={setRate2}
+        rate3={rate3}
+        setRate3={setRate3}
+        isManifestActive={isManifestActive}
+        patternImage={patternImage}
+        setPatternImage={setPatternImage}
+        patternImages={patternImages}
+        setPatternImages={setPatternImages}
+        receptorImage={receptorImage}
+        setReceptorImage={setReceptorImage}
+        receptorImages={receptorImages}
+        setReceptorImages={setReceptorImages}
+        receptorName={receptorName}
+        setReceptorName={setReceptorName}
+        audioFile={audioFile}
+        setAudioFile={setAudioFile}
+        audioVolume={audioVolume}
+        setAudioVolume={setAudioVolume}
+        audioSubliminalPlaying={audioSubliminalPlaying}
+        playSubliminalAudio={playSubliminalAudio}
+        stopSubliminalAudio={stopSubliminalAudio}
+        audioLoop={audioLoop}
+        setAudioLoop={setAudioLoop}
+        clearAudio={clearAudio}
+      />
       
       {/* Panel derecho: visualización y controles principales */}
       <div className="lg:col-span-2 space-y-8">
@@ -178,6 +187,19 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
           stopManifestation={stopManifestation}
           formatTimeRemaining={formatTimeRemaining}
           backgroundModeActive={backgroundModeActive}
+          selectedPattern=""  // Default empty string
+          patterns={patterns}
+          manifestPatterns={manifestPatternsRecord}
+          intention={intention}
+          manifestSound={manifestSound}
+          manifestFrequency={manifestFrequency}
+          exposureTime={exposureTime}
+          manifestSpeed={visualSpeed}
+          visualSpeed={visualSpeed}
+          rate1={rate1}
+          rate2={rate2}
+          rate3={rate3}
+          receptorName={receptorName}
         />
       </div>
     </div>

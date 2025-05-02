@@ -1,8 +1,10 @@
 
 import React from 'react';
+import { Card } from '@/components/ui/card';
 import PatternSection from './PatternSection';
 import ReceptorSection from './ReceptorSection';
 import AudioSubliminalSection from './AudioSubliminalSection';
+import { ManifestControls } from '../ManifestControls';
 
 interface CustomManifestLeftPanelProps {
   patternImage: string | null;
@@ -26,6 +28,23 @@ interface CustomManifestLeftPanelProps {
   audioLoop?: boolean;
   setAudioLoop?: (loop: boolean) => void;
   clearAudio?: () => void;
+  // Add these new props that were being passed to the component
+  intention: string;
+  setIntention: (intention: string) => void;
+  manifestSound: boolean;
+  setManifestSound: (sound: boolean) => void;
+  manifestFrequency: number[];
+  setManifestFrequency: (frequency: number[]) => void;
+  visualSpeed: number[];
+  setVisualSpeed: (speed: number[]) => void;
+  exposureTime: number[];
+  setExposureTime: (time: number[]) => void;
+  rate1: string;
+  setRate1: (rate: string) => void;
+  rate2: string;
+  setRate2: (rate: string) => void;
+  rate3: string;
+  setRate3: (rate: string) => void;
 }
 
 const CustomManifestLeftPanel = ({
@@ -49,10 +68,53 @@ const CustomManifestLeftPanel = ({
   stopSubliminalAudio,
   audioLoop = true,
   setAudioLoop = () => {},
-  clearAudio = () => {}
+  clearAudio = () => {},
+  intention,
+  setIntention,
+  manifestSound,
+  setManifestSound,
+  manifestFrequency,
+  setManifestFrequency,
+  visualSpeed,
+  setVisualSpeed,
+  exposureTime,
+  setExposureTime,
+  rate1,
+  setRate1,
+  rate2,
+  setRate2,
+  rate3,
+  setRate3
 }: CustomManifestLeftPanelProps) => {
   return (
-    <div className="lg:col-span-1">
+    <div className="lg:col-span-1 space-y-6">
+      <Card className="p-6 quantum-card">
+        <ManifestControls
+          intention={intention}
+          setIntention={setIntention}
+          manifestSound={manifestSound}
+          setManifestSound={setManifestSound}
+          manifestFrequency={manifestFrequency}
+          setManifestFrequency={setManifestFrequency}
+          visualSpeed={visualSpeed}
+          setVisualSpeed={setVisualSpeed}
+          exposureTime={exposureTime}
+          setExposureTime={setExposureTime}
+          rate1={rate1}
+          setRate1={setRate1}
+          rate2={rate2}
+          setRate2={setRate2}
+          rate3={rate3}
+          setRate3={setRate3}
+          isManifestActive={isManifestActive}
+          timeRemaining={null}
+          startManifestation={() => {}}
+          stopManifestation={() => {}}
+          formatTimeRemaining={() => ""}
+          canStart={false}
+        />
+      </Card>
+      
       <PatternSection 
         patternImage={patternImage}
         setPatternImage={setPatternImage}

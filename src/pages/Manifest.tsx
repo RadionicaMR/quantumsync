@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
@@ -6,11 +7,15 @@ import PresetManifest from '@/components/manifest/PresetManifest';
 import CustomManifest from '@/components/manifest/CustomManifest';
 import { manifestPatterns } from '@/data/manifestPatterns';
 import { useManifestCore } from '@/hooks/manifest/useManifestCore';
+import { useManifestState } from '@/hooks/manifest/useManifestState';
 import { toast } from '@/components/ui/use-toast';
 
 const Manifest = () => {
   const [activeTab, setActiveTab] = useState("presets");
   const manifest = useManifestCore(manifestPatterns);
+  
+  // Add missing properties to align with component expectations
+  const visualSpeed = manifest.exposureTime; // Using exposureTime as visualSpeed if missing
   
   return (
     <Layout>
@@ -43,8 +48,8 @@ const Manifest = () => {
                 setManifestFrequency={manifest.setManifestFrequency}
                 exposureTime={manifest.exposureTime}
                 setExposureTime={manifest.setExposureTime}
-                manifestSpeed={manifest.manifestSpeed}
-                setManifestSpeed={manifest.setManifestSpeed}
+                visualSpeed={visualSpeed}
+                setVisualSpeed={manifest.setExposureTime}
                 patternImage={manifest.patternImage}
                 setPatternImage={manifest.setPatternImage}
                 receptorImage={manifest.receptorImage}
@@ -56,7 +61,7 @@ const Manifest = () => {
                 isManifestActive={manifest.isManifestActive}
                 timeRemaining={manifest.timeRemaining}
                 currentImage={manifest.currentImage}
-                selectPattern={manifest.selectPattern}
+                selectPattern={(pattern) => manifest.selectPattern(pattern.id)}
                 startManifestation={manifest.startManifestation}
                 stopManifestation={manifest.stopManifestation}
                 formatTimeRemaining={manifest.formatTimeRemaining}
@@ -68,6 +73,12 @@ const Manifest = () => {
                 playSubliminalAudio={manifest.playSubliminalAudio}
                 stopSubliminalAudio={manifest.stopSubliminalAudio}
                 backgroundModeActive={manifest.backgroundModeActive}
+                rate1={manifest.rate1}
+                rate2={manifest.rate2}
+                rate3={manifest.rate3}
+                setRate1={manifest.setRate1}
+                setRate2={manifest.setRate2}
+                setRate3={manifest.setRate3}
               />
             </TabsContent>
             
@@ -81,8 +92,8 @@ const Manifest = () => {
                 setManifestFrequency={manifest.setManifestFrequency}
                 exposureTime={manifest.exposureTime}
                 setExposureTime={manifest.setExposureTime}
-                manifestSpeed={manifest.manifestSpeed}
-                setManifestSpeed={manifest.setManifestSpeed}
+                visualSpeed={visualSpeed}
+                setVisualSpeed={manifest.setExposureTime}
                 patternImage={manifest.patternImage}
                 setPatternImage={manifest.setPatternImage}
                 receptorImage={manifest.receptorImage}
@@ -105,6 +116,18 @@ const Manifest = () => {
                 playSubliminalAudio={manifest.playSubliminalAudio}
                 stopSubliminalAudio={manifest.stopSubliminalAudio}
                 backgroundModeActive={manifest.backgroundModeActive}
+                rate1={manifest.rate1}
+                rate2={manifest.rate2}
+                rate3={manifest.rate3}
+                setRate1={manifest.setRate1}
+                setRate2={manifest.setRate2}
+                setRate3={manifest.setRate3}
+                receptorName={manifest.receptorName}
+                setReceptorName={manifest.setReceptorName}
+                audioLoop={true}
+                setAudioLoop={() => {}}
+                clearAudio={() => {}}
+                patterns={manifestPatterns}
               />
             </TabsContent>
           </Tabs>

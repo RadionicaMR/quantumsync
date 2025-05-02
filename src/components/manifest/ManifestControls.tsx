@@ -32,7 +32,7 @@ interface ManifestControlsProps {
   canStart: boolean;
 }
 
-const ManifestControls = ({
+export const ManifestControls: React.FC<ManifestControlsProps> = ({
   intention,
   setIntention,
   manifestSound,
@@ -55,7 +55,7 @@ const ManifestControls = ({
   stopManifestation,
   formatTimeRemaining,
   canStart
-}: ManifestControlsProps) => {
+}) => {
   
   return (
     <div className="space-y-6">

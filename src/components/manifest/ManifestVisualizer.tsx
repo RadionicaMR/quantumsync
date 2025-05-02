@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { ManifestPattern } from '@/data/manifestPatterns';
 
 interface ManifestVisualizerProps {
   isActive: boolean;
@@ -9,14 +10,17 @@ interface ManifestVisualizerProps {
   receptorImage: string | null;
   receptorImages?: string[];
   selectedPattern: string;
-  patterns: Array<{ id: string; name: string; description: string; image: string }>;
-  manifestPatterns: Array<{ id: string; name: string; description: string; image: string }>;
+  patterns: ManifestPattern[];
+  manifestPatterns: Record<string, string>;
   intention: string;
-  visualSpeed: number[];
+  manifestSound: boolean;
+  manifestFrequency: number[];
   exposureTime: number[];
-  rate1: string;
-  rate2: string;
-  rate3: string;
+  manifestSpeed: number[];
+  visualSpeed?: number[];
+  rate1?: string;
+  rate2?: string;
+  rate3?: string;
   receptorName?: string;
 }
 
@@ -31,12 +35,15 @@ const ManifestVisualizer = ({
   patterns,
   manifestPatterns,
   intention,
-  visualSpeed,
+  manifestSound,
+  manifestFrequency,
   exposureTime,
-  rate1,
-  rate2,
-  rate3,
-  receptorName = ''
+  manifestSpeed,
+  visualSpeed = [10],
+  rate1 = "",
+  rate2 = "",
+  rate3 = "",
+  receptorName = ""
 }: ManifestVisualizerProps) => {
   const [currentPatternIndex, setCurrentPatternIndex] = useState(0);
   const [currentReceptorIndex, setCurrentReceptorIndex] = useState(0);
@@ -47,7 +54,10 @@ const ManifestVisualizer = ({
     
     // Only setup image rotation if we have multiple images
     if (patternImages.length > 1 || receptorImages.length > 1) {
-      const rotationInterval = 2000; // 2 seconds between image changes
+      const speedValue = visualSpeed && visualSpeed.length > 0 ? visualSpeed[0] : 
+                         manifestSpeed && manifestSpeed.length > 0 ? manifestSpeed[0] : 10;
+      
+      const rotationInterval = Math.max(1000, 3000 - (speedValue * 100)); // Adjust rotation speed
       
       const rotationTimer = setInterval(() => {
         if (patternImages.length > 1) {
@@ -61,7 +71,7 @@ const ManifestVisualizer = ({
       
       return () => clearInterval(rotationTimer);
     }
-  }, [isActive, patternImages.length, receptorImages.length]);
+  }, [isActive, patternImages.length, receptorImages.length, visualSpeed, manifestSpeed]);
 
   if (!isActive) {
     return null;
@@ -76,8 +86,13 @@ const ManifestVisualizer = ({
       return patternImage;
     }
     if (selectedPattern) {
-      const patternsToUse = patterns || manifestPatterns;
-      return patternsToUse.find(p => p.id === selectedPattern)?.image;
+      const patternsToUse = patterns || [];
+      const selectedPatternObj = patternsToUse.find(p => p.id === selectedPattern);
+      if (selectedPatternObj) {
+        return selectedPatternObj.image;
+      } else if (typeof manifestPatterns === 'object') {
+        return manifestPatterns[selectedPattern];
+      }
     }
     return null;
   };
@@ -96,7 +111,9 @@ const ManifestVisualizer = ({
   const hasContent = hasImages || receptorName || intention;
   
   // Calculate rate animation speed based on visual speed
-  const rateAnimationDuration = Math.max(5, 15 - visualSpeed[0]);
+  const speedValue = visualSpeed && visualSpeed.length > 0 ? visualSpeed[0] : 
+                     manifestSpeed && manifestSpeed.length > 0 ? manifestSpeed[0] : 10;
+  const rateAnimationDuration = Math.max(5, 15 - speedValue);
 
   return (
     <div className="mt-6 relative overflow-hidden rounded-lg bg-white aspect-square">
@@ -107,7 +124,7 @@ const ManifestVisualizer = ({
             src={getPatternImage()}
             alt="Patrón de manifestación"
             className="max-h-full max-w-full object-contain opacity-80 transition-opacity duration-300"
-            style={{ animation: `pulse ${60/visualSpeed[0]}s infinite alternate` }}
+            style={{ animation: `pulse ${60/speedValue}s infinite alternate` }}
           />
         )}
         
@@ -116,7 +133,7 @@ const ManifestVisualizer = ({
             src={getReceptorImage()}
             alt="Imagen del receptor"
             className="max-h-full max-w-full object-contain opacity-80 transition-opacity duration-300"
-            style={{ animation: `pulse ${60/visualSpeed[0]}s infinite alternate` }}
+            style={{ animation: `pulse ${60/speedValue}s infinite alternate` }}
           />
         )}
         
@@ -128,7 +145,7 @@ const ManifestVisualizer = ({
                 src={getPatternImage()}
                 alt="Mezcla de imágenes"
                 className="absolute inset-0 max-h-full max-w-full object-contain opacity-40 mix-blend-overlay"
-                style={{ animation: `pulse ${60/visualSpeed[0]}s infinite alternate` }}
+                style={{ animation: `pulse ${60/speedValue}s infinite alternate` }}
               />
             )}
             
@@ -137,7 +154,7 @@ const ManifestVisualizer = ({
                 src={getReceptorImage()}
                 alt="Mezcla de imágenes"
                 className="absolute inset-0 max-h-full max-w-full object-contain opacity-40 mix-blend-multiply"
-                style={{ animation: `pulse ${60/visualSpeed[0]}s infinite alternate` }}
+                style={{ animation: `pulse ${60/speedValue}s infinite alternate` }}
               />
             )}
           </>
@@ -158,7 +175,7 @@ const ManifestVisualizer = ({
             <div 
               className="max-w-[80%] text-white font-bold text-xl md:text-2xl p-4 text-center bg-black/30 rounded line-clamp-3"
               style={{
-                animation: `pulse ${60/visualSpeed[0]}s infinite alternate ease-in-out`,
+                animation: `pulse ${60/speedValue}s infinite alternate ease-in-out`,
                 textShadow: '0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(155,135,245,0.8)'
               }}
             >

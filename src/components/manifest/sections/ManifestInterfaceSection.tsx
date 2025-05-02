@@ -16,7 +16,7 @@ interface ManifestInterfaceSectionProps {
   stopManifestation: () => void;
   formatTimeRemaining: (time: number) => string;
   backgroundModeActive?: boolean;
-  // Adding the missing props
+  // Added properties to resolve type errors
   selectedPattern: string;
   patterns: ManifestPattern[];
   manifestPatterns: Record<string, string>;
@@ -25,6 +25,11 @@ interface ManifestInterfaceSectionProps {
   manifestFrequency: number[];
   exposureTime: number[];
   manifestSpeed: number[];
+  visualSpeed?: number[];
+  rate1?: string; 
+  rate2?: string;
+  rate3?: string;
+  receptorName?: string;
 }
 
 const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
@@ -40,7 +45,7 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
   stopManifestation,
   formatTimeRemaining,
   backgroundModeActive = false,
-  // Added missing props
+  // Added props
   selectedPattern,
   patterns,
   manifestPatterns,
@@ -49,7 +54,15 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
   manifestFrequency,
   exposureTime,
   manifestSpeed,
+  visualSpeed = [10],
+  rate1 = "",
+  rate2 = "",
+  rate3 = "",
+  receptorName = ""
 }) => {
+  // Convert manifestPatterns record to array if needed
+  const patternsArray = Array.isArray(patterns) ? patterns : [];
+  
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg">
       <h3 className="text-xl font-semibold mb-4">Interfaz de Manifestación</h3>
@@ -62,13 +75,18 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
         receptorImages={receptorImages}
         isActive={isManifestActive}
         selectedPattern={selectedPattern}
-        patterns={patterns}
+        patterns={patternsArray}
         manifestPatterns={manifestPatterns}
         intention={intention}
         manifestSound={manifestSound}
         manifestFrequency={manifestFrequency}
         exposureTime={exposureTime}
         manifestSpeed={manifestSpeed}
+        visualSpeed={visualSpeed}
+        rate1={rate1}
+        rate2={rate2}
+        rate3={rate3}
+        receptorName={receptorName}
       />
       
       <ManifestActions 

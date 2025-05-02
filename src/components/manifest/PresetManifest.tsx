@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { ManifestPattern } from '@/data/manifestPatterns';
@@ -8,7 +9,6 @@ import AudioControls from './AudioControls';
 import FrequencyControls from './FrequencyControls';
 import TimingControls from './TimingControls';
 
-// Added backgroundModeActive to interface
 interface PresetManifestProps {
   patterns: ManifestPattern[];
   selectedPattern: string;
@@ -20,8 +20,8 @@ interface PresetManifestProps {
   setManifestFrequency: (value: number[]) => void;
   exposureTime: number[];
   setExposureTime: (value: number[]) => void;
-  manifestSpeed: number[];
-  setManifestSpeed: (value: number[]) => void;
+  visualSpeed: number[];
+  setVisualSpeed: (value: number[]) => void;
   patternImage: string | null;
   setPatternImage: (image: string | null) => void;
   receptorImage: string | null;
@@ -45,6 +45,12 @@ interface PresetManifestProps {
   playSubliminalAudio: () => void;
   stopSubliminalAudio: () => void;
   backgroundModeActive?: boolean;
+  rate1: string;
+  rate2: string;
+  rate3: string;
+  setRate1: (value: string) => void;
+  setRate2: (value: string) => void;
+  setRate3: (value: string) => void;
 }
 
 const PresetManifest: React.FC<PresetManifestProps> = ({
@@ -58,8 +64,8 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
   setManifestFrequency,
   exposureTime,
   setExposureTime,
-  manifestSpeed,
-  setManifestSpeed,
+  visualSpeed,
+  setVisualSpeed,
   patternImage,
   setPatternImage,
   receptorImage,
@@ -83,12 +89,18 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
   playSubliminalAudio,
   stopSubliminalAudio,
   backgroundModeActive = false,
+  rate1,
+  rate2,
+  rate3,
+  setRate1,
+  setRate2,
+  setRate3
 }) => {
   // Convert patterns array to a record for easier access
   const manifestPatterns: Record<string, string> = patterns.reduce((acc, pattern) => {
     acc[pattern.id] = pattern.image;
     return acc;
-  }, {});
+  }, {} as Record<string, string>);
 
   const canStart =
     selectedPattern !== null &&
@@ -123,6 +135,8 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
           />
 
           <FrequencyControls
+            manifestSound={manifestSound}
+            setManifestSound={setManifestSound}
             manifestFrequency={manifestFrequency}
             setManifestFrequency={setManifestFrequency}
           />
@@ -130,8 +144,8 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
           <TimingControls
             exposureTime={exposureTime}
             setExposureTime={setExposureTime}
-            manifestSpeed={manifestSpeed}
-            setManifestSpeed={setManifestSpeed}
+            visualSpeed={visualSpeed}
+            setVisualSpeed={setVisualSpeed}
           />
         </Card>
       </div>
@@ -157,7 +171,11 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
           manifestSound={manifestSound}
           manifestFrequency={manifestFrequency}
           exposureTime={exposureTime}
-          manifestSpeed={manifestSpeed}
+          manifestSpeed={visualSpeed}
+          visualSpeed={visualSpeed}
+          rate1={rate1}
+          rate2={rate2}
+          rate3={rate3}
           backgroundModeActive={backgroundModeActive}
         />
       </div>

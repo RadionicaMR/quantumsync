@@ -1,6 +1,6 @@
 
+import React from 'react';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 
 interface VisualizationSpeedControlProps {
@@ -9,43 +9,32 @@ interface VisualizationSpeedControlProps {
   isDisabled: boolean;
 }
 
-const VisualizationSpeedControl = ({
+const VisualizationSpeedControl: React.FC<VisualizationSpeedControlProps> = ({
   visualSpeed,
   setVisualSpeed,
   isDisabled
-}: VisualizationSpeedControlProps) => {
-  const handleSpeedInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
-    if (!isNaN(value) && value >= 1 && value <= 30) {
-      setVisualSpeed([value]);
-    }
-  };
-
+}) => {
   return (
-    <div className="mt-4">
-      <div className="flex items-center justify-between mb-2">
-        <Label>Velocidad de Visualización:</Label>
-        <div className="flex items-center">
-          <Input
-            type="number"
-            value={visualSpeed[0]}
-            onChange={handleSpeedInputChange}
-            disabled={isDisabled}
-            className="w-24 ml-2"
-            min={1}
-            max={30}
-          />
-        </div>
+    <div className="space-y-2 my-4">
+      <div className="flex justify-between items-center">
+        <Label htmlFor="visual-speed">Velocidad de Visualización</Label>
+        <span className="text-muted-foreground font-mono text-sm">
+          {visualSpeed[0]}
+        </span>
       </div>
       <Slider
-        min={1}
-        max={30}
-        step={1}
+        id="visual-speed"
         value={visualSpeed}
         onValueChange={setVisualSpeed}
+        min={1}
+        max={20}
+        step={1}
         disabled={isDisabled}
-        className="mb-4"
       />
+      <div className="flex justify-between text-xs text-muted-foreground">
+        <span>Lento</span>
+        <span>Rápido</span>
+      </div>
     </div>
   );
 };

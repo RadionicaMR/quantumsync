@@ -2,35 +2,24 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { Switch } from '@/components/ui/switch';
 
-interface FrequencyControlProps {
+interface FrequencyControlsProps {
   manifestSound: boolean;
   setManifestSound: (value: boolean) => void;
   manifestFrequency: number[];
   setManifestFrequency: (value: number[]) => void;
-  isDisabled: boolean;
+  isDisabled?: boolean;
 }
 
-const FrequencyControl: React.FC<FrequencyControlProps> = ({
+const FrequencyControls: React.FC<FrequencyControlsProps> = ({
   manifestSound,
   setManifestSound,
   manifestFrequency,
   setManifestFrequency,
-  isDisabled
+  isDisabled = false
 }) => {
   return (
-    <div className="space-y-4 my-4">
-      <div className="flex items-center justify-between">
-        <Label htmlFor="manifest-sound" className="cursor-pointer">Sonido de manifestación</Label>
-        <Switch 
-          id="manifest-sound" 
-          checked={manifestSound} 
-          onCheckedChange={setManifestSound}
-          disabled={isDisabled}
-        />
-      </div>
-      
+    <div className="space-y-4 mb-6">
       <div className="space-y-2">
         <div className="flex justify-between items-center">
           <Label htmlFor="manifest-frequency">Frecuencia de Manifestación</Label>
@@ -56,4 +45,4 @@ const FrequencyControl: React.FC<FrequencyControlProps> = ({
   );
 };
 
-export default FrequencyControl;
+export default FrequencyControls;
