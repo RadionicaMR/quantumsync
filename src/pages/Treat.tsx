@@ -136,7 +136,7 @@ const Treat = () => {
                     setRate1={treatment.setRate1}
                     rate2={treatment.rate2}
                     setRate2={treatment.setRate2}
-                    rate3={treatment.rate3}
+                    rate3={treatment.setRate3}
                     setRate3={treatment.setRate3}
                     radionicImage={treatment.radionicImage}
                     setRadionicImage={treatment.setRadionicImage}
