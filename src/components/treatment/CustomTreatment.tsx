@@ -36,8 +36,8 @@ interface CustomTreatmentProps {
   hypnoticEffect: boolean;
   startTreatment: () => void;
   stopTreatment: () => void;
-  receptorName?: string;
-  setReceptorName?: (name: string) => void;
+  receptorName: string;
+  setReceptorName: (name: string) => void;
   audioFile: File | null;
   setAudioFile: (file: File | null) => void;
   audioVolume: number;
@@ -85,8 +85,8 @@ const CustomTreatment = (props: CustomTreatmentProps) => {
     hypnoticEffect,
     startTreatment,
     stopTreatment,
-    receptorName = '',
-    setReceptorName = () => {},
+    receptorName,
+    setReceptorName,
     audioFile,
     setAudioFile,
     audioVolume,

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -136,7 +137,7 @@ const Treat = () => {
                     setRate1={treatment.setRate1}
                     rate2={treatment.rate2}
                     setRate2={treatment.setRate2}
-                    rate3={treatment.setRate3}
+                    rate3={treatment.rate3}
                     setRate3={treatment.setRate3}
                     radionicImage={treatment.radionicImage}
                     setRadionicImage={treatment.setRadionicImage}
@@ -161,7 +162,6 @@ const Treat = () => {
                     stopTreatment={treatment.stopTreatment}
                     receptorName={treatment.receptorName}
                     setReceptorName={treatment.setReceptorName}
-                    // PASAR controles de audio
                     audioFile={treatment.audioFile}
                     setAudioFile={treatment.setAudioFile}
                     audioVolume={treatment.audioVolume}
@@ -169,6 +169,9 @@ const Treat = () => {
                     audioSubliminalPlaying={treatment.audioSubliminalPlaying}
                     playSubliminalAudio={treatment.playSubliminalAudio}
                     stopSubliminalAudio={treatment.stopSubliminalAudio}
+                    audioLoop={treatment.audioLoop}
+                    setAudioLoop={treatment.setAudioLoop}
+                    clearAudio={treatment.clearAudio}
                   />
                 </div>
               </Card>
