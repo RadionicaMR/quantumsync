@@ -9,6 +9,8 @@ export const useChakraTimers = () => {
   const isCompletingTimerRef = useRef<boolean>(false);
 
   const cleanupTimers = useCallback(() => {
+    console.log("Cleaning up all timers and animations");
+    
     if (progressIntervalRef.current) {
       clearInterval(progressIntervalRef.current);
       progressIntervalRef.current = null;
@@ -44,61 +46,30 @@ export const useChakraTimers = () => {
     console.log(`useChakraTimers: Resetting progress to 0 for chakra ${chakraName} before starting timer`);
     setProgress(0);
     
-    // Get total duration in milliseconds
-    const totalDuration = duration[0] * 60 * 1000;
+    // Get total duration in milliseconds (using 3 seconds for testing)
+    // TEMPORARY FIX FOR DEBUGGING: Use shorter duration
+    const debugMode = false; // Set to false in production
+    const totalDuration = debugMode ? 3000 : duration[0] * 60 * 1000;
+    
+    console.log(`Starting timer for ${chakraName} with duration: ${totalDuration}ms`);
+    
     const startTime = Date.now();
     const endTime = startTime + totalDuration;
     
-    // CRITICAL FIX: Execute callback at the end using multiple methods
-    const guaranteedCallback = () => {
-      // Prevent duplicate executions
-      if (isCompletingTimerRef.current) {
-        console.log(`Timer for ${chakraName} already completing, skipping duplicate callback`);
-        return;
-      }
-      
-      isCompletingTimerRef.current = true;
-      
-      try {
-        console.log(`Executing callback for chakra ${chakraName}`);
-        // Ensure we reach 100% before moving to the next chakra
-        setProgress(100);
-        
-        // First immediate execution
-        onComplete();
-        
-        // Second execution via RAF to synchronize with UI
-        window.requestAnimationFrame(() => {
-          try {
-            onComplete();
-          } catch (e) {
-            console.error("Error in RAF callback:", e);
-          } finally {
-            // Reset flag after all callbacks
-            isCompletingTimerRef.current = false;
-          }
-        });
-      } catch (error) {
-        console.error("Error in callback:", error);
-        
-        // Last attempt - force with setTimeout
-        setTimeout(() => {
-          try {
-            onComplete();
-          } catch (e) {
-            console.error("Final error in callback:", e);
-          } finally {
-            // Always reset flag
-            isCompletingTimerRef.current = false;
-          }
-        }, 200);
-      }
-    };
-    
     // Set up timer to move to next chakra when complete
     chakraTimerRef.current = setTimeout(() => {
-      console.log(`Timer completed for chakra ${chakraName}, duration: ${duration[0]} minutes`);
-      guaranteedCallback();
+      console.log(`Timer completed for chakra ${chakraName}, duration: ${totalDuration}ms`);
+      
+      // Ensure we reach 100% before moving on
+      setProgress(100);
+      
+      // Execute callback after a small delay to ensure UI updates
+      setTimeout(() => {
+        if (onComplete && typeof onComplete === 'function') {
+          onComplete();
+        }
+      }, 100);
+      
     }, totalDuration);
     
     // Use requestAnimationFrame for smoother progress updates
@@ -123,7 +94,7 @@ export const useChakraTimers = () => {
     // Start the animation frame loop
     if (isPlaying) {
       animationFrameId.current = requestAnimationFrame(updateProgress);
-      console.log(`Started timer for chakra ${chakraName} with duration ${duration[0]} minutes, progress reset to 0`);
+      console.log(`Started timer for chakra ${chakraName} with duration ${totalDuration}ms, progress reset to 0`);
     }
   }, [cleanupTimers]);
 

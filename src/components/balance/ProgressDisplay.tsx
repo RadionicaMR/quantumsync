@@ -16,22 +16,25 @@ const ProgressDisplay = ({ isPlaying, currentChakra, progress, frequency }: Prog
   const prevChakraRef = useRef<string>('');
   const prevProgressRef = useRef<number>(0);
   
-  // Reset display progress when chakra changes or progress is reset
+  // Enhanced chakra change detection and progress management
   useEffect(() => {
     // Force progress reset when chakra changes
-    if (currentChakra && currentChakra !== prevChakraRef.current) {
+    if (currentChakra !== prevChakraRef.current) {
       console.log(`ProgressDisplay: Chakra changed from ${prevChakraRef.current} to ${currentChakra}, forcing progress reset`);
       setDisplayProgress(0);
       prevChakraRef.current = currentChakra;
       prevProgressRef.current = 0;
-    } else if (progress === 0 && prevProgressRef.current !== 0) {
-      console.log(`ProgressDisplay: Progress reset to 0 detected, updating display`);
-      setDisplayProgress(0);
-      prevProgressRef.current = 0;
-    } else if (progress !== prevProgressRef.current) {
+    } 
+    // Handle progress updates
+    else if (progress !== prevProgressRef.current) {
       console.log(`ProgressDisplay: Progress updated from ${prevProgressRef.current} to ${progress}`);
       setDisplayProgress(progress);
       prevProgressRef.current = progress;
+      
+      // Special case for progress reset
+      if (progress === 0 && prevProgressRef.current !== 0) {
+        console.log(`ProgressDisplay: Progress reset to 0 detected`);
+      }
     }
   }, [progress, currentChakra]);
   
