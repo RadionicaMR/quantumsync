@@ -111,7 +111,7 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Left Panel - Configuration */}
       <div className="lg:col-span-1">
-        <Card className="bg-white p-6 rounded-lg shadow-md">
+        <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-4">Configuración</h3>
 
           <PatternSelection

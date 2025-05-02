@@ -64,7 +64,7 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
   const patternsArray = Array.isArray(patterns) ? patterns : [];
   
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg">
+    <div className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-lg">
       <h3 className="text-xl font-semibold mb-4">Interfaz de Manifestación</h3>
       
       <ManifestVisualizer
