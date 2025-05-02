@@ -39,7 +39,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     }
   }, [balanceOption, initialChakraStates]);
 
-  // Update progress animation function
+  // Update progress animation function - refactored for better reliability
   const updateProgress = useCallback(() => {
     if (!isPlaying || !startTimeRef.current || !currentChakra) {
       if (animationFrameRef.current) {
@@ -56,21 +56,29 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     progressRef.current = newProgress;
     setProgress(newProgress);
     
-    console.log(`Progress update: ${newProgress.toFixed(1)}%`);
+    console.log(`Progress update: ${newProgress.toFixed(1)}% for chakra ${currentChakra}`);
     
     if (newProgress < 100) {
       // Continue the animation loop
       animationFrameRef.current = window.requestAnimationFrame(updateProgress);
     } else {
+      // When progress reaches 100%, move to the next chakra
       const chakrasToBalance = getChakrasToBalance();
       const currentIndex = chakrasToBalance.indexOf(currentChakra as ChakraName);
       
+      console.log(`Chakra ${currentChakra} completed. Current index: ${currentIndex}, Total chakras: ${chakrasToBalance.length}`);
+      
       if (currentIndex < chakrasToBalance.length - 1) {
         const nextChakra = chakrasToBalance[currentIndex + 1];
+        console.log(`Moving to next chakra: ${nextChakra}`);
+        
         setCurrentChakra(nextChakra);
         setProgress(0);
         progressRef.current = 0;
         startTimeRef.current = Date.now();
+        
+        // Stop current sound and play the next chakra's sound
+        stopSound();
         playChakraSound(nextChakra);
         
         toast({
@@ -79,6 +87,9 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
         });
         
         // Start animation for next chakra
+        if (animationFrameRef.current) {
+          window.cancelAnimationFrame(animationFrameRef.current);
+        }
         animationFrameRef.current = window.requestAnimationFrame(updateProgress);
       } else {
         if (animationFrameRef.current) {
@@ -123,6 +134,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
       animationFrameRef.current = null;
     }
     
+    // Reset state and start with first chakra
     setIsPlaying(true);
     setCurrentChakra(chakrasToBalance[0]);
     setProgress(0);
@@ -139,6 +151,8 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     
     // Start the animation frame loop
     animationFrameRef.current = window.requestAnimationFrame(updateProgress);
+    
+    console.log(`Starting chakra balance with first chakra: ${chakrasToBalance[0]}`);
   }, [personName, getChakrasToBalance, playChakraSound, updateProgress]);
 
   const stopBalancing = useCallback(() => {

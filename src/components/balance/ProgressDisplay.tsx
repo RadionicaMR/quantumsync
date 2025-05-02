@@ -24,10 +24,10 @@ const ProgressDisplay = ({ isPlaying, currentChakra, progress, frequency }: Prog
       <p className="text-sm mb-1">
         Armonizando chakra {currentChakra} ({frequency} Hz)
       </p>
-      <div className="h-4 w-full bg-gray-700 rounded-full overflow-hidden shadow-inner">
+      <div className="relative h-4 w-full bg-gray-700 rounded-full overflow-hidden shadow-inner">
         <Progress 
           value={safeProgress} 
-          className="h-full"
+          className="h-full absolute top-0 left-0 w-full"
           style={{
             "--progress-foreground": chakraColor,
             "--progress-background": "transparent"
