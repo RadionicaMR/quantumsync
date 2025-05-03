@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ManifestPattern } from '@/data/manifestPatterns';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -66,8 +65,7 @@ const ManifestVisualizer = ({
     
     // Only setup rotation if we have multiple images
     if ((patternImages && patternImages.length > 1) || (receptorImages && receptorImages.length > 1)) {
-      const speedValue = visualSpeed && visualSpeed.length > 0 ? visualSpeed[0] : 
-                        manifestSpeed && manifestSpeed.length > 0 ? manifestSpeed[0] : 10;
+      const speedValue = visualSpeed && visualSpeed.length > 0 ? visualSpeed[0] : 10;
       
       const rotationInterval = Math.max(1000, 3000 - (speedValue * 100));
       
@@ -83,7 +81,7 @@ const ManifestVisualizer = ({
       
       return () => clearInterval(rotationTimer);
     }
-  }, [isActive, patternImages, receptorImages, visualSpeed, manifestSpeed]);
+  }, [isActive, patternImages, receptorImages, visualSpeed]);
 
   // Get the current pattern image to display
   const getPatternImage = () => {
@@ -121,8 +119,7 @@ const ManifestVisualizer = ({
   const hasContent = hasPatternImage || hasReceptorImage || hasReceptorName || intention;
 
   // Calculate animation speeds based on visualSpeed
-  const speedValue = visualSpeed && visualSpeed.length > 0 ? visualSpeed[0] : 
-                    manifestSpeed && manifestSpeed.length > 0 ? manifestSpeed[0] : 10;
+  const speedValue = visualSpeed && visualSpeed.length > 0 ? visualSpeed[0] : 10;
   const rateAnimationDuration = Math.max(5, 15 - speedValue);
   const pulseDuration = Math.max(0.5, 5 - (speedValue / 4));
 
