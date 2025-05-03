@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
@@ -29,7 +28,13 @@ const Manifest = () => {
         <div className="container mx-auto">
           <Tabs 
             value={activeTab} 
-            onValueChange={setActiveTab} 
+            onValueChange={(value) => {
+              setActiveTab(value);
+              // Reset manifest state when switching tabs
+              if (manifest.isManifestActive) {
+                manifest.stopManifestation();
+              }
+            }} 
             className="w-full"
           >
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">

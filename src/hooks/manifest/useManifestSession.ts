@@ -28,17 +28,13 @@ export const useManifestSession = () => {
     const hasPattern = state.activeTab === "presets" 
       ? !!state.selectedPattern 
       : (!!state.patternImage || state.patternImages.length > 0);
-
-    const hasReceptor = !!state.receptorName.trim() || 
-                    !!state.receptorImage || 
-                    state.receptorImages.length > 0;
     
     // For custom tab, we only need a pattern and intention
     const canStart = hasPattern && state.intention.trim() !== "";
     
     console.log("Start manifestation checks:", { 
       hasPattern, 
-      hasReceptor, 
+      hasReceptor: false,
       canStart, 
       intention: state.intention,
       activeTab: state.activeTab,
