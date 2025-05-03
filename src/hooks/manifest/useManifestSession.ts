@@ -53,42 +53,34 @@ export const useManifestSession = () => {
     
     console.log("INTENCIÓN VALIDADA CORRECTAMENTE:", currentIntention);
     
-    // CORRECCIÓN FUNDAMENTAL: Nueva lógica de verificación de patrones
+    // LÓGICA SIMPLIFICADA: Verificar patrón según tab activo
     let hasPattern = false;
     
     // Debug completo del estado actual
-    console.log("DEBUG COMPLETO - Estado de patrones:", {
+    console.log("VERIFICACIÓN DE PATRONES - Estado actual:", {
       activeTab: state.activeTab,
       patternImage: state.patternImage,
       patternImagesLength: state.patternImages ? state.patternImages.length : 0,
+      patternImages: state.patternImages,
       selectedPattern: state.selectedPattern,
       receptorImage: state.receptorImage,
       receptorImagesLength: state.receptorImages ? state.receptorImages.length : 0
     });
     
-    // LÓGICA CORREGIDA: Verificación según pestaña activa
     if (state.activeTab === "custom") {
-      // Para pestaña personalizada, cualquier imagen de patrón es válida
+      // Para pestaña personalizada, necesitamos imágenes de patrón
       hasPattern = Boolean(state.patternImage !== null || 
                         (state.patternImages && state.patternImages.length > 0));
-      
-      console.log("Tab CUSTOM - Verificación de patrón:", { 
-        hasPattern, 
-        patternImage: state.patternImage, 
-        patternImagesLength: state.patternImages.length,
-        patternImages: state.patternImages
-      });
-    } else if (state.activeTab === "presets") {
-      // Para presets, requiere un patrón seleccionado
-      hasPattern = Boolean(state.selectedPattern && state.selectedPattern.trim() !== "");
-      
-      console.log("Tab PRESETS - Verificación de patrón:", { 
-        hasPattern, 
-        selectedPattern: state.selectedPattern 
-      });
+    } else {
+      // Para presets, aceptamos tanto un patrón seleccionado COMO imágenes de patrón
+      hasPattern = Boolean(
+        (state.selectedPattern && state.selectedPattern.trim() !== "") || 
+        state.patternImage !== null || 
+        (state.patternImages && state.patternImages.length > 0)
+      );
     }
     
-    console.log("Resultado final de verificación de patrón:", { 
+    console.log("Resultado de verificación de patrón:", { 
       hasPattern, 
       activeTab: state.activeTab 
     });
@@ -98,7 +90,7 @@ export const useManifestSession = () => {
       console.error("ERROR: No se puede iniciar manifestación - falta patrón");
       toast({
         title: "No se puede iniciar la manifestación",
-        description: "Asegúrate de tener un patrón seleccionado.",
+        description: "Asegúrate de tener un patrón seleccionado o una imagen cargada.",
         variant: "destructive",
       });
       return;

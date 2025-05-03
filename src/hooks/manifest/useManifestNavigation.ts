@@ -17,16 +17,9 @@ export const useManifestNavigation = (stopManifestation: () => void) => {
     // Primero actualizar el tab activo en el estado para garantizar consistencia
     state.setActiveTab(val);
     
-    // Limpieza específica según el tab seleccionado
-    if (val === "presets") {
-      console.log("useManifestNavigation: Limpiando imágenes de patrón para presets");
-      // No limpiamos patternImages para permitir que sigan disponibles
-      // state.setPatternImage(null);
-      // state.setPatternImages([]);
-    } else if (val === "custom") {
-      console.log("useManifestNavigation: Limpiando patrón seleccionado para custom");
-      state.setSelectedPattern('');
-    }
+    // Ya NO limpiamos nada al cambiar de tab para permitir mejor experiencia de usuario
+    // Los usuarios pueden cambiar entre tabs sin perder sus configuraciones
+    console.log("useManifestNavigation: Manteniendo configuración al cambiar a", val);
     
     stopSubliminalAudio();
   };

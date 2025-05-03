@@ -35,8 +35,9 @@ const ManifestActions = ({
       intention,
       intentionLength: intention ? intention.length : 0,
       intentionValid: intention && intention.trim() !== "",
+      canStart
     });
-  }, [intention]);
+  }, [intention, canStart]);
   
   // Debugging log con valores actuales
   console.log("ManifestActions render con valores actuales:", {
@@ -58,14 +59,13 @@ const ManifestActions = ({
       intentionValid: intention && intention.trim() !== ""
     });
     
-    // Llamamos a startManifestation sin pasar la intención, 
-    // ya que debe haberse configurado en niveles superiores
     startManifestation();
   };
   
   // Verificación estricta de intención válida
   const isIntentionValid = Boolean(intention && intention.trim() !== "");
-  // Solo habilitamos el botón si hay intención válida Y canStart es true
+  
+  // Usamos directamente el valor de canStart que viene como prop
   const isButtonEnabled = canStart && isIntentionValid;
   
   console.log("ManifestActions: Estado final del botón:", { 

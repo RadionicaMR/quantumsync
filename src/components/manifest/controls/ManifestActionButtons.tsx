@@ -30,7 +30,15 @@ const ManifestActionButtons = ({
     startManifestation();
   };
 
-  const isIntentionValid = intention && intention.trim() !== "";
+  // Simplificamos la validación con los valores que vienen de props
+  const isButtonEnabled = canStart && intention && intention.trim() !== "";
+  
+  console.log("ManifestActionButtons: Button state", {
+    isButtonEnabled,
+    canStart,
+    intention,
+    intentionValid: intention && intention.trim() !== ""
+  });
 
   return (
     <div className="flex items-center justify-between">
@@ -51,14 +59,14 @@ const ManifestActionButtons = ({
       ) : (
         <>
           <div className="text-muted-foreground">
-            {canStart && isIntentionValid 
+            {isButtonEnabled
               ? 'Listo para iniciar manifestación' 
               : 'Completa los campos requeridos para continuar'}
           </div>
           <QuantumButton 
             className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
             onClick={handleStartClick}
-            disabled={!canStart || !isIntentionValid}
+            disabled={!isButtonEnabled}
           >
             INICIAR MANIFESTACIÓN
           </QuantumButton>

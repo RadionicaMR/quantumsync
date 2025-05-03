@@ -11,8 +11,8 @@ import { useManifestState } from '@/hooks/manifest/useManifestState';
 import { toast } from '@/components/ui/use-toast';
 
 const Manifest = () => {
-  // Inicializamos con 'custom' para que coincida con la UI
-  const [activeTab, setActiveTab] = useState("custom");
+  // Inicializamos con 'presets' para que coincida con la UI por defecto
+  const [activeTab, setActiveTab] = useState("presets");
   const manifest = useManifestCore(manifestPatterns);
   
   // Use visualSpeed from core if available, or create new state
@@ -30,18 +30,27 @@ const Manifest = () => {
     manifest.setActiveTab(activeTab);
   }, []);
   
-  // Mantener la sincronización cuando cambia el tab
+  // Mantener la sincronización cuando cambia el tab en cualquier dirección
   useEffect(() => {
-    console.log("Manifest: Sincronizando activeTab cuando cambia:", activeTab);
-    
-    // Asegurar que la tab activa se actualice en el state
-    manifest.setActiveTab(activeTab);
-    
-    // Detener manifestación si estaba activa al cambiar de tab
-    if (manifest.isManifestActive) {
-      manifest.stopManifestation();
+    if (activeTab !== manifest.activeTab) {
+      console.log("Manifest: Sincronizando activeTab local con hook:", {
+        activeTabLocal: activeTab,
+        activeTabState: manifest.activeTab
+      });
+      manifest.setActiveTab(activeTab);
     }
   }, [activeTab]);
+  
+  // También sincronizar cuando cambia en el hook
+  useEffect(() => {
+    if (activeTab !== manifest.activeTab) {
+      console.log("Manifest: Sincronizando activeTab hook con local:", {
+        activeTabLocal: activeTab,
+        activeTabState: manifest.activeTab
+      });
+      setActiveTab(manifest.activeTab);
+    }
+  }, [manifest.activeTab]);
 
   console.log("Manifest RENDER - ESTADO COMPLETO:", {
     activeTab,
@@ -63,24 +72,11 @@ const Manifest = () => {
       manifest.stopManifestation();
     }
     
-    // ORDEN CORREGIDO: Primero actualizar el estado global
-    manifest.setActiveTab(value);
+    // Usar el método de navegación del core para cambiar tab
+    manifest.handleTabChange(value);
     
-    // Luego actualizar el estado local
+    // Actualizar también el estado local
     setActiveTab(value);
-    
-    // NO limpiamos las imágenes al cambiar de tab para permitir mejor experiencia de usuario
-    /* if (value === "presets") {
-      manifest.setPatternImage(null);
-      manifest.setPatternImages([]);
-    } else if (value === "custom") {
-      manifest.setSelectedPattern("");
-    } */
-    
-    // Sólo quitamos la selección previa de patrón al ir a custom
-    if (value === "custom") {
-      manifest.setSelectedPattern("");
-    }
   };
   
   return (

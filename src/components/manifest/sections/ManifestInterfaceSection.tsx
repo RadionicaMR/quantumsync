@@ -75,13 +75,21 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
     });
   }, [intention]);
   
-  // Debug log for canStart value, intention and other values
-  console.log("ManifestInterfaceSection RENDER:", {
+  // Verificación de patrón
+  const hasPattern = Boolean(
+    (selectedPattern && selectedPattern !== "") || 
+    patternImage !== null || 
+    (patternImages && patternImages.length > 0)
+  );
+  
+  // Debug log for pattern verification
+  console.log("ManifestInterfaceSection RENDER - Verificación de patrón:", {
     canStart,
     intention,
     intentionLength: intention ? intention.length : 0,
     intentionValid: intention && intention.trim() !== "",
     isManifestActive,
+    hasPattern,
     patternImagesLength: patternImages.length,
     patternImage,
     selectedPattern,
@@ -92,20 +100,9 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
   const handleStartManifestation = () => {
     console.log("ManifestInterfaceSection - Iniciando con intención:", intention);
     if (intention && intention.trim() !== "") {
-      // CORRECCIÓN: Verificación explícita de imágenes de patrón
-      const hasPattern = (selectedPattern && selectedPattern !== "") || 
-                         patternImage !== null || 
-                         (patternImages && patternImages.length > 0);
-                         
-      console.log("ManifestInterfaceSection - Verificación de patrones:", {
-        hasPattern,
-        selectedPattern,
-        patternImage,
-        patternImagesLength: patternImages ? patternImages.length : 0,
-        patternImages
-      });
-      
+      // CORRECCIÓN: Verificación explícita de patrones
       if (hasPattern) {
+        console.log("ManifestInterfaceSection - Patrón verificado, iniciando manifestación");
         startManifestation(intention);
       } else {
         console.error("Error: No se encontró patrón para iniciar manifestación");
@@ -141,7 +138,7 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
       
       <ManifestActions 
         isManifestActive={isManifestActive}
-        canStart={canStart}
+        canStart={hasPattern && intention && intention.trim() !== ""}
         timeRemaining={timeRemaining}
         startManifestation={handleStartManifestation}
         stopManifestation={stopManifestation}

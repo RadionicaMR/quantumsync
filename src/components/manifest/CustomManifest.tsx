@@ -1,3 +1,4 @@
+
 import React, { useEffect, useCallback } from 'react';
 import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
 import ManifestInterfaceSection from './sections/ManifestInterfaceSection';
@@ -101,15 +102,16 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
   indefiniteTime = false,
   setIndefiniteTime = () => {}
 }) => {
-  // Log para rastrear el valor de intención cuando cambia
+  // Log para rastrear el valor de intención y patrones cuando cambian
   useEffect(() => {
-    console.log("CustomManifest - intention actualizado:", {
+    console.log("CustomManifest - Estado actualizado:", {
       intention,
       intentionLength: intention ? intention.length : 0,
       intentionValid: intention && intention.trim() !== "",
       patternImage,
       patternImagesCount: patternImages ? patternImages.length : 0,
-      patternImages
+      patternImages,
+      hasPattern: Boolean(patternImage !== null || (patternImages && patternImages.length > 0))
     });
   }, [intention, patternImage, patternImages]);
   
@@ -121,7 +123,8 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
       intentionValid: intention && intention.trim() !== "",
       patternImage,
       patternImagesCount: patternImages ? patternImages.length : 0,
-      patternImages
+      patternImages,
+      hasPattern: Boolean(patternImage !== null || (patternImages && patternImages.length > 0))
     });
     
     // CORRECCIÓN: Verificación explícita de imágenes de patrón
@@ -149,25 +152,25 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
     }
   }, [intention, startManifestation, patternImage, patternImages]);
                   
-  // Debug log para verificar el cálculo de canStart
-  console.log("CustomManifest - RENDER:", {
-    intentionValid: intention && intention.trim() !== "",
-    patternImageExists: patternImage !== null,
-    patternImagesCount: patternImages.length,
-    intention: intention,
-    intentionLength: intention ? intention.length : 0,
-    patternImages
-  });
-
   // Create manifest patterns record
   const manifestPatternsRecord: Record<string, string> = {};
   patterns.forEach(pattern => {
     manifestPatternsRecord[pattern.id] = pattern.image;
   });
   
-  // Calculated values - simplified canStart condition
-  const canStart = Boolean(intention && intention.trim() !== "" && 
-                   (patternImage !== null || patternImages.length > 0));
+  // Calculated values - verificación de patrón e intención
+  const hasPattern = patternImage !== null || patternImages.length > 0;
+  const isIntentionValid = Boolean(intention && intention.trim() !== "");
+  const canStart = isIntentionValid && hasPattern;
+  
+  console.log("CustomManifest - Estado final de canStart:", {
+    canStart,
+    hasPattern,
+    isIntentionValid,
+    intention,
+    patternImage,
+    patternImagesLength: patternImages.length
+  });
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
