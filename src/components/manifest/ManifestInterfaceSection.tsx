@@ -13,7 +13,7 @@ interface ManifestInterfaceSectionProps {
   receptorImages: string[];
   canStart: boolean;
   timeRemaining: number | null;
-  startManifestation: () => void;
+  startManifestation: (intention?: string) => void;
   stopManifestation: () => void;
   formatTimeRemaining: (time: number) => string;
   backgroundModeActive?: boolean;
@@ -87,10 +87,12 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
     selectedPattern
   });
   
-  // CRUCIAL FIX: Preparamos una función que pase la intención al iniciar
+  // CRUCIAL: Explícitamente pasar la intención cuando se inicia la manifestación
   const handleStartManifestation = () => {
     console.log("ManifestInterfaceSection - Iniciando con intención:", intention);
-    startManifestation();
+    if (intention && intention.trim() !== "") {
+      startManifestation(intention);
+    }
   };
   
   return (

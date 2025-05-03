@@ -14,10 +14,10 @@ export const useManifestNavigation = (stopManifestation: () => void) => {
       stopManifestation();
     }
     
-    // CORREGIDO: Primero actualizar el tab activo en el estado para garantizar consistencia
+    // Primero actualizar el tab activo en el estado para garantizar consistencia
     state.setActiveTab(val);
     
-    // Luego limpiar el estado según el tab seleccionado
+    // Limpieza específica según el tab seleccionado
     if (val === "presets") {
       console.log("useManifestNavigation: Limpiando imágenes de patrón para presets");
       state.setPatternImage(null);
@@ -41,6 +41,12 @@ export const useManifestNavigation = (stopManifestation: () => void) => {
     if (patternId && patternId.trim() !== "") {
       state.setSelectedPattern(patternId);
       console.log("Patrón seleccionado:", patternId);
+      
+      // Asegurar que estamos en la pestaña correcta
+      if (state.activeTab !== "presets") {
+        console.log("Cambiando de tab 'custom' a 'presets' por selección de patrón");
+        state.setActiveTab("presets");
+      }
     } else {
       console.warn("Intento de seleccionar un patrón vacío");
       toast({

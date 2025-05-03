@@ -11,7 +11,7 @@ import { useManifestState } from '@/hooks/manifest/useManifestState';
 import { toast } from '@/components/ui/use-toast';
 
 const Manifest = () => {
-  // FIJO: Inicializamos con 'custom' para que coincida con la UI
+  // Inicializamos con 'custom' para que coincida con la UI
   const [activeTab, setActiveTab] = useState("custom");
   const manifest = useManifestCore(manifestPatterns);
   
@@ -19,19 +19,20 @@ const Manifest = () => {
   const visualSpeed = manifest.visualSpeed || manifest.exposureTime; 
   const setVisualSpeed = manifest.setVisualSpeed || manifest.setExposureTime;
   
-  // CORREGIDO: Se asegura que el estado activeTab en el hook se mantenga sincronizado
+  // Asegurar que el estado activeTab en el hook se mantenga sincronizado al iniciar
   useEffect(() => {
-    // CRUCIAL: Asegurar que el estado activeTab en el hook coincida con la UI
-    manifest.setActiveTab(activeTab);
-    
-    console.log("Manifest: Estado inicial sincronizado:", {
+    console.log("Manifest: Sincronizando estado inicial:", {
       activeTabLocal: activeTab,
       activeTabState: manifest.activeTab
     });
+    
+    // CRUCIAL: Sincronizar el estado activeTab del hook con el estado local
+    manifest.setActiveTab(activeTab);
   }, []);
   
+  // Mantener la sincronización cuando cambia el tab
   useEffect(() => {
-    console.log("Manifest: Sincronizando activeTab:", activeTab);
+    console.log("Manifest: Sincronizando activeTab cuando cambia:", activeTab);
     
     // Asegurar que la tab activa se actualice en el state
     manifest.setActiveTab(activeTab);
@@ -67,7 +68,7 @@ const Manifest = () => {
     // Luego actualizar el estado local
     setActiveTab(value);
     
-    // CORREGIDO: Después limpiar valores según la tab
+    // Después limpiar valores según la tab
     if (value === "presets") {
       manifest.setPatternImage(null);
       manifest.setPatternImages([]);
