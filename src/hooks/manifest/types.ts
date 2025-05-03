@@ -20,6 +20,7 @@ export interface ManifestState {
   rate2: string;
   rate3: string;
   indefiniteTime: boolean;
+  manifestSpeed: number[]; // Added missing property
 }
 
 export interface ManifestAudio {

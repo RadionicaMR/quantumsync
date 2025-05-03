@@ -44,7 +44,7 @@ export const useManifestState = (): ManifestState & {
   const [rate2, setRate2] = useState('');
   const [rate3, setRate3] = useState('');
   const [indefiniteTime, setIndefiniteTime] = useState(false);
-  // Add manifestSpeed for compatibility with useManifestSession
+  // Add manifestSpeed state with default value
   const [manifestSpeed, setManifestSpeed] = useState([10]);
 
   return {
