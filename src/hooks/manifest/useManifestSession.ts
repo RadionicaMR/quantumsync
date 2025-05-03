@@ -23,6 +23,7 @@ export const useManifestSession = () => {
   } = useManifestSubliminal();
 
   // Iniciar Manifestación: comienza audio subliminal si disponible
+  // Updated signature to accept the forcedIntention parameter
   const startManifestation = (forcedIntention?: string) => {
     // CORRECCIÓN CRÍTICA: Usar la intención forzada si está disponible
     // o usar la del state como fallback

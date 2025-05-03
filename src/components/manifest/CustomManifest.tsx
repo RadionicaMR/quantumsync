@@ -32,7 +32,7 @@ interface CustomManifestProps {
   setRate3: (rate: string) => void;
   isManifestActive: boolean;
   timeRemaining: number | null;
-  startManifestation: () => void;
+  startManifestation: (intention?: string) => void;
   stopManifestation: () => void;
   formatTimeRemaining: (time: number) => string;
   currentImage: 'pattern' | 'receptor' | 'mix';
@@ -133,7 +133,7 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
       return;
     }
     
-    // IMPORTANTE: Pasamos la intención como argumento adicional al hook
+    // IMPORTANTE: Pasamos la intención como argumento al hook
     if (intention && intention.trim() !== "") {
       console.log("CustomManifest - Iniciando con intención:", intention);
       startManifestation(intention);

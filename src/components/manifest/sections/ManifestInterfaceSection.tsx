@@ -13,7 +13,7 @@ interface ManifestInterfaceSectionProps {
   receptorImages: string[];
   canStart: boolean;
   timeRemaining: number | null;
-  startManifestation: () => void;
+  startManifestation: (intention?: string) => void;
   stopManifestation: () => void;
   formatTimeRemaining: (time: number) => string;
   backgroundModeActive?: boolean;
@@ -87,6 +87,12 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
     selectedPattern
   });
   
+  // CRUCIAL FIX: Preparamos una función que pase la intención al iniciar
+  const handleStartManifestation = () => {
+    console.log("ManifestInterfaceSection - Iniciando con intención:", intention);
+    startManifestation(intention);
+  };
+  
   return (
     <div className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-lg">
       <h3 className="text-xl font-semibold mb-4">Interfaz de Manifestación</h3>
@@ -117,7 +123,7 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
         isManifestActive={isManifestActive}
         canStart={canStart}
         timeRemaining={timeRemaining}
-        startManifestation={startManifestation}
+        startManifestation={handleStartManifestation}
         stopManifestation={stopManifestation}
         formatTimeRemaining={formatTimeRemaining}
         backgroundModeActive={backgroundModeActive}
