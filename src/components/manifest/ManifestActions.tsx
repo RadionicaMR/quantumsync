@@ -58,8 +58,8 @@ const ManifestActions = ({
       intentionValid: intention && intention.trim() !== ""
     });
     
-    // IMPORTANTE: Pasar la intención directamente a startManifestation
-    // para asegurar que se use el valor actual
+    // Llamamos a startManifestation sin pasar la intención, 
+    // ya que debe haberse configurado en niveles superiores
     startManifestation();
   };
   

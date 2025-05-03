@@ -52,15 +52,29 @@ export const useManifestSession = () => {
     
     console.log("INTENCIÓN VALIDADA CORRECTAMENTE:", currentIntention);
     
-    // CRITICAL FIX: Check for pattern based on the current tab
+    // CORRECCIÓN CRÍTICA: Verificación de patrón considerando todas las fuentes posibles
     let hasPattern = false;
+    
+    // Log del estado actual de patrones para debugging
+    console.log("Verificación de patrón:", {
+      activeTab: state.activeTab,
+      patternImage: state.patternImage,
+      patternImagesLength: state.patternImages ? state.patternImages.length : 0,
+      selectedPattern: state.selectedPattern,
+      receptorImage: state.receptorImage,
+      receptorImagesLength: state.receptorImages ? state.receptorImages.length : 0
+    });
+    
+    // Verificación completa de todas las posibles fuentes de patrones
     if (state.activeTab === "custom") {
-      // For custom tab, check for either patternImage or patternImages
-      hasPattern = state.patternImage !== null || (state.patternImages && state.patternImages.length > 0);
+      hasPattern = Boolean(state.patternImage !== null || 
+                          (state.patternImages && state.patternImages.length > 0));
     } else {
-      // For presets tab, check for selectedPattern
-      hasPattern = state.selectedPattern !== "";
+      // Para la pestaña de presets, verificar selectedPattern
+      hasPattern = Boolean(state.selectedPattern !== "");
     }
+    
+    console.log("Resultado de verificación de patrón:", { hasPattern });
     
     if (!hasPattern) {
       console.log("Cannot start manifestation - missing pattern");

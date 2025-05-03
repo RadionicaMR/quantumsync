@@ -107,23 +107,35 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
     console.log("CustomManifest - intention actualizado:", {
       intention,
       intentionLength: intention ? intention.length : 0,
-      intentionValid: intention && intention.trim() !== ""
+      intentionValid: intention && intention.trim() !== "",
+      patternImage,
+      patternImagesCount: patternImages ? patternImages.length : 0
     });
-  }, [intention]);
+  }, [intention, patternImage, patternImages]);
   
   // Envoltura memoizada para startManifestation con validación previa
   const handleStartManifestation = useCallback(() => {
     console.log("CustomManifest - Verificación pre-start:", {
       intention,
       intentionLength: intention ? intention.length : 0,
-      intentionValid: intention && intention.trim() !== ""
+      intentionValid: intention && intention.trim() !== "",
+      patternImage,
+      patternImagesCount: patternImages ? patternImages.length : 0
     });
     
-    // IMPORTANTE: Pasamos la intención actual directamente como argumento
-    // esto garantiza que siempre se use el valor más reciente
+    // Verificación adicional para asegurar que tenemos un patrón válido
+    if (!patternImage && (!patternImages || patternImages.length === 0)) {
+      toast({
+        title: "No se puede iniciar la manifestación",
+        description: "Necesitas subir al menos una imagen de patrón.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // IMPORTANTE: Pasamos la intención como argumento adicional al hook
     if (intention && intention.trim() !== "") {
       console.log("CustomManifest - Iniciando con intención:", intention);
-      // @ts-ignore - Pasamos la intención como argumento adicional al hook
       startManifestation(intention);
     } else {
       toast({
@@ -132,7 +144,7 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
         variant: "destructive",
       });
     }
-  }, [intention, startManifestation]);
+  }, [intention, startManifestation, patternImage, patternImages]);
                   
   // Debug log para verificar el cálculo de canStart
   console.log("CustomManifest - RENDER:", {
