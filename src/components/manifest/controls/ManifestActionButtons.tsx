@@ -55,7 +55,7 @@ const ManifestActionButtons = ({
             )}
           </div>
           <QuantumButton 
-            variant="destructive"
+            variant="secondary"
             onClick={stopManifestation}
             className="bg-red-500 hover:bg-red-600 text-white"
           >
