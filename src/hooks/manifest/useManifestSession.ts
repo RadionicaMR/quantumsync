@@ -24,22 +24,21 @@ export const useManifestSession = () => {
 
   // Iniciar Manifestación: comienza audio subliminal si disponible
   const startManifestation = () => {
-    // IMPORTANTE: Capturamos la intención en el momento exacto de la llamada
+    // SUPER IMPORTANTE: Obtenemos la intención directamente del estado actual
+    // e inmediatamente la validamos antes de seguir
     const currentIntention = state.intention;
     
-    console.log("StartManifestation validation - ACTUAL STATE VALUES:", {
+    console.log("StartManifestation - VALIDANDO INTENCIÓN ACTUAL:", {
       intention: currentIntention,
       intentionLength: currentIntention ? currentIntention.length : 0,
       intentionValid: currentIntention && currentIntention.trim() !== "",
-      activeTab: state.activeTab,
-      patternImage: state.patternImage,
-      patternImagesCount: state.patternImages.length,
-      selectedPattern: state.selectedPattern
+      stateObject: state,
+      activeTab: state.activeTab
     });
     
     // VALIDACIÓN ESTRICTA: Verificamos que la intención exista y no esté vacía
     if (!currentIntention || currentIntention.trim() === "") {
-      console.log("ERROR CRÍTICO: Intención vacía o indefinida");
+      console.log("ERROR CRÍTICO: Intención vacía o indefinida", {state});
       toast({
         title: "No se puede iniciar la manifestación",
         description: "Asegúrate de tener una intención definida.",
@@ -47,6 +46,8 @@ export const useManifestSession = () => {
       });
       return;
     }
+    
+    console.log("INTENCIÓN VALIDADA CORRECTAMENTE:", currentIntention);
     
     // CRITICAL FIX: Check for pattern based on the current tab
     let hasPattern = false;
@@ -115,7 +116,7 @@ export const useManifestSession = () => {
         stopManifestation();
         toast({
           title: "Manifestación completada",
-          description: `Tu intención "${state.intention}" ha sido completamente programada.`,
+          description: `Tu intención "${currentIntention}" ha sido completamente programada.`,
         });
       }, exposureTimeInMs);
       setExposureTimer(exposureTimer);

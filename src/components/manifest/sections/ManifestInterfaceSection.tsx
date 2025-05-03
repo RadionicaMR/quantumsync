@@ -2,6 +2,7 @@
 import ManifestVisualizer from '../ManifestVisualizer';
 import ManifestActions from '../ManifestActions';
 import { ManifestPattern } from '@/data/manifestPatterns';
+import { useEffect } from 'react';
 
 interface ManifestInterfaceSectionProps {
   currentImage: 'pattern' | 'receptor' | 'mix';
@@ -64,6 +65,15 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
 }) => {
   // Convert manifestPatterns record to array if needed
   const patternsArray = Array.isArray(patterns) ? patterns : [];
+  
+  // Log intention changes for debugging
+  useEffect(() => {
+    console.log("ManifestInterfaceSection - Intention actualizada:", {
+      intention,
+      intentionLength: intention ? intention.length : 0,
+      intentionValid: intention && intention.trim() !== "",
+    });
+  }, [intention]);
   
   // Debug log for canStart value, intention and other values
   console.log("ManifestInterfaceSection RENDER:", {

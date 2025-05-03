@@ -18,12 +18,20 @@ const Manifest = () => {
   const visualSpeed = manifest.visualSpeed || manifest.exposureTime; 
   const setVisualSpeed = manifest.setVisualSpeed || manifest.setExposureTime;
   
-  // CRITICAL: Asegurarse que activeTab se sincronice
+  // Efecto para sincronizar activeTab entre el componente y el state
   useEffect(() => {
     console.log("Manifest: Sincronizando activeTab:", activeTab);
+    
     // Asegurar que la tab activa se actualice en el state
-    manifest.setActiveTab(activeTab);
-  }, [activeTab, manifest.setActiveTab]);
+    if (manifest.activeTab !== activeTab) {
+      manifest.setActiveTab(activeTab);
+    }
+    
+    // Detener manifestación si estaba activa al cambiar de tab
+    if (manifest.isManifestActive) {
+      manifest.stopManifestation();
+    }
+  }, [activeTab, manifest]);
   
   // Debug log con todos los valores de state antes del render
   console.log("Manifest RENDER - ESTADO COMPLETO:", {
@@ -33,8 +41,22 @@ const Manifest = () => {
     isManifestActive: manifest.isManifestActive,
     patternImage: manifest.patternImage,
     patternImagesCount: manifest.patternImages.length,
-    selectedPattern: manifest.selectedPattern
+    selectedPattern: manifest.selectedPattern,
+    manifestActiveTab: manifest.activeTab
   });
+  
+  const handleTabChange = (value: string) => {
+    console.log("Manifest: Cambiando tab a", value);
+    setActiveTab(value);
+    
+    // Reset manifest state when switching tabs
+    if (manifest.isManifestActive) {
+      manifest.stopManifestation();
+    }
+    
+    // Asegurar que el cambio de tab se refleje en el state
+    manifest.setActiveTab(value);
+  };
   
   return (
     <Layout>
@@ -47,14 +69,7 @@ const Manifest = () => {
         <div className="container mx-auto">
           <Tabs 
             value={activeTab} 
-            onValueChange={(value) => {
-              console.log("Manifest: Cambiando tab a", value);
-              setActiveTab(value);
-              // Reset manifest state when switching tabs
-              if (manifest.isManifestActive) {
-                manifest.stopManifestation();
-              }
-            }} 
+            onValueChange={handleTabChange} 
             className="w-full"
           >
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">

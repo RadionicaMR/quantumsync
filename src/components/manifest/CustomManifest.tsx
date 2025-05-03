@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
 import ManifestInterfaceSection from './sections/ManifestInterfaceSection';
 import { ManifestPattern } from '@/data/manifestPatterns';
@@ -102,7 +102,7 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
   indefiniteTime = false,
   setIndefiniteTime = () => {}
 }) => {
-  // Usar un useEffect para registrar los valores de intención cuando cambian
+  // Log para rastrear el valor de intención cuando cambia
   useEffect(() => {
     console.log("CustomManifest - intention actualizado:", {
       intention,
@@ -111,14 +111,15 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
     });
   }, [intention]);
   
-  // Envolver la función startManifestation para validar intención antes de llamar
-  const handleStartManifestation = () => {
+  // Envoltura memoizada para startManifestation con validación previa
+  const handleStartManifestation = useCallback(() => {
     console.log("CustomManifest - Verificación pre-start:", {
       intention,
       intentionLength: intention ? intention.length : 0,
       intentionValid: intention && intention.trim() !== ""
     });
     
+    // Validación estricta de la intención en el componente antes de llamar al hook
     if (!intention || intention.trim() === "") {
       toast({
         title: "No se puede iniciar la manifestación",
@@ -128,8 +129,9 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
       return;
     }
     
+    // Si pasó la validación, llamamos a la función original
     startManifestation();
-  };
+  }, [intention, startManifestation]);
                   
   // Debug log para verificar el cálculo de canStart
   console.log("CustomManifest - RENDER:", {

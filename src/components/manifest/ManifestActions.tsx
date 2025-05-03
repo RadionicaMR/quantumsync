@@ -4,6 +4,7 @@ import { es } from 'date-fns/locale';
 import { Progress } from '@/components/ui/progress';
 import QuantumButton from '@/components/QuantumButton';
 import { Rocket, StopCircle, Smartphone, Infinity } from 'lucide-react';
+import { useEffect } from 'react';
 
 interface ManifestActionsProps {
   isManifestActive: boolean;
@@ -28,6 +29,15 @@ const ManifestActions = ({
   indefiniteTime = false,
   intention = "", 
 }: ManifestActionsProps) => {
+  // Log intention changes for debugging
+  useEffect(() => {
+    console.log("ManifestActions - Intention actualizada:", {
+      intention,
+      intentionLength: intention ? intention.length : 0,
+      intentionValid: intention && intention.trim() !== "",
+    });
+  }, [intention]);
+  
   // Debugging log con valores actuales
   console.log("ManifestActions render con valores actuales:", {
     isManifestActive,
@@ -48,11 +58,18 @@ const ManifestActions = ({
       intentionValid: intention && intention.trim() !== ""
     });
     
+    // Validación de intención en el momento del clic
+    if (!intention || intention.trim() === "") {
+      console.error("ManifestActions: No se puede iniciar - intención vacía");
+      return;
+    }
+    
     startManifestation();
   };
   
   // Verificación estricta de intención válida
-  const isIntentionValid = intention && intention.trim() !== "";
+  const isIntentionValid = Boolean(intention && intention.trim() !== "");
+  // Solo habilitamos el botón si hay intención válida Y canStart es true
   const isButtonEnabled = canStart && isIntentionValid;
   
   console.log("ManifestActions: Estado final del botón:", { 
