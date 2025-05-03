@@ -80,6 +80,8 @@ const Manifest = () => {
                 setRate1={manifest.setRate1}
                 setRate2={manifest.setRate2}
                 setRate3={manifest.setRate3}
+                indefiniteTime={manifest.indefiniteTime}
+                setIndefiniteTime={manifest.setIndefiniteTime}
               />
             </TabsContent>
             
@@ -129,6 +131,8 @@ const Manifest = () => {
                 setRate3={manifest.setRate3}
                 receptorName={manifest.receptorName}
                 setReceptorName={manifest.setReceptorName}
+                indefiniteTime={manifest.indefiniteTime}
+                setIndefiniteTime={manifest.setIndefiniteTime}
               />
             </TabsContent>
           </Tabs>

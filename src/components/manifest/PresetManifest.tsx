@@ -51,6 +51,8 @@ interface PresetManifestProps {
   setRate1: (value: string) => void;
   setRate2: (value: string) => void;
   setRate3: (value: string) => void;
+  indefiniteTime?: boolean;
+  setIndefiniteTime?: (value: boolean) => void;
 }
 
 const PresetManifest: React.FC<PresetManifestProps> = ({
@@ -94,7 +96,9 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
   rate3,
   setRate1,
   setRate2,
-  setRate3
+  setRate3,
+  indefiniteTime = false,
+  setIndefiniteTime = () => {}
 }) => {
   // Convert patterns array to a record for easier access
   const manifestPatterns: Record<string, string> = patterns.reduce((acc, pattern) => {
@@ -146,6 +150,9 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
             setExposureTime={setExposureTime}
             visualSpeed={visualSpeed}
             setVisualSpeed={setVisualSpeed}
+            isDisabled={isManifestActive}
+            indefiniteTime={indefiniteTime}
+            setIndefiniteTime={setIndefiniteTime}
           />
         </Card>
       </div>
@@ -177,6 +184,7 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
           rate2={rate2}
           rate3={rate3}
           backgroundModeActive={backgroundModeActive}
+          indefiniteTime={indefiniteTime}
         />
       </div>
     </div>

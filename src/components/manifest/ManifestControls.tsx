@@ -30,6 +30,8 @@ interface ManifestControlsProps {
   stopManifestation: () => void;
   formatTimeRemaining: (minutes: number) => string;
   canStart: boolean;
+  indefiniteTime?: boolean;
+  setIndefiniteTime?: (value: boolean) => void;
 }
 
 export const ManifestControls: React.FC<ManifestControlsProps> = ({
@@ -54,7 +56,9 @@ export const ManifestControls: React.FC<ManifestControlsProps> = ({
   startManifestation,
   stopManifestation,
   formatTimeRemaining,
-  canStart
+  canStart,
+  indefiniteTime = false,
+  setIndefiniteTime = () => {}
 }) => {
   
   return (
@@ -84,6 +88,8 @@ export const ManifestControls: React.FC<ManifestControlsProps> = ({
           exposureTime={exposureTime}
           setExposureTime={setExposureTime}
           isDisabled={isManifestActive}
+          indefiniteTime={indefiniteTime}
+          setIndefiniteTime={setIndefiniteTime}
         />
 
         {/* Campos RATE */}

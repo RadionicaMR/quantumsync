@@ -45,6 +45,8 @@ interface CustomManifestLeftPanelProps {
   setRate2: (rate: string) => void;
   rate3: string;
   setRate3: (rate: string) => void;
+  indefiniteTime?: boolean;
+  setIndefiniteTime?: (value: boolean) => void;
 }
 
 const CustomManifestLeftPanel = ({
@@ -84,7 +86,9 @@ const CustomManifestLeftPanel = ({
   rate2,
   setRate2,
   rate3,
-  setRate3
+  setRate3,
+  indefiniteTime = false,
+  setIndefiniteTime = () => {}
 }: CustomManifestLeftPanelProps) => {
   return (
     <div className="lg:col-span-1 space-y-6">
@@ -112,6 +116,8 @@ const CustomManifestLeftPanel = ({
           stopManifestation={() => {}}
           formatTimeRemaining={() => ""}
           canStart={false}
+          indefiniteTime={indefiniteTime}
+          setIndefiniteTime={setIndefiniteTime}
         />
       </Card>
       

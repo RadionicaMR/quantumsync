@@ -3,7 +3,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Progress } from '@/components/ui/progress';
 import QuantumButton from '@/components/QuantumButton';
-import { Rocket, StopCircle, Smartphone } from 'lucide-react';
+import { Rocket, StopCircle, Smartphone, Infinity } from 'lucide-react';
 
 interface ManifestActionsProps {
   isManifestActive: boolean;
@@ -13,6 +13,7 @@ interface ManifestActionsProps {
   stopManifestation: () => void;
   formatTimeRemaining: (time: number) => string;
   backgroundModeActive?: boolean;
+  indefiniteTime?: boolean;
 }
 
 const ManifestActions = ({
@@ -23,6 +24,7 @@ const ManifestActions = ({
   stopManifestation,
   formatTimeRemaining,
   backgroundModeActive = false,
+  indefiniteTime = false,
 }: ManifestActionsProps) => {
   return (
     <div className="flex flex-col space-y-2 mt-6">
@@ -40,16 +42,25 @@ const ManifestActions = ({
               )}
             </div>
             <div className="text-sm font-medium">
-              {timeRemaining !== null && `${formatTimeRemaining(timeRemaining)} restante`}
+              {indefiniteTime || timeRemaining === -1 ? (
+                <div className="flex items-center">
+                  <Infinity className="w-4 h-4 mr-1" />
+                  <span>Tiempo indefinido</span>
+                </div>
+              ) : (
+                timeRemaining !== null && `${formatTimeRemaining(timeRemaining)} restante`
+              )}
             </div>
           </div>
           
-          <Progress 
-            value={(timeRemaining !== null && timeRemaining > 0) 
-              ? ((1 - timeRemaining / 5) * 100) 
-              : 0} 
-            className="h-2 mb-4"
-          />
+          {!indefiniteTime && timeRemaining !== -1 && timeRemaining !== null && (
+            <Progress 
+              value={(timeRemaining > 0) 
+                ? ((1 - timeRemaining / (timeRemaining + ((timeRemaining < 1) ? 5 : 0))) * 100) 
+                : 0} 
+              className="h-2 mb-4"
+            />
+          )}
           
           <QuantumButton
             variant="outline"

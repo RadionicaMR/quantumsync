@@ -48,7 +48,9 @@ interface CustomManifestProps {
   setAudioLoop: (loop: boolean) => void;
   clearAudio: () => void;
   backgroundModeActive?: boolean;
-  patterns?: ManifestPattern[]; // Add missing required props
+  patterns?: ManifestPattern[];
+  indefiniteTime?: boolean;
+  setIndefiniteTime?: (value: boolean) => void;
 }
 
 const CustomManifest: React.FC<CustomManifestProps> = ({
@@ -96,6 +98,8 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
   clearAudio,
   backgroundModeActive = false,
   patterns = [],
+  indefiniteTime = false,
+  setIndefiniteTime = () => {}
 }) => {
   // Calculated values
   const canStart = intention.trim() !== "" && 
@@ -148,6 +152,8 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
         audioLoop={audioLoop}
         setAudioLoop={setAudioLoop}
         clearAudio={clearAudio}
+        indefiniteTime={indefiniteTime}
+        setIndefiniteTime={setIndefiniteTime}
       />
       
       {/* Panel derecho: visualización y controles principales - Removed duplicated pattern and receptor sections */}
@@ -178,6 +184,7 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
           rate2={rate2}
           rate3={rate3}
           receptorName={receptorName}
+          indefiniteTime={indefiniteTime}
         />
       </div>
     </div>

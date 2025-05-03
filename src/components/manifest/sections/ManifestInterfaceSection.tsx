@@ -30,6 +30,7 @@ interface ManifestInterfaceSectionProps {
   rate2?: string;
   rate3?: string;
   receptorName?: string;
+  indefiniteTime?: boolean;
 }
 
 const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
@@ -58,7 +59,8 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
   rate1 = "",
   rate2 = "",
   rate3 = "",
-  receptorName = ""
+  receptorName = "",
+  indefiniteTime = false
 }) => {
   // Convert manifestPatterns record to array if needed
   const patternsArray = Array.isArray(patterns) ? patterns : [];
@@ -97,6 +99,7 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
         stopManifestation={stopManifestation}
         formatTimeRemaining={formatTimeRemaining}
         backgroundModeActive={backgroundModeActive}
+        indefiniteTime={indefiniteTime}
       />
     </div>
   );

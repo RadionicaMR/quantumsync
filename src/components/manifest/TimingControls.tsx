@@ -2,6 +2,8 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
+import { Infinity } from 'lucide-react';
 
 interface TimingControlsProps {
   exposureTime: number[];
@@ -9,6 +11,8 @@ interface TimingControlsProps {
   visualSpeed: number[];
   setVisualSpeed: (value: number[]) => void;
   isDisabled?: boolean;
+  indefiniteTime?: boolean;
+  setIndefiniteTime?: (value: boolean) => void;
 }
 
 const TimingControls: React.FC<TimingControlsProps> = ({
@@ -16,7 +20,9 @@ const TimingControls: React.FC<TimingControlsProps> = ({
   setExposureTime,
   visualSpeed, 
   setVisualSpeed,
-  isDisabled = false
+  isDisabled = false,
+  indefiniteTime = false,
+  setIndefiniteTime = () => {}
 }) => {
   return (
     <div className="space-y-6 mb-6">
@@ -24,7 +30,7 @@ const TimingControls: React.FC<TimingControlsProps> = ({
         <div className="flex justify-between items-center">
           <Label htmlFor="exposure-time">Tiempo de Exposición</Label>
           <span className="text-muted-foreground font-mono text-sm">
-            {exposureTime[0]} min
+            {indefiniteTime ? "∞" : `${exposureTime[0]} min`}
           </span>
         </div>
         <Slider
@@ -32,13 +38,27 @@ const TimingControls: React.FC<TimingControlsProps> = ({
           value={exposureTime}
           onValueChange={(value) => setExposureTime(value)}
           min={1}
-          max={30}
+          max={180}
           step={1}
-          disabled={isDisabled}
+          disabled={isDisabled || indefiniteTime}
         />
         <div className="flex justify-between text-xs text-muted-foreground">
           <span>1 min</span>
-          <span>30 min</span>
+          <span>180 min</span>
+        </div>
+        
+        <div className="flex items-center justify-between pt-2 pb-1">
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="indefinite-time"
+              checked={indefiniteTime}
+              onCheckedChange={setIndefiniteTime}
+              disabled={isDisabled}
+            />
+            <Label htmlFor="indefinite-time" className="flex items-center cursor-pointer">
+              <Infinity className="h-3 w-3 mr-1" /> Tiempo Indefinido
+            </Label>
+          </div>
         </div>
       </div>
       

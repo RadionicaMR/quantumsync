@@ -19,6 +19,7 @@ export interface ManifestState {
   rate1: string;
   rate2: string;
   rate3: string;
+  indefiniteTime: boolean;
 }
 
 export interface ManifestAudio {

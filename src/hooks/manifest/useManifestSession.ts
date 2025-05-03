@@ -60,29 +60,35 @@ export const useManifestSession = () => {
     }, switchInterval);
     setHypnoticTimer(hypnoticTimer);
 
-    const exposureTimeInMs = state.exposureTime[0] * 60 * 1000;
-    state.setTimeRemaining(state.exposureTime[0]);
+    // Only set exposure and countdown timers if not indefinite time
+    if (!state.indefiniteTime) {
+      const exposureTimeInMs = state.exposureTime[0] * 60 * 1000;
+      state.setTimeRemaining(state.exposureTime[0]);
 
-    const countdownTimer = setInterval(() => {
-      if (!document.hidden) {
-        state.setTimeRemaining((prev) => {
-          if (prev !== null && prev > 0) {
-            return prev - 1/60;
-          }
-          return prev;
+      const countdownTimer = setInterval(() => {
+        if (!document.hidden) {
+          state.setTimeRemaining((prev) => {
+            if (prev !== null && prev > 0) {
+              return prev - 1/60;
+            }
+            return prev;
+          });
+        }
+      }, 1000);
+      setCountdownTimer(countdownTimer);
+
+      const exposureTimer = setTimeout(() => {
+        stopManifestation();
+        toast({
+          title: "Manifestación completada",
+          description: `Tu intención "${state.intention}" ha sido completamente programada.`,
         });
-      }
-    }, 1000);
-    setCountdownTimer(countdownTimer);
-
-    const exposureTimer = setTimeout(() => {
-      stopManifestation();
-      toast({
-        title: "Manifestación completada",
-        description: `Tu intención "${state.intention}" ha sido completamente programada.`,
-      });
-    }, exposureTimeInMs);
-    setExposureTimer(exposureTimer);
+      }, exposureTimeInMs);
+      setExposureTimer(exposureTimer);
+    } else {
+      // If indefinite time, set timeRemaining to -1 to indicate indefinite
+      state.setTimeRemaining(-1);
+    }
 
     state.setIsManifestActive(true);
   };
