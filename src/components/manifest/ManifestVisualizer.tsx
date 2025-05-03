@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ManifestPattern } from '@/data/manifestPatterns';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ManifestVisualizerProps {
   isActive: boolean;
@@ -47,6 +48,7 @@ const ManifestVisualizer = ({
 }: ManifestVisualizerProps) => {
   const [currentPatternIndex, setCurrentPatternIndex] = useState(0);
   const [currentReceptorIndex, setCurrentReceptorIndex] = useState(0);
+  const { isIOS } = useIsMobile();
 
   // Log when visualization should be active
   console.log("ManifestVisualizer render:", { 
@@ -112,15 +114,20 @@ const ManifestVisualizer = ({
     return receptorImage;
   };
 
-  const hasPatternImage = !!getPatternImage();
-  const hasReceptorImage = !!getReceptorImage();
-  const hasImages = hasPatternImage || hasReceptorImage;
-  const hasContent = hasImages || receptorName || intention;
+  const patternImagesArray = patternImages.length > 0 ? patternImages : (patternImage ? [patternImage] : []);
+  const receptorImagesArray = receptorImages.length > 0 ? receptorImages : (receptorImage ? [receptorImage] : []);
+
+  const hasPatternImage = patternImagesArray.length > 0 || !!getPatternImage();
+  const hasReceptorImage = receptorImagesArray.length > 0 || !!getReceptorImage();
+  const hasReceptorName = receptorName && receptorName.trim().length > 0;
+  const hasImages = hasPatternImage || hasReceptorImage || hasReceptorName;
+  const hasContent = hasImages || intention;
   
   // Calculate rate animation speed based on visual speed
   const speedValue = visualSpeed && visualSpeed.length > 0 ? visualSpeed[0] : 
                      manifestSpeed && manifestSpeed.length > 0 ? manifestSpeed[0] : 10;
   const rateAnimationDuration = Math.max(5, 15 - speedValue);
+  const pulseDuration = Math.max(0.5, 5 - (speedValue / 4));
 
   // If not active, still render the container but empty
   if (!isActive) {
@@ -136,78 +143,94 @@ const ManifestVisualizer = ({
   }
 
   return (
-    <div className="mt-6 relative overflow-hidden rounded-lg bg-card/90 dark:bg-black/40 aspect-square">
-      <div className="absolute inset-0 flex items-center justify-center">
-        {/* Mostrar imagen según el estado actual */}
-        {currentImage === 'pattern' && hasPatternImage && (
-          <img 
-            src={getPatternImage()}
-            alt="Patrón de manifestación"
-            className="max-h-full max-w-full object-contain opacity-80 transition-opacity duration-300"
-            style={{ animation: `pulse ${60/speedValue}s infinite alternate` }}
-          />
-        )}
-        
-        {currentImage === 'receptor' && hasReceptorImage && (
-          <img 
-            src={getReceptorImage()}
-            alt="Imagen del receptor"
-            className="max-h-full max-w-full object-contain opacity-80 transition-opacity duration-300"
-            style={{ animation: `pulse ${60/speedValue}s infinite alternate` }}
-          />
-        )}
-        
-        {currentImage === 'mix' && (
-          <>
-            {/* Superposición de ambas imágenes */}
-            {hasPatternImage && (
+    <div className={`mt-6 relative overflow-hidden rounded-lg bg-black aspect-square ${isIOS ? 'ios-momentum-scroll' : ''}`}>
+      {/* Blended images similar to TreatmentVisualizer */}
+      <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+        {/* Pattern Images - Only show when current is pattern or mix */}
+        {(currentImage === 'pattern' || currentImage === 'mix') && hasPatternImage && (
+          <div className="absolute inset-0 flex items-center justify-center z-10">
+            {patternImagesArray.map((img, index) => (
               <img 
-                src={getPatternImage()}
-                alt="Mezcla de imágenes"
-                className="absolute inset-0 max-h-full max-w-full object-contain opacity-40 mix-blend-overlay"
-                style={{ animation: `pulse ${60/speedValue}s infinite alternate` }}
+                key={`pattern-${index}`}
+                src={img || getPatternImage()}
+                alt={`Patrón de manifestación ${index + 1}`}
+                className="absolute inset-0 w-full h-full object-contain"
+                style={{ 
+                  opacity: 1,
+                  mixBlendMode: 'screen',
+                  filter: 'contrast(1.2) brightness(1.1)',
+                  transition: `opacity ${pulseDuration/2}s ease-in-out`,
+                  animation: `pulse ${pulseDuration}s infinite alternate ease-in-out`
+                }}
               />
-            )}
-            
-            {hasReceptorImage && (
-              <img 
-                src={getReceptorImage()}
-                alt="Mezcla de imágenes"
-                className="absolute inset-0 max-h-full max-w-full object-contain opacity-40 mix-blend-multiply"
-                style={{ animation: `pulse ${60/speedValue}s infinite alternate` }}
-              />
-            )}
-          </>
-        )}
-        
-        {/* Mostrar nombre del receptor si no hay imágenes disponibles */}
-        {!hasImages && receptorName && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-3xl font-bold text-quantum-primary bg-black/10 px-6 py-4 rounded-lg">
-              {receptorName}
-            </div>
+            ))}
           </div>
         )}
         
-        {/* Texto de la intención */}
-        {intention && (
-          <div className="absolute inset-0 flex items-center justify-center z-10">
-            <div 
-              className="max-w-[80%] text-white font-bold text-xl md:text-2xl p-4 text-center bg-black/30 rounded line-clamp-3"
-              style={{
-                animation: `pulse ${60/speedValue}s infinite alternate ease-in-out`,
-                textShadow: '0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(155,135,245,0.8)'
-              }}
-            >
-              {intention}
-            </div>
+        {/* Receptor Images - Only show when current is receptor or mix */}
+        {(currentImage === 'receptor' || currentImage === 'mix') && (
+          <div className="absolute inset-0 flex items-center justify-center z-20">
+            {/* Show receptor images if available */}
+            {hasReceptorImage && receptorImagesArray.map((img, index) => (
+              <img 
+                key={`receptor-${index}`}
+                src={img || getReceptorImage()}
+                alt={`Imagen del receptor ${index + 1}`}
+                className="absolute inset-0 w-full h-full object-contain"
+                style={{ 
+                  opacity: 1,
+                  mixBlendMode: 'multiply',
+                  filter: 'contrast(1.2) brightness(1.1)',
+                  transition: `opacity ${pulseDuration/2}s ease-in-out`,
+                  animation: `pulse ${pulseDuration}s infinite alternate-reverse ease-in-out`
+                }}
+              />
+            ))}
+            
+            {/* Show receptor name when needed */}
+            {hasReceptorName && (!hasReceptorImage) && (
+              <div 
+                className="absolute inset-0 flex items-center justify-center"
+                style={{
+                  opacity: 1,
+                  transition: `opacity ${pulseDuration/2}s ease-in-out`,
+                  animation: `pulse ${pulseDuration}s infinite alternate`
+                }}
+              >
+                <div className="text-2xl font-bold text-white bg-black/50 px-6 py-4 rounded-lg">
+                  {receptorName}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
+      
+      {/* Overlay con los pulsos circulares */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
+        <div className="w-12 h-12 bg-quantum-primary/20 rounded-full animate-ping"></div>
+        <div className="w-24 h-24 bg-quantum-primary/15 rounded-full animate-ping" style={{ animationDelay: '0.2s' }}></div>
+        <div className="w-36 h-36 bg-quantum-primary/10 rounded-full animate-ping" style={{ animationDelay: '0.4s' }}></div>
+      </div>
+
+      {/* Texto de la intención */}
+      {intention && (
+        <div className="absolute inset-0 flex items-center justify-center z-40">
+          <div 
+            className="max-w-[80%] text-white font-bold text-xl md:text-2xl p-4 text-center bg-black/30 rounded line-clamp-3"
+            style={{
+              animation: `pulse ${pulseDuration}s infinite alternate ease-in-out`,
+              textShadow: '0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(155,135,245,0.8)'
+            }}
+          >
+            {intention}
+          </div>
+        </div>
+      )}
 
       {/* RATES con movimiento aleatorio */}
       {(rate1 || rate2 || rate3) && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-40">
           <div className="relative w-full h-full max-w-[90%] max-h-[90%]">
             {rate1 && (
               <div className="absolute text-blue-400 font-mono bg-black/60 px-3 py-2 rounded text-sm md:text-base shadow-lg border border-blue-500/30" 
@@ -257,6 +280,11 @@ const ManifestVisualizer = ({
           </div>
         </div>
       )}
+      
+      {/* Información de frecuencia */}
+      <div className="absolute bottom-3 left-3 text-xs md:text-sm text-white z-40 font-mono bg-black/40 px-2 py-1 rounded">
+        Frecuencia: {manifestFrequency[0]} Hz
+      </div>
     </div>
   );
 };

@@ -61,6 +61,9 @@ export const useManifestSession = () => {
       state.setIntention(forcedIntention);
     }
 
+    // Es crucial establecer el estado activo ANTES de continuar
+    state.setIsManifestActive(true);
+    
     // Start sound if enabled
     if (state.manifestSound) {
       startAudio(state.manifestFrequency[0]);
@@ -86,9 +89,6 @@ export const useManifestSession = () => {
       }
     }, switchInterval);
     setHypnoticTimer(hypnoticTimer);
-
-    // Set active state before setting timers
-    state.setIsManifestActive(true);
     
     console.log("Manifestación activada, ahora configurando temporizadores");
 

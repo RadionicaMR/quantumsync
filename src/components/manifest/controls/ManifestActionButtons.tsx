@@ -1,5 +1,6 @@
 
 import QuantumButton from '@/components/QuantumButton';
+import { Rocket, StopCircle } from 'lucide-react';
 
 interface ManifestActionButtonsProps {
   isManifestActive: boolean;
@@ -46,15 +47,22 @@ const ManifestActionButtons = ({
       {isManifestActive ? (
         <>
           <div className="text-quantum-primary font-medium">
-            {timeRemaining !== null && (
+            {timeRemaining !== null && timeRemaining !== -1 && (
               <span>Tiempo restante: {formatTimeRemaining(Math.ceil(timeRemaining))}</span>
+            )}
+            {timeRemaining === -1 && (
+              <span>Tiempo indefinido</span>
             )}
           </div>
           <QuantumButton 
             variant="outline"
             onClick={stopManifestation}
+            className="bg-red-500 hover:bg-red-600 text-white"
           >
-            Detener Manifestación
+            <div className="flex items-center justify-center">
+              <StopCircle className="mr-2 h-4 w-4" />
+              <span>Detener Manifestación</span>
+            </div>
           </QuantumButton>
         </>
       ) : (
@@ -69,7 +77,10 @@ const ManifestActionButtons = ({
             onClick={handleStartClick}
             disabled={!isButtonEnabled}
           >
-            INICIAR MANIFESTACIÓN
+            <div className="flex items-center justify-center">
+              <Rocket className="mr-2 h-5 w-5" />
+              <span>INICIAR MANIFESTACIÓN</span>
+            </div>
           </QuantumButton>
         </>
       )}
