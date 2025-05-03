@@ -1,8 +1,6 @@
 
 import React from 'react';
 import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
-import PatternSection from './sections/PatternSection';
-import ReceptorSection from './sections/ReceptorSection';
 import ManifestInterfaceSection from './sections/ManifestInterfaceSection';
 import { ManifestPattern } from '@/data/manifestPatterns';
 
@@ -152,28 +150,8 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
         clearAudio={clearAudio}
       />
       
-      {/* Panel derecho: visualización y controles principales */}
-      <div className="lg:col-span-2 space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <PatternSection 
-            patternImage={patternImage}
-            setPatternImage={setPatternImage}
-            patternImages={patternImages}
-            setPatternImages={setPatternImages}
-            isManifestActive={isManifestActive}
-          />
-          
-          <ReceptorSection
-            receptorName={receptorName}
-            setReceptorName={setReceptorName}
-            receptorImage={receptorImage}
-            setReceptorImage={setReceptorImage}
-            receptorImages={receptorImages}
-            setReceptorImages={setReceptorImages}
-            isManifestActive={isManifestActive}
-          />
-        </div>
-        
+      {/* Panel derecho: visualización y controles principales - Removed duplicated pattern and receptor sections */}
+      <div className="lg:col-span-2">
         <ManifestInterfaceSection
           currentImage={currentImage}
           isManifestActive={isManifestActive}
