@@ -101,16 +101,19 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
   indefiniteTime = false,
   setIndefiniteTime = () => {}
 }) => {
+  // Ensure intention is a string before trimming
+  const intentionStr = String(intention || "");
+  
   // Calculated values - simplified canStart condition
-  const canStart = intention.trim() !== "" && 
+  const canStart = intentionStr.trim() !== "" && 
                   (patternImage !== null || patternImages.length > 0);
                   
   // Debug log para verificar el cálculo de canStart
   console.log("CustomManifest canStart calculation:", {
-    intentionValid: intention.trim() !== "",
+    intentionValid: intentionStr.trim() !== "",
     patternImageExists: patternImage !== null,
     patternImagesCount: patternImages.length,
-    intention: intention,
+    intention: intentionStr,
     canStart
   });
 
