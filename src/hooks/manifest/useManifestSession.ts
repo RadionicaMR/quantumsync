@@ -23,22 +23,25 @@ export const useManifestSession = () => {
   } = useManifestSubliminal();
 
   // Iniciar Manifestación: comienza audio subliminal si disponible
-  const startManifestation = () => {
-    // SUPER IMPORTANTE: Obtenemos la intención directamente del estado actual
-    // e inmediatamente la validamos antes de seguir
-    const currentIntention = state.intention;
+  const startManifestation = (forcedIntention?: string) => {
+    // CORRECCIÓN CRÍTICA: Usar la intención forzada si está disponible
+    // o usar la del state como fallback
+    const currentIntention = forcedIntention || state.intention;
     
-    console.log("StartManifestation - VALIDANDO INTENCIÓN ACTUAL:", {
-      intention: currentIntention,
+    console.log("StartManifestation - INTENCIÓN RECIBIDA:", {
+      forcedIntention,
+      stateIntention: state.intention,
+      finalIntention: currentIntention,
       intentionLength: currentIntention ? currentIntention.length : 0,
-      intentionValid: currentIntention && currentIntention.trim() !== "",
-      stateObject: state,
-      activeTab: state.activeTab
+      intentionValid: currentIntention && currentIntention.trim() !== ""
     });
     
     // VALIDACIÓN ESTRICTA: Verificamos que la intención exista y no esté vacía
     if (!currentIntention || currentIntention.trim() === "") {
-      console.log("ERROR CRÍTICO: Intención vacía o indefinida", {state});
+      console.log("ERROR CRÍTICO: Intención vacía o indefinida", {
+        forcedIntention,
+        stateIntention: state.intention
+      });
       toast({
         title: "No se puede iniciar la manifestación",
         description: "Asegúrate de tener una intención definida.",
@@ -67,6 +70,11 @@ export const useManifestSession = () => {
         variant: "destructive",
       });
       return;
+    }
+
+    // Actualizar la intención en el state si usamos la intención forzada
+    if (forcedIntention && forcedIntention !== state.intention) {
+      state.setIntention(forcedIntention);
     }
 
     // Start sound if enabled

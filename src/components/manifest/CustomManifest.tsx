@@ -119,18 +119,19 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
       intentionValid: intention && intention.trim() !== ""
     });
     
-    // Validación estricta de la intención en el componente antes de llamar al hook
-    if (!intention || intention.trim() === "") {
+    // IMPORTANTE: Pasamos la intención actual directamente como argumento
+    // esto garantiza que siempre se use el valor más reciente
+    if (intention && intention.trim() !== "") {
+      console.log("CustomManifest - Iniciando con intención:", intention);
+      // @ts-ignore - Pasamos la intención como argumento adicional al hook
+      startManifestation(intention);
+    } else {
       toast({
         title: "No se puede iniciar la manifestación",
         description: "Asegúrate de tener una intención definida.",
         variant: "destructive",
       });
-      return;
     }
-    
-    // Si pasó la validación, llamamos a la función original
-    startManifestation();
   }, [intention, startManifestation]);
                   
   // Debug log para verificar el cálculo de canStart

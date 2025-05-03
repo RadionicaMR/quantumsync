@@ -32,6 +32,20 @@ const Manifest = () => {
       manifest.stopManifestation();
     }
   }, [activeTab, manifest]);
+
+  // Nuevo efecto para forzar la sincronización del estado al iniciar
+  useEffect(() => {
+    // Establecer el activeTab correcto en el state al iniciar
+    manifest.setActiveTab(activeTab);
+    
+    // Log para debugging
+    console.log("Manifest - Initial state synchronization:", {
+      activeTab, 
+      manifestActiveTab: manifest.activeTab
+    });
+    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Solo se ejecuta una vez al montar el componente
   
   // Debug log con todos los valores de state antes del render
   console.log("Manifest RENDER - ESTADO COMPLETO:", {
@@ -56,6 +70,11 @@ const Manifest = () => {
     
     // Asegurar que el cambio de tab se refleje en el state
     manifest.setActiveTab(value);
+    
+    // Forzar limpieza de valores al cambiar de tab
+    manifest.setSelectedPattern("");
+    manifest.setPatternImage(null);
+    manifest.setReceptorImage(null);
   };
   
   return (

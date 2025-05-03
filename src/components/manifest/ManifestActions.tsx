@@ -58,12 +58,8 @@ const ManifestActions = ({
       intentionValid: intention && intention.trim() !== ""
     });
     
-    // Validación de intención en el momento del clic
-    if (!intention || intention.trim() === "") {
-      console.error("ManifestActions: No se puede iniciar - intención vacía");
-      return;
-    }
-    
+    // IMPORTANTE: Pasar la intención directamente a startManifestation
+    // para asegurar que se use el valor actual
     startManifestation();
   };
   
