@@ -26,6 +26,12 @@ const ManifestActions = ({
   backgroundModeActive = false,
   indefiniteTime = false,
 }: ManifestActionsProps) => {
+  // Add a console log to debug button click
+  const handleStartClick = () => {
+    console.log("Start manifestation button clicked, canStart:", canStart);
+    startManifestation();
+  };
+  
   return (
     <div className="flex flex-col space-y-2 mt-6">
       {isManifestActive ? (
@@ -75,9 +81,9 @@ const ManifestActions = ({
         </>
       ) : (
         <QuantumButton
-          className="w-full bg-quantum-primary text-white"
+          className="w-full bg-quantum-primary hover:bg-quantum-primary/90 text-white"
           disabled={!canStart}
-          onClick={startManifestation}
+          onClick={handleStartClick}
         >
           <div className="flex items-center justify-center">
             <Rocket className="mr-2 h-5 w-5" />

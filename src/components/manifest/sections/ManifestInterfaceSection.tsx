@@ -65,6 +65,9 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
   // Convert manifestPatterns record to array if needed
   const patternsArray = Array.isArray(patterns) ? patterns : [];
   
+  // Debug log for canStart value
+  console.log("ManifestInterfaceSection canStart:", canStart);
+  
   return (
     <div className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-lg">
       <h3 className="text-xl font-semibold mb-4">Interfaz de Manifestación</h3>

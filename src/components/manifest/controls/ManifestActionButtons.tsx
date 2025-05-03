@@ -20,6 +20,15 @@ const ManifestActionButtons = ({
   canStart,
   intention
 }: ManifestActionButtonsProps) => {
+  // Add a console log to debug button click
+  const handleStartClick = () => {
+    console.log("ManifestActionButtons: Start manifestation button clicked", {
+      canStart,
+      intention: intention.trim()
+    });
+    startManifestation();
+  };
+
   return (
     <div className="flex items-center justify-between">
       {isManifestActive ? (
@@ -43,7 +52,7 @@ const ManifestActionButtons = ({
           </div>
           <QuantumButton 
             className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
-            onClick={startManifestation}
+            onClick={handleStartClick}
             disabled={!canStart || !intention.trim()}
           >
             INICIAR MANIFESTACIÓN
