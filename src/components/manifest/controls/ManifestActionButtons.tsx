@@ -24,10 +24,13 @@ const ManifestActionButtons = ({
   const handleStartClick = () => {
     console.log("ManifestActionButtons: Start manifestation button clicked", {
       canStart,
-      intention: intention.trim()
+      intention,
+      intentionValid: intention && intention.trim() !== ""
     });
     startManifestation();
   };
+
+  const isIntentionValid = intention && intention.trim() !== "";
 
   return (
     <div className="flex items-center justify-between">
@@ -48,12 +51,14 @@ const ManifestActionButtons = ({
       ) : (
         <>
           <div className="text-muted-foreground">
-            {canStart ? 'Listo para iniciar manifestación' : 'Selecciona un patrón para continuar'}
+            {canStart && isIntentionValid 
+              ? 'Listo para iniciar manifestación' 
+              : 'Completa los campos requeridos para continuar'}
           </div>
           <QuantumButton 
             className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
             onClick={handleStartClick}
-            disabled={!canStart || !intention.trim()}
+            disabled={!canStart || !isIntentionValid}
           >
             INICIAR MANIFESTACIÓN
           </QuantumButton>

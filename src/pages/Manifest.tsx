@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
@@ -16,6 +17,11 @@ const Manifest = () => {
   // Use visualSpeed from core if available, or create new state
   const visualSpeed = manifest.visualSpeed || manifest.exposureTime; 
   const setVisualSpeed = manifest.setVisualSpeed || manifest.setExposureTime;
+  
+  // Ensure manifest state activeTab stays in sync
+  useEffect(() => {
+    manifest.setActiveTab(activeTab);
+  }, [activeTab, manifest.setActiveTab]);
   
   return (
     <Layout>

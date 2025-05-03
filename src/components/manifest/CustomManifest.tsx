@@ -110,6 +110,7 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
     intentionValid: intention.trim() !== "",
     patternImageExists: patternImage !== null,
     patternImagesCount: patternImages.length,
+    intention: intention,
     canStart
   });
 

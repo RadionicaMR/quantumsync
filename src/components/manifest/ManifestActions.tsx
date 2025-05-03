@@ -14,7 +14,7 @@ interface ManifestActionsProps {
   formatTimeRemaining: (time: number) => string;
   backgroundModeActive?: boolean;
   indefiniteTime?: boolean;
-  intention?: string; // Make intention optional for backwards compatibility
+  intention?: string; 
 }
 
 const ManifestActions = ({
@@ -26,13 +26,20 @@ const ManifestActions = ({
   formatTimeRemaining,
   backgroundModeActive = false,
   indefiniteTime = false,
-  intention = "", // Default to empty string
+  intention = "", 
 }: ManifestActionsProps) => {
   // Add a console log to debug button click
   const handleStartClick = () => {
-    console.log("Start manifestation button clicked, canStart:", canStart, "intention:", intention);
+    console.log("ManifestActions: Start manifestation button clicked", {
+      canStart,
+      intention,
+      intentionValid: intention && intention.trim() !== ""
+    });
     startManifestation();
   };
+  
+  // Determine if button should be disabled
+  const isButtonDisabled = !canStart || (intention && intention.trim() === "");
   
   return (
     <div className="flex flex-col space-y-2 mt-6">
@@ -84,7 +91,7 @@ const ManifestActions = ({
       ) : (
         <QuantumButton
           className="w-full bg-quantum-primary hover:bg-quantum-primary/90 text-white"
-          disabled={!canStart || (intention && !intention.trim())}
+          disabled={isButtonDisabled}
           onClick={handleStartClick}
         >
           <div className="flex items-center justify-center">

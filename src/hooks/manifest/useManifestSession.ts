@@ -24,19 +24,18 @@ export const useManifestSession = () => {
 
   // Iniciar Manifestación: comienza audio subliminal si disponible
   const startManifestation = () => {
-    // Fix the pattern check logic to be more permissive
+    // Fix: Directly access the state values
     const hasPattern = state.activeTab === "presets" 
       ? !!state.selectedPattern 
       : (!!state.patternImage || state.patternImages.length > 0);
     
-    // For custom tab, we only need a pattern and intention
     const canStart = hasPattern && state.intention.trim() !== "";
     
     console.log("Start manifestation checks:", { 
-      hasPattern, 
-      hasReceptor: false,
+      hasPattern,
       canStart, 
       intention: state.intention,
+      intentionValid: state.intention.trim() !== "",
       activeTab: state.activeTab,
       selectedPattern: state.selectedPattern,
       patternImage: state.patternImage,
@@ -45,6 +44,11 @@ export const useManifestSession = () => {
     
     if (!canStart) {
       console.log("Cannot start manifestation - missing required fields");
+      toast({
+        title: "No se puede iniciar la manifestación",
+        description: "Asegúrate de tener un patrón seleccionado y una intención definida.",
+        variant: "destructive",
+      });
       return;
     }
 
