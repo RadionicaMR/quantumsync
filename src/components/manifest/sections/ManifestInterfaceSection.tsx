@@ -46,7 +46,6 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
   stopManifestation,
   formatTimeRemaining,
   backgroundModeActive = false,
-  // Added props
   selectedPattern,
   patterns,
   manifestPatterns,
@@ -87,7 +86,7 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
     selectedPattern
   });
   
-  // Explicitly pass the intention when starting the manifestation
+  // CRUCIAL: Explícitamente pasar la intención cuando se inicia la manifestación
   const handleStartManifestation = () => {
     console.log("ManifestInterfaceSection - Iniciando con intención:", intention);
     if (intention && intention.trim() !== "") {
@@ -123,7 +122,7 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
       
       <ManifestActions 
         isManifestActive={isManifestActive}
-        canStart={intention && intention.trim() !== ""}
+        canStart={canStart}
         timeRemaining={timeRemaining}
         startManifestation={handleStartManifestation}
         stopManifestation={stopManifestation}

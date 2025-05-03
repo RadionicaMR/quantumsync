@@ -1,6 +1,7 @@
 
 import QuantumButton from '@/components/QuantumButton';
 import { Rocket, StopCircle } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
 
 interface ManifestActionButtonsProps {
   isManifestActive: boolean;
@@ -28,7 +29,16 @@ const ManifestActionButtons = ({
       intention,
       intentionValid: intention && intention.trim() !== ""
     });
-    startManifestation();
+    
+    if (intention && intention.trim() !== "") {
+      startManifestation();
+    } else {
+      toast({
+        title: "No se puede iniciar la manifestación",
+        description: "Asegúrate de tener una intención definida.",
+        variant: "destructive",
+      });
+    }
   };
 
   // Simplificamos la validación solo para la intención

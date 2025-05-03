@@ -49,26 +49,6 @@ const ManifestActions = ({
     indefiniteTime
   });
   
-  const handleStartClick = () => {
-    // Debug para verificar los valores en el momento del clic
-    console.log("ManifestActions: INICIO DE MANIFESTACIÓN con valores:", {
-      canStart,
-      intention,
-      intentionLength: intention ? intention.length : 0,
-      intentionValid: intention && intention.trim() !== ""
-    });
-    
-    if (intention && intention.trim() !== "") {
-      startManifestation();
-    } else {
-      toast({
-        title: "No se puede iniciar la manifestación",
-        description: "Asegúrate de tener una intención definida.",
-        variant: "destructive",
-      });
-    }
-  };
-  
   // Verificación estricta SOLO de intención válida
   const isIntentionValid = Boolean(intention && intention.trim() !== "");
   
@@ -89,7 +69,7 @@ const ManifestActions = ({
         isManifestActive={isManifestActive}
         timeRemaining={timeRemaining}
         formatTimeRemaining={formatTimeRemaining}
-        startManifestation={handleStartClick}
+        startManifestation={startManifestation}
         stopManifestation={stopManifestation}
         canStart={isButtonEnabled}
         intention={intention}
