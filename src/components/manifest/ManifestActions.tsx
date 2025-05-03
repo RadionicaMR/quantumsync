@@ -33,6 +33,7 @@ const ManifestActions = ({
     isManifestActive,
     canStart,
     intention,
+    intentionLength: intention ? intention.length : 0,
     intentionValid: intention && intention.trim() !== "",
     timeRemaining,
     indefiniteTime
@@ -42,15 +43,11 @@ const ManifestActions = ({
     console.log("ManifestActions: Start manifestation button clicked", {
       canStart,
       intention,
+      intentionLength: intention ? intention.length : 0,
       intentionValid: intention && intention.trim() !== ""
     });
     
-    // Añadimos esta verificación antes de llamar a startManifestation
-    if (!intention || intention.trim() === "") {
-      console.warn("Attempted to start without valid intention");
-      return;
-    }
-    
+    // Don't check intention here - let the startManifestation function handle validation
     startManifestation();
   };
   

@@ -24,21 +24,20 @@ export const useManifestSession = () => {
 
   // Iniciar Manifestación: comienza audio subliminal si disponible
   const startManifestation = () => {
-    // FIX: Correctamente verificamos si hay una intención válida
-    const intentionValid = state.intention && state.intention.trim() !== "";
-    
-    // Log detailed debug info
-    console.log("StartManifestation validation check:", {
+    // CRITICAL FIX: Directly check the state value at time of execution
+    console.log("StartManifestation with current state:", {
       intention: state.intention,
       intentionLength: state.intention ? state.intention.length : 0,
-      intentionValid,
       activeTab: state.activeTab,
       patternImage: state.patternImage,
       patternImagesLength: state.patternImages ? state.patternImages.length : 0,
       selectedPattern: state.selectedPattern
     });
     
-    if (!intentionValid) {
+    // Proper validation of intention - forced to string and trimmed
+    const currentIntention = String(state.intention || "").trim();
+    
+    if (currentIntention === "") {
       console.log("Cannot start manifestation - missing intention");
       toast({
         title: "No se puede iniciar la manifestación",
@@ -57,17 +56,6 @@ export const useManifestSession = () => {
       // For presets tab, check for selectedPattern
       hasPattern = state.selectedPattern !== "";
     }
-    
-    // Log detailed validation info
-    console.log("Start manifestation validation:", { 
-      activeTab: state.activeTab,
-      hasPattern,
-      patternImage: state.patternImage,
-      patternImagesCount: state.patternImages ? state.patternImages.length : 0,
-      selectedPattern: state.selectedPattern,
-      intention: state.intention,
-      intentionValid
-    });
     
     if (!hasPattern) {
       console.log("Cannot start manifestation - missing pattern");
