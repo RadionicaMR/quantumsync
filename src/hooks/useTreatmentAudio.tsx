@@ -34,12 +34,20 @@ export const useTreatmentAudio = () => {
       
       // Current oscillator must stop because AudioContext is suspended
       if (oscillatorRef.current) {
-        oscillatorRef.current.stop();
+        try {
+          oscillatorRef.current.stop();
+        } catch (e) {
+          console.error("Error stopping oscillator:", e);
+        }
         oscillatorRef.current = null;
       }
       
       if (harmonicOscillatorRef.current) {
-        harmonicOscillatorRef.current.stop();
+        try {
+          harmonicOscillatorRef.current.stop();
+        } catch (e) {
+          console.error("Error stopping harmonic oscillator:", e);
+        }
         harmonicOscillatorRef.current = null;
       }
       
@@ -69,6 +77,11 @@ export const useTreatmentAudio = () => {
     try {
       // Initialize audio context
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContext) {
+        console.error("AudioContext not supported");
+        return;
+      }
+      
       audioContextRef.current = new AudioContext();
       
       // Create oscillator
@@ -106,6 +119,8 @@ export const useTreatmentAudio = () => {
         harmonicOscillator.start();
         harmonicOscillatorRef.current = harmonicOscillator;
       }
+      
+      console.log("Audio restarted successfully at frequency:", frequency[0]);
     } catch (error) {
       console.error("Error restarting audio:", error);
     }
@@ -132,6 +147,11 @@ export const useTreatmentAudio = () => {
     try {
       // Initialize audio context
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContext) {
+        console.error("AudioContext not supported");
+        return;
+      }
+      
       audioContextRef.current = new AudioContext();
       
       // Create oscillator
@@ -178,23 +198,35 @@ export const useTreatmentAudio = () => {
       console.log("Audio started successfully at frequency:", frequency[0]);
     } catch (error) {
       console.error("Error starting audio treatment:", error);
-      alert("Could not start audio treatment. Please ensure your device supports Web Audio API.");
+      alert("No se pudo iniciar el tratamiento de audio. Asegúrese de que su dispositivo sea compatible con Web Audio API.");
     }
   };
 
   const stopAudio = () => {
     if (oscillatorRef.current) {
-      oscillatorRef.current.stop();
+      try {
+        oscillatorRef.current.stop();
+      } catch (e) {
+        console.error("Error stopping oscillator:", e);
+      }
       oscillatorRef.current = null;
     }
     
     if (harmonicOscillatorRef.current) {
-      harmonicOscillatorRef.current.stop();
+      try {
+        harmonicOscillatorRef.current.stop();
+      } catch (e) {
+        console.error("Error stopping harmonic oscillator:", e);
+      }
       harmonicOscillatorRef.current = null;
     }
     
     if (audioContextRef.current) {
-      audioContextRef.current.close();
+      try {
+        audioContextRef.current.close();
+      } catch (e) {
+        console.error("Error closing audio context:", e);
+      }
       audioContextRef.current = null;
     }
     
@@ -217,10 +249,18 @@ export const useTreatmentAudio = () => {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (oscillatorRef.current) {
-        oscillatorRef.current.stop();
+        try {
+          oscillatorRef.current.stop();
+        } catch (e) {
+          console.error("Error stopping oscillator during cleanup:", e);
+        }
       }
       if (harmonicOscillatorRef.current) {
-        harmonicOscillatorRef.current.stop();
+        try {
+          harmonicOscillatorRef.current.stop();
+        } catch (e) {
+          console.error("Error stopping harmonic oscillator during cleanup:", e);
+        }
       }
       if (timerRef.current) {
         clearInterval(timerRef.current);

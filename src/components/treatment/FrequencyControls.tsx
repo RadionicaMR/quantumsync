@@ -73,6 +73,8 @@ const FrequencyControls = ({
 
   return (
     <div className="space-y-6">
+      <h4 className="font-medium text-lg mb-4">Control de Frecuencias</h4>
+      
       <div>
         <div className="flex items-center justify-between mb-2">
           <h4 className="font-medium">Frecuencia:</h4>
