@@ -23,7 +23,8 @@ const PatternSection = ({
     console.log("PatternSection - Estado actualizado:", {
       patternImage,
       patternImagesCount: patternImages.length,
-      hasPattern: Boolean(patternImage !== null || patternImages.length > 0)
+      hasPattern: Boolean(patternImage !== null || patternImages.length > 0),
+      patternImages: patternImages
     });
   }, [patternImage, patternImages]);
   
@@ -38,7 +39,11 @@ const PatternSection = ({
   };
   
   const handleSetPatternImages = (images: string[]) => {
-    console.log("PatternSection - Estableciendo múltiples imágenes de patrón:", images.length);
+    console.log("PatternSection - Estableciendo múltiples imágenes de patrón:", {
+      imagesLength: images.length,
+      images: images
+    });
+    
     setPatternImages(images);
     
     // Si se eliminan todas las imágenes múltiples y no hay imagen principal, alerta al usuario

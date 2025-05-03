@@ -82,16 +82,34 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
     intentionLength: intention ? intention.length : 0,
     intentionValid: intention && intention.trim() !== "",
     isManifestActive,
-    patternImages: patternImages.length,
+    patternImagesLength: patternImages.length,
     patternImage,
-    selectedPattern
+    selectedPattern,
+    patternImages
   });
   
-  // CRUCIAL: Usar la función que siempre pasa la intención explícitamente
+  // CRUCIAL: Explícitamente pasar la intención cuando se inicia la manifestación
   const handleStartManifestation = () => {
     console.log("ManifestInterfaceSection - Iniciando con intención:", intention);
     if (intention && intention.trim() !== "") {
-      startManifestation(intention);
+      // CORRECCIÓN: Verificación explícita de imágenes de patrón
+      const hasPattern = (selectedPattern && selectedPattern !== "") || 
+                         patternImage !== null || 
+                         (patternImages && patternImages.length > 0);
+                         
+      console.log("ManifestInterfaceSection - Verificación de patrones:", {
+        hasPattern,
+        selectedPattern,
+        patternImage,
+        patternImagesLength: patternImages ? patternImages.length : 0,
+        patternImages
+      });
+      
+      if (hasPattern) {
+        startManifestation(intention);
+      } else {
+        console.error("Error: No se encontró patrón para iniciar manifestación");
+      }
     }
   };
   

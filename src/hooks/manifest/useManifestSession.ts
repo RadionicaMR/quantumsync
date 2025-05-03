@@ -39,7 +39,7 @@ export const useManifestSession = () => {
     
     // VALIDACIÓN ESTRICTA: Verificamos que la intención exista y no esté vacía
     if (!currentIntention || currentIntention.trim() === "") {
-      console.log("ERROR CRÍTICO: Intención vacía o indefinida", {
+      console.error("ERROR CRÍTICO: Intención vacía o indefinida", {
         forcedIntention,
         stateIntention: state.intention
       });
@@ -56,8 +56,8 @@ export const useManifestSession = () => {
     // CORRECCIÓN FUNDAMENTAL: Nueva lógica de verificación de patrones
     let hasPattern = false;
     
-    // Log del estado actual de patrones para debugging
-    console.log("Verificación de patrón:", {
+    // Debug completo del estado actual
+    console.log("DEBUG COMPLETO - Estado de patrones:", {
       activeTab: state.activeTab,
       patternImage: state.patternImage,
       patternImagesLength: state.patternImages ? state.patternImages.length : 0,
@@ -66,19 +66,22 @@ export const useManifestSession = () => {
       receptorImagesLength: state.receptorImages ? state.receptorImages.length : 0
     });
     
-    // CORRECCIÓN ESENCIAL: Reconocimiento de imágenes en custom y selección en presets
+    // LÓGICA CORREGIDA: Verificación según pestaña activa
     if (state.activeTab === "custom") {
-      // Para la pestaña personalizada, verificar patternImage o patternImages
+      // Para pestaña personalizada, cualquier imagen de patrón es válida
       hasPattern = Boolean(state.patternImage !== null || 
-                          (state.patternImages && state.patternImages.length > 0));
+                        (state.patternImages && state.patternImages.length > 0));
+      
       console.log("Tab CUSTOM - Verificación de patrón:", { 
         hasPattern, 
         patternImage: state.patternImage, 
-        patternImagesLength: state.patternImages ? state.patternImages.length : 0 
+        patternImagesLength: state.patternImages.length,
+        patternImages: state.patternImages
       });
     } else if (state.activeTab === "presets") {
-      // Para la pestaña de presets, verificar selectedPattern
-      hasPattern = Boolean(state.selectedPattern && state.selectedPattern !== "");
+      // Para presets, requiere un patrón seleccionado
+      hasPattern = Boolean(state.selectedPattern && state.selectedPattern.trim() !== "");
+      
       console.log("Tab PRESETS - Verificación de patrón:", { 
         hasPattern, 
         selectedPattern: state.selectedPattern 
@@ -90,8 +93,9 @@ export const useManifestSession = () => {
       activeTab: state.activeTab 
     });
     
+    // ERROR CRITICO: No se puede iniciar sin un patrón
     if (!hasPattern) {
-      console.log("Cannot start manifestation - missing pattern");
+      console.error("ERROR: No se puede iniciar manifestación - falta patrón");
       toast({
         title: "No se puede iniciar la manifestación",
         description: "Asegúrate de tener un patrón seleccionado.",
@@ -162,6 +166,13 @@ export const useManifestSession = () => {
     }
 
     state.setIsManifestActive(true);
+    
+    console.log("Manifestación iniciada correctamente con:", {
+      intention: currentIntention,
+      activeTab: state.activeTab,
+      patternImages: state.patternImages ? state.patternImages.length : 0,
+      selectedPattern: state.selectedPattern
+    });
   };
 
   // Detener Manifestación: para audio subliminal si está en reproducción

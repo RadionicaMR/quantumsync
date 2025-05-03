@@ -1,4 +1,3 @@
-
 import React, { useEffect, useCallback } from 'react';
 import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
 import ManifestInterfaceSection from './sections/ManifestInterfaceSection';
@@ -109,7 +108,8 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
       intentionLength: intention ? intention.length : 0,
       intentionValid: intention && intention.trim() !== "",
       patternImage,
-      patternImagesCount: patternImages ? patternImages.length : 0
+      patternImagesCount: patternImages ? patternImages.length : 0,
+      patternImages
     });
   }, [intention, patternImage, patternImages]);
   
@@ -120,11 +120,14 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
       intentionLength: intention ? intention.length : 0,
       intentionValid: intention && intention.trim() !== "",
       patternImage,
-      patternImagesCount: patternImages ? patternImages.length : 0
+      patternImagesCount: patternImages ? patternImages.length : 0,
+      patternImages
     });
     
-    // Verificación adicional para asegurar que tenemos un patrón válido
-    if (!patternImage && (!patternImages || patternImages.length === 0)) {
+    // CORRECCIÓN: Verificación explícita de imágenes de patrón
+    const hasPattern = patternImage !== null || (patternImages && patternImages.length > 0);
+    
+    if (!hasPattern) {
       toast({
         title: "No se puede iniciar la manifestación",
         description: "Necesitas subir al menos una imagen de patrón.",
@@ -152,7 +155,8 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
     patternImageExists: patternImage !== null,
     patternImagesCount: patternImages.length,
     intention: intention,
-    intentionLength: intention ? intention.length : 0
+    intentionLength: intention ? intention.length : 0,
+    patternImages
   });
 
   // Create manifest patterns record

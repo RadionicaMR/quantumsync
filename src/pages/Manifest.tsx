@@ -50,6 +50,7 @@ const Manifest = () => {
     isManifestActive: manifest.isManifestActive,
     patternImage: manifest.patternImage,
     patternImagesCount: manifest.patternImages.length,
+    patternImages: manifest.patternImages,
     selectedPattern: manifest.selectedPattern,
     manifestActiveTab: manifest.activeTab
   });
@@ -68,11 +69,16 @@ const Manifest = () => {
     // Luego actualizar el estado local
     setActiveTab(value);
     
-    // Después limpiar valores según la tab
-    if (value === "presets") {
+    // NO limpiamos las imágenes al cambiar de tab para permitir mejor experiencia de usuario
+    /* if (value === "presets") {
       manifest.setPatternImage(null);
       manifest.setPatternImages([]);
     } else if (value === "custom") {
+      manifest.setSelectedPattern("");
+    } */
+    
+    // Sólo quitamos la selección previa de patrón al ir a custom
+    if (value === "custom") {
       manifest.setSelectedPattern("");
     }
   };

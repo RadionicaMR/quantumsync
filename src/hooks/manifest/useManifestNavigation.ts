@@ -20,8 +20,9 @@ export const useManifestNavigation = (stopManifestation: () => void) => {
     // Limpieza específica según el tab seleccionado
     if (val === "presets") {
       console.log("useManifestNavigation: Limpiando imágenes de patrón para presets");
-      state.setPatternImage(null);
-      state.setPatternImages([]);
+      // No limpiamos patternImages para permitir que sigan disponibles
+      // state.setPatternImage(null);
+      // state.setPatternImages([]);
     } else if (val === "custom") {
       console.log("useManifestNavigation: Limpiando patrón seleccionado para custom");
       state.setSelectedPattern('');
