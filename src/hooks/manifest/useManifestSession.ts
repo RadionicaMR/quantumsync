@@ -53,9 +53,6 @@ export const useManifestSession = () => {
     
     console.log("INTENCIÓN VALIDADA CORRECTAMENTE:", currentIntention);
     
-    // ELIMINAMOS la verificación de patrón para permitir iniciar sin patrón
-    console.log("Iniciando manifestación sin verificación de patrón");
-
     // Actualizar la intención en el state si usamos la intención forzada
     if (forcedIntention && forcedIntention !== state.intention) {
       state.setIntention(forcedIntention);
@@ -74,6 +71,7 @@ export const useManifestSession = () => {
       playSubliminalAudio();
     }
 
+    // Establecer una velocidad para la rotación de imágenes basada en visualSpeed
     const switchInterval = 1000 / (state.visualSpeed[0] * 3);
 
     const hypnoticTimer = setInterval(() => {

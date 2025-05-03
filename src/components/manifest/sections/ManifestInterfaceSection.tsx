@@ -17,7 +17,6 @@ interface ManifestInterfaceSectionProps {
   stopManifestation: () => void;
   formatTimeRemaining: (time: number) => string;
   backgroundModeActive?: boolean;
-  // Added properties to resolve type errors
   selectedPattern: string;
   patterns: ManifestPattern[];
   manifestPatterns: Record<string, string>;
@@ -76,7 +75,7 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
     });
   }, [intention, isManifestActive]);
   
-  // Debug log for canStart value, intention and other values
+  // Debug log for values
   console.log("ManifestInterfaceSection RENDER:", {
     canStart,
     intention,
@@ -88,10 +87,9 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
     selectedPattern
   });
   
-  // CRUCIAL: Explícitamente pasar la intención cuando se inicia la manifestación
+  // Explicitly pass the intention when starting the manifestation
   const handleStartManifestation = () => {
     console.log("ManifestInterfaceSection - Iniciando con intención:", intention);
-    // Solo validamos que la intención exista, no el patrón
     if (intention && intention.trim() !== "") {
       startManifestation(intention);
     }
@@ -125,7 +123,6 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
       
       <ManifestActions 
         isManifestActive={isManifestActive}
-        // Solo validamos la intención, no el patrón
         canStart={intention && intention.trim() !== ""}
         timeRemaining={timeRemaining}
         startManifestation={handleStartManifestation}

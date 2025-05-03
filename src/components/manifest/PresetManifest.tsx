@@ -8,6 +8,7 @@ import IntentionInput from './IntentionInput';
 import AudioControls from './AudioControls';
 import FrequencyControls from './FrequencyControls';
 import TimingControls from './TimingControls';
+import ReceptorNameInput from './ReceptorNameInput';
 
 interface PresetManifestProps {
   patterns: ManifestPattern[];
@@ -51,6 +52,8 @@ interface PresetManifestProps {
   setRate1: (value: string) => void;
   setRate2: (value: string) => void;
   setRate3: (value: string) => void;
+  receptorName?: string;
+  setReceptorName?: (value: string) => void;
   indefiniteTime?: boolean;
   setIndefiniteTime?: (value: boolean) => void;
 }
@@ -97,6 +100,8 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
   setRate1,
   setRate2,
   setRate3,
+  receptorName = "",
+  setReceptorName = () => {},
   indefiniteTime = false,
   setIndefiniteTime = () => {}
 }) => {
@@ -106,10 +111,9 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
     return acc;
   }, {} as Record<string, string>);
 
-  const canStart =
-    selectedPattern !== null &&
-    selectedPattern !== undefined &&
-    selectedPattern !== '';
+  // Validate intention exists
+  const isIntentionValid = intention && intention.trim() !== "";
+  const canStart = isIntentionValid;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -125,6 +129,14 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
           />
 
           <IntentionInput intention={intention} setIntention={setIntention} />
+
+          <div className="mt-6">
+            <ReceptorNameInput 
+              receptorName={receptorName}
+              setReceptorName={setReceptorName}
+              isActive={isManifestActive}
+            />
+          </div>
 
           <AudioControls
             manifestSound={manifestSound}
@@ -183,6 +195,7 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
           rate1={rate1}
           rate2={rate2}
           rate3={rate3}
+          receptorName={receptorName}
           backgroundModeActive={backgroundModeActive}
           indefiniteTime={indefiniteTime}
         />

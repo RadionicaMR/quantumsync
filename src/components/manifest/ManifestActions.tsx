@@ -1,11 +1,8 @@
 
-import { formatDistanceToNow } from 'date-fns';
-import { es } from 'date-fns/locale';
-import { Progress } from '@/components/ui/progress';
-import QuantumButton from '@/components/QuantumButton';
 import { Rocket, StopCircle, Smartphone, Infinity } from 'lucide-react';
 import { useEffect } from 'react';
 import ManifestActionButtons from './controls/ManifestActionButtons';
+import { toast } from '@/components/ui/use-toast';
 
 interface ManifestActionsProps {
   isManifestActive: boolean;
@@ -42,7 +39,7 @@ const ManifestActions = ({
   }, [intention, canStart, isManifestActive]);
   
   // Debugging log con valores actuales
-  console.log("ManifestActions render con valores actuales:", {
+  console.log("ManifestActions RENDER:", {
     isManifestActive,
     canStart,
     intention,
@@ -61,10 +58,18 @@ const ManifestActions = ({
       intentionValid: intention && intention.trim() !== ""
     });
     
-    startManifestation();
+    if (intention && intention.trim() !== "") {
+      startManifestation();
+    } else {
+      toast({
+        title: "No se puede iniciar la manifestación",
+        description: "Asegúrate de tener una intención definida.",
+        variant: "destructive",
+      });
+    }
   };
   
-  // Verificación estricta SOLO de intención válida, sin verificar patrón
+  // Verificación estricta SOLO de intención válida
   const isIntentionValid = Boolean(intention && intention.trim() !== "");
   
   // Simplificamos la validación solo a la intención

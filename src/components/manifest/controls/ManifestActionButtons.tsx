@@ -34,7 +34,7 @@ const ManifestActionButtons = ({
   // Simplificamos la validación solo para la intención
   const isButtonEnabled = intention && intention.trim() !== "";
   
-  console.log("ManifestActionButtons: Button state", {
+  console.log("ManifestActionButtons RENDER:", {
     isButtonEnabled,
     canStart,
     intention,
@@ -55,7 +55,7 @@ const ManifestActionButtons = ({
             )}
           </div>
           <QuantumButton 
-            variant="outline"
+            variant="destructive"
             onClick={stopManifestation}
             className="bg-red-500 hover:bg-red-600 text-white"
           >
