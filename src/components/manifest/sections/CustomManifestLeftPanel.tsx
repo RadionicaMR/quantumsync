@@ -90,6 +90,10 @@ const CustomManifestLeftPanel = ({
   indefiniteTime = false,
   setIndefiniteTime = () => {}
 }: CustomManifestLeftPanelProps) => {
+  // Calculate canStart here to determine button state
+  const canStart = intention.trim() !== "" && 
+                 (patternImage !== null || patternImages.length > 0);
+  
   return (
     <div className="lg:col-span-1 space-y-6">
       <Card className="p-6 quantum-card">
@@ -115,7 +119,7 @@ const CustomManifestLeftPanel = ({
           startManifestation={() => {}}
           stopManifestation={() => {}}
           formatTimeRemaining={() => ""}
-          canStart={false}
+          canStart={canStart}
           indefiniteTime={indefiniteTime}
           setIndefiniteTime={setIndefiniteTime}
         />

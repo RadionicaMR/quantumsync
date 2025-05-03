@@ -60,6 +60,8 @@ export const ManifestControls: React.FC<ManifestControlsProps> = ({
   indefiniteTime = false,
   setIndefiniteTime = () => {}
 }) => {
+  // Log to check if the intention is passed correctly
+  console.log("ManifestControls received intention:", intention);
   
   return (
     <div className="space-y-6">

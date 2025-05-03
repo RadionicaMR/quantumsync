@@ -101,9 +101,17 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
   indefiniteTime = false,
   setIndefiniteTime = () => {}
 }) => {
-  // Calculated values
+  // Calculated values - simplified canStart condition
   const canStart = intention.trim() !== "" && 
-                 (patternImage !== null || patternImages.length > 0);
+                  (patternImage !== null || patternImages.length > 0);
+                  
+  // Debug log to verify canStart calculation
+  console.log("CustomManifest canStart calculation:", {
+    intentionValid: intention.trim() !== "",
+    patternImageExists: patternImage !== null,
+    patternImagesCount: patternImages.length,
+    canStart
+  });
 
   // Create manifest patterns record
   const manifestPatternsRecord: Record<string, string> = {};
@@ -156,7 +164,7 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
         setIndefiniteTime={setIndefiniteTime}
       />
       
-      {/* Panel derecho: visualización y controles principales - Removed duplicated pattern and receptor sections */}
+      {/* Panel derecho: visualización y controles principales */}
       <div className="lg:col-span-2">
         <ManifestInterfaceSection
           currentImage={currentImage}
