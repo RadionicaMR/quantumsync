@@ -65,8 +65,15 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
   // Convert manifestPatterns record to array if needed
   const patternsArray = Array.isArray(patterns) ? patterns : [];
   
-  // Debug log for canStart value
-  console.log("ManifestInterfaceSection canStart:", canStart);
+  // Debug log for canStart value and intention
+  console.log("ManifestInterfaceSection:", {
+    canStart,
+    intention,
+    isManifestActive,
+    patternImages: patternImages.length,
+    patternImage,
+    selectedPattern
+  });
   
   return (
     <div className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-lg">
@@ -103,7 +110,7 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
         formatTimeRemaining={formatTimeRemaining}
         backgroundModeActive={backgroundModeActive}
         indefiniteTime={indefiniteTime}
-        intention={intention}  // Asegurar que la intención se pase correctamente
+        intention={intention}
       />
     </div>
   );

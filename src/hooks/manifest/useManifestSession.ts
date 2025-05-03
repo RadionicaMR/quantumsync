@@ -25,22 +25,28 @@ export const useManifestSession = () => {
   // Iniciar Manifestación: comienza audio subliminal si disponible
   const startManifestation = () => {
     // Acceder directamente a los valores del estado actuales
-    const hasPattern = state.activeTab === "presets" 
-      ? !!state.selectedPattern 
-      : (!!state.patternImage || state.patternImages.length > 0);
-    
     const intentionValid = state.intention.trim() !== "";
-    const canStart = hasPattern && intentionValid;
+    
+    // Check pattern based on the active tab
+    let hasPattern = false;
+    if (state.activeTab === "presets") {
+      hasPattern = state.selectedPattern !== "";
+    } else {
+      // For custom tab, check for either patternImage or patternImages
+      hasPattern = state.patternImage !== null || state.patternImages.length > 0;
+    }
+    
+    const canStart = intentionValid && hasPattern;
     
     console.log("Start manifestation checks:", { 
+      activeTab: state.activeTab,
       hasPattern,
-      canStart, 
+      patternImage: state.patternImage,
+      patternImages: state.patternImages.length,
+      selectedPattern: state.selectedPattern,
       intention: state.intention,
       intentionValid,
-      activeTab: state.activeTab,
-      selectedPattern: state.selectedPattern,
-      patternImage: state.patternImage,
-      patternImages: state.patternImages.length
+      canStart
     });
     
     if (!canStart) {

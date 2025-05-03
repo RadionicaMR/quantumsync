@@ -28,6 +28,16 @@ const ManifestActions = ({
   indefiniteTime = false,
   intention = "", 
 }: ManifestActionsProps) => {
+  // Debugging log
+  console.log("ManifestActions render:", {
+    isManifestActive,
+    canStart,
+    intention,
+    intentionValid: intention && intention.trim() !== "",
+    timeRemaining,
+    indefiniteTime
+  });
+  
   // Add a console log to debug button click
   const handleStartClick = () => {
     console.log("ManifestActions: Start manifestation button clicked", {
@@ -37,12 +47,6 @@ const ManifestActions = ({
     });
     startManifestation();
   };
-  
-  // Intención válida (no vacía)
-  const isIntentionValid = intention && intention.trim() !== "";
-  
-  // Solo deshabilitar el botón si canStart es falso o la intención no es válida
-  const isButtonDisabled = !canStart || !isIntentionValid;
   
   return (
     <div className="flex flex-col space-y-2 mt-6">
@@ -94,7 +98,6 @@ const ManifestActions = ({
       ) : (
         <QuantumButton
           className="w-full bg-quantum-primary hover:bg-quantum-primary/90 text-white"
-          disabled={isButtonDisabled}
           onClick={handleStartClick}
         >
           <div className="flex items-center justify-center">
