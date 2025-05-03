@@ -1,6 +1,6 @@
 
-import ManifestVisualizer from '../ManifestVisualizer';
-import ManifestActions from '../ManifestActions';
+import ManifestVisualizer from './ManifestVisualizer';
+import ManifestActions from './ManifestActions';
 import { ManifestPattern } from '@/data/manifestPatterns';
 import { useEffect } from 'react';
 
