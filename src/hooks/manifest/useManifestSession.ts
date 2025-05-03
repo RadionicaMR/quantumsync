@@ -24,8 +24,20 @@ export const useManifestSession = () => {
 
   // Iniciar Manifestación: comienza audio subliminal si disponible
   const startManifestation = () => {
-    // CRITICAL FIX: Validate the intention first
+    // FIX: Correctamente verificamos si hay una intención válida
     const intentionValid = state.intention && state.intention.trim() !== "";
+    
+    // Log detailed debug info
+    console.log("StartManifestation validation check:", {
+      intention: state.intention,
+      intentionLength: state.intention ? state.intention.length : 0,
+      intentionValid,
+      activeTab: state.activeTab,
+      patternImage: state.patternImage,
+      patternImagesLength: state.patternImages ? state.patternImages.length : 0,
+      selectedPattern: state.selectedPattern
+    });
+    
     if (!intentionValid) {
       console.log("Cannot start manifestation - missing intention");
       toast({

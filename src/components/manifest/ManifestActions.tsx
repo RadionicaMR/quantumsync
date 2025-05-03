@@ -44,8 +44,19 @@ const ManifestActions = ({
       intention,
       intentionValid: intention && intention.trim() !== ""
     });
+    
+    // Añadimos esta verificación antes de llamar a startManifestation
+    if (!intention || intention.trim() === "") {
+      console.warn("Attempted to start without valid intention");
+      return;
+    }
+    
     startManifestation();
   };
+  
+  // Verificamos que la intención sea válida para habilitar el botón
+  const isIntentionValid = intention && intention.trim() !== "";
+  const isButtonEnabled = canStart && isIntentionValid;
   
   return (
     <div className="flex flex-col space-y-2 mt-6">
@@ -98,6 +109,7 @@ const ManifestActions = ({
         <QuantumButton
           className="w-full bg-quantum-primary hover:bg-quantum-primary/90 text-white"
           onClick={handleStartClick}
+          disabled={!isButtonEnabled}
         >
           <div className="flex items-center justify-center">
             <Rocket className="mr-2 h-5 w-5" />
