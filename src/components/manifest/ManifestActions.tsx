@@ -38,33 +38,15 @@ const ManifestActions = ({
     });
   }, [intention, canStart, isManifestActive]);
   
-  // Debugging log with current values
-  console.log("ManifestActions RENDER:", {
-    isManifestActive,
-    canStart,
-    intention,
-    intentionLength: intention ? intention.length : 0,
-    intentionValid: intention && intention.trim() !== "",
-    timeRemaining,
-    indefiniteTime
-  });
-  
   // Strict verification ONLY for valid intention
   const isIntentionValid = Boolean(intention && intention.trim() !== "");
   
-  // Simplify validation to just the intention
+  // Simplify validation to just check intention
   const isButtonEnabled = isIntentionValid;
-  
-  console.log("ManifestActions: Estado final del botón:", { 
-    isButtonEnabled, 
-    canStart, 
-    isIntentionValid, 
-    intention,
-    isManifestActive
-  });
   
   return (
     <div className="flex flex-col space-y-2 mt-6">
+      {/* Make sure the buttons are visible by passing necessary props */}
       <ManifestActionButtons
         isManifestActive={isManifestActive}
         timeRemaining={timeRemaining}

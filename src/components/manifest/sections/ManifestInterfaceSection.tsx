@@ -74,18 +74,6 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
     });
   }, [intention, isManifestActive]);
   
-  // Debug log for values
-  console.log("ManifestInterfaceSection RENDER:", {
-    canStart,
-    intention,
-    intentionLength: intention ? intention.length : 0,
-    intentionValid: intention && intention.trim() !== "",
-    isManifestActive,
-    patternImages: patternImages.length,
-    patternImage,
-    selectedPattern
-  });
-  
   // CRUCIAL: Explícitamente pasar la intención cuando se inicia la manifestación
   const handleStartManifestation = () => {
     console.log("ManifestInterfaceSection - Iniciando con intención:", intention);
@@ -98,6 +86,7 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
     <div className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-lg">
       <h3 className="text-xl font-semibold mb-4">Interfaz de Manifestación</h3>
       
+      {/* Display the visualizer with all required props */}
       <ManifestVisualizer
         currentImage={currentImage}
         patternImage={patternImage}
@@ -120,6 +109,7 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
         receptorName={receptorName}
       />
       
+      {/* Make sure we're passing the intention to ManifestActions */}
       <ManifestActions 
         isManifestActive={isManifestActive}
         canStart={canStart}

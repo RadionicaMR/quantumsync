@@ -80,15 +80,21 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
             isPlaying={isPlaying}
           />
 
-          {imageUploader}
           {rateSection}
           {receptorSection}
           {audioSection}
         </Card>
       </div>
       
-      {/* Right Column - Visualizer */}
-      <div className="lg:col-span-2">
+      {/* Right Column - Images and Visualizer */}
+      <div className="lg:col-span-2 space-y-6">
+        {/* Image uploader now at the top of the right column */}
+        <Card className="quantum-card p-6">
+          <h3 className="text-xl font-semibold mb-4">Imágenes de Tratamiento</h3>
+          {imageUploader}
+        </Card>
+        
+        {/* Visualizer below the images */}
         {visualizerSection}
       </div>
     </div>

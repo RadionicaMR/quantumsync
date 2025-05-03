@@ -71,8 +71,8 @@ export const useManifestSession = () => {
       playSubliminalAudio();
     }
 
-    // Establecer una velocidad para la rotación de imágenes basada en visualSpeed
-    const switchInterval = 1000 / (state.visualSpeed?.[0] || 10);
+    // Establecer una velocidad para la rotación de imágenes basada en manifestSpeed
+    const switchInterval = 1000 / (state.manifestSpeed?.[0] || 10);
 
     const hypnoticTimer = setInterval(() => {
       if (!document.hidden) {
@@ -138,6 +138,10 @@ export const useManifestSession = () => {
     state.setTimeRemaining(null);
     state.setIsManifestActive(false);
     stopSubliminalAudio();
+    toast({
+      title: "Manifestación detenida",
+      description: "El proceso de manifestación ha sido detenido manualmente."
+    });
     console.log("Manifestación detenida");
   };
 

@@ -43,17 +43,9 @@ const ManifestActionButtons = ({
 
   // Simplify validation to just check for intention
   const isButtonEnabled = intention && intention.trim() !== "";
-  
-  console.log("ManifestActionButtons RENDER:", {
-    isButtonEnabled,
-    canStart,
-    intention,
-    intentionValid: intention && intention.trim() !== "",
-    isManifestActive
-  });
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-background/50">
       {isManifestActive ? (
         <>
           <div className="text-quantum-primary font-medium">
@@ -67,7 +59,7 @@ const ManifestActionButtons = ({
           <QuantumButton 
             variant="secondary"
             onClick={stopManifestation}
-            className="bg-red-500 hover:bg-red-600 text-white"
+            className="bg-red-500 hover:bg-red-600 text-white font-bold"
           >
             <div className="flex items-center justify-center">
               <StopCircle className="mr-2 h-4 w-4" />

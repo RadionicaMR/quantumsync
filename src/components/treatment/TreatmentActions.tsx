@@ -23,6 +23,9 @@ const TreatmentActions = ({
 }: TreatmentActionsProps) => {
   // Treatment can start if at least the receptor name is filled
   const canStartTreatment = !!receptorName?.trim();
+  
+  // Format the displayed time properly for the countdown
+  const displayTime = isPlaying ? formatTime(Math.max(0, timeRemaining)) : "";
 
   return (
     <div className="flex items-center justify-between">
@@ -32,10 +35,10 @@ const TreatmentActions = ({
             {backgroundModeActive ? (
               <>
                 <Smartphone className="w-4 h-4 mr-2 text-orange-500" />
-                <span>Tratamiento en segundo plano: {formatTime(timeRemaining)} restante</span>
+                <span>Tratamiento en segundo plano: {displayTime} restante</span>
               </>
             ) : (
-              <span>Tratamiento en progreso: {formatTime(timeRemaining)} restante</span>
+              <span>Tratamiento en progreso: {displayTime} restante</span>
             )}
           </div>
           <QuantumButton 

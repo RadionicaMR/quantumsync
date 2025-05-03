@@ -1,11 +1,12 @@
 
+import { RefObject } from 'react';
+
 export interface ManifestState {
   intention: string;
   isManifestActive: boolean;
   visualSpeed: number[];
   patternImage: string | null;
   receptorImage: string | null;
-  // New properties for multiple images
   patternImages: string[];
   receptorImages: string[];
   selectedPattern: string;
@@ -20,18 +21,39 @@ export interface ManifestState {
   rate2: string;
   rate3: string;
   indefiniteTime: boolean;
-  manifestSpeed: number[]; // Added missing property
+  manifestSpeed: number[];
+}
+
+export interface ManifestTimers {
+  hypnoticTimerRef: RefObject<NodeJS.Timeout | null>;
+  exposureTimerRef: RefObject<NodeJS.Timeout | null>;
+  countdownTimerRef: RefObject<NodeJS.Timeout | null>;
 }
 
 export interface ManifestAudio {
-  oscillatorRef: React.RefObject<OscillatorNode | null>;
-  audioContextRef: React.RefObject<AudioContext | null>;
+  oscillatorRef: RefObject<OscillatorNode | null>;
+  audioContextRef: RefObject<AudioContext | null>;
   startAudio: (frequency: number) => void;
   stopAudio: () => void;
 }
 
-export interface ManifestTimers {
-  hypnoticTimerRef: React.RefObject<NodeJS.Timeout | null>;
-  exposureTimerRef: React.RefObject<NodeJS.Timeout | null>;
-  countdownTimerRef: React.RefObject<NodeJS.Timeout | null>;
+export interface ManifestNavigation {
+  handleTabChange: (tab: string) => void;
+  selectPattern: (patternId: string) => void;
+}
+
+export interface ManifestSubliminal {
+  audioFile: File | null;
+  setAudioFile: (file: File | null) => void;
+  audioVolume: number;
+  setAudioVolume: (vol: number) => void;
+  audioRef: RefObject<HTMLAudioElement | null>;
+  audioSubliminalPlaying: boolean;
+  playSubliminalAudio: () => void;
+  stopSubliminalAudio: () => void;
+  backgroundModeActive: boolean;
+}
+
+export interface ManifestUtils {
+  formatTimeRemaining: (time: number) => string;
 }
