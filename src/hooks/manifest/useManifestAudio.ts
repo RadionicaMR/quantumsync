@@ -36,7 +36,7 @@ export const useManifestAudio = (): ManifestAudio & {
     }
   };
 
-  // Agregar event listener para visibilitychange
+  // Add event listener for visibilitychange
   useEffect(() => {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     
@@ -47,7 +47,7 @@ export const useManifestAudio = (): ManifestAudio & {
 
   const startAudio = (frequency: number) => {
     try {
-      // Guarda la frecuencia actual para restaurar si es necesario
+      // Save current frequency for restoration if needed
       currentFrequencyRef.current = frequency;
       
       // Initialize audio context
@@ -86,6 +86,7 @@ export const useManifestAudio = (): ManifestAudio & {
         harmonicOscillator.start();
         harmonicOscillatorRef.current = harmonicOscillator;
       }
+      console.log("Manifest audio started successfully at frequency:", frequency);
     } catch (error) {
       console.error("Error starting manifestation audio:", error);
     }
@@ -109,6 +110,7 @@ export const useManifestAudio = (): ManifestAudio & {
     
     currentFrequencyRef.current = null;
     setBackgroundModeActive(false);
+    console.log("Manifest audio stopped");
   };
 
   return {

@@ -41,7 +41,7 @@ const ManifestActionButtons = ({
     }
   };
 
-  // Simplificamos la validación solo para la intención
+  // Simplify validation to just check for intention
   const isButtonEnabled = intention && intention.trim() !== "";
   
   console.log("ManifestActionButtons RENDER:", {

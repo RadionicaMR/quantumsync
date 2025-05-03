@@ -38,7 +38,7 @@ const ManifestActions = ({
     });
   }, [intention, canStart, isManifestActive]);
   
-  // Debugging log con valores actuales
+  // Debugging log with current values
   console.log("ManifestActions RENDER:", {
     isManifestActive,
     canStart,
@@ -49,10 +49,10 @@ const ManifestActions = ({
     indefiniteTime
   });
   
-  // Verificación estricta SOLO de intención válida
+  // Strict verification ONLY for valid intention
   const isIntentionValid = Boolean(intention && intention.trim() !== "");
   
-  // Simplificamos la validación solo a la intención
+  // Simplify validation to just the intention
   const isButtonEnabled = isIntentionValid;
   
   console.log("ManifestActions: Estado final del botón:", { 

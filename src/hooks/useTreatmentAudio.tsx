@@ -23,16 +23,16 @@ export const useTreatmentAudio = () => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Función para manejar cuando la app pasa a segundo plano
+  // Function to handle when the app goes to background
   const handleVisibilityChange = () => {
     if (document.hidden && isPlaying) {
       console.log("App pasó a segundo plano mientras se ejecutaba un tratamiento");
       setBackgroundModeActive(true);
       
-      // Guardar el tiempo restante cuando se pausa
+      // Save remaining time when paused
       pausedTimeRemainingRef.current = timeRemaining;
       
-      // El oscilador actual debe detenerse porque el AudioContext se suspende
+      // Current oscillator must stop because AudioContext is suspended
       if (oscillatorRef.current) {
         oscillatorRef.current.stop();
         oscillatorRef.current = null;
@@ -43,7 +43,7 @@ export const useTreatmentAudio = () => {
         harmonicOscillatorRef.current = null;
       }
       
-      // Detener el timer actual
+      // Stop current timer
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
@@ -52,12 +52,12 @@ export const useTreatmentAudio = () => {
       console.log("App volvió al primer plano, restaurando tratamiento");
       setBackgroundModeActive(false);
       
-      // Reiniciar la reproducción si se estaba reproduciendo
+      // Restart playback if it was playing
       if (isPlaying && pausedTimeRemainingRef.current !== null) {
-        // Crear un nuevo contexto y osciladore
+        // Create a new context and oscillators
         restartAudio();
         
-        // Restaurar el temporizador
+        // Restore the timer
         setTimeRemaining(pausedTimeRemainingRef.current);
         startTimer(pausedTimeRemainingRef.current);
         pausedTimeRemainingRef.current = null;
@@ -88,16 +88,16 @@ export const useTreatmentAudio = () => {
       oscillator.start();
       oscillatorRef.current = oscillator;
       
-      // Si la frecuencia es baja, añadir armónico para mejorar la audibilidad en dispositivos pequeños
+      // If frequency is low, add harmonic to improve audibility on small devices
       if (frequency[0] < 100) {
         const harmonicOscillator = audioContextRef.current.createOscillator();
         const harmonicGainNode = audioContextRef.current.createGain();
         
-        // Crear armónico a 2x la frecuencia con menor volumen
+        // Create harmonic at 2x the frequency with lower volume
         harmonicOscillator.type = 'sine';
         harmonicOscillator.frequency.value = frequency[0] * 2;
         
-        // Volumen del armónico proporcional al volumen principal
+        // Harmonic volume proportional to main volume
         harmonicGainNode.gain.value = volume * 0.75;
         
         harmonicOscillator.connect(harmonicGainNode);
@@ -107,7 +107,7 @@ export const useTreatmentAudio = () => {
         harmonicOscillatorRef.current = harmonicOscillator;
       }
     } catch (error) {
-      console.error("Error al reiniciar el audio:", error);
+      console.error("Error restarting audio:", error);
     }
   };
 
@@ -151,16 +151,16 @@ export const useTreatmentAudio = () => {
       oscillator.start();
       oscillatorRef.current = oscillator;
       
-      // Si la frecuencia es baja, añadir armónico para mejorar la audibilidad en dispositivos pequeños
+      // If frequency is low, add harmonic to improve audibility on small devices
       if (frequency[0] < 100) {
         const harmonicOscillator = audioContextRef.current.createOscillator();
         const harmonicGainNode = audioContextRef.current.createGain();
         
-        // Crear armónico a 2x la frecuencia con menor volumen
+        // Create harmonic at 2x the frequency with lower volume
         harmonicOscillator.type = 'sine';
         harmonicOscillator.frequency.value = frequency[0] * 2;
         
-        // Volumen del armónico proporcional al volumen principal
+        // Harmonic volume proportional to main volume
         harmonicGainNode.gain.value = volume * 0.75;
         
         harmonicOscillator.connect(harmonicGainNode);
@@ -175,9 +175,10 @@ export const useTreatmentAudio = () => {
       startTimer(duration[0]);
       
       setIsPlaying(true);
+      console.log("Audio started successfully at frequency:", frequency[0]);
     } catch (error) {
-      console.error("Error al iniciar el tratamiento de audio:", error);
-      alert("No se pudo iniciar el tratamiento de audio. Por favor, asegúrate de que tu dispositivo admite la API Web Audio.");
+      console.error("Error starting audio treatment:", error);
+      alert("Could not start audio treatment. Please ensure your device supports Web Audio API.");
     }
   };
 
@@ -205,13 +206,14 @@ export const useTreatmentAudio = () => {
     setIsPlaying(false);
     setBackgroundModeActive(false);
     pausedTimeRemainingRef.current = null;
+    console.log("Audio stopped");
   };
 
-  // Agregar el event listener para visibilitychange
+  // Add event listener for visibilitychange
   useEffect(() => {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     
-    // Limpieza al desmontar
+    // Cleanup when unmounting
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (oscillatorRef.current) {

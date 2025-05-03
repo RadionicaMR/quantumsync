@@ -22,6 +22,7 @@ export const useManifestState = (): ManifestState & {
   setIsManifestActive: (value: boolean) => void;
   setSelectedPattern: (value: string) => void;
   setIndefiniteTime: (value: boolean) => void;
+  setManifestSpeed: (value: number[]) => void;
 } => {
   const [intention, setIntention] = useState('');
   const [isManifestActive, setIsManifestActive] = useState(false);
@@ -43,6 +44,8 @@ export const useManifestState = (): ManifestState & {
   const [rate2, setRate2] = useState('');
   const [rate3, setRate3] = useState('');
   const [indefiniteTime, setIndefiniteTime] = useState(false);
+  // Add manifestSpeed for compatibility with useManifestSession
+  const [manifestSpeed, setManifestSpeed] = useState([10]);
 
   return {
     intention,
@@ -64,6 +67,7 @@ export const useManifestState = (): ManifestState & {
     rate2,
     rate3,
     indefiniteTime,
+    manifestSpeed,
     // Setters
     setIntention,
     setIsManifestActive,
@@ -83,6 +87,7 @@ export const useManifestState = (): ManifestState & {
     setRate1,
     setRate2,
     setRate3,
-    setIndefiniteTime
+    setIndefiniteTime,
+    setManifestSpeed
   };
 };
