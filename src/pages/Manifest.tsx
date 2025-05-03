@@ -23,6 +23,16 @@ const Manifest = () => {
     manifest.setActiveTab(activeTab);
   }, [activeTab, manifest.setActiveTab]);
   
+  // Log actual state values before rendering
+  console.log("Manifest render state:", {
+    activeTab,
+    intention: manifest.intention,
+    isManifestActive: manifest.isManifestActive,
+    patternImage: manifest.patternImage,
+    patternImagesCount: manifest.patternImages.length,
+    selectedPattern: manifest.selectedPattern
+  });
+  
   return (
     <Layout>
       <HeroSection 

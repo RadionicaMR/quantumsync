@@ -24,18 +24,19 @@ export const useManifestSession = () => {
 
   // Iniciar Manifestación: comienza audio subliminal si disponible
   const startManifestation = () => {
-    // Fix: Directly access the state values
+    // Acceder directamente a los valores del estado actuales
     const hasPattern = state.activeTab === "presets" 
       ? !!state.selectedPattern 
       : (!!state.patternImage || state.patternImages.length > 0);
     
-    const canStart = hasPattern && state.intention.trim() !== "";
+    const intentionValid = state.intention.trim() !== "";
+    const canStart = hasPattern && intentionValid;
     
     console.log("Start manifestation checks:", { 
       hasPattern,
       canStart, 
       intention: state.intention,
-      intentionValid: state.intention.trim() !== "",
+      intentionValid,
       activeTab: state.activeTab,
       selectedPattern: state.selectedPattern,
       patternImage: state.patternImage,

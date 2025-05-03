@@ -47,6 +47,10 @@ interface CustomManifestLeftPanelProps {
   setRate3: (rate: string) => void;
   indefiniteTime?: boolean;
   setIndefiniteTime?: (value: boolean) => void;
+  timeRemaining?: number | null;
+  startManifestation?: () => void;
+  stopManifestation?: () => void;
+  formatTimeRemaining?: (time: number) => string;
 }
 
 const CustomManifestLeftPanel = ({
@@ -88,11 +92,23 @@ const CustomManifestLeftPanel = ({
   rate3,
   setRate3,
   indefiniteTime = false,
-  setIndefiniteTime = () => {}
+  setIndefiniteTime = () => {},
+  timeRemaining = null,
+  startManifestation = () => {},
+  stopManifestation = () => {},
+  formatTimeRemaining = (time) => ""
 }: CustomManifestLeftPanelProps) => {
   // Calculate canStart here to determine button state
   const canStart = intention.trim() !== "" && 
                  (patternImage !== null || patternImages.length > 0);
+                 
+  console.log("CustomManifestLeftPanel canStart:", { 
+    intention, 
+    intentionValid: intention.trim() !== "", 
+    patternImage, 
+    patternImagesLength: patternImages.length,
+    canStart
+  });
   
   return (
     <div className="lg:col-span-1 space-y-6">
@@ -115,10 +131,10 @@ const CustomManifestLeftPanel = ({
           rate3={rate3}
           setRate3={setRate3}
           isManifestActive={isManifestActive}
-          timeRemaining={null}
-          startManifestation={() => {}}
-          stopManifestation={() => {}}
-          formatTimeRemaining={() => ""}
+          timeRemaining={timeRemaining}
+          startManifestation={startManifestation}
+          stopManifestation={stopManifestation}
+          formatTimeRemaining={formatTimeRemaining}
           canStart={canStart}
           indefiniteTime={indefiniteTime}
           setIndefiniteTime={setIndefiniteTime}

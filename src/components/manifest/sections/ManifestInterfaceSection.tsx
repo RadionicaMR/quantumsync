@@ -103,7 +103,7 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
         formatTimeRemaining={formatTimeRemaining}
         backgroundModeActive={backgroundModeActive}
         indefiniteTime={indefiniteTime}
-        intention={intention}  // Pass intention to ManifestActions
+        intention={intention}  // Asegurar que la intención se pase correctamente
       />
     </div>
   );

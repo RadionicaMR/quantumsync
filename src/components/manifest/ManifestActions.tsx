@@ -38,8 +38,11 @@ const ManifestActions = ({
     startManifestation();
   };
   
-  // Determine if button should be disabled
-  const isButtonDisabled = !canStart || (intention && intention.trim() === "");
+  // Intención válida (no vacía)
+  const isIntentionValid = intention && intention.trim() !== "";
+  
+  // Solo deshabilitar el botón si canStart es falso o la intención no es válida
+  const isButtonDisabled = !canStart || !isIntentionValid;
   
   return (
     <div className="flex flex-col space-y-2 mt-6">

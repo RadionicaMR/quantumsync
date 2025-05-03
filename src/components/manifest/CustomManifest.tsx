@@ -105,7 +105,7 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
   const canStart = intention.trim() !== "" && 
                   (patternImage !== null || patternImages.length > 0);
                   
-  // Debug log to verify canStart calculation
+  // Debug log para verificar el cálculo de canStart
   console.log("CustomManifest canStart calculation:", {
     intentionValid: intention.trim() !== "",
     patternImageExists: patternImage !== null,
@@ -163,6 +163,10 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
         clearAudio={clearAudio}
         indefiniteTime={indefiniteTime}
         setIndefiniteTime={setIndefiniteTime}
+        timeRemaining={timeRemaining}
+        startManifestation={startManifestation}
+        stopManifestation={stopManifestation}
+        formatTimeRemaining={formatTimeRemaining}
       />
       
       {/* Panel derecho: visualización y controles principales */}
