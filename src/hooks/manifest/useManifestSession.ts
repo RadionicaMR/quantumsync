@@ -24,36 +24,44 @@ export const useManifestSession = () => {
 
   // Iniciar Manifestación: comienza audio subliminal si disponible
   const startManifestation = () => {
-    // Acceder directamente a los valores del estado actuales
-    const intentionValid = state.intention.trim() !== "";
-    
-    // Check pattern based on the active tab
-    let hasPattern = false;
-    if (state.activeTab === "presets") {
-      hasPattern = state.selectedPattern !== "";
-    } else {
-      // For custom tab, check for either patternImage or patternImages
-      hasPattern = state.patternImage !== null || state.patternImages.length > 0;
+    // CRITICAL FIX: Validate the intention first
+    const intentionValid = state.intention && state.intention.trim() !== "";
+    if (!intentionValid) {
+      console.log("Cannot start manifestation - missing intention");
+      toast({
+        title: "No se puede iniciar la manifestación",
+        description: "Asegúrate de tener una intención definida.",
+        variant: "destructive",
+      });
+      return;
     }
     
-    const canStart = intentionValid && hasPattern;
+    // CRITICAL FIX: Check for pattern based on the current tab
+    let hasPattern = false;
+    if (state.activeTab === "custom") {
+      // For custom tab, check for either patternImage or patternImages
+      hasPattern = state.patternImage !== null || (state.patternImages && state.patternImages.length > 0);
+    } else {
+      // For presets tab, check for selectedPattern
+      hasPattern = state.selectedPattern !== "";
+    }
     
-    console.log("Start manifestation checks:", { 
+    // Log detailed validation info
+    console.log("Start manifestation validation:", { 
       activeTab: state.activeTab,
       hasPattern,
       patternImage: state.patternImage,
-      patternImages: state.patternImages.length,
+      patternImagesCount: state.patternImages ? state.patternImages.length : 0,
       selectedPattern: state.selectedPattern,
       intention: state.intention,
-      intentionValid,
-      canStart
+      intentionValid
     });
     
-    if (!canStart) {
-      console.log("Cannot start manifestation - missing required fields");
+    if (!hasPattern) {
+      console.log("Cannot start manifestation - missing pattern");
       toast({
         title: "No se puede iniciar la manifestación",
-        description: "Asegúrate de tener un patrón seleccionado y una intención definida.",
+        description: "Asegúrate de tener un patrón seleccionado.",
         variant: "destructive",
       });
       return;

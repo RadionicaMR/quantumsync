@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
 import ManifestInterfaceSection from './sections/ManifestInterfaceSection';
 import { ManifestPattern } from '@/data/manifestPatterns';
@@ -120,6 +119,12 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
     manifestPatternsRecord[pattern.id] = pattern.image;
   });
 
+  // IMPORTANT: Explicitly sync the activeTab value with useManifestState
+  useEffect(() => {
+    // This is handled in the parent component now
+    // But keeping this comment to document the importance
+  }, []);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       {/* Panel izquierdo: configuraciones */}
@@ -154,7 +159,7 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
         audioFile={audioFile}
         setAudioFile={setAudioFile}
         audioVolume={audioVolume}
-        setAudioVolume={setAudioVolume}
+        setAudioVolume={audioVolume}
         audioSubliminalPlaying={audioSubliminalPlaying}
         playSubliminalAudio={playSubliminalAudio}
         stopSubliminalAudio={stopSubliminalAudio}

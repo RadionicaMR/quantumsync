@@ -38,7 +38,6 @@ const ManifestActions = ({
     indefiniteTime
   });
   
-  // Add a console log to debug button click
   const handleStartClick = () => {
     console.log("ManifestActions: Start manifestation button clicked", {
       canStart,
