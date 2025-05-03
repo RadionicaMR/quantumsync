@@ -18,15 +18,18 @@ const Manifest = () => {
   const visualSpeed = manifest.visualSpeed || manifest.exposureTime; 
   const setVisualSpeed = manifest.setVisualSpeed || manifest.setExposureTime;
   
-  // Ensure manifest state activeTab stays in sync
+  // CRITICAL: Asegurarse que activeTab se sincronice
   useEffect(() => {
+    console.log("Manifest: Sincronizando activeTab:", activeTab);
+    // Asegurar que la tab activa se actualice en el state
     manifest.setActiveTab(activeTab);
   }, [activeTab, manifest.setActiveTab]);
   
-  // Log actual state values before rendering
-  console.log("Manifest render state:", {
+  // Debug log con todos los valores de state antes del render
+  console.log("Manifest RENDER - ESTADO COMPLETO:", {
     activeTab,
     intention: manifest.intention,
+    intentionLength: manifest.intention ? manifest.intention.length : 0,
     isManifestActive: manifest.isManifestActive,
     patternImage: manifest.patternImage,
     patternImagesCount: manifest.patternImages.length,
@@ -45,6 +48,7 @@ const Manifest = () => {
           <Tabs 
             value={activeTab} 
             onValueChange={(value) => {
+              console.log("Manifest: Cambiando tab a", value);
               setActiveTab(value);
               // Reset manifest state when switching tabs
               if (manifest.isManifestActive) {

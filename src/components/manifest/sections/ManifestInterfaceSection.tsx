@@ -66,7 +66,7 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
   const patternsArray = Array.isArray(patterns) ? patterns : [];
   
   // Debug log for canStart value, intention and other values
-  console.log("ManifestInterfaceSection:", {
+  console.log("ManifestInterfaceSection RENDER:", {
     canStart,
     intention,
     intentionLength: intention ? intention.length : 0,

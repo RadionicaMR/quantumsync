@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
 import ManifestInterfaceSection from './sections/ManifestInterfaceSection';
 import { ManifestPattern } from '@/data/manifestPatterns';
+import { toast } from '@/components/ui/use-toast';
 
 interface CustomManifestProps {
   intention: string;
@@ -101,20 +102,42 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
   indefiniteTime = false,
   setIndefiniteTime = () => {}
 }) => {
-  // Ensure intention is a string before trimming
-  const intentionStr = String(intention || "");
+  // Usar un useEffect para registrar los valores de intención cuando cambian
+  useEffect(() => {
+    console.log("CustomManifest - intention actualizado:", {
+      intention,
+      intentionLength: intention ? intention.length : 0,
+      intentionValid: intention && intention.trim() !== ""
+    });
+  }, [intention]);
   
-  // Calculated values - simplified canStart condition
-  const canStart = intentionStr.trim() !== "" && 
-                  (patternImage !== null || patternImages.length > 0);
+  // Envolver la función startManifestation para validar intención antes de llamar
+  const handleStartManifestation = () => {
+    console.log("CustomManifest - Verificación pre-start:", {
+      intention,
+      intentionLength: intention ? intention.length : 0,
+      intentionValid: intention && intention.trim() !== ""
+    });
+    
+    if (!intention || intention.trim() === "") {
+      toast({
+        title: "No se puede iniciar la manifestación",
+        description: "Asegúrate de tener una intención definida.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    startManifestation();
+  };
                   
   // Debug log para verificar el cálculo de canStart
-  console.log("CustomManifest canStart calculation:", {
-    intentionValid: intentionStr.trim() !== "",
+  console.log("CustomManifest - RENDER:", {
+    intentionValid: intention && intention.trim() !== "",
     patternImageExists: patternImage !== null,
     patternImagesCount: patternImages.length,
-    intention: intentionStr,
-    canStart
+    intention: intention,
+    intentionLength: intention ? intention.length : 0
   });
 
   // Create manifest patterns record
@@ -122,12 +145,10 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
   patterns.forEach(pattern => {
     manifestPatternsRecord[pattern.id] = pattern.image;
   });
-
-  // IMPORTANT: Explicitly sync the activeTab value with useManifestState
-  useEffect(() => {
-    // This is handled in the parent component now
-    // But keeping this comment to document the importance
-  }, []);
+  
+  // Calculated values - simplified canStart condition
+  const canStart = Boolean(intention && intention.trim() !== "" && 
+                   (patternImage !== null || patternImages.length > 0));
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -173,7 +194,7 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
         indefiniteTime={indefiniteTime}
         setIndefiniteTime={setIndefiniteTime}
         timeRemaining={timeRemaining}
-        startManifestation={startManifestation}
+        startManifestation={handleStartManifestation}
         stopManifestation={stopManifestation}
         formatTimeRemaining={formatTimeRemaining}
       />
@@ -189,7 +210,7 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
           receptorImages={receptorImages}
           canStart={canStart}
           timeRemaining={timeRemaining}
-          startManifestation={startManifestation}
+          startManifestation={handleStartManifestation}
           stopManifestation={stopManifestation}
           formatTimeRemaining={formatTimeRemaining}
           backgroundModeActive={backgroundModeActive}

@@ -28,8 +28,8 @@ const ManifestActions = ({
   indefiniteTime = false,
   intention = "", 
 }: ManifestActionsProps) => {
-  // Debugging log
-  console.log("ManifestActions render:", {
+  // Debugging log con valores actuales
+  console.log("ManifestActions render con valores actuales:", {
     isManifestActive,
     canStart,
     intention,
@@ -40,20 +40,27 @@ const ManifestActions = ({
   });
   
   const handleStartClick = () => {
-    console.log("ManifestActions: Start manifestation button clicked", {
+    // Debug para verificar los valores en el momento del clic
+    console.log("ManifestActions: INICIO DE MANIFESTACIÓN con valores:", {
       canStart,
       intention,
       intentionLength: intention ? intention.length : 0,
       intentionValid: intention && intention.trim() !== ""
     });
     
-    // Don't check intention here - let the startManifestation function handle validation
     startManifestation();
   };
   
-  // Verificamos que la intención sea válida para habilitar el botón
+  // Verificación estricta de intención válida
   const isIntentionValid = intention && intention.trim() !== "";
   const isButtonEnabled = canStart && isIntentionValid;
+  
+  console.log("ManifestActions: Estado final del botón:", { 
+    isButtonEnabled, 
+    canStart, 
+    isIntentionValid, 
+    intention 
+  });
   
   return (
     <div className="flex flex-col space-y-2 mt-6">

@@ -24,21 +24,22 @@ export const useManifestSession = () => {
 
   // Iniciar Manifestación: comienza audio subliminal si disponible
   const startManifestation = () => {
-    // CRITICAL FIX: Directly get the state intention at time of function call
+    // IMPORTANTE: Capturamos la intención en el momento exacto de la llamada
     const currentIntention = state.intention;
     
-    console.log("StartManifestation validation check:", {
+    console.log("StartManifestation validation - ACTUAL STATE VALUES:", {
       intention: currentIntention,
       intentionLength: currentIntention ? currentIntention.length : 0,
       intentionValid: currentIntention && currentIntention.trim() !== "",
       activeTab: state.activeTab,
       patternImage: state.patternImage,
-      patternImagesLength: state.patternImages ? state.patternImages.length : 0,
+      patternImagesCount: state.patternImages.length,
       selectedPattern: state.selectedPattern
     });
     
+    // VALIDACIÓN ESTRICTA: Verificamos que la intención exista y no esté vacía
     if (!currentIntention || currentIntention.trim() === "") {
-      console.log("Cannot start manifestation - missing intention");
+      console.log("ERROR CRÍTICO: Intención vacía o indefinida");
       toast({
         title: "No se puede iniciar la manifestación",
         description: "Asegúrate de tener una intención definida.",
