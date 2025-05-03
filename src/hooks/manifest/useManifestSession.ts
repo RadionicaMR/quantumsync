@@ -53,48 +53,8 @@ export const useManifestSession = () => {
     
     console.log("INTENCIÓN VALIDADA CORRECTAMENTE:", currentIntention);
     
-    // LÓGICA SIMPLIFICADA: Verificar patrón según tab activo
-    let hasPattern = false;
-    
-    // Debug completo del estado actual
-    console.log("VERIFICACIÓN DE PATRONES - Estado actual:", {
-      activeTab: state.activeTab,
-      patternImage: state.patternImage,
-      patternImagesLength: state.patternImages ? state.patternImages.length : 0,
-      patternImages: state.patternImages,
-      selectedPattern: state.selectedPattern,
-      receptorImage: state.receptorImage,
-      receptorImagesLength: state.receptorImages ? state.receptorImages.length : 0
-    });
-    
-    if (state.activeTab === "custom") {
-      // Para pestaña personalizada, necesitamos imágenes de patrón
-      hasPattern = Boolean(state.patternImage !== null || 
-                        (state.patternImages && state.patternImages.length > 0));
-    } else {
-      // Para presets, aceptamos tanto un patrón seleccionado COMO imágenes de patrón
-      hasPattern = Boolean(
-        (state.selectedPattern && state.selectedPattern.trim() !== "") || 
-        state.patternImage !== null || 
-        (state.patternImages && state.patternImages.length > 0)
-      );
-    }
-    
-    console.log("Resultado de verificación de patrón:", { 
-      hasPattern, 
-      activeTab: state.activeTab 
-    });
-    
-    // ERROR CRITICO: No se puede iniciar sin un patrón
-    if (!hasPattern) {
-      console.error("ERROR: No se puede iniciar manifestación - falta patrón");
-      toast({
-        title: "No se puede iniciar la manifestación",
-        description: "Asegúrate de tener un patrón seleccionado o una imagen cargada.",
-        variant: "destructive",
-      });
-      return;
-    }
+    // ELIMINAMOS la verificación de patrón para permitir iniciar sin patrón
+    console.log("Iniciando manifestación sin verificación de patrón");
 
     // Actualizar la intención en el state si usamos la intención forzada
     if (forcedIntention && forcedIntention !== state.intention) {

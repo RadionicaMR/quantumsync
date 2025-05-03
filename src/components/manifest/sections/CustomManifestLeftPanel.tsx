@@ -51,6 +51,7 @@ interface CustomManifestLeftPanelProps {
   startManifestation?: () => void;
   stopManifestation?: () => void;
   formatTimeRemaining?: (time: number) => string;
+  canStart?: boolean;
 }
 
 const CustomManifestLeftPanel = ({
@@ -96,11 +97,11 @@ const CustomManifestLeftPanel = ({
   timeRemaining = null,
   startManifestation = () => {},
   stopManifestation = () => {},
-  formatTimeRemaining = (time) => ""
+  formatTimeRemaining = (time) => "",
+  canStart = false
 }: CustomManifestLeftPanelProps) => {
-  // Calculate canStart here to determine button state
-  const canStart = intention.trim() !== "" && 
-                 (patternImage !== null || patternImages.length > 0);
+  // Solo validamos la intención
+  const isIntentionValid = intention.trim() !== "";
                  
   console.log("CustomManifestLeftPanel canStart:", { 
     intention, 
@@ -135,7 +136,7 @@ const CustomManifestLeftPanel = ({
           startManifestation={startManifestation}
           stopManifestation={stopManifestation}
           formatTimeRemaining={formatTimeRemaining}
-          canStart={canStart}
+          canStart={isIntentionValid}
           indefiniteTime={indefiniteTime}
           setIndefiniteTime={setIndefiniteTime}
         />

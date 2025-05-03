@@ -111,7 +111,6 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
       patternImage,
       patternImagesCount: patternImages ? patternImages.length : 0,
       patternImages,
-      hasPattern: Boolean(patternImage !== null || (patternImages && patternImages.length > 0))
     });
   }, [intention, patternImage, patternImages]);
   
@@ -124,22 +123,9 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
       patternImage,
       patternImagesCount: patternImages ? patternImages.length : 0,
       patternImages,
-      hasPattern: Boolean(patternImage !== null || (patternImages && patternImages.length > 0))
     });
     
-    // CORRECCIÓN: Verificación explícita de imágenes de patrón
-    const hasPattern = patternImage !== null || (patternImages && patternImages.length > 0);
-    
-    if (!hasPattern) {
-      toast({
-        title: "No se puede iniciar la manifestación",
-        description: "Necesitas subir al menos una imagen de patrón.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // IMPORTANTE: Pasamos la intención como argumento al hook
+    // IMPORTANTE: Solo validamos la intención, eliminamos la validación de patrón
     if (intention && intention.trim() !== "") {
       console.log("CustomManifest - Iniciando con intención:", intention);
       startManifestation(intention);
@@ -158,14 +144,12 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
     manifestPatternsRecord[pattern.id] = pattern.image;
   });
   
-  // Calculated values - verificación de patrón e intención
-  const hasPattern = patternImage !== null || patternImages.length > 0;
+  // Calculated values - solo validamos la intención
   const isIntentionValid = Boolean(intention && intention.trim() !== "");
-  const canStart = isIntentionValid && hasPattern;
+  const canStart = isIntentionValid;
   
   console.log("CustomManifest - Estado final de canStart:", {
     canStart,
-    hasPattern,
     isIntentionValid,
     intention,
     patternImage,
@@ -219,6 +203,7 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
         startManifestation={handleStartManifestation}
         stopManifestation={stopManifestation}
         formatTimeRemaining={formatTimeRemaining}
+        canStart={canStart}
       />
       
       {/* Panel derecho: visualización y controles principales */}

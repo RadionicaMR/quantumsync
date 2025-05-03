@@ -62,11 +62,11 @@ const ManifestActions = ({
     startManifestation();
   };
   
-  // Verificación estricta de intención válida
+  // Verificación estricta SOLO de intención válida, sin verificar patrón
   const isIntentionValid = Boolean(intention && intention.trim() !== "");
   
-  // Usamos directamente el valor de canStart que viene como prop
-  const isButtonEnabled = canStart && isIntentionValid;
+  // Simplificamos la validación solo a la intención
+  const isButtonEnabled = isIntentionValid;
   
   console.log("ManifestActions: Estado final del botón:", { 
     isButtonEnabled, 

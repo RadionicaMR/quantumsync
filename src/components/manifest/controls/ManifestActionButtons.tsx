@@ -30,8 +30,8 @@ const ManifestActionButtons = ({
     startManifestation();
   };
 
-  // Simplificamos la validación con los valores que vienen de props
-  const isButtonEnabled = canStart && intention && intention.trim() !== "";
+  // Simplificamos la validación solo para la intención
+  const isButtonEnabled = intention && intention.trim() !== "";
   
   console.log("ManifestActionButtons: Button state", {
     isButtonEnabled,

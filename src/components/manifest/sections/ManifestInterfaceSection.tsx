@@ -75,38 +75,24 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
     });
   }, [intention]);
   
-  // Verificación de patrón
-  const hasPattern = Boolean(
-    (selectedPattern && selectedPattern !== "") || 
-    patternImage !== null || 
-    (patternImages && patternImages.length > 0)
-  );
-  
-  // Debug log for pattern verification
-  console.log("ManifestInterfaceSection RENDER - Verificación de patrón:", {
+  // Debug log for canStart value, intention and other values
+  console.log("ManifestInterfaceSection RENDER:", {
     canStart,
     intention,
     intentionLength: intention ? intention.length : 0,
     intentionValid: intention && intention.trim() !== "",
     isManifestActive,
-    hasPattern,
-    patternImagesLength: patternImages.length,
+    patternImages: patternImages.length,
     patternImage,
-    selectedPattern,
-    patternImages
+    selectedPattern
   });
   
   // CRUCIAL: Explícitamente pasar la intención cuando se inicia la manifestación
   const handleStartManifestation = () => {
     console.log("ManifestInterfaceSection - Iniciando con intención:", intention);
+    // Solo validamos que la intención exista, no el patrón
     if (intention && intention.trim() !== "") {
-      // CORRECCIÓN: Verificación explícita de patrones
-      if (hasPattern) {
-        console.log("ManifestInterfaceSection - Patrón verificado, iniciando manifestación");
-        startManifestation(intention);
-      } else {
-        console.error("Error: No se encontró patrón para iniciar manifestación");
-      }
+      startManifestation(intention);
     }
   };
   
@@ -138,7 +124,8 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
       
       <ManifestActions 
         isManifestActive={isManifestActive}
-        canStart={hasPattern && intention && intention.trim() !== ""}
+        // Solo validamos la intención, no el patrón
+        canStart={intention && intention.trim() !== ""}
         timeRemaining={timeRemaining}
         startManifestation={handleStartManifestation}
         stopManifestation={stopManifestation}
