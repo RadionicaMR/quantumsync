@@ -18,7 +18,7 @@ const PatternSection = ({
   isManifestActive
 }: PatternSectionProps) => {
   
-  // Debug log para confirmar que los patrones se están estableciendo correctamente
+  // Verificar y registrar el estado del patrón cada vez que cambia
   useEffect(() => {
     console.log("PatternSection - Estado actualizado:", {
       patternImage,
@@ -30,11 +30,21 @@ const PatternSection = ({
   const handleSetPatternImage = (image: string | null) => {
     console.log("PatternSection - Estableciendo imagen de patrón:", image);
     setPatternImage(image);
+    
+    // Si se limpia la imagen principal y no hay imágenes múltiples, alerta al usuario
+    if (image === null && patternImages.length === 0) {
+      console.warn("PatternSection - Advertencia: No hay imágenes de patrón disponibles");
+    }
   };
   
   const handleSetPatternImages = (images: string[]) => {
     console.log("PatternSection - Estableciendo múltiples imágenes de patrón:", images.length);
     setPatternImages(images);
+    
+    // Si se eliminan todas las imágenes múltiples y no hay imagen principal, alerta al usuario
+    if (images.length === 0 && patternImage === null) {
+      console.warn("PatternSection - Advertencia: No hay imágenes de patrón disponibles");
+    }
   };
   
   return (

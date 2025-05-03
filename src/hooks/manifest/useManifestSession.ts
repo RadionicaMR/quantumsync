@@ -53,7 +53,7 @@ export const useManifestSession = () => {
     
     console.log("INTENCIÓN VALIDADA CORRECTAMENTE:", currentIntention);
     
-    // CORRECCIÓN CRÍTICA: Verificación de patrón considerando todas las fuentes posibles
+    // CORRECCIÓN CRÍTICA: Verificación de patrón según el tab activo ACTUAL del estado
     let hasPattern = false;
     
     // Log del estado actual de patrones para debugging
@@ -66,7 +66,7 @@ export const useManifestSession = () => {
       receptorImagesLength: state.receptorImages ? state.receptorImages.length : 0
     });
     
-    // CORRECCIÓN FUNDAMENTAL: Verificar según el tab activo real
+    // CORRECCIÓN CRUCIAL: Usar el activeTab actual para determinar la lógica correcta
     if (state.activeTab === "custom") {
       // Para la pestaña personalizada, verificar patternImage o patternImages
       hasPattern = Boolean(state.patternImage !== null || 

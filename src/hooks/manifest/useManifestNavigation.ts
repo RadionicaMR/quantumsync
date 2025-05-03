@@ -14,7 +14,10 @@ export const useManifestNavigation = (stopManifestation: () => void) => {
       stopManifestation();
     }
     
-    // Limpiar estado al cambiar de pestaña
+    // CORREGIDO: Primero actualizar el tab activo en el estado para garantizar consistencia
+    state.setActiveTab(val);
+    
+    // Luego limpiar el estado según el tab seleccionado
     if (val === "presets") {
       console.log("useManifestNavigation: Limpiando imágenes de patrón para presets");
       state.setPatternImage(null);
@@ -24,8 +27,6 @@ export const useManifestNavigation = (stopManifestation: () => void) => {
       state.setSelectedPattern('');
     }
     
-    // Actualizar tab activa
-    state.setActiveTab(val);
     stopSubliminalAudio();
   };
 

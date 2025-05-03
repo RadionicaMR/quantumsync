@@ -87,10 +87,12 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
     selectedPattern
   });
   
-  // Función para iniciar la manifestación pasando la intención explícitamente
+  // CRUCIAL: Usar la función que siempre pasa la intención explícitamente
   const handleStartManifestation = () => {
     console.log("ManifestInterfaceSection - Iniciando con intención:", intention);
-    startManifestation(intention);
+    if (intention && intention.trim() !== "") {
+      startManifestation(intention);
+    }
   };
   
   return (

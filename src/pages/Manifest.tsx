@@ -11,7 +11,7 @@ import { useManifestState } from '@/hooks/manifest/useManifestState';
 import { toast } from '@/components/ui/use-toast';
 
 const Manifest = () => {
-  // Inicializamos con 'custom' para asegurar que coincida con la UI
+  // FIJO: Inicializamos con 'custom' para que coincida con la UI
   const [activeTab, setActiveTab] = useState("custom");
   const manifest = useManifestCore(manifestPatterns);
   
@@ -19,13 +19,17 @@ const Manifest = () => {
   const visualSpeed = manifest.visualSpeed || manifest.exposureTime; 
   const setVisualSpeed = manifest.setVisualSpeed || manifest.setExposureTime;
   
-  // Asegurar que el activeTab se inicialice correctamente en el hook
+  // CORREGIDO: Se asegura que el estado activeTab en el hook se mantenga sincronizado
   useEffect(() => {
-    // Inicializar el estado activeTab en el hook solo una vez al inicio
-    manifest.setActiveTab("custom");
+    // CRUCIAL: Asegurar que el estado activeTab en el hook coincida con la UI
+    manifest.setActiveTab(activeTab);
+    
+    console.log("Manifest: Estado inicial sincronizado:", {
+      activeTabLocal: activeTab,
+      activeTabState: manifest.activeTab
+    });
   }, []);
   
-  // Efecto para sincronizar activeTab entre el componente y el state
   useEffect(() => {
     console.log("Manifest: Sincronizando activeTab:", activeTab);
     
@@ -36,9 +40,8 @@ const Manifest = () => {
     if (manifest.isManifestActive) {
       manifest.stopManifestation();
     }
-  }, [activeTab, manifest]);
+  }, [activeTab]);
 
-  // Debug log con todos los valores de state antes del render
   console.log("Manifest RENDER - ESTADO COMPLETO:", {
     activeTab,
     intention: manifest.intention,
@@ -58,18 +61,19 @@ const Manifest = () => {
       manifest.stopManifestation();
     }
     
-    // Primero actualizar el activeTab local para actualizar la UI
+    // ORDEN CORREGIDO: Primero actualizar el estado global
+    manifest.setActiveTab(value);
+    
+    // Luego actualizar el estado local
     setActiveTab(value);
     
-    // Después forzar limpieza de valores
-    manifest.setSelectedPattern("");
-    manifest.setPatternImage(null);
-    manifest.setReceptorImage(null);
-    manifest.setPatternImages([]);
-    manifest.setReceptorImages([]);
-    
-    // Asegurar que el cambio de tab se refleje en el state
-    manifest.setActiveTab(value);
+    // CORREGIDO: Después limpiar valores según la tab
+    if (value === "presets") {
+      manifest.setPatternImage(null);
+      manifest.setPatternImages([]);
+    } else if (value === "custom") {
+      manifest.setSelectedPattern("");
+    }
   };
   
   return (
