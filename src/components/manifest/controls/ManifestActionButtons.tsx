@@ -37,7 +37,8 @@ const ManifestActionButtons = ({
     isButtonEnabled,
     canStart,
     intention,
-    intentionValid: intention && intention.trim() !== ""
+    intentionValid: intention && intention.trim() !== "",
+    isManifestActive
   });
 
   return (

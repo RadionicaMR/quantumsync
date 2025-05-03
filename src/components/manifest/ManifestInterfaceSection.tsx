@@ -72,8 +72,9 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
       intention,
       intentionLength: intention ? intention.length : 0,
       intentionValid: intention && intention.trim() !== "",
+      isManifestActive
     });
-  }, [intention]);
+  }, [intention, isManifestActive]);
   
   // Debug log for canStart value, intention and other values
   console.log("ManifestInterfaceSection RENDER:", {

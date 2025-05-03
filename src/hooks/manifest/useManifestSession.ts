@@ -87,10 +87,15 @@ export const useManifestSession = () => {
     }, switchInterval);
     setHypnoticTimer(hypnoticTimer);
 
+    // Set active state before setting timers
+    state.setIsManifestActive(true);
+    
+    console.log("Manifestación activada, ahora configurando temporizadores");
+
     // Only set exposure and countdown timers if not indefinite time
     if (!state.indefiniteTime) {
       const exposureTimeInMs = state.exposureTime[0] * 60 * 1000;
-      state.setTimeRemaining(state.exposureTime[0]);
+      state.setTimeRemaining(state.exposureTime[0] * 60); // Set in minutes originally
 
       const countdownTimer = setInterval(() => {
         if (!document.hidden) {
@@ -116,24 +121,26 @@ export const useManifestSession = () => {
       // If indefinite time, set timeRemaining to -1 to indicate indefinite
       state.setTimeRemaining(-1);
     }
-
-    state.setIsManifestActive(true);
     
     console.log("Manifestación iniciada correctamente con:", {
       intention: currentIntention,
       activeTab: state.activeTab,
       patternImages: state.patternImages ? state.patternImages.length : 0,
-      selectedPattern: state.selectedPattern
+      selectedPattern: state.selectedPattern,
+      isActive: state.isManifestActive,
+      timeRemaining: state.timeRemaining
     });
   };
 
   // Detener Manifestación: para audio subliminal si está en reproducción
   const stopManifestation = () => {
+    console.log("Deteniendo manifestación");
     stopAudio();
     clearAllTimers();
     state.setTimeRemaining(null);
     state.setIsManifestActive(false);
     stopSubliminalAudio();
+    console.log("Manifestación detenida");
   };
 
   // Limpieza al desmontar

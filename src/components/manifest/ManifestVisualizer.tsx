@@ -48,6 +48,17 @@ const ManifestVisualizer = ({
   const [currentPatternIndex, setCurrentPatternIndex] = useState(0);
   const [currentReceptorIndex, setCurrentReceptorIndex] = useState(0);
 
+  // Log when visualization should be active
+  console.log("ManifestVisualizer render:", { 
+    isActive, 
+    currentImage, 
+    hasPatternImage: !!patternImage || (patternImages && patternImages.length > 0), 
+    hasSelectedPattern: !!selectedPattern,
+    intention,
+    patternImagesCount: patternImages ? patternImages.length : 0,
+    receptorImagesCount: receptorImages ? receptorImages.length : 0
+  });
+
   // Rotate through multiple images
   useEffect(() => {
     if (!isActive) return;
@@ -72,10 +83,6 @@ const ManifestVisualizer = ({
       return () => clearInterval(rotationTimer);
     }
   }, [isActive, patternImages.length, receptorImages.length, visualSpeed, manifestSpeed]);
-
-  if (!isActive) {
-    return null;
-  }
 
   // Determine which pattern image to use
   const getPatternImage = () => {
@@ -114,6 +121,19 @@ const ManifestVisualizer = ({
   const speedValue = visualSpeed && visualSpeed.length > 0 ? visualSpeed[0] : 
                      manifestSpeed && manifestSpeed.length > 0 ? manifestSpeed[0] : 10;
   const rateAnimationDuration = Math.max(5, 15 - speedValue);
+
+  // If not active, still render the container but empty
+  if (!isActive) {
+    return (
+      <div className="mt-6 relative overflow-hidden rounded-lg bg-card/90 dark:bg-black/40 aspect-square">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-muted-foreground">
+            El visualizador se activará al iniciar la manifestación
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-6 relative overflow-hidden rounded-lg bg-card/90 dark:bg-black/40 aspect-square">

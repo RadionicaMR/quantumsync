@@ -35,9 +35,10 @@ const ManifestActions = ({
       intention,
       intentionLength: intention ? intention.length : 0,
       intentionValid: intention && intention.trim() !== "",
-      canStart
+      canStart,
+      isManifestActive
     });
-  }, [intention, canStart]);
+  }, [intention, canStart, isManifestActive]);
   
   // Debugging log con valores actuales
   console.log("ManifestActions render con valores actuales:", {
@@ -72,7 +73,8 @@ const ManifestActions = ({
     isButtonEnabled, 
     canStart, 
     isIntentionValid, 
-    intention 
+    intention,
+    isManifestActive
   });
   
   return (
