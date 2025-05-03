@@ -16,10 +16,20 @@ export const useManifestNavigation = (stopManifestation: () => void) => {
   };
 
   const selectPattern = (patternId: string) => {
+    console.log("useManifestNavigation: Seleccionando patrón", patternId);
+    
     if (state.isManifestActive) {
       stopManifestation();
     }
-    state.setSelectedPattern(patternId);
+    
+    // Validación para evitar patrones vacíos
+    if (patternId && patternId.trim() !== "") {
+      state.setSelectedPattern(patternId);
+      console.log("Patrón seleccionado:", patternId);
+    } else {
+      console.warn("Intento de seleccionar un patrón vacío");
+    }
+    
     stopSubliminalAudio();
   };
 

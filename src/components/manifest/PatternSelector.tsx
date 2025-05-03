@@ -22,6 +22,12 @@ const PatternSelector = ({
   isManifestActive,
   onSelectPattern 
 }: PatternSelectorProps) => {
+  // Función de debugging para seguimiento de selección de patrones
+  const handleSelectPattern = (patternId: string) => {
+    console.log("PatternSelector: Seleccionando patrón", patternId);
+    onSelectPattern(patternId);
+  };
+  
   return (
     <Card className="quantum-card p-6 lg:col-span-1">
       <h3 className="text-xl font-semibold mb-4">Selecciona un Patrón Radiónico</h3>
@@ -34,7 +40,7 @@ const PatternSelector = ({
                 ? 'bg-quantum-primary text-white' 
                 : 'bg-muted hover:bg-muted/80'
             }`}
-            onClick={() => onSelectPattern(pattern.id)}
+            onClick={() => handleSelectPattern(pattern.id)}
             disabled={isManifestActive}
           >
             <div className="font-medium">{pattern.name}</div>

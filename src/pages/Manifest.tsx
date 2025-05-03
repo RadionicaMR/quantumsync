@@ -75,6 +75,10 @@ const Manifest = () => {
     manifest.setSelectedPattern("");
     manifest.setPatternImage(null);
     manifest.setReceptorImage(null);
+    
+    // Reseteamos patternImages y receptorImages también
+    manifest.setPatternImages([]);
+    manifest.setReceptorImages([]);
   };
   
   return (
