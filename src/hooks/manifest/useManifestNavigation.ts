@@ -1,17 +1,31 @@
 
 import { useManifestState } from './useManifestState';
 import { useManifestSubliminal } from './useManifestSubliminal';
+import { toast } from "@/components/ui/use-toast";
 
 export const useManifestNavigation = (stopManifestation: () => void) => {
   const state = useManifestState();
   const { stopSubliminalAudio } = useManifestSubliminal();
 
   const handleTabChange = (val: string) => {
+    console.log("useManifestNavigation: Cambiando a tab", val, "desde tab actual", state.activeTab);
+    
     if (state.isManifestActive) {
       stopManifestation();
     }
+    
+    // Limpiar estado al cambiar de pestaña
+    if (val === "presets") {
+      console.log("useManifestNavigation: Limpiando imágenes de patrón para presets");
+      state.setPatternImage(null);
+      state.setPatternImages([]);
+    } else if (val === "custom") {
+      console.log("useManifestNavigation: Limpiando patrón seleccionado para custom");
+      state.setSelectedPattern('');
+    }
+    
+    // Actualizar tab activa
     state.setActiveTab(val);
-    state.setSelectedPattern('');
     stopSubliminalAudio();
   };
 
@@ -28,6 +42,11 @@ export const useManifestNavigation = (stopManifestation: () => void) => {
       console.log("Patrón seleccionado:", patternId);
     } else {
       console.warn("Intento de seleccionar un patrón vacío");
+      toast({
+        title: "Error al seleccionar patrón",
+        description: "El patrón seleccionado no es válido",
+        variant: "destructive",
+      });
     }
     
     stopSubliminalAudio();

@@ -66,8 +66,7 @@ export const useManifestSession = () => {
       receptorImagesLength: state.receptorImages ? state.receptorImages.length : 0
     });
     
-    // CORRECCIÓN FUNDAMENTAL: Verificar según la tab ACTUAL, no el state.activeTab
-    // que podría estar desincronizado
+    // CORRECCIÓN FUNDAMENTAL: Verificar según el tab activo real
     if (state.activeTab === "custom") {
       // Para la pestaña personalizada, verificar patternImage o patternImages
       hasPattern = Boolean(state.patternImage !== null || 
@@ -75,7 +74,7 @@ export const useManifestSession = () => {
       console.log("Tab CUSTOM - Verificación de patrón:", { 
         hasPattern, 
         patternImage: state.patternImage, 
-        patternImagesLength: state.patternImages.length 
+        patternImagesLength: state.patternImages ? state.patternImages.length : 0 
       });
     } else if (state.activeTab === "presets") {
       // Para la pestaña de presets, verificar selectedPattern

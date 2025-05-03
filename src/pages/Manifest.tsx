@@ -19,8 +19,13 @@ const Manifest = () => {
   const visualSpeed = manifest.visualSpeed || manifest.exposureTime; 
   const setVisualSpeed = manifest.setVisualSpeed || manifest.setExposureTime;
   
+  // Asegurar que el activeTab se inicialice correctamente en el hook
+  useEffect(() => {
+    // Inicializar el estado activeTab en el hook solo una vez al inicio
+    manifest.setActiveTab("custom");
+  }, []);
+  
   // Efecto para sincronizar activeTab entre el componente y el state
-  // y asegurar que siempre estén sincronizados
   useEffect(() => {
     console.log("Manifest: Sincronizando activeTab:", activeTab);
     
@@ -53,7 +58,10 @@ const Manifest = () => {
       manifest.stopManifestation();
     }
     
-    // Forzar limpieza de valores al cambiar de tab
+    // Primero actualizar el activeTab local para actualizar la UI
+    setActiveTab(value);
+    
+    // Después forzar limpieza de valores
     manifest.setSelectedPattern("");
     manifest.setPatternImage(null);
     manifest.setReceptorImage(null);
@@ -62,10 +70,6 @@ const Manifest = () => {
     
     // Asegurar que el cambio de tab se refleje en el state
     manifest.setActiveTab(value);
-    
-    // Actualizamos el estado local después de que la sincronización con
-    // el estado global haya ocurrido
-    setActiveTab(value);
   };
   
   return (

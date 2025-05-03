@@ -27,18 +27,28 @@ const PatternSection = ({
     });
   }, [patternImage, patternImages]);
   
+  const handleSetPatternImage = (image: string | null) => {
+    console.log("PatternSection - Estableciendo imagen de patrón:", image);
+    setPatternImage(image);
+  };
+  
+  const handleSetPatternImages = (images: string[]) => {
+    console.log("PatternSection - Estableciendo múltiples imágenes de patrón:", images.length);
+    setPatternImages(images);
+  };
+  
   return (
     <div className="mb-6">
       <h3 className="text-xl font-semibold mb-4">Carga tu Patrón Radiónico</h3>
       <ImageUploader
         label="Subir Patrón Radiónico"
         image={patternImage}
-        setImage={setPatternImage}
+        setImage={handleSetPatternImage}
         isDisabled={isManifestActive}
         description="Sube tu propio diseño desde tu galería"
         isMultiple={true}
         images={patternImages}
-        setImages={setPatternImages}
+        setImages={handleSetPatternImages}
         maxImages={3}
       />
     </div>
