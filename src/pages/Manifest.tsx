@@ -11,7 +11,8 @@ import { useManifestState } from '@/hooks/manifest/useManifestState';
 import { toast } from '@/components/ui/use-toast';
 
 const Manifest = () => {
-  const [activeTab, setActiveTab] = useState("presets");
+  // Inicializamos con 'custom' para asegurar que coincida con la UI
+  const [activeTab, setActiveTab] = useState("custom");
   const manifest = useManifestCore(manifestPatterns);
   
   // Use visualSpeed from core if available, or create new state
@@ -19,13 +20,12 @@ const Manifest = () => {
   const setVisualSpeed = manifest.setVisualSpeed || manifest.setExposureTime;
   
   // Efecto para sincronizar activeTab entre el componente y el state
+  // y asegurar que siempre estén sincronizados
   useEffect(() => {
     console.log("Manifest: Sincronizando activeTab:", activeTab);
     
     // Asegurar que la tab activa se actualice en el state
-    if (manifest.activeTab !== activeTab) {
-      manifest.setActiveTab(activeTab);
-    }
+    manifest.setActiveTab(activeTab);
     
     // Detener manifestación si estaba activa al cambiar de tab
     if (manifest.isManifestActive) {
@@ -33,20 +33,6 @@ const Manifest = () => {
     }
   }, [activeTab, manifest]);
 
-  // Nuevo efecto para forzar la sincronización del estado al iniciar
-  useEffect(() => {
-    // Establecer el activeTab correcto en el state al iniciar
-    manifest.setActiveTab(activeTab);
-    
-    // Log para debugging
-    console.log("Manifest - Initial state synchronization:", {
-      activeTab, 
-      manifestActiveTab: manifest.activeTab
-    });
-    
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Solo se ejecuta una vez al montar el componente
-  
   // Debug log con todos los valores de state antes del render
   console.log("Manifest RENDER - ESTADO COMPLETO:", {
     activeTab,
@@ -61,24 +47,25 @@ const Manifest = () => {
   
   const handleTabChange = (value: string) => {
     console.log("Manifest: Cambiando tab a", value);
-    setActiveTab(value);
     
     // Reset manifest state when switching tabs
     if (manifest.isManifestActive) {
       manifest.stopManifestation();
     }
     
-    // Asegurar que el cambio de tab se refleje en el state
-    manifest.setActiveTab(value);
-    
     // Forzar limpieza de valores al cambiar de tab
     manifest.setSelectedPattern("");
     manifest.setPatternImage(null);
     manifest.setReceptorImage(null);
-    
-    // Reseteamos patternImages y receptorImages también
     manifest.setPatternImages([]);
     manifest.setReceptorImages([]);
+    
+    // Asegurar que el cambio de tab se refleje en el state
+    manifest.setActiveTab(value);
+    
+    // Actualizamos el estado local después de que la sincronización con
+    // el estado global haya ocurrido
+    setActiveTab(value);
   };
   
   return (

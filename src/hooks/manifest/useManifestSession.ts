@@ -23,7 +23,6 @@ export const useManifestSession = () => {
   } = useManifestSubliminal();
 
   // Iniciar Manifestación: comienza audio subliminal si disponible
-  // Updated signature to accept the forcedIntention parameter
   const startManifestation = (forcedIntention?: string) => {
     // CORRECCIÓN CRÍTICA: Usar la intención forzada si está disponible
     // o usar la del state como fallback
@@ -34,7 +33,8 @@ export const useManifestSession = () => {
       stateIntention: state.intention,
       finalIntention: currentIntention,
       intentionLength: currentIntention ? currentIntention.length : 0,
-      intentionValid: currentIntention && currentIntention.trim() !== ""
+      intentionValid: currentIntention && currentIntention.trim() !== "",
+      activeTab: state.activeTab
     });
     
     // VALIDACIÓN ESTRICTA: Verificamos que la intención exista y no esté vacía
@@ -66,14 +66,24 @@ export const useManifestSession = () => {
       receptorImagesLength: state.receptorImages ? state.receptorImages.length : 0
     });
     
-    // Verificación completa de todas las posibles fuentes de patrones
+    // CORRECCIÓN FUNDAMENTAL: Verificar según la tab ACTUAL, no el state.activeTab
+    // que podría estar desincronizado
     if (state.activeTab === "custom") {
-      // CORRECCIÓN: Para la pestaña personalizada, verificar patternImage o patternImages
+      // Para la pestaña personalizada, verificar patternImage o patternImages
       hasPattern = Boolean(state.patternImage !== null || 
                          (state.patternImages && state.patternImages.length > 0));
+      console.log("Tab CUSTOM - Verificación de patrón:", { 
+        hasPattern, 
+        patternImage: state.patternImage, 
+        patternImagesLength: state.patternImages.length 
+      });
     } else if (state.activeTab === "presets") {
       // Para la pestaña de presets, verificar selectedPattern
       hasPattern = Boolean(state.selectedPattern && state.selectedPattern !== "");
+      console.log("Tab PRESETS - Verificación de patrón:", { 
+        hasPattern, 
+        selectedPattern: state.selectedPattern 
+      });
     }
     
     console.log("Resultado de verificación de patrón:", { hasPattern, activeTab: state.activeTab });

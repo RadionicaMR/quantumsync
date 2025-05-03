@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import ImageUploader from '../ImageUploader';
 
 interface PatternSectionProps {
@@ -17,6 +17,16 @@ const PatternSection = ({
   setPatternImages,
   isManifestActive
 }: PatternSectionProps) => {
+  
+  // Debug log para confirmar que los patrones se están estableciendo correctamente
+  useEffect(() => {
+    console.log("PatternSection - Estado actualizado:", {
+      patternImage,
+      patternImagesCount: patternImages.length,
+      hasPattern: Boolean(patternImage !== null || patternImages.length > 0)
+    });
+  }, [patternImage, patternImages]);
+  
   return (
     <div className="mb-6">
       <h3 className="text-xl font-semibold mb-4">Carga tu Patrón Radiónico</h3>
