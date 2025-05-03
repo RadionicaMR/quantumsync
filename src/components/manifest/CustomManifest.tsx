@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
 import ManifestInterfaceSection from './sections/ManifestInterfaceSection';
@@ -159,7 +160,7 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
         audioFile={audioFile}
         setAudioFile={setAudioFile}
         audioVolume={audioVolume}
-        setAudioVolume={audioVolume}
+        setAudioVolume={setAudioVolume}
         audioSubliminalPlaying={audioSubliminalPlaying}
         playSubliminalAudio={playSubliminalAudio}
         stopSubliminalAudio={stopSubliminalAudio}
