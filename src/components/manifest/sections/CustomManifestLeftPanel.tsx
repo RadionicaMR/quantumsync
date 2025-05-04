@@ -29,7 +29,6 @@ interface CustomManifestLeftPanelProps {
   audioLoop?: boolean;
   setAudioLoop?: (loop: boolean) => void;
   clearAudio?: () => void;
-  // Add these new props that were being passed to the component
   intention: string;
   setIntention: (intention: string) => void;
   manifestSound: boolean;
@@ -115,7 +114,6 @@ const CustomManifestLeftPanel = ({
   return (
     <div className="lg:col-span-1 space-y-6">
       <Card className="p-6 quantum-card">
-        {/* Usando ManifestControls pero sin mostrar los botones de acción */}
         <ManifestControls
           intention={intention}
           setIntention={setIntention}
@@ -173,20 +171,18 @@ const CustomManifestLeftPanel = ({
         clearAudio={clearAudio}
       />
       
-      {/* Añadir botones de acción para Manifestación Personal */}
-      {isManifestActive && (
-        <Card className="p-4 quantum-card border-orange-500">
-          <ManifestActionButtons
-            isManifestActive={isManifestActive}
-            timeRemaining={timeRemaining}
-            formatTimeRemaining={formatTimeRemaining || ((time) => `${time} min`)}
-            startManifestation={startManifestation || (() => {})}
-            stopManifestation={stopManifestation || (() => {})}
-            canStart={canStart || false}
-            intention={intention}
-          />
-        </Card>
-      )}
+      {/* Rendering action buttons outside of the control panels to avoid flickering */}
+      <Card className="p-4 quantum-card border-quantum-primary">
+        <ManifestActionButtons
+          isManifestActive={isManifestActive}
+          timeRemaining={timeRemaining}
+          formatTimeRemaining={formatTimeRemaining || ((time) => `${time} min`)}
+          startManifestation={startManifestation || (() => {})}
+          stopManifestation={stopManifestation || (() => {})}
+          canStart={canStart || false}
+          intention={intention}
+        />
+      </Card>
     </div>
   );
 };

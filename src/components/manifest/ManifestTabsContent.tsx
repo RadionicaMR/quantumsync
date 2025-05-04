@@ -28,6 +28,10 @@ const ManifestTabsContent = ({
         <CustomManifest
           patterns={patterns}
           {...coreProps}
+          // Add required props that were missing
+          audioLoop={coreProps.audioLoop || false}
+          setAudioLoop={coreProps.setAudioLoop || (() => {})}
+          clearAudio={coreProps.clearAudio || (() => {})}
         />
       </TabsContent>
     </>

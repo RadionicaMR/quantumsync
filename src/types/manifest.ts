@@ -46,6 +46,9 @@ export interface ManifestCoreProps {
   setReceptorName: (value: string) => void;
   indefiniteTime: boolean;
   setIndefiniteTime: (value: boolean) => void;
+  audioLoop?: boolean;
+  setAudioLoop?: (value: boolean) => void;
+  clearAudio?: () => void;
 }
 
 export interface ManifestTabsProps {

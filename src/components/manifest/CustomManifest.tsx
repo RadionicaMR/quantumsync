@@ -1,7 +1,7 @@
 
 import React, { useEffect, useCallback } from 'react';
 import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
-import ManifestInterfaceSection from './sections/ManifestInterfaceSection';
+import TreatmentVisualizer from '@/components/treatment/TreatmentVisualizer';
 import { ManifestPattern } from '@/data/manifestPatterns';
 import { toast } from '@/components/ui/use-toast';
 
@@ -138,12 +138,6 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
     }
   }, [intention, startManifestation, patternImage, patternImages]);
                   
-  // Create manifest patterns record
-  const manifestPatternsRecord: Record<string, string> = {};
-  patterns.forEach(pattern => {
-    manifestPatternsRecord[pattern.id] = pattern.image;
-  });
-  
   // Calculated values - solo validamos la intención
   const isIntentionValid = Boolean(intention && intention.trim() !== "");
   const canStart = isIntentionValid;
@@ -206,36 +200,34 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
         canStart={canStart}
       />
       
-      {/* Panel derecho: visualización y controles principales */}
+      {/* Panel derecho: Visualizador de tratamiento adaptado para manifestación */}
       <div className="lg:col-span-2">
-        <ManifestInterfaceSection
-          currentImage={currentImage}
-          isManifestActive={isManifestActive}
-          patternImage={patternImage}
-          patternImages={patternImages}
-          receptorImage={receptorImage}
-          receptorImages={receptorImages}
-          canStart={canStart}
-          timeRemaining={timeRemaining}
-          startManifestation={handleStartManifestation}
-          stopManifestation={stopManifestation}
-          formatTimeRemaining={formatTimeRemaining}
-          backgroundModeActive={backgroundModeActive}
-          selectedPattern=""  // Default empty string
-          patterns={patterns}
-          manifestPatterns={manifestPatternsRecord}
-          intention={intention}
-          manifestSound={manifestSound}
-          manifestFrequency={manifestFrequency}
-          exposureTime={exposureTime}
-          manifestSpeed={visualSpeed}
-          visualSpeed={visualSpeed}
-          rate1={rate1}
-          rate2={rate2}
-          rate3={rate3}
-          receptorName={receptorName}
-          indefiniteTime={indefiniteTime}
-        />
+        <div className="bg-card/80 dark:bg-black/40 rounded-lg p-6 mb-4">
+          <h3 className="text-xl font-semibold mb-2 text-center">Visualizador de Manifestación Cuántica</h3>
+          <p className="text-muted-foreground text-center mb-4">
+            {isManifestActive 
+              ? "Manifestación en curso. Visualizando patrones cuánticos..." 
+              : "Complete los campos requeridos y haga clic en Iniciar Manifestación."}
+          </p>
+          
+          <TreatmentVisualizer
+            isPlaying={isManifestActive}
+            visualFeedback={true}
+            radionicImage={patternImage}
+            receptorImage={receptorImage}
+            radionicImages={patternImages}
+            receptorImages={receptorImages}
+            currentImage={currentImage}
+            hypnoticEffect={true}
+            frequency={manifestFrequency}
+            intensity={visualSpeed}
+            rate1={rate1}
+            rate2={rate2}
+            rate3={rate3}
+            hypnoticSpeed={visualSpeed}
+            receptorName={receptorName}
+          />
+        </div>
       </div>
     </div>
   );
