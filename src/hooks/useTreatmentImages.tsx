@@ -24,9 +24,10 @@ export const useTreatmentImages = () => {
     const hasReceptorImagesOrName = receptorImages.length > 0 || receptorImage || receptorName.trim().length > 0;
     
     if (hasRadionicImagesOrName || hasReceptorImagesOrName) {
+      console.log("Starting hypnotic effect in useTreatmentImages with images or receptor name");
       setHypnoticEffect(true);
       
-      // Limpieza de temporizadores previos
+      // Limpieza de temporizadores previos para evitar conflictos
       stopHypnoticEffect();
       
       // Configuramos la velocidad basada en el valor del deslizador
@@ -43,6 +44,8 @@ export const useTreatmentImages = () => {
         let lastTime = performance.now();
         
         const animate = (currentTime: number) => {
+          if (!hypnoticEffect) return; // Stop animation if effect is turned off
+          
           const elapsed = currentTime - lastTime;
           
           if (elapsed > switchInterval) {
@@ -80,6 +83,8 @@ export const useTreatmentImages = () => {
   };
 
   const stopHypnoticEffect = () => {
+    console.log("Stopping hypnotic effect in useTreatmentImages");
+    
     // Limpieza optimizada para todos los navegadores
     if (hypnoticTimerRef.current) {
       clearInterval(hypnoticTimerRef.current as NodeJS.Timeout);
@@ -98,6 +103,8 @@ export const useTreatmentImages = () => {
   // Cleanup function mejorada para Safari
   useEffect(() => {
     return () => {
+      console.log("Cleaning up hypnotic effect timers in useTreatmentImages");
+      
       if (hypnoticTimerRef.current) {
         clearInterval(hypnoticTimerRef.current as NodeJS.Timeout);
       }
@@ -108,7 +115,7 @@ export const useTreatmentImages = () => {
     };
   }, []);
 
-  // Reinicia el efecto hipnótico si cambia la velocidad
+  // Reinicia el efecto hipnótico si cambia la velocidad mientras está activo
   useEffect(() => {
     if (hypnoticEffect) {
       console.log("Hypnotic speed changed, restarting effect with speed:", hypnoticSpeed[0]);
@@ -128,6 +135,7 @@ export const useTreatmentImages = () => {
     receptorImages,
     setReceptorImages,
     hypnoticEffect,
+    setHypnoticEffect, // Expose this so we can control it from outside
     hypnoticSpeed,
     setHypnoticSpeed,
     currentImage,

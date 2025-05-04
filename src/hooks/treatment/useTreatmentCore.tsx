@@ -63,6 +63,12 @@ export const useTreatmentCore = () => {
     // First set the hypnotic effect (visual change)
     setHypnoticEffect(true);
     
+    // Start the hypnotic effect if visual feedback is enabled
+    if (visualFeedback) {
+      console.log("Starting hypnotic effect in useTreatmentCore");
+      images.startHypnoticEffect();
+    }
+    
     // Make sure the audio starts correctly
     audio.startAudio();
 
@@ -90,6 +96,7 @@ export const useTreatmentCore = () => {
     
     // Stop visual effects
     setHypnoticEffect(false);
+    images.stopHypnoticEffect();
 
     toast({
       title: "Tratamiento detenido",

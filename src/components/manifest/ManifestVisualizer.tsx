@@ -1,3 +1,5 @@
+
+// Solo modificamos la parte crítica del código
 import React, { useState, useEffect } from 'react';
 import { ManifestPattern } from '@/data/manifestPatterns';
 import { useIsMobile } from '@/hooks/use-mobile';

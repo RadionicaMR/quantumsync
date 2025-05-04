@@ -13,6 +13,9 @@ export const useTreatment = () => {
   // Get subliminal audio functionality
   const subliminal = useTreatmentSubliminal();
   
+  // Make sure the currentImage value is consistently handled
+  const normalizedCurrentImage = core.currentImage === 'pattern' ? 'radionic' : core.currentImage;
+  
   // Augment startTreatment to handle subliminal audio
   const startTreatment = () => {
     // Use the core start treatment functionality
@@ -45,6 +48,8 @@ export const useTreatment = () => {
     // Override with enhanced treatment control functions
     startTreatment,
     stopTreatment,
+    // Override currentImage with normalized version
+    currentImage: normalizedCurrentImage,
     // Handle background mode from both sources
     backgroundModeActive: core.backgroundModeActive || subliminal.backgroundModeActive,
   };

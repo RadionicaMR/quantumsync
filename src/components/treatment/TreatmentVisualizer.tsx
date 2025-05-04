@@ -1,3 +1,4 @@
+
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface TreatmentVisualizerProps {
@@ -37,9 +38,20 @@ const TreatmentVisualizer = ({
 }: TreatmentVisualizerProps) => {
   const { isIOS } = useIsMobile();
   
+  // Early return if not playing or visualFeedback is disabled
   if (!isPlaying || !visualFeedback) {
     return null;
   }
+  
+  console.log("TreatmentVisualizer rendering with:", { 
+    isPlaying, 
+    visualFeedback, 
+    currentImage, 
+    hypnoticEffect,
+    hasRadionicImage: !!radionicImage || radionicImages.length > 0,
+    hasReceptorImage: !!receptorImage || receptorImages.length > 0,
+    receptorName
+  });
 
   // Use the multi-image arrays if they have content, otherwise fall back to the single image
   const radionicImagesArray = radionicImages.length > 0 ? radionicImages : (radionicImage ? [radionicImage] : []);
@@ -47,7 +59,7 @@ const TreatmentVisualizer = ({
 
   const hasRadionicImages = radionicImagesArray.length > 0;
   const hasReceptorImages = receptorImagesArray.length > 0;
-  const hasReceptorName = receptorName.trim().length > 0;
+  const hasReceptorName = receptorName && receptorName.trim().length > 0;
   const hasImages = hasRadionicImages || hasReceptorImages || hasReceptorName;
 
   // Calculate animation speed based on hypnotic speed - faster speed = shorter duration
@@ -61,6 +73,8 @@ const TreatmentVisualizer = ({
 
   // Normalize currentImage value - treat 'pattern' as 'radionic' for compatibility
   const adjustedCurrentImage = currentImage === 'pattern' ? 'radionic' : currentImage;
+
+  console.log("Treatment visualizer rendering with adjusted image:", adjustedCurrentImage);
 
   return (
     <div className={`relative aspect-square w-full bg-black rounded-lg overflow-hidden ${isIOS ? 'ios-momentum-scroll' : ''}`}>
@@ -137,7 +151,7 @@ const TreatmentVisualizer = ({
       
       {/* Información y RATES */}
       <div className="absolute bottom-3 left-3 text-xs md:text-sm text-white z-40 font-mono bg-black/40 px-2 py-1 rounded">
-        Intensidad: {intensity[0]}%
+        Frecuencia: {frequency[0]} Hz | Intensidad: {intensity[0]}%
       </div>
       
       {/* RATES con movimiento aleatorio dentro de la imagen */}
