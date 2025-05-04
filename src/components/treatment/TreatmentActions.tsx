@@ -1,6 +1,7 @@
 
 import QuantumButton from '@/components/QuantumButton';
 import { Smartphone } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface TreatmentActionsProps {
   isPlaying: boolean;
@@ -24,9 +25,18 @@ const TreatmentActions = ({
   // Treatment can start if at least the receptor name is filled
   const canStartTreatment = !!receptorName?.trim();
   
-  // Format the displayed time properly for the countdown
-  const displayTime = isPlaying ? formatTime(Math.max(0, timeRemaining)) : "";
-
+  // Estado local para mantener un valor actualizado de timeRemaining
+  const [displayTimeString, setDisplayTimeString] = useState<string>("");
+  
+  // Actualizar el tiempo mostrado cada vez que cambie timeRemaining o isPlaying
+  useEffect(() => {
+    if (isPlaying) {
+      setDisplayTimeString(formatTime(Math.max(0, timeRemaining)));
+    } else {
+      setDisplayTimeString("");
+    }
+  }, [timeRemaining, isPlaying, formatTime]);
+  
   return (
     <div className="flex items-center justify-between">
       {isPlaying ? (
@@ -35,10 +45,10 @@ const TreatmentActions = ({
             {backgroundModeActive ? (
               <>
                 <Smartphone className="w-4 h-4 mr-2 text-orange-500" />
-                <span>Tratamiento en segundo plano: {displayTime} restante</span>
+                <span>Tratamiento en segundo plano: {displayTimeString} restante</span>
               </>
             ) : (
-              <span>Tratamiento en progreso: {displayTime} restante</span>
+              <span>Tratamiento en progreso: {displayTimeString} restante</span>
             )}
           </div>
           <QuantumButton 

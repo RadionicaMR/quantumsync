@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 
 export const useTreatmentAudio = () => {
@@ -16,6 +15,7 @@ export const useTreatmentAudio = () => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number | null>(null);
   const pausedTimeRemainingRef = useRef<number | null>(null);
+  const lastTickTimeRef = useRef<number | null>(null);
 
   const formatTime = (minutes: number) => {
     const mins = Math.floor(minutes);
@@ -128,10 +128,22 @@ export const useTreatmentAudio = () => {
 
   const startTimer = (initialTime: number) => {
     startTimeRef.current = Date.now();
+    lastTickTimeRef.current = Date.now();
+    setTimeRemaining(initialTime);
     
+    // Clear any existing timer
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    
+    // Update every second
     timerRef.current = setInterval(() => {
+      const now = Date.now();
+      const elapsed = (now - (lastTickTimeRef.current || now)) / 1000 / 60; // Convert to minutes
+      lastTickTimeRef.current = now;
+      
       setTimeRemaining(prev => {
-        const newTime = prev - 1/60;
+        const newTime = Math.max(0, prev - elapsed);
         if (newTime <= 0) {
           stopAudio();
           return 0;
@@ -190,9 +202,10 @@ export const useTreatmentAudio = () => {
         harmonicOscillatorRef.current = harmonicOscillator;
       }
       
-      // Start timer
-      setTimeRemaining(duration[0]);
-      startTimer(duration[0]);
+      // Start timer with exact duration
+      const durationInMinutes = duration[0];
+      setTimeRemaining(durationInMinutes);
+      startTimer(durationInMinutes);
       
       setIsPlaying(true);
       console.log("Audio started successfully at frequency:", frequency[0]);
