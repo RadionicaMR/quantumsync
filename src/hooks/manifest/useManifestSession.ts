@@ -74,9 +74,9 @@ export const useManifestSession = () => {
     const speed = state.visualSpeed?.[0] || state.manifestSpeed?.[0] || 10;
     
     // Use a proper interval that's not too fast
-    const switchInterval = Math.max(1000, 3000 / speed);
+    const switchInterval = Math.max(2000, 5000 / speed);
 
-    // Important: We only toggle the currentImage state property, NOT the whole component
+    // Important: Only toggle between pattern and receptor images
     const hypnoticTimer = setInterval(() => {
       if (!document.hidden) {
         state.setCurrentImage((prev) => {
