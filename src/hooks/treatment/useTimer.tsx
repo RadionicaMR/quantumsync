@@ -6,6 +6,7 @@ export const useTimer = () => {
   const [duration, setDuration] = useState<number[]>([5]);
   const timerRef = useRef<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
+  const isRunningRef = useRef<boolean>(false);
 
   // Format time function
   const formatTime = (minutes: number) => {
@@ -15,7 +16,13 @@ export const useTimer = () => {
   };
 
   const startTimer = (initialTimeMinutes: number) => {
-    // Clear existing timer
+    // Prevent starting multiple timers
+    if (isRunningRef.current) {
+      console.log("Timer is already running, not starting a new one");
+      return;
+    }
+    
+    // Clear existing timer if there is one
     if (timerRef.current) {
       window.clearInterval(timerRef.current);
       timerRef.current = null;
@@ -23,6 +30,7 @@ export const useTimer = () => {
     
     console.log(`Starting timer with ${initialTimeMinutes} minutes`);
     startTimeRef.current = Date.now();
+    isRunningRef.current = true;
     
     // Set initial time
     setTimeRemaining(initialTimeMinutes);
@@ -31,7 +39,10 @@ export const useTimer = () => {
     const intervalMS = 1000; // Update every second
     
     timerRef.current = window.setInterval(() => {
-      if (!startTimeRef.current) return;
+      if (!startTimeRef.current) {
+        clearTimer();
+        return;
+      }
       
       const elapsedMs = Date.now() - startTimeRef.current;
       const elapsedMinutes = elapsedMs / (1000 * 60);
@@ -53,6 +64,7 @@ export const useTimer = () => {
       console.log("Timer cleared");
     }
     startTimeRef.current = null;
+    isRunningRef.current = false;
   };
 
   // Clean up on unmount
@@ -71,6 +83,7 @@ export const useTimer = () => {
     startTimeRef,
     formatTime,
     startTimer,
-    clearTimer
+    clearTimer,
+    isRunningRef
   };
 };

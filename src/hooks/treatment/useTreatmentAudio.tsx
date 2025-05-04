@@ -1,5 +1,5 @@
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAudioContext } from './useAudioContext';
 import { useOscillators } from './useOscillators';
 import { useTimer } from './useTimer';
@@ -9,12 +9,14 @@ export const useTreatmentAudio = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const isStoppingRef = useRef<boolean>(false);
   const isStartingRef = useRef<boolean>(false);
+  const treatmentActiveRef = useRef<boolean>(false);
 
   // Import other hooks
   const { 
     oscillatorRef, 
     harmonicOscillatorRef, 
     audioContextRef, 
+    isAudioInitializedRef,
     createAudioContext, 
     cleanupAudioResources 
   } = useAudioContext();
@@ -36,25 +38,35 @@ export const useTreatmentAudio = () => {
     setDuration, 
     formatTime, 
     startTimer, 
-    clearTimer 
+    clearTimer,
+    isRunningRef
   } = useTimer();
 
   // Function to restart audio after background mode
   const restartAudio = () => {
     try {
-      if (isStoppingRef.current) {
-        console.log("Audio is currently stopping, can't restart yet");
+      if (isStoppingRef.current || !treatmentActiveRef.current) {
+        console.log("Cannot restart audio: treatment is stopping or not active");
         return;
       }
 
+      console.log("Attempting to restart audio...");
+      
       // Initialize audio context
       const audioContext = createAudioContext();
-      if (!audioContext) return;
+      if (!audioContext) {
+        console.error("Failed to create audio context during restart");
+        return;
+      }
       
       // Setup oscillators
-      setupOscillators(audioContext, oscillatorRef, harmonicOscillatorRef, frequency[0]);
+      const success = setupOscillators(audioContext, oscillatorRef, harmonicOscillatorRef, frequency[0]);
       
-      console.log("Audio successfully restarted at frequency:", frequency[0]);
+      if (success) {
+        console.log("Audio successfully restarted at frequency:", frequency[0]);
+      } else {
+        console.error("Failed to setup oscillators during restart");
+      }
     } catch (error) {
       console.error("Error restarting audio:", error);
     }
@@ -72,111 +84,149 @@ export const useTreatmentAudio = () => {
     setTimeRemaining
   );
 
+  // Start the audio treatment
   const startAudio = () => {
-    // Prevent multiple concurrent starts
+    // Guard against multiple starts or when stopping is in progress
     if (isPlaying || isStoppingRef.current || isStartingRef.current) {
-      console.log("Audio already playing or stopping or starting, not starting again");
+      console.log("Cannot start audio: already playing, stopping, or starting");
       return;
     }
     
-    // Set starting flag
-    isStartingRef.current = true;
+    console.log("=== STARTING TREATMENT ===");
     
-    console.log(`Starting audio with frequency: ${frequency[0]} Hz, duration: ${duration[0]} minutes`);
+    // Set flags to prevent concurrent operations
+    isStartingRef.current = true;
+    treatmentActiveRef.current = true;
     
     try {
-      // Stop any existing audio
+      // First ensure any previous audio resources are cleaned up
       cleanupAudioResources();
       
-      // Create a new AudioContext
-      const audioContext = createAudioContext();
-      if (!audioContext) {
-        isStartingRef.current = false;
-        return;
-      }
-      
-      console.log("AudioContext created, state:", audioContext.state);
-      
-      // Make sure the audio context is running
-      if (audioContext.state !== "running") {
-        audioContext.resume().then(() => {
-          console.log("AudioContext resumed successfully, state:", audioContext?.state);
-          setupAudioOscillators();
-        }).catch(error => {
-          console.error("Failed to resume AudioContext:", error);
-          isStartingRef.current = false;
-          cleanupAudioResources();
-        });
-      } else {
-        setupAudioOscillators();
-      }
+      // Force a small delay to ensure cleanup completes
+      setTimeout(() => {
+        try {
+          // Create new audio context
+          const audioContext = createAudioContext();
+          
+          if (!audioContext) {
+            console.error("Failed to create AudioContext");
+            handleStartFailure();
+            return;
+          }
+          
+          console.log("AudioContext created, state:", audioContext.state);
+          
+          // Make sure the audio context is running
+          if (audioContext.state !== "running") {
+            audioContext.resume()
+              .then(() => {
+                console.log("AudioContext resumed successfully");
+                completeAudioStart();
+              })
+              .catch(error => {
+                console.error("Failed to resume AudioContext:", error);
+                handleStartFailure();
+              });
+          } else {
+            completeAudioStart();
+          }
+        } catch (error) {
+          console.error("Error during audio start:", error);
+          handleStartFailure();
+        }
+      }, 300);
     } catch (error) {
-      console.error("Error starting audio treatment:", error);
-      cleanupAudioResources();
-      isStartingRef.current = false;
+      console.error("Critical error starting treatment:", error);
+      handleStartFailure();
     }
   };
   
-  const setupAudioOscillators = () => {
-    if (!audioContextRef.current) {
-      console.error("AudioContext not initialized");
-      isStartingRef.current = false;
-      return;
-    }
-    
+  // Helper function to handle start failure
+  const handleStartFailure = () => {
+    console.error("Failed to start audio treatment");
+    cleanupAudioResources();
+    clearTimer();
+    isStartingRef.current = false;
+    treatmentActiveRef.current = false;
+  };
+  
+  // Complete the audio start process after context is ready
+  const completeAudioStart = () => {
     try {
-      // Setup oscillators using the imported function
+      if (!audioContextRef.current) {
+        console.error("Audio context not available for oscillator setup");
+        handleStartFailure();
+        return;
+      }
+      
+      // Setup the oscillators
       const success = setupOscillators(
-        audioContextRef.current, 
-        oscillatorRef, 
-        harmonicOscillatorRef, 
+        audioContextRef.current,
+        oscillatorRef,
+        harmonicOscillatorRef,
         frequency[0]
       );
       
       if (!success) {
-        throw new Error("Failed to setup oscillators");
+        console.error("Failed to setup oscillators");
+        handleStartFailure();
+        return;
       }
       
-      // IMPORTANT: First set isPlaying to true BEFORE starting timer
+      // IMPORTANT: First update state
       setIsPlaying(true);
       
       // Then start the timer
       const durationInMinutes = duration[0];
       startTimer(durationInMinutes);
       
-      console.log("Audio treatment fully initialized with:", 
-                "Frequency:", frequency[0], 
-                "Duration:", durationInMinutes, "minutes");
+      console.log("Treatment started successfully:",
+        "Frequency:", frequency[0],
+        "Duration:", durationInMinutes,
+        "minutes");
+        
     } catch (error) {
-      console.error("Error setting up audio oscillators:", error);
-      cleanupAudioResources();
+      console.error("Error during oscillator setup:", error);
+      handleStartFailure();
     } finally {
-      // Clear starting flag
+      // Clear starting flag regardless of success/failure
       isStartingRef.current = false;
     }
   };
 
+  // Stop the audio treatment
   const stopAudio = () => {
-    console.log("Stopping treatment audio...");
+    console.log("=== STOPPING TREATMENT ===");
     
-    // Set the stopping flag to prevent race conditions
+    // Set stopping flag to prevent concurrent operations
     isStoppingRef.current = true;
+    treatmentActiveRef.current = false;
     
-    // Clean up audio resources
-    cleanupAudioResources();
-    
-    // Clear timer
+    // Clear timer first
     clearTimer();
     
-    // Reset state after a small delay to ensure UI updates properly
+    // Then clean up audio resources
+    cleanupAudioResources();
+    
+    // Update state after a delay to ensure proper sequencing
     setTimeout(() => {
       setIsPlaying(false);
       setBackgroundModeActive(false);
       pausedTimeRemainingRef.current = null;
       isStoppingRef.current = false;
-      console.log("Audio treatment fully stopped");
-    }, 100);
+      console.log("Treatment stopped completely");
+    }, 300);
   };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (isPlaying) {
+        stopAudio();
+      }
+      console.log("useTreatmentAudio hook unmounted and cleaned up");
+    };
+  }, []);
 
   return {
     isPlaying,
