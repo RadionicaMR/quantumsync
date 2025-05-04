@@ -33,7 +33,7 @@ interface CustomTreatmentProps {
   isPlaying: boolean;
   timeRemaining: number;
   formatTime: (minutes: number) => string;
-  currentImage: 'radionic' | 'receptor' | 'mix';
+  currentImage: 'radionic' | 'receptor' | 'mix' | 'pattern';
   hypnoticEffect: boolean;
   startTreatment: () => void;
   stopTreatment: () => void;

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -39,6 +40,11 @@ const Treat = () => {
       }
     }
   }, [location.state, treatment]);
+  
+  // Normalize currentImage value to ensure compatibility
+  const normalizeCurrentImage = (image: 'radionic' | 'receptor' | 'mix' | 'pattern'): 'radionic' | 'receptor' | 'mix' => {
+    return image === 'pattern' ? 'radionic' : image;
+  };
   
   return (
     <Layout>
@@ -93,7 +99,7 @@ const Treat = () => {
                 setRadionicImages={treatment.setRadionicImages}
                 receptorImages={treatment.receptorImages}
                 setReceptorImages={treatment.setReceptorImages}
-                currentImage={treatment.currentImage}
+                currentImage={normalizeCurrentImage(treatment.currentImage)}
                 hypnoticEffect={treatment.hypnoticEffect}
                 rate1={treatment.rate1}
                 setRate1={treatment.setRate1}
@@ -155,7 +161,7 @@ const Treat = () => {
                     isPlaying={treatment.isPlaying}
                     timeRemaining={treatment.timeRemaining}
                     formatTime={treatment.formatTime}
-                    currentImage={treatment.currentImage}
+                    currentImage={normalizeCurrentImage(treatment.currentImage)}
                     hypnoticEffect={treatment.hypnoticEffect}
                     startTreatment={treatment.startTreatment}
                     stopTreatment={treatment.stopTreatment}

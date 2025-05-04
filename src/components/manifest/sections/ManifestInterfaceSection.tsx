@@ -6,7 +6,7 @@ import { ManifestPattern } from '@/data/manifestPatterns';
 import { useEffect } from 'react';
 
 interface ManifestInterfaceSectionProps {
-  currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';  // Updated to include 'radionic'
+  currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';  // Includes 'pattern' and 'radionic'
   isManifestActive: boolean;
   patternImage: string | null;
   patternImages: string[];
