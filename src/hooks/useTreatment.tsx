@@ -38,17 +38,27 @@ export const useTreatment = () => {
   const [backgroundModeActive, setBackgroundModeActive] = useState(false);
   const audioSourceRef = useRef<string | null>(null);
 
+  // Debugging useEffect to track time remaining changes
+  useEffect(() => {
+    if (audio.isPlaying) {
+      console.log(`useTreatment Hook - tiempo restante actualizado: ${audio.timeRemaining.toFixed(2)} minutos, reproduciendose: ${audio.isPlaying}`);
+    }
+  }, [audio.timeRemaining, audio.isPlaying]);
+
   // Select a preset
   const selectPreset = (preset: TreatmentPreset) => {
-    setSelectedPreset(preset.id);
-    audio.setFrequency([preset.frequency]);
-    audio.setDuration([preset.duration]);
+    console.log("Seleccionando preset:", preset.id, "con frecuencia:", preset.frequency, "Hz y duración:", preset.duration, "minutos");
     
-    // Resetear el estado de tratamiento cuando se cambia de preset
+    // Reset treatment state when changing presets
     if (audio.isPlaying) {
+      console.log("Stopping previous treatment before changing preset");
       audio.stopAudio();
       setHypnoticEffect(false);
     }
+    
+    setSelectedPreset(preset.id);
+    audio.setFrequency([preset.frequency]);
+    audio.setDuration([preset.duration]);
   };
 
   // Manejar cambios de visibilidad del documento para audio subliminal
@@ -180,18 +190,24 @@ export const useTreatment = () => {
 
   // Start the treatment - Con inicialización explícita del audio
   const startTreatment = () => {
-    if (audio.isPlaying) return;
+    if (audio.isPlaying) {
+      console.log("Treatment already playing, not starting again");
+      return;
+    }
 
     // Logging para depuración
     console.log("Iniciando tratamiento con frecuencia:", audio.frequency[0], "Hz");
     console.log("Duración configurada:", audio.duration[0], "minutos");
     
+    // Primero establecemos el efecto hipnótico (cambio visual)
+    setHypnoticEffect(true);
+    
     // Asegúrate de que el audio se inicia correctamente
     audio.startAudio();
-    setHypnoticEffect(true);
 
-    // Ahora: solo al iniciar tratamiento, dale play
+    // Solo después de iniciar el audio, iniciamos el subliminal si existe
     if (audioFile) {
+      console.log("Iniciando audio subliminal asociado al tratamiento");
       playSubliminalAudio();
     }
 
@@ -201,19 +217,29 @@ export const useTreatment = () => {
       title: "Tratamiento iniciado",
       description: `Aplicando frecuencia de ${audio.frequency[0]}Hz${target}`,
     });
+    
+    console.log("Tratamiento completamente iniciado");
   };
 
   // Stop the treatment
   const stopTreatment = () => {
     console.log("Deteniendo tratamiento");
+    
+    // Detener audio principal
     audio.stopAudio();
+    
+    // Detener efectos visuales 
     setHypnoticEffect(false);
+    
+    // Detener audio subliminal si está reproduciendo
     stopSubliminalAudio();
 
     toast({
       title: "Tratamiento detenido",
       description: "El tratamiento de frecuencia ha sido detenido.",
     });
+    
+    console.log("Tratamiento completamente detenido");
   };
 
   // Update loop property en caliente

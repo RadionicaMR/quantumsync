@@ -128,16 +128,20 @@ export const useTreatmentAudio = () => {
   };
 
   const startTimer = (initialTime: number) => {
-    startTimeRef.current = Date.now();
-    lastTickTimeRef.current = Date.now();
-    setTimeRemaining(initialTime);
-    
-    // Clear any existing timer
+    // Clear any existing timer first
     if (timerRef.current) {
       clearInterval(timerRef.current);
+      timerRef.current = null;
     }
     
-    // Update every second for more accurate display
+    console.log(`Iniciando temporizador con ${initialTime} minutos`);
+    startTimeRef.current = Date.now();
+    lastTickTimeRef.current = Date.now();
+    
+    // Ensure timeRemaining is set before starting the timer
+    setTimeRemaining(initialTime);
+    
+    // Update frequently for smoother countdown
     timerRef.current = setInterval(() => {
       const now = Date.now();
       const elapsed = (now - (lastTickTimeRef.current || now)) / 1000 / 60; // Convert to minutes
@@ -145,19 +149,30 @@ export const useTreatmentAudio = () => {
       
       setTimeRemaining(prev => {
         const newTime = Math.max(0, prev - elapsed);
+        console.log(`Timer tick: ${prev.toFixed(2)} - ${elapsed.toFixed(4)} = ${newTime.toFixed(2)} minutos`);
+        
         if (newTime <= 0) {
+          console.log("Tiempo agotado, deteniendo el audio");
           stopAudio();
           return 0;
         }
         return newTime;
       });
-    }, 500); // Update more frequently for smoother countdown
+    }, 250); // Update more frequently for smoother countdown
   };
 
   const startAudio = () => {
-    if (isPlaying) return;
+    if (isPlaying) {
+      console.log("Audio already playing, not starting again");
+      return;
+    }
+    
+    console.log(`Iniciando audio con frecuencia: ${frequency[0]} Hz, duración: ${duration[0]} minutos`);
     
     try {
+      // Stop any existing audio first
+      stopAudio();
+      
       // Initialize audio context
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
       if (!AudioContext) {
@@ -165,20 +180,12 @@ export const useTreatmentAudio = () => {
         return;
       }
       
-      // Close any existing audio context first
-      if (audioContextRef.current) {
-        try {
-          audioContextRef.current.close();
-        } catch (e) {
-          console.error("Error closing existing audio context:", e);
-        }
-      }
-      
       audioContextRef.current = new AudioContext();
+      console.log("AudioContext created:", audioContextRef.current.state);
       
       // Resume the audio context (required by many browsers due to autoplay policy)
       audioContextRef.current.resume().then(() => {
-        console.log("AudioContext resumed successfully");
+        console.log("AudioContext resumed successfully, state:", audioContextRef.current?.state);
         
         // Create oscillator
         const oscillator = audioContextRef.current!.createOscillator();
@@ -196,6 +203,7 @@ export const useTreatmentAudio = () => {
         
         oscillator.start();
         oscillatorRef.current = oscillator;
+        console.log("Main oscillator started at frequency:", frequency[0]);
         
         // If frequency is low, add harmonic to improve audibility on small devices
         if (frequency[0] < 100) {
@@ -214,19 +222,21 @@ export const useTreatmentAudio = () => {
           
           harmonicOscillator.start();
           harmonicOscillatorRef.current = harmonicOscillator;
+          console.log("Harmonic oscillator started at frequency:", frequency[0] * 2);
         }
         
         // Start timer with exact duration
         const durationInMinutes = duration[0];
         
-        // Establece explícitamente el tiempo restante antes de iniciar el temporizador
-        setTimeRemaining(durationInMinutes);
-        // Luego inicia el temporizador
+        // Set isPlaying before starting the timer to ensure UI updates properly
+        setIsPlaying(true);
+        
+        // Start the timer AFTER setting isPlaying to true
         startTimer(durationInMinutes);
         
-        // Actualiza el estado de reproducción
-        setIsPlaying(true);
-        console.log("Audio started successfully at frequency:", frequency[0], "Duration set to:", durationInMinutes, "minutes");
+        console.log("Audio treatment fully initialized with frequency:", frequency[0], 
+                  "Duration:", durationInMinutes, "minutes",
+                  "Current time remaining:", timeRemaining);
         
       }).catch(error => {
         console.error("Failed to resume AudioContext:", error);
@@ -240,9 +250,12 @@ export const useTreatmentAudio = () => {
   };
 
   const stopAudio = () => {
+    console.log("Stopping treatment audio...");
+    
     if (oscillatorRef.current) {
       try {
         oscillatorRef.current.stop();
+        console.log("Main oscillator stopped");
       } catch (e) {
         console.error("Error stopping oscillator:", e);
       }
@@ -252,6 +265,7 @@ export const useTreatmentAudio = () => {
     if (harmonicOscillatorRef.current) {
       try {
         harmonicOscillatorRef.current.stop();
+        console.log("Harmonic oscillator stopped");
       } catch (e) {
         console.error("Error stopping harmonic oscillator:", e);
       }
@@ -261,6 +275,7 @@ export const useTreatmentAudio = () => {
     if (audioContextRef.current) {
       try {
         audioContextRef.current.close();
+        console.log("Audio context closed");
       } catch (e) {
         console.error("Error closing audio context:", e);
       }
@@ -270,17 +285,19 @@ export const useTreatmentAudio = () => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
+      console.log("Timer cleared");
     }
     
     setIsPlaying(false);
     setBackgroundModeActive(false);
     pausedTimeRemainingRef.current = null;
-    console.log("Audio stopped");
+    console.log("Audio treatment fully stopped");
   };
 
   // Add event listener for visibilitychange
   useEffect(() => {
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    console.log("Visibility change listener added");
     
     // Cleanup when unmounting
     return () => {
@@ -302,6 +319,7 @@ export const useTreatmentAudio = () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
+      console.log("useTreatmentAudio hook cleaned up");
     };
   }, [isPlaying, backgroundModeActive]);
 
