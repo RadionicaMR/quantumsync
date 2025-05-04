@@ -17,6 +17,7 @@ interface ManifestInterfaceSectionProps {
   stopManifestation: () => void;
   formatTimeRemaining: (time: number) => string;
   backgroundModeActive?: boolean;
+  // Added properties to resolve type errors
   selectedPattern: string;
   patterns: ManifestPattern[];
   manifestPatterns: Record<string, string>;
@@ -46,6 +47,7 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
   stopManifestation,
   formatTimeRemaining,
   backgroundModeActive = false,
+  // Added props
   selectedPattern,
   patterns,
   manifestPatterns,
@@ -86,7 +88,6 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
     <div className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-lg">
       <h3 className="text-xl font-semibold mb-4">Interfaz de Manifestación</h3>
       
-      {/* Display the visualizer with all required props */}
       <ManifestVisualizer
         currentImage={currentImage}
         patternImage={patternImage}
@@ -109,7 +110,6 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
         receptorName={receptorName}
       />
       
-      {/* Make sure we're passing the intention to ManifestActions */}
       <ManifestActions 
         isManifestActive={isManifestActive}
         canStart={canStart}

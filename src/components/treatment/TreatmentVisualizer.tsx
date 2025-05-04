@@ -1,4 +1,3 @@
-
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface TreatmentVisualizerProps {
@@ -60,7 +59,7 @@ const TreatmentVisualizer = ({
   // Pulse animation duration based on hypnotic speed
   const pulseDuration = Math.max(0.5, 5 - (hypnoticSpeed[0] / 4));
 
-  // Map 'pattern' to 'radionic' for compatibility
+  // Normalize currentImage value - treat 'pattern' as 'radionic' for compatibility
   const adjustedCurrentImage = currentImage === 'pattern' ? 'radionic' : currentImage;
 
   return (

@@ -12,7 +12,7 @@ export const useManifestState = (): ManifestState & {
   setActiveTab: (value: string) => void;
   setManifestSound: (value: boolean) => void;
   setManifestFrequency: (value: number[]) => void;
-  setCurrentImage: (value: ((prev: 'pattern' | 'receptor' | 'mix') => 'pattern' | 'receptor' | 'mix') | 'pattern' | 'receptor' | 'mix') => void;
+  setCurrentImage: (value: ((prev: 'pattern' | 'receptor' | 'mix' | 'radionic') => 'pattern' | 'receptor' | 'mix' | 'radionic') | 'pattern' | 'receptor' | 'mix' | 'radionic') => void;
   setExposureTime: (value: number[]) => void;
   setTimeRemaining: (value: ((prev: number | null) => number | null) | number | null) => void;
   setReceptorName: (value: string) => void;
@@ -36,7 +36,7 @@ export const useManifestState = (): ManifestState & {
   const [activeTab, setActiveTab] = useState("presets");
   const [manifestSound, setManifestSound] = useState(true);
   const [manifestFrequency, setManifestFrequency] = useState([528]);
-  const [currentImage, setCurrentImage] = useState<'pattern' | 'receptor' | 'mix'>('pattern');
+  const [currentImage, setCurrentImage] = useState<'pattern' | 'receptor' | 'mix' | 'radionic'>('pattern');
   const [exposureTime, setExposureTime] = useState([5]); 
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
   const [receptorName, setReceptorName] = useState('');

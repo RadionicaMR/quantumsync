@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ManifestPattern } from '@/data/manifestPatterns';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -144,7 +143,7 @@ const ManifestVisualizer = ({
   const speedValue = visualSpeed && visualSpeed.length > 0 ? visualSpeed[0] : 10;
   const { rateAnimationDuration, pulseDuration } = calculateAnimationSpeeds(speedValue);
 
-  // Normalize currentImage value - treat 'pattern' as 'radionic'
+  // Normalize currentImage value - treat 'pattern' as 'radionic' for visualization purposes
   const normalizedCurrentImage = currentImage === 'pattern' ? 'radionic' : currentImage;
 
   // Si no está activo, mostrar un placeholder

@@ -4,7 +4,7 @@ import { ManifestPattern } from '@/data/manifestPatterns';
 import ManifestInterfaceSection from './ManifestInterfaceSection';
 
 interface PresetManifestInterfaceProps {
-  currentImage: 'pattern' | 'receptor' | 'mix';
+  currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';
   isManifestActive: boolean;
   patternImage: string | null;
   patternImages: string[];
