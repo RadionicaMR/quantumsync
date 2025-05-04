@@ -1,0 +1,37 @@
+
+import { TabsContent } from '@/components/ui/tabs';
+import PresetManifest from '@/components/manifest/PresetManifest';
+import CustomManifest from '@/components/manifest/CustomManifest';
+import { ManifestPattern } from '@/data/manifestPatterns';
+import { ManifestCoreProps } from '@/types/manifest';
+
+interface ManifestTabsContentProps extends ManifestCoreProps {
+  activeTab: string;
+  patterns: ManifestPattern[];
+}
+
+const ManifestTabsContent = ({
+  activeTab,
+  patterns,
+  ...coreProps
+}: ManifestTabsContentProps) => {
+  return (
+    <>
+      <TabsContent value="presets" className="w-full">
+        <PresetManifest
+          patterns={patterns}
+          {...coreProps}
+        />
+      </TabsContent>
+      
+      <TabsContent value="custom" className="w-full">
+        <CustomManifest
+          patterns={patterns}
+          {...coreProps}
+        />
+      </TabsContent>
+    </>
+  );
+};
+
+export default ManifestTabsContent;
