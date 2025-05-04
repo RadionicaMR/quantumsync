@@ -43,6 +43,12 @@ export const useTreatment = () => {
     setSelectedPreset(preset.id);
     audio.setFrequency([preset.frequency]);
     audio.setDuration([preset.duration]);
+    
+    // Resetear el estado de tratamiento cuando se cambia de preset
+    if (audio.isPlaying) {
+      audio.stopAudio();
+      setHypnoticEffect(false);
+    }
   };
 
   // Manejar cambios de visibilidad del documento para audio subliminal
@@ -172,10 +178,14 @@ export const useTreatment = () => {
     });
   };
 
-  // Start the treatment
+  // Start the treatment - Con inicialización explícita del audio
   const startTreatment = () => {
     if (audio.isPlaying) return;
 
+    // Logging para depuración
+    console.log("Iniciando tratamiento con frecuencia:", audio.frequency[0], "Hz");
+    console.log("Duración configurada:", audio.duration[0], "minutos");
+    
     // Asegúrate de que el audio se inicia correctamente
     audio.startAudio();
     setHypnoticEffect(true);
@@ -195,6 +205,7 @@ export const useTreatment = () => {
 
   // Stop the treatment
   const stopTreatment = () => {
+    console.log("Deteniendo tratamiento");
     audio.stopAudio();
     setHypnoticEffect(false);
     stopSubliminalAudio();

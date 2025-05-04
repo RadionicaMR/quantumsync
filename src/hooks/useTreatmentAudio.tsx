@@ -137,7 +137,7 @@ export const useTreatmentAudio = () => {
       clearInterval(timerRef.current);
     }
     
-    // Update every second
+    // Update every second for more accurate display
     timerRef.current = setInterval(() => {
       const now = Date.now();
       const elapsed = (now - (lastTickTimeRef.current || now)) / 1000 / 60; // Convert to minutes
@@ -151,7 +151,7 @@ export const useTreatmentAudio = () => {
         }
         return newTime;
       });
-    }, 1000);
+    }, 500); // Update more frequently for smoother countdown
   };
 
   const startAudio = () => {
@@ -218,11 +218,16 @@ export const useTreatmentAudio = () => {
         
         // Start timer with exact duration
         const durationInMinutes = duration[0];
+        
+        // Establece explícitamente el tiempo restante antes de iniciar el temporizador
         setTimeRemaining(durationInMinutes);
+        // Luego inicia el temporizador
         startTimer(durationInMinutes);
         
+        // Actualiza el estado de reproducción
         setIsPlaying(true);
-        console.log("Audio started successfully at frequency:", frequency[0]);
+        console.log("Audio started successfully at frequency:", frequency[0], "Duration set to:", durationInMinutes, "minutes");
+        
       }).catch(error => {
         console.error("Failed to resume AudioContext:", error);
         alert("No se pudo iniciar el audio. Por favor, interactúe con la página primero (haga clic en algún lugar) e inténtelo nuevamente.");

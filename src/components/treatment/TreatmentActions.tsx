@@ -37,6 +37,13 @@ const TreatmentActions = ({
     }
   }, [timeRemaining, isPlaying, formatTime]);
   
+  // Debug para verificar actualizaciones de tiempo
+  useEffect(() => {
+    if (isPlaying) {
+      console.log('Tiempo restante actualizado:', timeRemaining, 'minutos -', displayTimeString);
+    }
+  }, [timeRemaining, displayTimeString, isPlaying]);
+  
   return (
     <div className="flex items-center justify-between">
       {isPlaying ? (
