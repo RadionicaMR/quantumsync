@@ -1,14 +1,8 @@
 
 import React from 'react';
-import { Card } from '@/components/ui/card';
 import { ManifestPattern } from '@/data/manifestPatterns';
-import ManifestInterfaceSection from './sections/ManifestInterfaceSection';
-import PatternSelection from './PatternSelection';
-import IntentionInput from './IntentionInput';
-import AudioControls from './AudioControls';
-import FrequencyControls from './FrequencyControls';
-import TimingControls from './TimingControls';
-import ReceptorNameInput from './ReceptorNameInput';
+import PresetManifestConfigPanel from './sections/PresetManifestConfigPanel';
+import PresetManifestInterface from './sections/PresetManifestInterface';
 
 interface PresetManifestProps {
   patterns: ManifestPattern[];
@@ -118,88 +112,63 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Left Panel - Configuration */}
-      <div className="lg:col-span-1">
-        <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Configuración</h3>
-
-          <PatternSelection
-            patterns={patterns}
-            selectedPattern={selectedPattern}
-            selectPattern={selectPattern}
-          />
-
-          <IntentionInput intention={intention} setIntention={setIntention} />
-
-          <div className="mt-6">
-            <ReceptorNameInput 
-              receptorName={receptorName}
-              setReceptorName={setReceptorName}
-              isActive={isManifestActive}
-            />
-          </div>
-
-          <AudioControls
-            manifestSound={manifestSound}
-            setManifestSound={setManifestSound}
-            audioFile={audioFile}
-            setAudioFile={setAudioFile}
-            audioVolume={audioVolume}
-            setAudioVolume={setAudioVolume}
-            audioSubliminalPlaying={audioSubliminalPlaying}
-            playSubliminalAudio={playSubliminalAudio}
-            stopSubliminalAudio={stopSubliminalAudio}
-          />
-
-          <FrequencyControls
-            manifestSound={manifestSound}
-            setManifestSound={setManifestSound}
-            manifestFrequency={manifestFrequency}
-            setManifestFrequency={setManifestFrequency}
-          />
-
-          <TimingControls
-            exposureTime={exposureTime}
-            setExposureTime={setExposureTime}
-            visualSpeed={visualSpeed}
-            setVisualSpeed={setVisualSpeed}
-            isDisabled={isManifestActive}
-            indefiniteTime={indefiniteTime}
-            setIndefiniteTime={setIndefiniteTime}
-          />
-        </Card>
-      </div>
+      <PresetManifestConfigPanel
+        patterns={patterns}
+        selectedPattern={selectedPattern}
+        intention={intention}
+        setIntention={setIntention}
+        manifestSound={manifestSound}
+        setManifestSound={setManifestSound}
+        manifestFrequency={manifestFrequency}
+        setManifestFrequency={setManifestFrequency}
+        exposureTime={exposureTime}
+        setExposureTime={setExposureTime}
+        visualSpeed={visualSpeed}
+        setVisualSpeed={setVisualSpeed}
+        isManifestActive={isManifestActive}
+        audioFile={audioFile}
+        setAudioFile={setAudioFile}
+        audioVolume={audioVolume}
+        setAudioVolume={setAudioVolume}
+        audioSubliminalPlaying={audioSubliminalPlaying}
+        playSubliminalAudio={playSubliminalAudio}
+        stopSubliminalAudio={stopSubliminalAudio}
+        receptorName={receptorName}
+        setReceptorName={setReceptorName}
+        selectPattern={selectPattern}
+        indefiniteTime={indefiniteTime}
+        setIndefiniteTime={setIndefiniteTime}
+      />
 
       {/* Right Panel - Interface */}
-      <div className="lg:col-span-2">
-        <ManifestInterfaceSection
-          currentImage={currentImage}
-          isManifestActive={isManifestActive}
-          patternImage={patternImage}
-          patternImages={patternImages}
-          receptorImage={receptorImage}
-          receptorImages={receptorImages}
-          canStart={canStart}
-          timeRemaining={timeRemaining}
-          startManifestation={startManifestation}
-          stopManifestation={stopManifestation}
-          formatTimeRemaining={formatTimeRemaining}
-          selectedPattern={selectedPattern}
-          patterns={patterns}
-          manifestPatterns={manifestPatterns}
-          intention={intention}
-          manifestSound={manifestSound}
-          manifestFrequency={manifestFrequency}
-          exposureTime={exposureTime}
-          manifestSpeed={visualSpeed}
-          visualSpeed={visualSpeed}
-          rate1={rate1}
-          rate2={rate2}
-          rate3={rate3}
-          receptorName={receptorName}
-          backgroundModeActive={backgroundModeActive}
-          indefiniteTime={indefiniteTime}
-        />
-      </div>
+      <PresetManifestInterface
+        currentImage={currentImage}
+        isManifestActive={isManifestActive}
+        patternImage={patternImage}
+        patternImages={patternImages}
+        receptorImage={receptorImage}
+        receptorImages={receptorImages}
+        canStart={canStart}
+        timeRemaining={timeRemaining}
+        startManifestation={startManifestation}
+        stopManifestation={stopManifestation}
+        formatTimeRemaining={formatTimeRemaining}
+        selectedPattern={selectedPattern}
+        patterns={patterns}
+        manifestPatterns={manifestPatterns}
+        intention={intention}
+        manifestSound={manifestSound}
+        manifestFrequency={manifestFrequency}
+        exposureTime={exposureTime}
+        manifestSpeed={visualSpeed}
+        visualSpeed={visualSpeed}
+        rate1={rate1}
+        rate2={rate2}
+        rate3={rate3}
+        receptorName={receptorName}
+        backgroundModeActive={backgroundModeActive}
+        indefiniteTime={indefiniteTime}
+      />
     </div>
   );
 };

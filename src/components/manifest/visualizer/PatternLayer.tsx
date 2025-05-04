@@ -35,6 +35,10 @@ const PatternLayer: React.FC<PatternLayerProps> = ({
     );
   }
   
+  // Calculate optimized pulse duration based on pulseDuration input
+  // Lower values (faster speed) should result in quicker pulses
+  const optimizedPulseDuration = Math.max(1, 6 - (pulseDuration / 4));
+  
   return (
     <div className="absolute inset-0 flex items-center justify-center z-10">
       <img 
@@ -45,7 +49,7 @@ const PatternLayer: React.FC<PatternLayerProps> = ({
           opacity: 1,
           mixBlendMode: 'screen',
           filter: 'contrast(1.2) brightness(1.1)',
-          animation: `pulse ${pulseDuration}s infinite alternate ease-in-out`
+          animation: `pulse ${optimizedPulseDuration}s infinite alternate ease-in-out`
         }}
       />
     </div>
