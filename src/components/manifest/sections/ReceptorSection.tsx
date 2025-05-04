@@ -40,14 +40,14 @@ const ReceptorSection = memo(({
           </p>
           
           <ImageUploader 
-            imageUrl={receptorImage}
-            setImageUrl={setReceptorImage}
-            imageUrls={receptorImages}
-            setImageUrls={setReceptorImages}
-            disabled={isManifestActive}
-            allowMultiple={true}
-            aspectRatio="square"
-            maxFiles={10}
+            image={receptorImage}
+            setImage={setReceptorImage}
+            images={receptorImages}
+            setImages={setReceptorImages}
+            isDisabled={isManifestActive}
+            isMultiple={true}
+            label="Imágenes del Receptor"
+            maxImages={10}
           />
         </div>
       </div>

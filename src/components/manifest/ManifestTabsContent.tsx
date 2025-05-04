@@ -4,13 +4,15 @@ import PresetManifest from '@/components/manifest/PresetManifest';
 import CustomManifest from '@/components/manifest/CustomManifest';
 import { ManifestPattern } from '@/data/manifestPatterns';
 import { ManifestCoreProps } from '@/types/manifest';
+import { memo } from 'react';
 
 interface ManifestTabsContentProps extends ManifestCoreProps {
   activeTab: string;
   patterns: ManifestPattern[];
 }
 
-const ManifestTabsContent = ({
+// Use memo to prevent unnecessary re-renders
+const ManifestTabsContent = memo(({
   activeTab,
   patterns,
   ...coreProps
@@ -39,6 +41,8 @@ const ManifestTabsContent = ({
       </TabsContent>
     </>
   );
-};
+});
+
+ManifestTabsContent.displayName = 'ManifestTabsContent';
 
 export default ManifestTabsContent;

@@ -27,7 +27,7 @@ interface PresetManifestProps {
   setReceptorImages: (images: string[]) => void;
   isManifestActive: boolean;
   timeRemaining: number | null;
-  currentImage: 'pattern' | 'receptor' | 'mix';
+  currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';  // Updated to include 'radionic'
   selectPattern: (pattern: ManifestPattern) => void;
   startManifestation: () => void;
   stopManifestation: () => void;

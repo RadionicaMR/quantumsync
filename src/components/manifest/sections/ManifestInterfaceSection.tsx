@@ -3,9 +3,10 @@ import ManifestVisualizer from '../ManifestVisualizer';
 import ManifestActions from '../ManifestActions';
 import { ManifestPattern } from '@/data/manifestPatterns';
 import { useEffect } from 'react';
+import { memo } from 'react';
 
 interface ManifestInterfaceSectionProps {
-  currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';
+  currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';  // Updated to include 'radionic'
   isManifestActive: boolean;
   patternImage: string | null;
   patternImages: string[];
@@ -34,7 +35,8 @@ interface ManifestInterfaceSectionProps {
   indefiniteTime?: boolean;
 }
 
-const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
+// Memoize the component to prevent unnecessary re-renders
+const ManifestInterfaceSection = memo(({
   currentImage,
   isManifestActive,
   patternImage,
@@ -123,6 +125,8 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
       />
     </div>
   );
-};
+});
+
+ManifestInterfaceSection.displayName = 'ManifestInterfaceSection';
 
 export default ManifestInterfaceSection;

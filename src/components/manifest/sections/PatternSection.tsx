@@ -41,14 +41,14 @@ const PatternSection = memo(({
           </p>
           
           <ImageUploader 
-            imageUrl={patternImage}
-            setImageUrl={setPatternImage}
-            imageUrls={patternImages}
-            setImageUrls={setPatternImages}
-            disabled={isManifestActive}
-            allowMultiple={true}
-            aspectRatio="square"
-            maxFiles={10}
+            image={patternImage}
+            setImage={setPatternImage}
+            images={patternImages}
+            setImages={setPatternImages}
+            isDisabled={isManifestActive}
+            isMultiple={true}
+            label="Imágenes de Patrón"
+            maxImages={10}
           />
         </div>
       </div>

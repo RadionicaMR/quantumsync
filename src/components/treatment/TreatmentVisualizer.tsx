@@ -7,7 +7,7 @@ interface TreatmentVisualizerProps {
   receptorImage: string | null;
   radionicImages: string[];
   receptorImages: string[];
-  currentImage: 'radionic' | 'receptor' | 'mix' | 'pattern';
+  currentImage: 'radionic' | 'receptor' | 'mix' | 'pattern';  // Updated to include 'pattern'
   hypnoticEffect: boolean;
   frequency: number[];
   intensity: number[];
