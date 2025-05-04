@@ -29,7 +29,7 @@ export const useManifestState = (): ManifestState & {
   const [visualSpeed, setVisualSpeed] = useState([10]);
   const [patternImage, setPatternImage] = useState<string | null>(null);
   const [receptorImage, setReceptorImage] = useState<string | null>(null);
-  // New state for multiple images
+  // State for multiple images
   const [patternImages, setPatternImages] = useState<string[]>([]);
   const [receptorImages, setReceptorImages] = useState<string[]>([]);
   const [selectedPattern, setSelectedPattern] = useState('');

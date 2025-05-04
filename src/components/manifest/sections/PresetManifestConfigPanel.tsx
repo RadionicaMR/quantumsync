@@ -8,6 +8,7 @@ import AudioControls from '../AudioControls';
 import FrequencyControls from '../FrequencyControls';
 import TimingControls from '../TimingControls';
 import ReceptorNameInput from '../ReceptorNameInput';
+import ImageUploaderSection from '@/components/treatment/preset/ImageUploaderSection';
 
 interface PresetManifestConfigPanelProps {
   patterns: ManifestPattern[];
@@ -35,6 +36,15 @@ interface PresetManifestConfigPanelProps {
   selectPattern: (pattern: ManifestPattern) => void;
   indefiniteTime: boolean;
   setIndefiniteTime: (value: boolean) => void;
+  // Added image uploader props
+  patternImage: string | null;
+  setPatternImage: (image: string | null) => void;
+  receptorImage: string | null;
+  setReceptorImage: (image: string | null) => void;
+  patternImages: string[];
+  setPatternImages: (images: string[]) => void;
+  receptorImages: string[];
+  setReceptorImages: (images: string[]) => void;
 }
 
 const PresetManifestConfigPanel: React.FC<PresetManifestConfigPanelProps> = ({
@@ -62,11 +72,20 @@ const PresetManifestConfigPanel: React.FC<PresetManifestConfigPanelProps> = ({
   setReceptorName,
   selectPattern,
   indefiniteTime,
-  setIndefiniteTime
+  setIndefiniteTime,
+  // Added image uploader props
+  patternImage,
+  setPatternImage,
+  receptorImage,
+  setReceptorImage,
+  patternImages,
+  setPatternImages,
+  receptorImages,
+  setReceptorImages
 }) => {
   return (
     <div className="lg:col-span-1">
-      <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-md">
+      <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-md mb-6">
         <h3 className="text-xl font-semibold mb-4">Configuración</h3>
 
         <PatternSelection
@@ -112,6 +131,24 @@ const PresetManifestConfigPanel: React.FC<PresetManifestConfigPanelProps> = ({
           isDisabled={isManifestActive}
           indefiniteTime={indefiniteTime}
           setIndefiniteTime={setIndefiniteTime}
+        />
+      </Card>
+
+      {/* Added Image Uploader Section similar to Treatment page */}
+      <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-md">
+        <h3 className="text-xl font-semibold mb-4">Imágenes de Manifestación</h3>
+        <ImageUploaderSection 
+          isPlaying={isManifestActive}
+          radionicImage={patternImage}
+          setRadionicImage={setPatternImage}
+          receptorImage={receptorImage}
+          setReceptorImage={setReceptorImage}
+          radionicImages={patternImages}
+          setRadionicImages={setPatternImages}
+          receptorImages={receptorImages}
+          setReceptorImages={setReceptorImages}
+          receptorName={receptorName}
+          setReceptorName={setReceptorName}
         />
       </Card>
     </div>

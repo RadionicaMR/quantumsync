@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { ManifestPattern } from '@/data/manifestPatterns';
 import { ManifestAudio } from './types';
@@ -101,8 +102,8 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
     // Clear any existing interval/animation frame
     stopImageAlternation();
     
-    // Set initial image
-    setCurrentImage('pattern');
+    // Set initial image - now renamed to 'radionic' to match treatment nomenclature
+    setCurrentImage('radionic');
     
     // Calculate interval based on speed setting (faster = shorter interval)
     const speed = (visualSpeed && visualSpeed.length > 0) ? visualSpeed[0] : 10;
@@ -119,8 +120,8 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
         
         if (elapsed > switchInterval) {
           setCurrentImage(prev => {
-            // Ensure we toggle between the two states
-            return prev === 'pattern' || prev === 'radionic' ? 'receptor' : 'pattern';
+            // Toggle between 'radionic' (or legacy 'pattern') and 'receptor' states
+            return prev === 'radionic' || prev === 'pattern' ? 'receptor' : 'radionic';
           });
           lastTimeRef.current = currentTime;
         }
@@ -134,8 +135,8 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
       // Standard interval for other browsers
       manifestIntervalRef.current = setInterval(() => {
         setCurrentImage(prev => {
-          // Ensure we toggle between the two states
-          return prev === 'pattern' || prev === 'radionic' ? 'receptor' : 'pattern';
+          // Toggle between 'radionic' (or legacy 'pattern') and 'receptor' states
+          return prev === 'radionic' || prev === 'pattern' ? 'receptor' : 'radionic';
         });
       }, switchInterval);
     }

@@ -6,12 +6,17 @@ import { ManifestPattern } from '@/data/manifestPatterns';
 export const useManifest = (patterns: ManifestPattern[]) => {
   const manifestCore = useManifestCore(patterns);
   
-  // Ensure visualSpeed and exposureTime are properly handled as separate controls
-  const enhancedManifestCore = {
+  // Make sure currentImage correctly handles pattern/radionic values
+  const normalizedManifestCore = {
     ...manifestCore,
+    // Normalize the currentImage value for consistency
+    currentImage: manifestCore.currentImage === 'pattern' 
+      ? 'radionic' 
+      : manifestCore.currentImage,
+    // Ensure visualSpeed and exposureTime are properly handled as separate controls
     setVisualSpeed: manifestCore.setVisualSpeed || manifestCore.setExposureTime,
     visualSpeed: manifestCore.visualSpeed || manifestCore.exposureTime,
   };
   
-  return enhancedManifestCore;
+  return normalizedManifestCore;
 };

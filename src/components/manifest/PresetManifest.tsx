@@ -27,7 +27,7 @@ interface PresetManifestProps {
   setReceptorImages: (images: string[]) => void;
   isManifestActive: boolean;
   timeRemaining: number | null;
-  currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';  // Updated to include 'radionic'
+  currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';
   selectPattern: (pattern: ManifestPattern) => void;
   startManifestation: () => void;
   stopManifestation: () => void;
@@ -138,6 +138,15 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
         selectPattern={selectPattern}
         indefiniteTime={indefiniteTime}
         setIndefiniteTime={setIndefiniteTime}
+        // Added image uploader props
+        patternImage={patternImage}
+        setPatternImage={setPatternImage}
+        receptorImage={receptorImage}
+        setReceptorImage={setReceptorImage}
+        patternImages={patternImages}
+        setPatternImages={setPatternImages}
+        receptorImages={receptorImages}
+        setReceptorImages={setReceptorImages}
       />
 
       {/* Right Panel - Interface */}

@@ -1,23 +1,14 @@
 
-// Solo modificamos la parte crítica del código
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { ManifestPattern } from '@/data/manifestPatterns';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { calculateAnimationSpeeds, getCurrentPatternImage, getCurrentReceptorImage } from '@/utils/visualizerUtils';
-import PatternLayer from './visualizer/PatternLayer';
-import ReceptorLayer from './visualizer/ReceptorLayer';
-import PulsingOverlay from './visualizer/PulsingOverlay';
-import IntentionOverlay from './visualizer/IntentionOverlay';
-import RatesDisplay from './visualizer/RatesDisplay';
-import FrequencyInfo from './visualizer/FrequencyInfo';
 
 interface ManifestVisualizerProps {
-  isActive: boolean;
   currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';
   patternImage: string | null;
-  patternImages?: string[];
+  patternImages: string[];
   receptorImage: string | null;
-  receptorImages?: string[];
+  receptorImages: string[];
+  isActive: boolean;
   selectedPattern: string;
   patterns: ManifestPattern[];
   manifestPatterns: Record<string, string>;
@@ -33,13 +24,13 @@ interface ManifestVisualizerProps {
   receptorName?: string;
 }
 
-const ManifestVisualizer = ({
-  isActive,
+const ManifestVisualizer: React.FC<ManifestVisualizerProps> = ({
   currentImage,
   patternImage,
-  patternImages = [],
+  patternImages,
   receptorImage,
-  receptorImages = [],
+  receptorImages,
+  isActive,
   selectedPattern,
   patterns,
   manifestPatterns,
@@ -53,151 +44,100 @@ const ManifestVisualizer = ({
   rate2 = "",
   rate3 = "",
   receptorName = ""
-}: ManifestVisualizerProps) => {
-  const [currentPatternIndex, setCurrentPatternIndex] = useState(0);
-  const [currentReceptorIndex, setCurrentReceptorIndex] = useState(0);
-  const { isIOS } = useIsMobile();
-
-  console.log("ManifestVisualizer RENDER:", { 
-    isActive, 
-    currentImage, 
-    hasPatternImage: !!patternImage || (patternImages && patternImages.length > 0), 
-    hasSelectedPattern: !!selectedPattern,
-    intention,
-    patternImagesCount: patternImages ? patternImages.length : 0,
-    receptorImagesCount: receptorImages ? receptorImages.length : 0,
-    selectedPattern,
-    manifestPatterns
-  });
-
-  // Rotate through multiple images when active
-  useEffect(() => {
-    if (!isActive) return;
-    
-    console.log("Configurando rotación de imágenes:", {
-      patternImagesLength: patternImages.length,
-      receptorImagesLength: receptorImages.length
-    });
-    
-    // Only setup rotation if we have multiple images
-    if ((patternImages && patternImages.length > 1) || (receptorImages && receptorImages.length > 1)) {
-      const speedValue = visualSpeed && visualSpeed.length > 0 ? visualSpeed[0] : 10;
-      const rotationInterval = Math.max(1000, 3000 - (speedValue * 100));
-      
-      console.log("Iniciando rotación de imágenes con intervalo:", rotationInterval);
-      
-      const rotationTimer = setInterval(() => {
-        if (!document.hidden) {
-          if (patternImages && patternImages.length > 1) {
-            setCurrentPatternIndex(prev => (prev + 1) % patternImages.length);
-          }
-          
-          if (receptorImages && receptorImages.length > 1) {
-            setCurrentReceptorIndex(prev => (prev + 1) % receptorImages.length);
-          }
-        }
-      }, rotationInterval);
-      
-      return () => clearInterval(rotationTimer);
-    }
-  }, [isActive, patternImages, receptorImages, visualSpeed]);
-
-  // Get the selected pattern image
-  const getSelectedPatternImage = (): string | null => {
-    if (selectedPattern) {
-      console.log("Buscando patrón seleccionado:", selectedPattern, "en", patterns);
-      const selectedPatternObj = patterns.find(p => p.id === selectedPattern);
-      if (selectedPatternObj) {
-        console.log("Patrón encontrado en el array patterns:", selectedPatternObj);
-        return selectedPatternObj.image;
-      } else if (manifestPatterns && manifestPatterns[selectedPattern]) {
-        console.log("Patrón encontrado en manifestPatterns:", manifestPatterns[selectedPattern]);
-        return manifestPatterns[selectedPattern];
-      }
+}) => {
+  // Get the current pattern image
+  const getPatternImageSrc = () => {
+    if (patternImage) {
+      return patternImage;
+    } else if (patternImages.length > 0) {
+      // Return the first image from the array
+      return patternImages[0];
+    } else if (selectedPattern && manifestPatterns[selectedPattern]) {
+      return manifestPatterns[selectedPattern];
     }
     return null;
   };
 
-  const selectedPatternImage = getSelectedPatternImage();
+  // Get the current receptor image or name
+  const getReceptorImageSrc = () => {
+    if (receptorImage) {
+      return receptorImage;
+    } else if (receptorImages.length > 0) {
+      // Return the first image from the array
+      return receptorImages[0];
+    }
+    return null;
+  };
+
+  const patternImageSrc = getPatternImageSrc();
+  const receptorImageSrc = getReceptorImageSrc();
   
-  console.log("Imágenes disponibles:", {
-    selectedPatternImage,
-    patternImages,
-    patternImage,
-    receptorImages,
-    receptorImage
-  });
-  
-  // Seleccionar la imagen correcta para mostrar
-  const currentPatternImageSrc = getCurrentPatternImage(patternImages, currentPatternIndex, patternImage, selectedPatternImage);
-  const currentReceptorImageSrc = getCurrentReceptorImage(receptorImages, currentReceptorIndex, receptorImage);
-
-  console.log("Imágenes seleccionadas para mostrar:", {
-    currentPatternImageSrc,
-    currentReceptorImageSrc
-  });
-
-  const hasPatternImage = !!currentPatternImageSrc;
-  const hasReceptorImage = !!currentReceptorImageSrc;
-  const hasContent = hasPatternImage || hasReceptorImage || (receptorName && receptorName.trim().length > 0) || intention;
-
-  // Calculate animation speeds
-  const speedValue = visualSpeed && visualSpeed.length > 0 ? visualSpeed[0] : 10;
-  const { rateAnimationDuration, pulseDuration } = calculateAnimationSpeeds(speedValue);
-
-  // Normalize currentImage value - treat 'pattern' as 'radionic' for visualization purposes
-  const normalizedCurrentImage = currentImage === 'pattern' ? 'radionic' : currentImage;
-
-  // Si no está activo, mostrar un placeholder
-  if (!isActive) {
-    return (
-      <div className="mt-6 relative overflow-hidden rounded-lg bg-card/90 dark:bg-black/40 aspect-square">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-muted-foreground">
-            El visualizador se activará al iniciar la manifestación
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Determine which image to show based on the current state
+  const showPatternImage = currentImage === 'radionic' || currentImage === 'pattern' || currentImage === 'mix';
+  const showReceptorImage = currentImage === 'receptor' || currentImage === 'mix';
 
   return (
-    <div className={`mt-6 relative overflow-hidden rounded-lg bg-black aspect-square ${isIOS ? 'ios-momentum-scroll' : ''}`}>
-      {/* Pattern Layer */}
-      <PatternLayer 
-        isVisible={normalizedCurrentImage === 'radionic' || normalizedCurrentImage === 'mix'} 
-        currentPatternImageSrc={currentPatternImageSrc}
-        pulseDuration={pulseDuration}
-      />
-      
-      {/* Receptor Layer */}
-      <ReceptorLayer 
-        isVisible={normalizedCurrentImage === 'receptor' || normalizedCurrentImage === 'mix'} 
-        currentReceptorImageSrc={currentReceptorImageSrc}
-        receptorName={receptorName}
-        hasReceptorImage={hasReceptorImage}
-        pulseDuration={pulseDuration}
-      />
-      
-      {/* Pulsing Background Effect */}
-      <PulsingOverlay />
-      
-      {/* Intention Text Overlay */}
-      <IntentionOverlay 
-        intention={intention} 
-        pulseDuration={pulseDuration} 
-      />
-      
-      {/* Rates Display */}
-      <RatesDisplay 
-        rate1={rate1} 
-        rate2={rate2} 
-        rate3={rate3} 
-        rateAnimationDuration={rateAnimationDuration} 
-      />
-      
-      {/* Frequency Info */}
-      <FrequencyInfo frequency={manifestFrequency[0]} />
+    <div className="relative min-h-[300px] bg-black/20 dark:bg-black/40 rounded-lg overflow-hidden p-4">
+      <div className="absolute inset-0 flex items-center justify-center">
+        {!isActive && !patternImageSrc && !receptorImageSrc && !receptorName && (
+          <div className="text-center p-4">
+            <p className="text-muted-foreground">
+              Configura tu manifestación seleccionando un patrón e intención
+            </p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full h-full p-4">
+          {/* Pattern Image */}
+          {showPatternImage && (
+            <div className="flex items-center justify-center h-full">
+              {patternImageSrc ? (
+                <img 
+                  src={patternImageSrc} 
+                  alt="Patrón de Manifestación" 
+                  className="max-w-full max-h-full object-contain shadow-lg rounded"
+                />
+              ) : selectedPattern ? (
+                <div className="bg-primary/10 p-6 rounded-lg text-center">
+                  <h3 className="font-semibold mb-2">Patrón Seleccionado</h3>
+                  <p>{patterns.find(p => p.id === selectedPattern)?.name || "Patrón"}</p>
+                </div>
+              ) : null}
+            </div>
+          )}
+
+          {/* Receptor Image or Name */}
+          {showReceptorImage && (
+            <div className="flex items-center justify-center h-full">
+              {receptorImageSrc ? (
+                <img 
+                  src={receptorImageSrc} 
+                  alt="Receptor de Manifestación" 
+                  className="max-w-full max-h-full object-contain shadow-lg rounded"
+                />
+              ) : receptorName ? (
+                <div className="bg-secondary/10 p-6 rounded-lg text-center">
+                  <h3 className="font-semibold mb-2">Receptor</h3>
+                  <p className="text-xl">{receptorName}</p>
+                </div>
+              ) : null}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Overlay information when active */}
+      {isActive && (
+        <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white p-3 text-sm">
+          <div className="grid grid-cols-2 gap-2 text-center">
+            <div>Frecuencia: {manifestFrequency[0]}Hz</div>
+            <div>Velocidad: {visualSpeed[0]}</div>
+            {rate1 && <div>Tasa 1: {rate1}</div>}
+            {rate2 && <div>Tasa 2: {rate2}</div>}
+            {rate3 && <div>Tasa 3: {rate3}</div>}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
