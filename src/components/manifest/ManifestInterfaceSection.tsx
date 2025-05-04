@@ -1,11 +1,11 @@
 
+import React, { memo, useCallback } from 'react';
 import ManifestVisualizer from './ManifestVisualizer';
 import ManifestActions from './ManifestActions';
 import { ManifestPattern } from '@/data/manifestPatterns';
-import { useEffect } from 'react';
 
 interface ManifestInterfaceSectionProps {
-  currentImage: 'pattern' | 'receptor' | 'mix';
+  currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';  // Includes 'pattern' and 'radionic'
   isManifestActive: boolean;
   patternImage: string | null;
   patternImages: string[];
@@ -34,7 +34,8 @@ interface ManifestInterfaceSectionProps {
   indefiniteTime?: boolean;
 }
 
-const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
+// Memoize the component to prevent unnecessary re-renders
+const ManifestInterfaceSection = memo(({
   currentImage,
   isManifestActive,
   patternImage,
@@ -62,46 +63,25 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
   rate3 = "",
   receptorName = "",
   indefiniteTime = false
-}) => {
+}: ManifestInterfaceSectionProps) => {
   // Convert manifestPatterns record to array if needed
   const patternsArray = Array.isArray(patterns) ? patterns : [];
   
-  // Log intention changes for debugging
-  useEffect(() => {
-    console.log("ManifestInterfaceSection - Intention actualizada:", {
-      intention,
-      intentionLength: intention ? intention.length : 0,
-      intentionValid: intention && intention.trim() !== "",
-      isManifestActive
-    });
-  }, [intention, isManifestActive]);
+  // Ensure we use a stable currentImage value for the visualizer
+  const stableCurrentImage = currentImage === 'radionic' ? 'pattern' : currentImage;
   
-  // Debug log for canStart value, intention and other values
-  console.log("ManifestInterfaceSection RENDER:", {
-    canStart,
-    intention,
-    intentionLength: intention ? intention.length : 0,
-    intentionValid: intention && intention.trim() !== "",
-    isManifestActive,
-    patternImages: patternImages.length,
-    patternImage,
-    selectedPattern
-  });
-  
-  // CRUCIAL: Explícitamente pasar la intención cuando se inicia la manifestación
-  const handleStartManifestation = () => {
-    console.log("ManifestInterfaceSection - Iniciando con intención:", intention);
-    if (intention && intention.trim() !== "") {
-      startManifestation(intention);
-    }
-  };
+  // CRUCIAL: Explicitly pass the intention when starting manifestation
+  const handleStartManifestation = useCallback(() => {
+    console.log("ManifestInterfaceSection - Starting with intention:", intention);
+    startManifestation(intention);
+  }, [intention, startManifestation]);
   
   return (
     <div className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-lg">
       <h3 className="text-xl font-semibold mb-4">Interfaz de Manifestación</h3>
       
       <ManifestVisualizer
-        currentImage={currentImage}
+        currentImage={stableCurrentImage}
         patternImage={patternImage}
         patternImages={patternImages}
         receptorImage={receptorImage}
@@ -135,6 +115,8 @@ const ManifestInterfaceSection: React.FC<ManifestInterfaceSectionProps> = ({
       />
     </div>
   );
-};
+});
+
+ManifestInterfaceSection.displayName = 'ManifestInterfaceSection';
 
 export default ManifestInterfaceSection;

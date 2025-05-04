@@ -6,18 +6,20 @@ import { ManifestPattern } from '@/data/manifestPatterns';
 export const useManifest = (patterns: ManifestPattern[]) => {
   const manifestCore = useManifestCore(patterns);
   
-  // Make sure currentImage correctly handles pattern/radionic values
-  const normalizedManifestCore = {
+  // Fix image alternation when starting manifestation
+  // Ensure that we're always setting a valid initial state
+  const enhancedManifestCore = {
     ...manifestCore,
     // Normalize the currentImage value for consistency
-    // Note: We preserve the original value to avoid issues with component that expect 'pattern'
-    currentImage: manifestCore.currentImage === 'radionic' ? 'pattern' : manifestCore.currentImage,
-    // Ensure visualSpeed and exposureTime are properly handled as separate controls
+    // Always use 'pattern' when in active state to avoid UI bugs
+    currentImage: manifestCore.isManifestActive ? 
+      (manifestCore.currentImage === 'radionic' ? 'pattern' : manifestCore.currentImage) : 
+      (manifestCore.currentImage === 'radionic' ? 'pattern' : manifestCore.currentImage),
+    
+    // Ensure visualSpeed and exposureTime are properly handled
     setVisualSpeed: manifestCore.setVisualSpeed || manifestCore.setExposureTime,
     visualSpeed: manifestCore.visualSpeed || manifestCore.exposureTime,
   };
   
-  console.log("useManifest: normalized currentImage =", normalizedManifestCore.currentImage);
-  
-  return normalizedManifestCore;
+  return enhancedManifestCore;
 };

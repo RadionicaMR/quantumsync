@@ -46,7 +46,7 @@ const ManifestActions = memo(({
         formatTimeRemaining={formatTimeRemaining}
         startManifestation={startManifestation}
         stopManifestation={stopManifestation}
-        canStart={canStart}
+        canStart={isIntentionValid} // Use local validation to ensure consistent button state
         intention={intention}
       />
       

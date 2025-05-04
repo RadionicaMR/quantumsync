@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 
 interface PatternLayerProps {
   isVisible: boolean;
@@ -12,14 +12,6 @@ const PatternLayer: React.FC<PatternLayerProps> = ({
   currentPatternImageSrc,
   pulseDuration
 }) => {
-  useEffect(() => {
-    console.log("PatternLayer render:", { 
-      isVisible, 
-      hasPatternImage: !!currentPatternImageSrc,
-      pulseDuration
-    });
-  }, [isVisible, currentPatternImageSrc, pulseDuration]);
-
   if (!isVisible) {
     return null;
   }
@@ -37,7 +29,7 @@ const PatternLayer: React.FC<PatternLayerProps> = ({
   
   // Calculate optimized pulse duration based on pulseDuration input
   // Lower values (faster speed) should result in quicker pulses
-  const optimizedPulseDuration = Math.max(1, 6 - (pulseDuration / 4));
+  const optimizedPulseDuration = Math.max(1, 6 - (pulseDuration / 1.5));
   
   return (
     <div className="absolute inset-0 flex items-center justify-center z-10">

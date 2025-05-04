@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 
 interface ReceptorLayerProps {
   isVisible: boolean;
@@ -16,16 +16,6 @@ const ReceptorLayer: React.FC<ReceptorLayerProps> = ({
   hasReceptorImage,
   pulseDuration
 }) => {
-  useEffect(() => {
-    console.log("ReceptorLayer render:", { 
-      isVisible, 
-      hasReceptorImage,
-      receptorName,
-      currentReceptorImageSrc,
-      pulseDuration
-    });
-  }, [isVisible, hasReceptorImage, receptorName, currentReceptorImageSrc, pulseDuration]);
-
   if (!isVisible) {
     return null;
   }
@@ -43,6 +33,10 @@ const ReceptorLayer: React.FC<ReceptorLayerProps> = ({
     );
   }
   
+  // Calculate optimized pulse duration based on pulseDuration input
+  // Lower values (faster speed) should result in quicker pulses but different from pattern
+  const optimizedPulseDuration = Math.max(1, 6 - (pulseDuration / 2));
+  
   return (
     <div className="absolute inset-0 flex items-center justify-center z-20">
       {/* Show receptor image if available */}
@@ -55,7 +49,7 @@ const ReceptorLayer: React.FC<ReceptorLayerProps> = ({
             opacity: 1,
             mixBlendMode: 'multiply',
             filter: 'contrast(1.2) brightness(1.1)',
-            animation: `pulse ${pulseDuration}s infinite alternate-reverse ease-in-out`
+            animation: `pulse ${optimizedPulseDuration}s infinite alternate-reverse ease-in-out`
           }}
         />
       )}
@@ -66,7 +60,7 @@ const ReceptorLayer: React.FC<ReceptorLayerProps> = ({
           className="absolute inset-0 flex items-center justify-center"
           style={{
             opacity: 1,
-            animation: `pulse ${pulseDuration}s infinite alternate`
+            animation: `pulse ${optimizedPulseDuration}s infinite alternate`
           }}
         >
           <div className="text-2xl font-bold text-white bg-black/50 px-6 py-4 rounded-lg">

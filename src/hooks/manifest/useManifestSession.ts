@@ -72,26 +72,25 @@ export const useManifestSession = () => {
 
     // Set a speed for image rotation based on manifestSpeed or visualSpeed
     const speed = state.visualSpeed?.[0] || state.manifestSpeed?.[0] || 10;
-    const switchInterval = 1000 / speed;
+    
+    // Use a proper interval that's not too fast
+    const switchInterval = Math.max(1000, 3000 / speed);
 
     const hypnoticTimer = setInterval(() => {
       if (!document.hidden) {
         state.setCurrentImage((prev) => {
-          switch(prev) {
-            case 'pattern':
-            case 'radionic': 
-              return 'receptor';
-            case 'receptor': 
-              return 'pattern';
-            default: 
-              return 'pattern';
+          // Only toggle between pattern and receptor, avoiding 'mix'
+          if (prev === 'pattern' || prev === 'radionic') {
+            return 'receptor';
+          } else {
+            return 'pattern';
           }
         });
       }
     }, switchInterval);
     setHypnoticTimer(hypnoticTimer);
     
-    console.log("Manifestation activated, now setting up timers");
+    console.log("Manifestation activated with interval:", switchInterval);
 
     // Only set exposure and countdown timers if not indefinite time
     if (!state.indefiniteTime) {
@@ -122,15 +121,6 @@ export const useManifestSession = () => {
       // If indefinite time, set timeRemaining to -1 to indicate indefinite
       state.setTimeRemaining(-1);
     }
-    
-    console.log("Manifestation successfully started with:", {
-      intention: currentIntention,
-      activeTab: state.activeTab,
-      patternImages: state.patternImages ? state.patternImages.length : 0,
-      selectedPattern: state.selectedPattern,
-      isActive: state.isManifestActive,
-      timeRemaining: state.timeRemaining
-    });
   };
 
   // Stop Manifestation: stop subliminal audio if playing
@@ -140,12 +130,15 @@ export const useManifestSession = () => {
     clearAllTimers();
     state.setTimeRemaining(null);
     state.setIsManifestActive(false);
+    
+    // Reset to mix view instead of alternating
+    state.setCurrentImage('mix');
+    
     stopSubliminalAudio();
     toast({
       title: "Manifestación detenida",
       description: "El proceso de manifestación ha sido detenido manualmente."
     });
-    console.log("Manifestation stopped");
   };
 
   // Cleanup on unmount

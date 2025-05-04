@@ -10,20 +10,23 @@ const IntentionOverlay: React.FC<IntentionOverlayProps> = ({
   intention,
   pulseDuration
 }) => {
-  if (!intention) {
-    return null;
-  }
+  if (!intention) return null;
   
+  // Calculate optimized pulse duration based on pulseDuration input
+  const optimizedPulseDuration = Math.max(2, 8 - pulseDuration);
+
   return (
-    <div className="absolute inset-0 flex items-center justify-center z-40">
+    <div 
+      className="absolute inset-0 flex flex-col items-center justify-center z-30 pointer-events-none"
+    >
       <div 
-        className="max-w-[80%] text-white font-bold text-xl md:text-2xl p-4 text-center bg-black/30 rounded line-clamp-3"
+        className="text-center max-w-[80%] bg-black/40 px-4 py-2 rounded-lg backdrop-blur-sm"
         style={{
-          animation: `pulse ${pulseDuration}s infinite alternate ease-in-out`,
-          textShadow: '0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(155,135,245,0.8)'
+          animation: `pulse ${optimizedPulseDuration}s infinite alternate ease-in-out`,
+          opacity: 0.8
         }}
       >
-        {intention}
+        <p className="text-white text-lg md:text-xl font-medium">{intention}</p>
       </div>
     </div>
   );
