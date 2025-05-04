@@ -55,7 +55,6 @@ const ReceptorLayer: React.FC<ReceptorLayerProps> = ({
             opacity: 1,
             mixBlendMode: 'multiply',
             filter: 'contrast(1.2) brightness(1.1)',
-            transition: `opacity ${pulseDuration/2}s ease-in-out`,
             animation: `pulse ${pulseDuration}s infinite alternate-reverse ease-in-out`
           }}
         />
@@ -67,7 +66,6 @@ const ReceptorLayer: React.FC<ReceptorLayerProps> = ({
           className="absolute inset-0 flex items-center justify-center"
           style={{
             opacity: 1,
-            transition: `opacity ${pulseDuration/2}s ease-in-out`,
             animation: `pulse ${pulseDuration}s infinite alternate`
           }}
         >

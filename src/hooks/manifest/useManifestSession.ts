@@ -71,8 +71,9 @@ export const useManifestSession = () => {
       playSubliminalAudio();
     }
 
-    // Establecer una velocidad para la rotación de imágenes basada en manifestSpeed
-    const switchInterval = 1000 / (state.manifestSpeed?.[0] || 10);
+    // Establecer una velocidad para la rotación de imágenes basada en manifestSpeed o visualSpeed
+    const speed = state.visualSpeed?.[0] || state.manifestSpeed?.[0] || 10;
+    const switchInterval = 1000 / speed;
 
     const hypnoticTimer = setInterval(() => {
       if (!document.hidden) {

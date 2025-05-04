@@ -85,7 +85,7 @@ export const useManifestAudio = (): ManifestAudio & {
       oscillator.frequency.value = frequency;
       
       // Set volume
-      gainNode.gain.value = 0.2; // low volume
+      gainNode.gain.value = 0.3; // Incrementamos levemente el volumen
       
       oscillator.connect(gainNode);
       gainNode.connect(audioContextRef.current.destination);
@@ -106,7 +106,7 @@ export const useManifestAudio = (): ManifestAudio & {
         // Create harmonic at 2x the frequency with lower volume
         harmonicOscillator.type = 'sine';
         harmonicOscillator.frequency.value = frequency * 2;
-        harmonicGainNode.gain.value = 0.15; // slightly lower volume for harmonic
+        harmonicGainNode.gain.value = 0.2; // Incrementamos levemente el volumen armónico
         
         harmonicOscillator.connect(harmonicGainNode);
         harmonicGainNode.connect(audioContextRef.current.destination);

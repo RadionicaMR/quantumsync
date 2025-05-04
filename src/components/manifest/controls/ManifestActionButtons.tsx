@@ -63,7 +63,7 @@ const ManifestActionButtons = ({
           >
             <div className="flex items-center justify-center">
               <StopCircle className="mr-2 h-4 w-4" />
-              <span>Detener Manifestación</span>
+              <span>DETENER MANIFESTACIÓN</span>
             </div>
           </QuantumButton>
         </>
