@@ -38,7 +38,7 @@ interface TreatmentRightPanelProps {
   isPlaying: boolean;
   timeRemaining: number;
   formatTime: (minutes: number) => string;
-  currentImage: 'radionic' | 'receptor' | 'mix';
+  currentImage: 'radionic' | 'receptor' | 'mix' | 'pattern';  // Updated to include 'pattern'
   hypnoticEffect: boolean;
   startTreatment: () => void;
   stopTreatment: () => void;
@@ -105,6 +105,9 @@ const TreatmentRightPanel = ({
   clearAudio = () => {},
   backgroundModeActive = false,
 }: TreatmentRightPanelProps) => {
+  // Normalize currentImage to be compatible with TreatmentVisualizer
+  const normalizedCurrentImage = currentImage === 'pattern' ? 'radionic' : currentImage;
+
   return (
     <div className="space-y-6">
       {/* First Card: Image Uploads */}
@@ -190,7 +193,7 @@ const TreatmentRightPanel = ({
           radionicImages={radionicImages}
           receptorImage={receptorImage}
           receptorImages={receptorImages}
-          currentImage={currentImage}
+          currentImage={normalizedCurrentImage}
           hypnoticEffect={hypnoticEffect}
           visualFeedback={visualFeedback}
           frequency={frequency}
