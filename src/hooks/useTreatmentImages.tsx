@@ -19,6 +19,12 @@ export const useTreatmentImages = () => {
 
   // Función mejorada para el efecto hipnótico - optimizada para Safari
   const startHypnoticEffect = () => {
+    // Only start the effect if it's not already running
+    if (hypnoticEffect) {
+      console.log("Hypnotic effect already running, stopping before restart");
+      stopHypnoticEffect();
+    }
+    
     // Consideramos ya sea imágenes cargadas o un nombre de receptor
     const hasRadionicImagesOrName = radionicImages.length > 0 || radionicImage;
     const hasReceptorImagesOrName = receptorImages.length > 0 || receptorImage || receptorName.trim().length > 0;

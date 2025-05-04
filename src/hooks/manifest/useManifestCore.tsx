@@ -102,8 +102,8 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
     // Clear any existing interval/animation frame
     stopImageAlternation();
     
-    // Set initial image - now renamed to 'radionic' to match treatment nomenclature
-    setCurrentImage('radionic');
+    // Set initial image - using 'pattern' for consistency with component expectations
+    setCurrentImage('pattern');
     
     // Calculate interval based on speed setting (faster = shorter interval)
     const speed = (visualSpeed && visualSpeed.length > 0) ? visualSpeed[0] : 10;
@@ -120,8 +120,8 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
         
         if (elapsed > switchInterval) {
           setCurrentImage(prev => {
-            // Toggle between 'radionic' (or legacy 'pattern') and 'receptor' states
-            return prev === 'radionic' || prev === 'pattern' ? 'receptor' : 'radionic';
+            // Toggle between 'pattern' and 'receptor' states
+            return prev === 'pattern' ? 'receptor' : 'pattern';
           });
           lastTimeRef.current = currentTime;
         }
@@ -135,8 +135,8 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
       // Standard interval for other browsers
       manifestIntervalRef.current = setInterval(() => {
         setCurrentImage(prev => {
-          // Toggle between 'radionic' (or legacy 'pattern') and 'receptor' states
-          return prev === 'radionic' || prev === 'pattern' ? 'receptor' : 'radionic';
+          // Toggle between 'pattern' and 'receptor' states
+          return prev === 'pattern' ? 'receptor' : 'pattern';
         });
       }, switchInterval);
     }
@@ -233,6 +233,9 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
         stopManifestation();
         clearInterval(countdownInterval);
       }, timeInMs);
+    } else {
+      // If indefinite time, set timeRemaining to -1 to indicate indefinite
+      setTimeRemaining(-1);
     }
     
     // Show toast notification

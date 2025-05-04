@@ -79,10 +79,13 @@ export const useManifestSession = () => {
       if (!document.hidden) {
         state.setCurrentImage((prev) => {
           switch(prev) {
-            case 'pattern': return 'receptor';
-            case 'receptor': return 'mix';
-            case 'mix': return 'pattern';
-            default: return 'pattern';
+            case 'pattern':
+            case 'radionic': 
+              return 'receptor';
+            case 'receptor': 
+              return 'pattern';
+            default: 
+              return 'pattern';
           }
         });
       }
@@ -100,7 +103,7 @@ export const useManifestSession = () => {
         if (!document.hidden) {
           state.setTimeRemaining((prev) => {
             if (prev !== null && prev > 0) {
-              return prev - 1/60;
+              return prev - 1;
             }
             return prev;
           });

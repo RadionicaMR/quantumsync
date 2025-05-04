@@ -1,6 +1,8 @@
 
 import React, { useEffect } from 'react';
 import { ManifestPattern } from '@/data/manifestPatterns';
+import PulsingOverlay from './visualizer/PulsingOverlay';
+import IntentionOverlay from './visualizer/IntentionOverlay';
 
 interface ManifestVisualizerProps {
   currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';
@@ -88,10 +90,9 @@ const ManifestVisualizer: React.FC<ManifestVisualizerProps> = ({
   const receptorImageSrc = getReceptorImageSrc();
   
   // Determine which image to show based on the current state
-  // Normalize currentImage value - treat 'pattern' and 'radionic' the same way
-  const adjustedCurrentImage = currentImage === 'pattern' ? 'radionic' : currentImage;
-  const showPatternImage = adjustedCurrentImage === 'radionic' || adjustedCurrentImage === 'mix';
-  const showReceptorImage = adjustedCurrentImage === 'receptor' || adjustedCurrentImage === 'mix';
+  // Treat 'pattern' and 'radionic' the same for consistency
+  const showPatternImage = currentImage === 'pattern' || currentImage === 'radionic' || currentImage === 'mix';
+  const showReceptorImage = currentImage === 'receptor' || currentImage === 'mix';
 
   // Calculate animation speed based on visualSpeed - invert so higher values = faster animation
   const animationDuration = Math.max(0.5, 5 - (visualSpeed[0] / 4));
@@ -171,14 +172,11 @@ const ManifestVisualizer: React.FC<ManifestVisualizerProps> = ({
       )}
       
       {/* Pulse overlay when active */}
-      {isActive && (
-        <div className="absolute inset-0 pointer-events-none z-30">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-12 h-12 bg-primary/20 rounded-full animate-ping"></div>
-            <div className="w-24 h-24 bg-primary/15 rounded-full animate-ping" style={{ animationDelay: '0.2s' }}></div>
-            <div className="w-36 h-36 bg-primary/10 rounded-full animate-ping" style={{ animationDelay: '0.4s' }}></div>
-          </div>
-        </div>
+      {isActive && <PulsingOverlay />}
+      
+      {/* Intention overlay when active */}
+      {isActive && intention && (
+        <IntentionOverlay intention={intention} pulseDuration={animationDuration} />
       )}
     </div>
   );

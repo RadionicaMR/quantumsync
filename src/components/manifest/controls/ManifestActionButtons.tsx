@@ -26,6 +26,7 @@ const ManifestActionButtons = memo(({
   // Usar useCallback para memorizar la función y evitar renderizados innecesarios
   const handleStartClick = useCallback(() => {
     if (intention && intention.trim() !== "") {
+      console.log("ManifestActionButtons - Starting manifestation with intention:", intention);
       startManifestation();
     } else {
       toast({
@@ -38,6 +39,15 @@ const ManifestActionButtons = memo(({
 
   // Simplify validation to just check for intention
   const isButtonEnabled = Boolean(intention && intention.trim() !== "");
+  
+  console.log("ManifestActionButtons render:", {
+    isManifestActive,
+    timeRemaining,
+    isButtonEnabled,
+    intention,
+    hasIntention: Boolean(intention),
+    intentionTrimmed: intention?.trim() !== ""
+  });
 
   return (
     <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-background/50">

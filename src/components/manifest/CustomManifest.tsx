@@ -4,6 +4,7 @@ import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
 import TreatmentVisualizer from '@/components/treatment/TreatmentVisualizer';
 import { ManifestPattern } from '@/data/manifestPatterns';
 import { toast } from '@/components/ui/use-toast';
+import { Card } from '@/components/ui/card';
 
 interface CustomManifestProps {
   intention: string;
@@ -55,7 +56,7 @@ interface CustomManifestProps {
 }
 
 // Memoize the component to prevent unnecessary re-renders
-const CustomManifest: React.FC<CustomManifestProps> = memo(({
+const CustomManifest = memo(({
   intention,
   setIntention,
   patternImage,
@@ -102,7 +103,7 @@ const CustomManifest: React.FC<CustomManifestProps> = memo(({
   patterns = [],
   indefiniteTime = false,
   setIndefiniteTime = () => {}
-}) => {
+}: CustomManifestProps) => {
   // Envoltura memoizada para startManifestation con validación previa
   const handleStartManifestation = useCallback(() => {
     console.log("CustomManifest - Verificación pre-start:", {
@@ -130,6 +131,9 @@ const CustomManifest: React.FC<CustomManifestProps> = memo(({
   // Calculated values - solo validamos la intención
   const isIntentionValid = Boolean(intention && intention.trim() !== "");
   const canStart = isIntentionValid;
+
+  // Adjust the current image for Treatment Visualizer compatibility
+  const normalizedCurrentImage = currentImage === 'radionic' ? 'pattern' : currentImage;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -183,7 +187,7 @@ const CustomManifest: React.FC<CustomManifestProps> = memo(({
       
       {/* Panel derecho: Visualizador de tratamiento adaptado para manifestación */}
       <div className="lg:col-span-2">
-        <div className="bg-card/80 dark:bg-black/40 rounded-lg p-6 mb-4">
+        <Card className="bg-card/80 dark:bg-black/40 rounded-lg p-6 mb-4">
           <h3 className="text-xl font-semibold mb-2 text-center">Visualizador de Manifestación Cuántica</h3>
           <p className="text-muted-foreground text-center mb-4">
             {isManifestActive 
@@ -198,8 +202,8 @@ const CustomManifest: React.FC<CustomManifestProps> = memo(({
             receptorImage={receptorImage}
             radionicImages={patternImages}
             receptorImages={receptorImages}
-            currentImage={currentImage}
-            hypnoticEffect={true}
+            currentImage={normalizedCurrentImage}
+            hypnoticEffect={isManifestActive}
             frequency={manifestFrequency}
             intensity={visualSpeed}
             rate1={rate1}
@@ -208,7 +212,7 @@ const CustomManifest: React.FC<CustomManifestProps> = memo(({
             hypnoticSpeed={visualSpeed}
             receptorName={receptorName}
           />
-        </div>
+        </Card>
       </div>
     </div>
   );
