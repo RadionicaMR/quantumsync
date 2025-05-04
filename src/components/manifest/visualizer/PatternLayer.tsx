@@ -41,7 +41,7 @@ const PatternLayer: React.FC<PatternLayerProps> = ({
           opacity: 1,
           mixBlendMode: 'screen',
           filter: 'contrast(1.2) brightness(1.1)',
-          animation: `pulse ${optimizedPulseDuration}s infinite alternate ease-in-out`
+          animation: isVisible ? `pulse ${optimizedPulseDuration}s infinite alternate ease-in-out` : 'none'
         }}
       />
     </div>

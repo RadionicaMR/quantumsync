@@ -76,6 +76,7 @@ export const useManifestSession = () => {
     // Use a proper interval that's not too fast
     const switchInterval = Math.max(1000, 3000 / speed);
 
+    // Important: We only toggle the currentImage state property, NOT the whole component
     const hypnoticTimer = setInterval(() => {
       if (!document.hidden) {
         state.setCurrentImage((prev) => {
@@ -121,6 +122,15 @@ export const useManifestSession = () => {
       // If indefinite time, set timeRemaining to -1 to indicate indefinite
       state.setTimeRemaining(-1);
     }
+    
+    // Set currentImage to pattern to start the alternation
+    state.setCurrentImage('pattern');
+    
+    // Show completed toast notification
+    toast({
+      title: "Manifestación iniciada",
+      description: "El proceso ha comenzado correctamente."
+    });
   };
 
   // Stop Manifestation: stop subliminal audio if playing
@@ -137,7 +147,7 @@ export const useManifestSession = () => {
     stopSubliminalAudio();
     toast({
       title: "Manifestación detenida",
-      description: "El proceso de manifestación ha sido detenido manualmente."
+      description: "El proceso de manifestación ha sido detenido."
     });
   };
 
