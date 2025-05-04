@@ -32,22 +32,15 @@ export const useTreatment = () => {
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [audioVolume, setAudioVolume] = useState(10);
   const [audioLoop, setAudioLoop] = useState(true);
-  // Subliminal audio element reference para mejor control
+  // Subliminal audio element reference
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
   const [audioSubliminalPlaying, setAudioSubliminalPlaying] = useState(false);
   const [backgroundModeActive, setBackgroundModeActive] = useState(false);
   const audioSourceRef = useRef<string | null>(null);
 
-  // Debugging useEffect to track time remaining changes
-  useEffect(() => {
-    if (audio.isPlaying) {
-      console.log(`useTreatment Hook - tiempo restante actualizado: ${audio.timeRemaining.toFixed(2)} minutos, reproduciendose: ${audio.isPlaying}`);
-    }
-  }, [audio.timeRemaining, audio.isPlaying]);
-
   // Select a preset
   const selectPreset = (preset: TreatmentPreset) => {
-    console.log("Seleccionando preset:", preset.id, "con frecuencia:", preset.frequency, "Hz y duración:", preset.duration, "minutos");
+    console.log("Selecting preset:", preset.id, "with frequency:", preset.frequency, "Hz and duration:", preset.duration, "minutes");
     
     // Reset treatment state when changing presets
     if (audio.isPlaying) {
@@ -61,31 +54,31 @@ export const useTreatment = () => {
     audio.setDuration([preset.duration]);
   };
 
-  // Manejar cambios de visibilidad del documento para audio subliminal
+  // Handle document visibility changes for subliminal audio
   const handleVisibilityChange = () => {
     if (document.hidden && audioSubliminalPlaying) {
-      console.log("App pasó a segundo plano con audio subliminal en reproducción (tratamiento)");
+      console.log("App went to background with subliminal audio playing (treatment)");
       setBackgroundModeActive(true);
       
-      // Guardar la posición actual del audio
+      // Save current audio position
       if (audioElementRef.current) {
         const currentTime = audioElementRef.current.currentTime;
         audioElementRef.current.pause();
         audioElementRef.current.currentTime = currentTime;
       }
     } else if (!document.hidden && backgroundModeActive && audioSourceRef.current) {
-      console.log("App volvió al primer plano, restaurando audio subliminal (tratamiento)");
+      console.log("App returned to foreground, restoring subliminal audio (treatment)");
       
-      // Si estaba reproduciendo, restaurar la reproducción
+      // If it was playing, restore playback
       if (audioSubliminalPlaying && audioElementRef.current) {
         audioElementRef.current.play()
           .then(() => {
-            console.log("Audio subliminal reanudado con éxito (tratamiento)");
+            console.log("Subliminal audio successfully resumed (treatment)");
             setBackgroundModeActive(false);
           })
           .catch((err) => {
-            console.error("Error al reanudar audio subliminal (tratamiento):", err);
-            // Intentar crear un nuevo elemento de audio
+            console.error("Error resuming subliminal audio (treatment):", err);
+            // Try to recreate audio element
             if (audioFile) {
               recreateAudioElement();
             }
@@ -105,30 +98,30 @@ export const useTreatment = () => {
       newAudio.loop = audioLoop;
       newAudio.volume = audioVolume / 20;
       
-      // Asignar la nueva referencia
+      // Assign new reference
       audioElementRef.current = newAudio;
       
-      // Intentar reproducir
+      // Try to play
       newAudio.play()
         .then(() => {
-          console.log("Audio subliminal recreado y reproduciendo (tratamiento)");
+          console.log("Subliminal audio recreated and playing (treatment)");
           setAudioSubliminalPlaying(true);
           setBackgroundModeActive(false);
         })
         .catch((err) => {
-          console.error("Error al reproducir audio subliminal recreado (tratamiento):", err);
+          console.error("Error playing recreated subliminal audio (treatment):", err);
           setAudioSubliminalPlaying(false);
         });
     } catch (error) {
-      console.error("Error al recrear el elemento de audio (tratamiento):", error);
+      console.error("Error recreating audio element (treatment):", error);
     }
   };
 
-  // Función para manejar play del audio subliminal
+  // Function to play subliminal audio
   const playSubliminalAudio = () => {
     if (audioFile && !audioSubliminalPlaying) {
       try {
-        // Si ya existe un elemento de audio previo, detenlo primero
+        // If there's a previous audio element, stop it first
         if (audioElementRef.current) {
           audioElementRef.current.pause();
         }
@@ -140,41 +133,39 @@ export const useTreatment = () => {
         newAudio.loop = audioLoop;
         newAudio.volume = audioVolume / 20;
         
-        // Asignar primero la referencia para tener acceso inmediato
+        // Assign reference first for immediate access
         audioElementRef.current = newAudio;
         
-        // Intentar reproducir el audio
+        // Try to play the audio
         newAudio.play()
           .then(() => {
             setAudioSubliminalPlaying(true);
-            console.log("Audio subliminal reproduciendo correctamente");
+            console.log("Subliminal audio playing correctly");
           })
           .catch((err) => {
-            console.error("Error reproduciendo audio subliminal:", err);
+            console.error("Error playing subliminal audio:", err);
             setAudioSubliminalPlaying(false);
-            // No eliminamos la referencia en caso de error
           });
       } catch (error) {
-        console.error("Error al crear el objeto de audio:", error);
+        console.error("Error creating audio object:", error);
         setAudioSubliminalPlaying(false);
       }
     } else {
-      console.log("No hay archivo de audio para reproducir o ya está reproduciendo");
+      console.log("No audio file to play or already playing");
     }
   };
 
-  // Función para parar el audio subliminal
+  // Function to stop subliminal audio
   const stopSubliminalAudio = () => {
     if (audioElementRef.current) {
       audioElementRef.current.pause();
       setAudioSubliminalPlaying(false);
       setBackgroundModeActive(false);
-      console.log("Audio subliminal detenido");
-      // No eliminamos la referencia al elemento para poder reanudar la reproducción
+      console.log("Subliminal audio stopped");
     }
   };
 
-  // Función para eliminar el audio
+  // Function to remove audio
   const clearAudio = () => {
     stopSubliminalAudio();
     setAudioFile(null);
@@ -188,26 +179,26 @@ export const useTreatment = () => {
     });
   };
 
-  // Start the treatment - Con inicialización explícita del audio
+  // Start the treatment - With explicit audio initialization
   const startTreatment = () => {
     if (audio.isPlaying) {
       console.log("Treatment already playing, not starting again");
       return;
     }
 
-    // Logging para depuración
-    console.log("Iniciando tratamiento con frecuencia:", audio.frequency[0], "Hz");
-    console.log("Duración configurada:", audio.duration[0], "minutos");
+    // Debug logging
+    console.log("Starting treatment with frequency:", audio.frequency[0], "Hz");
+    console.log("Configured duration:", audio.duration[0], "minutes");
     
-    // Primero establecemos el efecto hipnótico (cambio visual)
+    // First set the hypnotic effect (visual change)
     setHypnoticEffect(true);
     
-    // Asegúrate de que el audio se inicia correctamente
+    // Make sure the audio starts correctly
     audio.startAudio();
-
-    // Solo después de iniciar el audio, iniciamos el subliminal si existe
+    
+    // Only after starting the audio, we start the subliminal if it exists
     if (audioFile) {
-      console.log("Iniciando audio subliminal asociado al tratamiento");
+      console.log("Starting subliminal audio associated with treatment");
       playSubliminalAudio();
     }
 
@@ -218,20 +209,20 @@ export const useTreatment = () => {
       description: `Aplicando frecuencia de ${audio.frequency[0]}Hz${target}`,
     });
     
-    console.log("Tratamiento completamente iniciado");
+    console.log("Treatment fully started");
   };
 
   // Stop the treatment
   const stopTreatment = () => {
-    console.log("Deteniendo tratamiento");
+    console.log("Stopping treatment");
     
-    // Detener audio principal
+    // Stop main audio
     audio.stopAudio();
     
-    // Detener efectos visuales 
+    // Stop visual effects
     setHypnoticEffect(false);
     
-    // Detener audio subliminal si está reproduciendo
+    // Stop subliminal audio if playing
     stopSubliminalAudio();
 
     toast({
@@ -239,24 +230,24 @@ export const useTreatment = () => {
       description: "El tratamiento de frecuencia ha sido detenido.",
     });
     
-    console.log("Tratamiento completamente detenido");
+    console.log("Treatment completely stopped");
   };
 
-  // Update loop property en caliente
+  // Update loop property on the fly
   useEffect(() => {
     if (audioElementRef.current) {
       audioElementRef.current.loop = audioLoop;
     }
   }, [audioLoop]);
 
-  // Actualizar el volumen del audio subliminal cuando cambie el volumen
+  // Update subliminal audio volume when volume changes
   useEffect(() => {
     if (audioElementRef.current) {
       audioElementRef.current.volume = audioVolume / 20;
     }
   }, [audioVolume]);
 
-  // Agregar listener para visibilitychange
+  // Add listener for visibilitychange
   useEffect(() => {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     

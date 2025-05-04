@@ -25,26 +25,19 @@ const TreatmentActions = ({
   // Treatment can start if at least the receptor name is filled
   const canStartTreatment = !!receptorName?.trim();
   
-  // Estado local para mostrar el tiempo restante
+  // Local state for displaying the remaining time
   const [displayTimeString, setDisplayTimeString] = useState<string>("");
   
-  // Actualizar el tiempo mostrado cada vez que cambie timeRemaining o isPlaying
+  // Update the displayed time whenever timeRemaining or isPlaying changes
   useEffect(() => {
     if (isPlaying) {
       const formattedTime = formatTime(Math.max(0, timeRemaining));
       setDisplayTimeString(formattedTime);
-      console.log(`Actualizando tiempo mostrado: ${formattedTime} (${timeRemaining} min)`);
+      console.log(`Updated displayed time: ${formattedTime} (${timeRemaining.toFixed(2)} min) - Playing: ${isPlaying}`);
     } else {
       setDisplayTimeString("");
     }
   }, [timeRemaining, isPlaying, formatTime]);
-  
-  // Debug para verificar actualizaciones de tiempo
-  useEffect(() => {
-    if (isPlaying) {
-      console.log('Tiempo restante actualizado:', timeRemaining, 'minutos -', displayTimeString);
-    }
-  }, [timeRemaining, displayTimeString, isPlaying]);
   
   return (
     <div className="flex items-center justify-between">
