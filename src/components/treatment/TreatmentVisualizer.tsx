@@ -8,7 +8,7 @@ interface TreatmentVisualizerProps {
   receptorImage: string | null;
   radionicImages: string[];
   receptorImages: string[];
-  currentImage: 'radionic' | 'receptor' | 'mix';
+  currentImage: 'radionic' | 'receptor' | 'mix' | 'pattern';
   hypnoticEffect: boolean;
   frequency: number[];
   intensity: number[];
@@ -60,13 +60,16 @@ const TreatmentVisualizer = ({
   // Pulse animation duration based on hypnotic speed
   const pulseDuration = Math.max(0.5, 5 - (hypnoticSpeed[0] / 4));
 
+  // Map 'pattern' to 'radionic' for compatibility
+  const adjustedCurrentImage = currentImage === 'pattern' ? 'radionic' : currentImage;
+
   return (
     <div className={`relative aspect-square w-full bg-black rounded-lg overflow-hidden ${isIOS ? 'ios-momentum-scroll' : ''}`}>
       {/* Show blended images */}
       {hasImages && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
           {/* Radionic Images - Only show when current is radionic or mix */}
-          {(currentImage === 'radionic' || currentImage === 'mix') && hasRadionicImages && (
+          {(adjustedCurrentImage === 'radionic' || adjustedCurrentImage === 'mix') && hasRadionicImages && (
             <div className="absolute inset-0 flex items-center justify-center z-10">
               {radionicImagesArray.map((img, index) => (
                 <img 
@@ -87,7 +90,7 @@ const TreatmentVisualizer = ({
           )}
           
           {/* Receptor Images - Only show when current is receptor or mix */}
-          {(currentImage === 'receptor' || currentImage === 'mix') && (
+          {(adjustedCurrentImage === 'receptor' || adjustedCurrentImage === 'mix') && (
             <div className="absolute inset-0 flex items-center justify-center z-20">
               {/* Show receptor images if available */}
               {hasReceptorImages && receptorImagesArray.map((img, index) => (

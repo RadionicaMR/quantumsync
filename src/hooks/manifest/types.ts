@@ -13,7 +13,7 @@ export interface ManifestState {
   activeTab: string;
   manifestSound: boolean;
   manifestFrequency: number[];
-  currentImage: 'pattern' | 'receptor' | 'mix';
+  currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';
   exposureTime: number[];
   timeRemaining: number | null;
   receptorName: string;

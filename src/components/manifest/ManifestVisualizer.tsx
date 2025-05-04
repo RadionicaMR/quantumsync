@@ -12,7 +12,7 @@ import FrequencyInfo from './visualizer/FrequencyInfo';
 
 interface ManifestVisualizerProps {
   isActive: boolean;
-  currentImage: 'pattern' | 'receptor' | 'mix';
+  currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';
   patternImage: string | null;
   patternImages?: string[];
   receptorImage: string | null;
@@ -144,6 +144,9 @@ const ManifestVisualizer = ({
   const speedValue = visualSpeed && visualSpeed.length > 0 ? visualSpeed[0] : 10;
   const { rateAnimationDuration, pulseDuration } = calculateAnimationSpeeds(speedValue);
 
+  // Normalize currentImage value - treat 'pattern' as 'radionic'
+  const normalizedCurrentImage = currentImage === 'pattern' ? 'radionic' : currentImage;
+
   // Si no está activo, mostrar un placeholder
   if (!isActive) {
     return (
@@ -161,14 +164,14 @@ const ManifestVisualizer = ({
     <div className={`mt-6 relative overflow-hidden rounded-lg bg-black aspect-square ${isIOS ? 'ios-momentum-scroll' : ''}`}>
       {/* Pattern Layer */}
       <PatternLayer 
-        isVisible={currentImage === 'pattern' || currentImage === 'mix'} 
+        isVisible={normalizedCurrentImage === 'radionic' || normalizedCurrentImage === 'mix'} 
         currentPatternImageSrc={currentPatternImageSrc}
         pulseDuration={pulseDuration}
       />
       
       {/* Receptor Layer */}
       <ReceptorLayer 
-        isVisible={currentImage === 'receptor' || currentImage === 'mix'} 
+        isVisible={normalizedCurrentImage === 'receptor' || normalizedCurrentImage === 'mix'} 
         currentReceptorImageSrc={currentReceptorImageSrc}
         receptorName={receptorName}
         hasReceptorImage={hasReceptorImage}

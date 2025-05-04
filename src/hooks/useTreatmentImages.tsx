@@ -10,7 +10,7 @@ export const useTreatmentImages = () => {
   const [receptorImages, setReceptorImages] = useState<string[]>([]);
   const [hypnoticEffect, setHypnoticEffect] = useState(false);
   const [hypnoticSpeed, setHypnoticSpeed] = useState([10]); // Velocidad de oscilación (1-20)
-  const [currentImage, setCurrentImage] = useState<'radionic' | 'receptor' | 'mix'>('mix');
+  const [currentImage, setCurrentImage] = useState<'radionic' | 'receptor' | 'mix' | 'pattern'>('mix');
   const [receptorName, setReceptorName] = useState<string>('');
   
   const hypnoticTimerRef = useRef<number | NodeJS.Timeout | null>(null);
@@ -47,7 +47,7 @@ export const useTreatmentImages = () => {
           
           if (elapsed > switchInterval) {
             setCurrentImage(prev => {
-              if (prev === 'radionic') return 'receptor';
+              if (prev === 'radionic' || prev === 'pattern') return 'receptor';
               if (prev === 'receptor') return 'radionic';
               return 'radionic';
             });
@@ -62,7 +62,7 @@ export const useTreatmentImages = () => {
         // Standard interval for non-iOS devices
         hypnoticTimerRef.current = setInterval(() => {
           setCurrentImage(prev => {
-            if (prev === 'radionic') return 'receptor';
+            if (prev === 'radionic' || prev === 'pattern') return 'receptor';
             if (prev === 'receptor') return 'radionic';
             return 'radionic';
           });

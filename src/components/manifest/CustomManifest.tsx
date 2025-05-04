@@ -35,7 +35,7 @@ interface CustomManifestProps {
   startManifestation: (intention?: string) => void;
   stopManifestation: () => void;
   formatTimeRemaining: (time: number) => string;
-  currentImage: 'pattern' | 'receptor' | 'mix';
+  currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';
   receptorName: string;
   setReceptorName: (name: string) => void;
   audioFile: File | null;

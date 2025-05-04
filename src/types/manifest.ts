@@ -23,7 +23,7 @@ export interface ManifestCoreProps {
   setReceptorImages: (images: string[]) => void;
   isManifestActive: boolean;
   timeRemaining: number | null;
-  currentImage: 'pattern' | 'receptor' | 'mix';
+  currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';
   selectPattern: (pattern: ManifestPattern) => void;
   startManifestation: (intention?: string) => void;
   stopManifestation: () => void;

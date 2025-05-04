@@ -18,7 +18,7 @@ interface TreatmentVisualizerSectionProps {
   setReceptorImage: (image: string | null) => void;
   receptorImages: string[];
   setReceptorImages: (images: string[]) => void;
-  currentImage: 'radionic' | 'receptor' | 'mix';
+  currentImage: 'radionic' | 'receptor' | 'mix' | 'pattern';
   hypnoticEffect: boolean;
   visualFeedback: boolean;
   setVisualFeedback: (value: boolean) => void;
