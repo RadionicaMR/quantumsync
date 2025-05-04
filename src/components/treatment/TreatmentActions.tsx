@@ -1,7 +1,7 @@
 
 import QuantumButton from '@/components/QuantumButton';
 import { Smartphone } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 interface TreatmentActionsProps {
   isPlaying: boolean;
@@ -27,6 +27,7 @@ const TreatmentActions = ({
   
   // Local state for displaying the remaining time
   const [displayTimeString, setDisplayTimeString] = useState<string>("");
+  const startClickedRef = useRef(false);
   
   // Update the displayed time whenever timeRemaining or isPlaying changes
   useEffect(() => {
@@ -34,15 +35,22 @@ const TreatmentActions = ({
       const formattedTime = formatTime(Math.max(0, timeRemaining));
       setDisplayTimeString(formattedTime);
       console.log(`Updated displayed time: ${formattedTime} (${timeRemaining.toFixed(2)} min) - Playing: ${isPlaying}`);
-    } else if (displayTimeString !== "") {
+    } else if (timeRemaining === 0) {
       setDisplayTimeString("");
     }
-  }, [timeRemaining, isPlaying, formatTime, displayTimeString]);
+  }, [timeRemaining, isPlaying, formatTime]);
   
   const handleStartTreatment = () => {
     console.log("Start treatment button clicked");
-    if (canStartTreatment && !isPlaying) {
+    if (canStartTreatment && !isPlaying && !startClickedRef.current) {
+      // Set flag to prevent double clicks
+      startClickedRef.current = true;
       startTreatment();
+      
+      // Reset flag after a short delay
+      setTimeout(() => {
+        startClickedRef.current = false;
+      }, 1000);
     }
   };
   
@@ -88,7 +96,7 @@ const TreatmentActions = ({
           <QuantumButton 
             className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
             onClick={handleStartTreatment}
-            disabled={!canStartTreatment}
+            disabled={!canStartTreatment || startClickedRef.current}
           >
             <div className="flex flex-col items-center">
               <span>INICIAR</span>

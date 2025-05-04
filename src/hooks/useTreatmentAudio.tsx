@@ -17,6 +17,7 @@ export const useTreatmentAudio = () => {
   const startTimeRef = useRef<number | null>(null);
   const pausedTimeRemainingRef = useRef<number | null>(null);
   const isStoppingRef = useRef<boolean>(false);
+  const isStartingRef = useRef<boolean>(false);
 
   // Format time function
   const formatTime = (minutes: number) => {
@@ -166,15 +167,14 @@ export const useTreatmentAudio = () => {
   };
 
   const startAudio = () => {
-    console.log("startAudio called, isPlaying:", isPlaying, "isStoppingRef:", isStoppingRef.current);
-    
-    if (isPlaying || isStoppingRef.current) {
-      console.log("Audio already playing or stopping, not starting again");
+    // Prevent multiple concurrent starts
+    if (isPlaying || isStoppingRef.current || isStartingRef.current) {
+      console.log("Audio already playing or stopping or starting, not starting again");
       return;
     }
     
-    // Reset stopping flag
-    isStoppingRef.current = false;
+    // Set starting flag
+    isStartingRef.current = true;
     
     console.log(`Starting audio with frequency: ${frequency[0]} Hz, duration: ${duration[0]} minutes`);
     
@@ -182,75 +182,98 @@ export const useTreatmentAudio = () => {
       // Stop any existing audio
       cleanupAudioResources();
       
-      // Initialize audio context
+      // Create and use a new AudioContext each time
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
       if (!AudioContext) {
         console.error("AudioContext not supported");
+        isStartingRef.current = false;
         return;
       }
       
       audioContextRef.current = new AudioContext();
       console.log("AudioContext created, state:", audioContextRef.current.state);
       
-      // Resume the audio context (needed for browsers with autoplay policies)
-      audioContextRef.current.resume().then(() => {
-        console.log("AudioContext resumed successfully, state:", audioContextRef.current?.state);
-        
-        // Create oscillator
-        const oscillator = audioContextRef.current!.createOscillator();
-        const gainNode = audioContextRef.current!.createGain();
-        
-        oscillator.type = 'sine';
-        oscillator.frequency.value = frequency[0];
-        
-        // Set volume based on intensity
-        const volume = intensity[0] / 100 * 0.3;
-        gainNode.gain.value = volume;
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContextRef.current!.destination);
-        
-        oscillator.start();
-        oscillatorRef.current = oscillator;
-        console.log("Main oscillator started at frequency:", frequency[0]);
-        
-        // Add harmonic for low frequencies
-        if (frequency[0] < 100) {
-          const harmonicOscillator = audioContextRef.current!.createOscillator();
-          const harmonicGainNode = audioContextRef.current!.createGain();
-          
-          harmonicOscillator.type = 'sine';
-          harmonicOscillator.frequency.value = frequency[0] * 2;
-          
-          harmonicGainNode.gain.value = volume * 0.75;
-          
-          harmonicOscillator.connect(harmonicGainNode);
-          harmonicGainNode.connect(audioContextRef.current!.destination);
-          
-          harmonicOscillator.start();
-          harmonicOscillatorRef.current = harmonicOscillator;
-          console.log("Harmonic oscillator started at frequency:", frequency[0] * 2);
-        }
-        
-        // First set isPlaying to true
-        setIsPlaying(true);
-        
-        // Then start the timer
-        const durationInMinutes = duration[0];
-        startTimer(durationInMinutes);
-        
-        console.log("Audio treatment fully initialized with:", 
-                  "Frequency:", frequency[0], 
-                  "Duration:", durationInMinutes, "minutes");
-        
-      }).catch(error => {
-        console.error("Failed to resume AudioContext:", error);
-        alert("No se pudo iniciar el audio. Por favor, interactúe con la página primero (haga clic en algún lugar) e inténtelo nuevamente.");
-      });
+      // Make sure the audio context is running
+      if (audioContextRef.current.state !== "running") {
+        audioContextRef.current.resume().then(() => {
+          console.log("AudioContext resumed successfully, state:", audioContextRef.current?.state);
+          setupAudioOscillators();
+        }).catch(error => {
+          console.error("Failed to resume AudioContext:", error);
+          isStartingRef.current = false;
+          cleanupAudioResources();
+        });
+      } else {
+        setupAudioOscillators();
+      }
       
     } catch (error) {
       console.error("Error starting audio treatment:", error);
-      alert("No se pudo iniciar el tratamiento de audio. Asegúrese de que su dispositivo sea compatible con Web Audio API.");
+      cleanupAudioResources();
+      isStartingRef.current = false;
+    }
+  };
+  
+  const setupAudioOscillators = () => {
+    if (!audioContextRef.current) {
+      console.error("AudioContext not initialized");
+      isStartingRef.current = false;
+      return;
+    }
+    
+    try {
+      // Create oscillator
+      const oscillator = audioContextRef.current.createOscillator();
+      const gainNode = audioContextRef.current.createGain();
+      
+      oscillator.type = 'sine';
+      oscillator.frequency.value = frequency[0];
+      
+      // Set volume based on intensity
+      const volume = intensity[0] / 100 * 0.3;
+      gainNode.gain.value = volume;
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContextRef.current.destination);
+      
+      oscillator.start();
+      oscillatorRef.current = oscillator;
+      console.log("Main oscillator started at frequency:", frequency[0]);
+      
+      // Add harmonic for low frequencies
+      if (frequency[0] < 100) {
+        const harmonicOscillator = audioContextRef.current.createOscillator();
+        const harmonicGainNode = audioContextRef.current.createGain();
+        
+        harmonicOscillator.type = 'sine';
+        harmonicOscillator.frequency.value = frequency[0] * 2;
+        
+        harmonicGainNode.gain.value = volume * 0.75;
+        
+        harmonicOscillator.connect(harmonicGainNode);
+        harmonicGainNode.connect(audioContextRef.current.destination);
+        
+        harmonicOscillator.start();
+        harmonicOscillatorRef.current = harmonicOscillator;
+        console.log("Harmonic oscillator started at frequency:", frequency[0] * 2);
+      }
+      
+      // IMPORTANT: First set isPlaying to true BEFORE starting timer
+      setIsPlaying(true);
+      
+      // Then start the timer
+      const durationInMinutes = duration[0];
+      startTimer(durationInMinutes);
+      
+      console.log("Audio treatment fully initialized with:", 
+                "Frequency:", frequency[0], 
+                "Duration:", durationInMinutes, "minutes");
+    } catch (error) {
+      console.error("Error setting up audio oscillators:", error);
+      cleanupAudioResources();
+    } finally {
+      // Clear starting flag
+      isStartingRef.current = false;
     }
   };
 
