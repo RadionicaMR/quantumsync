@@ -1,9 +1,9 @@
 
+import React, { memo } from 'react';
 import ManifestVisualizer from '../ManifestVisualizer';
 import ManifestActions from '../ManifestActions';
 import { ManifestPattern } from '@/data/manifestPatterns';
 import { useEffect } from 'react';
-import { memo } from 'react';
 
 interface ManifestInterfaceSectionProps {
   currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';  // Updated to include 'radionic'
@@ -64,7 +64,7 @@ const ManifestInterfaceSection = memo(({
   rate3 = "",
   receptorName = "",
   indefiniteTime = false
-}) => {
+}: ManifestInterfaceSectionProps) => {
   // Convert manifestPatterns record to array if needed
   const patternsArray = Array.isArray(patterns) ? patterns : [];
   

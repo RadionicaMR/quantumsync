@@ -1,5 +1,5 @@
 
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import QuantumButton from '@/components/QuantumButton';
 import { Rocket, StopCircle } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
@@ -23,8 +23,8 @@ const ManifestActionButtons = memo(({
   canStart,
   intention
 }: ManifestActionButtonsProps) => {
-  // Add a console log to debug button click
-  const handleStartClick = () => {
+  // Usar useCallback para memorizar la función y evitar renderizados innecesarios
+  const handleStartClick = useCallback(() => {
     if (intention && intention.trim() !== "") {
       startManifestation();
     } else {
@@ -34,10 +34,10 @@ const ManifestActionButtons = memo(({
         variant: "destructive",
       });
     }
-  };
+  }, [intention, startManifestation]);
 
   // Simplify validation to just check for intention
-  const isButtonEnabled = intention && intention.trim() !== "";
+  const isButtonEnabled = Boolean(intention && intention.trim() !== "");
 
   return (
     <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-background/50">
