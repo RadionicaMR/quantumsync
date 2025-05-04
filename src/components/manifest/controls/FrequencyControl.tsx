@@ -2,35 +2,20 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { Switch } from '@/components/ui/switch';
 
 interface FrequencyControlProps {
-  manifestSound: boolean;
-  setManifestSound: (value: boolean) => void;
   manifestFrequency: number[];
   setManifestFrequency: (value: number[]) => void;
   isDisabled: boolean;
 }
 
 const FrequencyControl: React.FC<FrequencyControlProps> = ({
-  manifestSound,
-  setManifestSound,
   manifestFrequency,
   setManifestFrequency,
   isDisabled
 }) => {
   return (
     <div className="space-y-4 my-4">
-      <div className="flex items-center justify-between">
-        <Label htmlFor="manifest-sound" className="cursor-pointer">Sonido de manifestación</Label>
-        <Switch 
-          id="manifest-sound" 
-          checked={manifestSound} 
-          onCheckedChange={setManifestSound}
-          disabled={isDisabled}
-        />
-      </div>
-      
       <div className="space-y-2">
         <div className="flex justify-between items-center">
           <Label htmlFor="manifest-frequency">Frecuencia de Manifestación</Label>
@@ -45,7 +30,7 @@ const FrequencyControl: React.FC<FrequencyControlProps> = ({
           min={396}
           max={963}
           step={1}
-          disabled={isDisabled || !manifestSound}
+          disabled={isDisabled}
         />
         <div className="flex justify-between text-xs text-muted-foreground">
           <span>396 Hz</span>
