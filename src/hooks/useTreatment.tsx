@@ -176,6 +176,7 @@ export const useTreatment = () => {
   const startTreatment = () => {
     if (audio.isPlaying) return;
 
+    // Asegúrate de que el audio se inicia correctamente
     audio.startAudio();
     setHypnoticEffect(true);
 
