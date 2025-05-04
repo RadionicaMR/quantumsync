@@ -32,6 +32,14 @@ const ManifestActions = memo(({
   // Simplify validation to just check intention
   const isButtonEnabled = isIntentionValid;
   
+  console.log("ManifestActions render:", { 
+    isManifestActive, 
+    timeRemaining, 
+    isButtonEnabled,
+    intention,
+    intentionValid: isIntentionValid
+  });
+  
   return (
     <div className="flex flex-col space-y-2 mt-6">
       {/* Make sure the buttons are visible by passing necessary props */}

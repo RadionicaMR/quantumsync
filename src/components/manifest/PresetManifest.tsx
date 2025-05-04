@@ -3,6 +3,8 @@ import React from 'react';
 import { ManifestPattern } from '@/data/manifestPatterns';
 import PresetManifestConfigPanel from './sections/PresetManifestConfigPanel';
 import PresetManifestInterface from './sections/PresetManifestInterface';
+import { Card } from '@/components/ui/card';
+import ImageUploaderSection from '@/components/treatment/preset/ImageUploaderSection';
 
 interface PresetManifestProps {
   patterns: ManifestPattern[];
@@ -138,7 +140,6 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
         selectPattern={selectPattern}
         indefiniteTime={indefiniteTime}
         setIndefiniteTime={setIndefiniteTime}
-        // Added image uploader props
         patternImage={patternImage}
         setPatternImage={setPatternImage}
         receptorImage={receptorImage}
@@ -149,35 +150,56 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
         setReceptorImages={setReceptorImages}
       />
 
-      {/* Right Panel - Interface */}
-      <PresetManifestInterface
-        currentImage={currentImage}
-        isManifestActive={isManifestActive}
-        patternImage={patternImage}
-        patternImages={patternImages}
-        receptorImage={receptorImage}
-        receptorImages={receptorImages}
-        canStart={canStart}
-        timeRemaining={timeRemaining}
-        startManifestation={startManifestation}
-        stopManifestation={stopManifestation}
-        formatTimeRemaining={formatTimeRemaining}
-        selectedPattern={selectedPattern}
-        patterns={patterns}
-        manifestPatterns={manifestPatterns}
-        intention={intention}
-        manifestSound={manifestSound}
-        manifestFrequency={manifestFrequency}
-        exposureTime={exposureTime}
-        manifestSpeed={visualSpeed}
-        visualSpeed={visualSpeed}
-        rate1={rate1}
-        rate2={rate2}
-        rate3={rate3}
-        receptorName={receptorName}
-        backgroundModeActive={backgroundModeActive}
-        indefiniteTime={indefiniteTime}
-      />
+      {/* Right Panel - Interface with Image Uploaders above Visualizer */}
+      <div className="lg:col-span-2">
+        {/* Image Uploader Section - Now above the visualizer */}
+        <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-md mb-6">
+          <h3 className="text-xl font-semibold mb-4">Imágenes de Manifestación</h3>
+          <ImageUploaderSection 
+            isPlaying={isManifestActive}
+            radionicImage={patternImage}
+            setRadionicImage={setPatternImage}
+            receptorImage={receptorImage}
+            setReceptorImage={setReceptorImage}
+            radionicImages={patternImages}
+            setRadionicImages={setPatternImages}
+            receptorImages={receptorImages}
+            setReceptorImages={setReceptorImages}
+            receptorName={receptorName}
+            setReceptorName={setReceptorName}
+          />
+        </Card>
+        
+        {/* Visualizer and Controls */}
+        <PresetManifestInterface
+          currentImage={currentImage}
+          isManifestActive={isManifestActive}
+          patternImage={patternImage}
+          patternImages={patternImages}
+          receptorImage={receptorImage}
+          receptorImages={receptorImages}
+          canStart={canStart}
+          timeRemaining={timeRemaining}
+          startManifestation={startManifestation}
+          stopManifestation={stopManifestation}
+          formatTimeRemaining={formatTimeRemaining}
+          selectedPattern={selectedPattern}
+          patterns={patterns}
+          manifestPatterns={manifestPatterns}
+          intention={intention}
+          manifestSound={manifestSound}
+          manifestFrequency={manifestFrequency}
+          exposureTime={exposureTime}
+          manifestSpeed={visualSpeed}
+          visualSpeed={visualSpeed}
+          rate1={rate1}
+          rate2={rate2}
+          rate3={rate3}
+          receptorName={receptorName}
+          backgroundModeActive={backgroundModeActive}
+          indefiniteTime={indefiniteTime}
+        />
+      </div>
     </div>
   );
 };

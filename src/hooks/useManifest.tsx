@@ -10,13 +10,14 @@ export const useManifest = (patterns: ManifestPattern[]) => {
   const normalizedManifestCore = {
     ...manifestCore,
     // Normalize the currentImage value for consistency
-    currentImage: manifestCore.currentImage === 'pattern' 
-      ? 'radionic' 
-      : manifestCore.currentImage,
+    // Note: We preserve the original value to avoid issues with component that expect 'pattern'
+    currentImage: manifestCore.currentImage,
     // Ensure visualSpeed and exposureTime are properly handled as separate controls
     setVisualSpeed: manifestCore.setVisualSpeed || manifestCore.setExposureTime,
     visualSpeed: manifestCore.visualSpeed || manifestCore.exposureTime,
   };
+  
+  console.log("useManifest: normalized currentImage =", normalizedManifestCore.currentImage);
   
   return normalizedManifestCore;
 };

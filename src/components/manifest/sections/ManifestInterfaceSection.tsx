@@ -1,5 +1,5 @@
 
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import ManifestVisualizer from '../ManifestVisualizer';
 import ManifestActions from '../ManifestActions';
 import { ManifestPattern } from '@/data/manifestPatterns';
@@ -78,13 +78,13 @@ const ManifestInterfaceSection = memo(({
     });
   }, [intention, isManifestActive]);
   
-  // CRUCIAL: Explícitamente pasar la intención cuando se inicia la manifestación
-  const handleStartManifestation = () => {
+  // CRUCIAL: Explicitly pass the intention when starting manifestation
+  const handleStartManifestation = useCallback(() => {
     console.log("ManifestInterfaceSection - Iniciando con intención:", intention);
     if (intention && intention.trim() !== "") {
       startManifestation(intention);
     }
-  };
+  }, [intention, startManifestation]);
   
   return (
     <div className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-lg">

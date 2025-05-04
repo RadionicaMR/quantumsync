@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ManifestPattern } from '@/data/manifestPatterns';
 
 interface ManifestVisualizerProps {
@@ -45,6 +45,21 @@ const ManifestVisualizer: React.FC<ManifestVisualizerProps> = ({
   rate3 = "",
   receptorName = ""
 }) => {
+  // Debug log for visualization
+  useEffect(() => {
+    console.log("ManifestVisualizer render:", {
+      currentImage,
+      isActive,
+      patternImage,
+      receptorImage,
+      patternImagesCount: patternImages.length,
+      receptorImagesCount: receptorImages.length,
+      selectedPattern,
+      intention,
+      visualSpeed
+    });
+  }, [currentImage, isActive, patternImage, receptorImage, patternImages, receptorImages, selectedPattern, intention, visualSpeed]);
+
   // Get the current pattern image
   const getPatternImageSrc = () => {
     if (patternImage) {
@@ -73,8 +88,13 @@ const ManifestVisualizer: React.FC<ManifestVisualizerProps> = ({
   const receptorImageSrc = getReceptorImageSrc();
   
   // Determine which image to show based on the current state
-  const showPatternImage = currentImage === 'radionic' || currentImage === 'pattern' || currentImage === 'mix';
-  const showReceptorImage = currentImage === 'receptor' || currentImage === 'mix';
+  // Normalize currentImage value - treat 'pattern' and 'radionic' the same way
+  const adjustedCurrentImage = currentImage === 'pattern' ? 'radionic' : currentImage;
+  const showPatternImage = adjustedCurrentImage === 'radionic' || adjustedCurrentImage === 'mix';
+  const showReceptorImage = adjustedCurrentImage === 'receptor' || adjustedCurrentImage === 'mix';
+
+  // Calculate animation speed based on visualSpeed - invert so higher values = faster animation
+  const animationDuration = Math.max(0.5, 5 - (visualSpeed[0] / 4));
 
   return (
     <div className="relative min-h-[300px] bg-black/20 dark:bg-black/40 rounded-lg overflow-hidden p-4">
@@ -96,6 +116,9 @@ const ManifestVisualizer: React.FC<ManifestVisualizerProps> = ({
                   src={patternImageSrc} 
                   alt="Patrón de Manifestación" 
                   className="max-w-full max-h-full object-contain shadow-lg rounded"
+                  style={{
+                    animation: isActive ? `pulse ${animationDuration}s infinite alternate ease-in-out` : 'none'
+                  }}
                 />
               ) : selectedPattern ? (
                 <div className="bg-primary/10 p-6 rounded-lg text-center">
@@ -114,9 +137,17 @@ const ManifestVisualizer: React.FC<ManifestVisualizerProps> = ({
                   src={receptorImageSrc} 
                   alt="Receptor de Manifestación" 
                   className="max-w-full max-h-full object-contain shadow-lg rounded"
+                  style={{
+                    animation: isActive ? `pulse ${animationDuration}s infinite alternate-reverse ease-in-out` : 'none'
+                  }}
                 />
               ) : receptorName ? (
-                <div className="bg-secondary/10 p-6 rounded-lg text-center">
+                <div 
+                  className="bg-secondary/10 p-6 rounded-lg text-center"
+                  style={{
+                    animation: isActive ? `pulse ${animationDuration}s infinite alternate` : 'none'
+                  }}
+                >
                   <h3 className="font-semibold mb-2">Receptor</h3>
                   <p className="text-xl">{receptorName}</p>
                 </div>
@@ -135,6 +166,17 @@ const ManifestVisualizer: React.FC<ManifestVisualizerProps> = ({
             {rate1 && <div>Tasa 1: {rate1}</div>}
             {rate2 && <div>Tasa 2: {rate2}</div>}
             {rate3 && <div>Tasa 3: {rate3}</div>}
+          </div>
+        </div>
+      )}
+      
+      {/* Pulse overlay when active */}
+      {isActive && (
+        <div className="absolute inset-0 pointer-events-none z-30">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-12 h-12 bg-primary/20 rounded-full animate-ping"></div>
+            <div className="w-24 h-24 bg-primary/15 rounded-full animate-ping" style={{ animationDelay: '0.2s' }}></div>
+            <div className="w-36 h-36 bg-primary/10 rounded-full animate-ping" style={{ animationDelay: '0.4s' }}></div>
           </div>
         </div>
       )}

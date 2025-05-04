@@ -8,7 +8,6 @@ import AudioControls from '../AudioControls';
 import FrequencyControls from '../FrequencyControls';
 import TimingControls from '../TimingControls';
 import ReceptorNameInput from '../ReceptorNameInput';
-import ImageUploaderSection from '@/components/treatment/preset/ImageUploaderSection';
 
 interface PresetManifestConfigPanelProps {
   patterns: ManifestPattern[];
@@ -36,7 +35,7 @@ interface PresetManifestConfigPanelProps {
   selectPattern: (pattern: ManifestPattern) => void;
   indefiniteTime: boolean;
   setIndefiniteTime: (value: boolean) => void;
-  // Added image uploader props
+  // Image uploader props (still needed in the interface but we'll use them differently)
   patternImage: string | null;
   setPatternImage: (image: string | null) => void;
   receptorImage: string | null;
@@ -73,7 +72,7 @@ const PresetManifestConfigPanel: React.FC<PresetManifestConfigPanelProps> = ({
   selectPattern,
   indefiniteTime,
   setIndefiniteTime,
-  // Added image uploader props
+  // Image uploader props still passed but not used here anymore
   patternImage,
   setPatternImage,
   receptorImage,
@@ -85,7 +84,7 @@ const PresetManifestConfigPanel: React.FC<PresetManifestConfigPanelProps> = ({
 }) => {
   return (
     <div className="lg:col-span-1">
-      <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-md mb-6">
+      <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-md">
         <h3 className="text-xl font-semibold mb-4">Configuración</h3>
 
         <PatternSelection
@@ -131,24 +130,6 @@ const PresetManifestConfigPanel: React.FC<PresetManifestConfigPanelProps> = ({
           isDisabled={isManifestActive}
           indefiniteTime={indefiniteTime}
           setIndefiniteTime={setIndefiniteTime}
-        />
-      </Card>
-
-      {/* Added Image Uploader Section similar to Treatment page */}
-      <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-md">
-        <h3 className="text-xl font-semibold mb-4">Imágenes de Manifestación</h3>
-        <ImageUploaderSection 
-          isPlaying={isManifestActive}
-          radionicImage={patternImage}
-          setRadionicImage={setPatternImage}
-          receptorImage={receptorImage}
-          setReceptorImage={setReceptorImage}
-          radionicImages={patternImages}
-          setRadionicImages={setPatternImages}
-          receptorImages={receptorImages}
-          setReceptorImages={setReceptorImages}
-          receptorName={receptorName}
-          setReceptorName={setReceptorName}
         />
       </Card>
     </div>
