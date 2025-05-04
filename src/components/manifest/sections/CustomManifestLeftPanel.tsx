@@ -5,6 +5,7 @@ import PatternSection from './PatternSection';
 import ReceptorSection from './ReceptorSection';
 import AudioSubliminalSection from './AudioSubliminalSection';
 import { ManifestControls } from '../ManifestControls';
+import ManifestActionButtons from '../controls/ManifestActionButtons';
 
 interface CustomManifestLeftPanelProps {
   patternImage: string | null;
@@ -171,6 +172,21 @@ const CustomManifestLeftPanel = ({
         setAudioLoop={setAudioLoop}
         clearAudio={clearAudio}
       />
+      
+      {/* Añadir botones de acción para Manifestación Personal */}
+      {isManifestActive && (
+        <Card className="p-4 quantum-card border-orange-500">
+          <ManifestActionButtons
+            isManifestActive={isManifestActive}
+            timeRemaining={timeRemaining}
+            formatTimeRemaining={formatTimeRemaining || ((time) => `${time} min`)}
+            startManifestation={startManifestation || (() => {})}
+            stopManifestation={stopManifestation || (() => {})}
+            canStart={canStart || false}
+            intention={intention}
+          />
+        </Card>
+      )}
     </div>
   );
 };
