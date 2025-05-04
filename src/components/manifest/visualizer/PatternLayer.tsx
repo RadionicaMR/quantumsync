@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface PatternLayerProps {
   isVisible: boolean;
@@ -12,8 +12,27 @@ const PatternLayer: React.FC<PatternLayerProps> = ({
   currentPatternImageSrc,
   pulseDuration
 }) => {
-  if (!isVisible || !currentPatternImageSrc) {
+  useEffect(() => {
+    console.log("PatternLayer render:", { 
+      isVisible, 
+      hasPatternImage: !!currentPatternImageSrc,
+      pulseDuration
+    });
+  }, [isVisible, currentPatternImageSrc, pulseDuration]);
+
+  if (!isVisible) {
     return null;
+  }
+  
+  // Si no hay imagen, devuelve un placeholder
+  if (!currentPatternImageSrc) {
+    return (
+      <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/80">
+        <div className="text-quantum-primary text-lg font-semibold">
+          Patrón no seleccionado
+        </div>
+      </div>
+    );
   }
   
   return (

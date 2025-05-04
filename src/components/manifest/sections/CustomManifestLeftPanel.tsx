@@ -114,6 +114,7 @@ const CustomManifestLeftPanel = ({
   return (
     <div className="lg:col-span-1 space-y-6">
       <Card className="p-6 quantum-card">
+        {/* Usando ManifestControls pero sin mostrar los botones de acción */}
         <ManifestControls
           intention={intention}
           setIntention={setIntention}
@@ -133,10 +134,7 @@ const CustomManifestLeftPanel = ({
           setRate3={setRate3}
           isManifestActive={isManifestActive}
           timeRemaining={timeRemaining}
-          startManifestation={startManifestation}
-          stopManifestation={stopManifestation}
-          formatTimeRemaining={formatTimeRemaining}
-          canStart={isIntentionValid}
+          hideActionButtons={true} // Ocultar los botones de acción
           indefiniteTime={indefiniteTime}
           setIndefiniteTime={setIndefiniteTime}
         />

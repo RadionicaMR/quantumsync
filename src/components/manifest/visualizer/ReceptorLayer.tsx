@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface ReceptorLayerProps {
   isVisible: boolean;
@@ -16,18 +16,39 @@ const ReceptorLayer: React.FC<ReceptorLayerProps> = ({
   hasReceptorImage,
   pulseDuration
 }) => {
+  useEffect(() => {
+    console.log("ReceptorLayer render:", { 
+      isVisible, 
+      hasReceptorImage,
+      receptorName,
+      currentReceptorImageSrc,
+      pulseDuration
+    });
+  }, [isVisible, hasReceptorImage, receptorName, currentReceptorImageSrc, pulseDuration]);
+
   if (!isVisible) {
     return null;
   }
 
-  const hasReceptorName = receptorName && receptorName.trim().length > 0;
+  const hasReceptorNameText = receptorName && receptorName.trim().length > 0;
+  
+  // Si no hay imagen ni nombre, mostrar placeholder
+  if (!hasReceptorImage && !hasReceptorNameText) {
+    return (
+      <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/80">
+        <div className="text-quantum-primary text-lg font-semibold">
+          Receptor no definido
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="absolute inset-0 flex items-center justify-center z-20">
       {/* Show receptor image if available */}
-      {hasReceptorImage && (
+      {hasReceptorImage && currentReceptorImageSrc && (
         <img 
-          src={currentReceptorImageSrc || ''}
+          src={currentReceptorImageSrc}
           alt="Imagen del receptor"
           className="absolute inset-0 w-full h-full object-contain"
           style={{ 
@@ -41,7 +62,7 @@ const ReceptorLayer: React.FC<ReceptorLayerProps> = ({
       )}
       
       {/* Show receptor name when needed */}
-      {hasReceptorName && (!hasReceptorImage) && (
+      {hasReceptorNameText && (!hasReceptorImage) && (
         <div 
           className="absolute inset-0 flex items-center justify-center"
           style={{

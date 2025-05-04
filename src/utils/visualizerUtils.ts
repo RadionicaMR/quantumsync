@@ -1,57 +1,57 @@
 
 /**
- * Utility functions for the manifest visualizer components
+ * Calcula las velocidades de animación basadas en la velocidad visual establecida.
+ * @param speedValue - Valor de velocidad visual (1-20)
+ * @returns Objeto con duraciones calculadas para las animaciones
  */
-
-/**
- * Calculates animation speed values based on visualSpeed input
- */
-export const calculateAnimationSpeeds = (speedValue: number = 10) => {
-  // Calculate animation durations based on speed value
-  const rateAnimationDuration = Math.max(5, 15 - speedValue);
+export function calculateAnimationSpeeds(speedValue: number) {
+  // Duración de la animación RATE - inversamente proporcional a la velocidad
+  const rateAnimationDuration = Math.max(5, 15 - (speedValue / 2));
+  
+  // Duración del pulso - inversamente proporcional a la velocidad
   const pulseDuration = Math.max(0.5, 5 - (speedValue / 4));
   
-  return {
-    rateAnimationDuration,
-    pulseDuration
-  };
-};
+  return { rateAnimationDuration, pulseDuration };
+}
 
 /**
- * Gets the current image to display from multiple options
+ * Obtiene la imagen de patrón actual para mostrar.
+ * Prioriza la matriz de imágenes, luego la imagen simple y finalmente el patrón seleccionado.
  */
-export const getCurrentPatternImage = (
-  patternImages: string[] = [],
-  currentIndex: number = 0,
-  patternImage: string | null = null,
-  selectedPatternImage: string | null = null
-): string | null => {
-  
+export function getCurrentPatternImage(
+  patternImages: string[] | undefined, 
+  currentIndex: number,
+  singlePatternImage: string | null,
+  selectedPatternImage: string | null
+): string | null {
+  // Si hay imágenes múltiples, usar la actual según el índice
   if (patternImages && patternImages.length > 0) {
-    return patternImages[currentIndex];
+    return patternImages[currentIndex % patternImages.length];
   }
   
-  if (patternImage) {
-    return patternImage;
+  // Si hay una imagen simple, usarla
+  if (singlePatternImage) {
+    return singlePatternImage;
   }
   
-  if (selectedPatternImage) {
-    return selectedPatternImage;
-  }
-  
-  return null;
-};
+  // Finalmente, usar la imagen del patrón seleccionado si hay
+  return selectedPatternImage;
+}
 
 /**
- * Gets the current receptor image from multiple options
+ * Obtiene la imagen de receptor actual para mostrar.
+ * Prioriza la matriz de imágenes, luego la imagen simple.
  */
-export const getCurrentReceptorImage = (
-  receptorImages: string[] = [],
-  currentIndex: number = 0,
-  receptorImage: string | null = null
-): string | null => {
+export function getCurrentReceptorImage(
+  receptorImages: string[] | undefined,
+  currentIndex: number,
+  singleReceptorImage: string | null
+): string | null {
+  // Si hay imágenes múltiples, usar la actual según el índice
   if (receptorImages && receptorImages.length > 0) {
-    return receptorImages[currentIndex];
+    return receptorImages[currentIndex % receptorImages.length];
   }
-  return receptorImage;
-};
+  
+  // Si hay una imagen simple, usarla
+  return singleReceptorImage;
+}

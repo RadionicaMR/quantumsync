@@ -64,25 +64,36 @@ const ManifestVisualizer = ({
     hasSelectedPattern: !!selectedPattern,
     intention,
     patternImagesCount: patternImages ? patternImages.length : 0,
-    receptorImagesCount: receptorImages ? receptorImages.length : 0
+    receptorImagesCount: receptorImages ? receptorImages.length : 0,
+    selectedPattern,
+    manifestPatterns
   });
 
   // Rotate through multiple images when active
   useEffect(() => {
     if (!isActive) return;
     
+    console.log("Configurando rotación de imágenes:", {
+      patternImagesLength: patternImages.length,
+      receptorImagesLength: receptorImages.length
+    });
+    
     // Only setup rotation if we have multiple images
     if ((patternImages && patternImages.length > 1) || (receptorImages && receptorImages.length > 1)) {
       const speedValue = visualSpeed && visualSpeed.length > 0 ? visualSpeed[0] : 10;
       const rotationInterval = Math.max(1000, 3000 - (speedValue * 100));
       
+      console.log("Iniciando rotación de imágenes con intervalo:", rotationInterval);
+      
       const rotationTimer = setInterval(() => {
-        if (patternImages && patternImages.length > 1) {
-          setCurrentPatternIndex(prev => (prev + 1) % patternImages.length);
-        }
-        
-        if (receptorImages && receptorImages.length > 1) {
-          setCurrentReceptorIndex(prev => (prev + 1) % receptorImages.length);
+        if (!document.hidden) {
+          if (patternImages && patternImages.length > 1) {
+            setCurrentPatternIndex(prev => (prev + 1) % patternImages.length);
+          }
+          
+          if (receptorImages && receptorImages.length > 1) {
+            setCurrentReceptorIndex(prev => (prev + 1) % receptorImages.length);
+          }
         }
       }, rotationInterval);
       
@@ -93,10 +104,13 @@ const ManifestVisualizer = ({
   // Get the selected pattern image
   const getSelectedPatternImage = (): string | null => {
     if (selectedPattern) {
+      console.log("Buscando patrón seleccionado:", selectedPattern, "en", patterns);
       const selectedPatternObj = patterns.find(p => p.id === selectedPattern);
       if (selectedPatternObj) {
+        console.log("Patrón encontrado en el array patterns:", selectedPatternObj);
         return selectedPatternObj.image;
       } else if (manifestPatterns && manifestPatterns[selectedPattern]) {
+        console.log("Patrón encontrado en manifestPatterns:", manifestPatterns[selectedPattern]);
         return manifestPatterns[selectedPattern];
       }
     }
@@ -104,8 +118,23 @@ const ManifestVisualizer = ({
   };
 
   const selectedPatternImage = getSelectedPatternImage();
+  
+  console.log("Imágenes disponibles:", {
+    selectedPatternImage,
+    patternImages,
+    patternImage,
+    receptorImages,
+    receptorImage
+  });
+  
+  // Seleccionar la imagen correcta para mostrar
   const currentPatternImageSrc = getCurrentPatternImage(patternImages, currentPatternIndex, patternImage, selectedPatternImage);
   const currentReceptorImageSrc = getCurrentReceptorImage(receptorImages, currentReceptorIndex, receptorImage);
+
+  console.log("Imágenes seleccionadas para mostrar:", {
+    currentPatternImageSrc,
+    currentReceptorImageSrc
+  });
 
   const hasPatternImage = !!currentPatternImageSrc;
   const hasReceptorImage = !!currentReceptorImageSrc;
@@ -115,7 +144,7 @@ const ManifestVisualizer = ({
   const speedValue = visualSpeed && visualSpeed.length > 0 ? visualSpeed[0] : 10;
   const { rateAnimationDuration, pulseDuration } = calculateAnimationSpeeds(speedValue);
 
-  // If not active, render placeholder
+  // Si no está activo, mostrar un placeholder
   if (!isActive) {
     return (
       <div className="mt-6 relative overflow-hidden rounded-lg bg-card/90 dark:bg-black/40 aspect-square">

@@ -1,10 +1,11 @@
 
-import { useState, useEffect } from 'react';
-import RateInputs from '@/components/treatment/RateInputs';
+import React from 'react';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import IntentionInput from './controls/IntentionInput';
 import FrequencyControl from './controls/FrequencyControl';
-import VisualizationSpeedControl from './controls/VisualizationSpeedControl';
 import ExposureTimeControl from './controls/ExposureTimeControl';
+import VisualizationSpeedControl from './controls/VisualizationSpeedControl';
 import ManifestActionButtons from './controls/ManifestActionButtons';
 
 interface ManifestControlsProps {
@@ -18,20 +19,21 @@ interface ManifestControlsProps {
   setVisualSpeed: (value: number[]) => void;
   exposureTime: number[];
   setExposureTime: (value: number[]) => void;
-  rate1: string;
-  setRate1: (value: string) => void;
-  rate2: string;
-  setRate2: (value: string) => void;
-  rate3: string;
-  setRate3: (value: string) => void;
+  rate1?: string;
+  setRate1?: (value: string) => void;
+  rate2?: string;
+  setRate2?: (value: string) => void;
+  rate3?: string;
+  setRate3?: (value: string) => void;
   isManifestActive: boolean;
-  timeRemaining: number | null;
-  startManifestation: () => void;
-  stopManifestation: () => void;
-  formatTimeRemaining: (minutes: number) => string;
-  canStart: boolean;
+  timeRemaining?: number | null;
+  startManifestation?: () => void;
+  stopManifestation?: () => void;
+  formatTimeRemaining?: (time: number) => string;
+  canStart?: boolean;
   indefiniteTime?: boolean;
   setIndefiniteTime?: (value: boolean) => void;
+  hideActionButtons?: boolean; // Nueva prop para ocultar los botones de acción
 }
 
 export const ManifestControls: React.FC<ManifestControlsProps> = ({
@@ -52,73 +54,79 @@ export const ManifestControls: React.FC<ManifestControlsProps> = ({
   rate3,
   setRate3,
   isManifestActive,
-  timeRemaining,
-  startManifestation,
-  stopManifestation,
-  formatTimeRemaining,
-  canStart,
+  timeRemaining = null,
+  startManifestation = () => {},
+  stopManifestation = () => {},
+  formatTimeRemaining = (time) => "",
+  canStart = false,
   indefiniteTime = false,
-  setIndefiniteTime = () => {}
+  setIndefiniteTime = () => {},
+  hideActionButtons = false // Por defecto, mostrar los botones
 }) => {
-  // Log to check if the intention is passed correctly
-  console.log("ManifestControls received intention:", intention);
-  
   return (
     <div className="space-y-6">
-      <div className="mb-6">
-        <IntentionInput 
-          intention={intention}
-          setIntention={setIntention}
-          isDisabled={isManifestActive}
-        />
+      <IntentionInput 
+        intention={intention}
+        setIntention={setIntention}
+        isDisabled={isManifestActive}
+      />
+      
+      <div className="space-y-6">
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="sound-toggle"
+            checked={manifestSound}
+            onCheckedChange={setManifestSound}
+            disabled={isManifestActive}
+          />
+          <Label htmlFor="sound-toggle">Sonido de manifestación</Label>
+        </div>
         
-        <FrequencyControl
-          manifestSound={manifestSound}
-          setManifestSound={setManifestSound}
-          manifestFrequency={manifestFrequency}
-          setManifestFrequency={setManifestFrequency}
-          isDisabled={isManifestActive}
-        />
+        {manifestSound && (
+          <FrequencyControl 
+            manifestFrequency={manifestFrequency}
+            setManifestFrequency={setManifestFrequency}
+            isDisabled={isManifestActive}
+          />
+        )}
         
-        <VisualizationSpeedControl
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="indefinite-time"
+            checked={indefiniteTime}
+            onCheckedChange={setIndefiniteTime}
+            disabled={isManifestActive}
+          />
+          <Label htmlFor="indefinite-time">Tiempo indefinido</Label>
+        </div>
+        
+        {!indefiniteTime && (
+          <ExposureTimeControl 
+            exposureTime={exposureTime}
+            setExposureTime={setExposureTime}
+            isDisabled={isManifestActive}
+          />
+        )}
+        
+        <VisualizationSpeedControl 
           visualSpeed={visualSpeed}
           setVisualSpeed={setVisualSpeed}
           isDisabled={isManifestActive}
         />
-
-        <ExposureTimeControl
-          exposureTime={exposureTime}
-          setExposureTime={setExposureTime}
-          isDisabled={isManifestActive}
-          indefiniteTime={indefiniteTime}
-          setIndefiniteTime={setIndefiniteTime}
-        />
-
-        {/* Campos RATE */}
-        <div className="mt-6">
-          <RateInputs 
-            rate1={rate1}
-            setRate1={setRate1}
-            rate2={rate2}
-            setRate2={setRate2}
-            rate3={rate3}
-            setRate3={setRate3}
-            isPlaying={isManifestActive}
-          />
-        </div>
       </div>
-      
-      <ManifestActionButtons
-        isManifestActive={isManifestActive}
-        timeRemaining={timeRemaining}
-        formatTimeRemaining={formatTimeRemaining}
-        startManifestation={startManifestation}
-        stopManifestation={stopManifestation}
-        canStart={canStart}
-        intention={intention}
-      />
+
+      {/* Botones de control solo si hideActionButtons es falso */}
+      {!hideActionButtons && (
+        <ManifestActionButtons 
+          isManifestActive={isManifestActive}
+          timeRemaining={timeRemaining}
+          formatTimeRemaining={formatTimeRemaining}
+          startManifestation={startManifestation}
+          stopManifestation={stopManifestation}
+          canStart={canStart}
+          intention={intention}
+        />
+      )}
     </div>
   );
 };
-
-export default ManifestControls;
