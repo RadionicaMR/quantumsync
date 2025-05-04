@@ -34,10 +34,24 @@ const TreatmentActions = ({
       const formattedTime = formatTime(Math.max(0, timeRemaining));
       setDisplayTimeString(formattedTime);
       console.log(`Updated displayed time: ${formattedTime} (${timeRemaining.toFixed(2)} min) - Playing: ${isPlaying}`);
-    } else {
+    } else if (displayTimeString !== "") {
       setDisplayTimeString("");
     }
-  }, [timeRemaining, isPlaying, formatTime]);
+  }, [timeRemaining, isPlaying, formatTime, displayTimeString]);
+  
+  const handleStartTreatment = () => {
+    console.log("Start treatment button clicked");
+    if (canStartTreatment && !isPlaying) {
+      startTreatment();
+    }
+  };
+  
+  const handleStopTreatment = () => {
+    console.log("Stop treatment button clicked");
+    if (isPlaying) {
+      stopTreatment();
+    }
+  };
   
   return (
     <div className="flex items-center justify-between">
@@ -55,7 +69,7 @@ const TreatmentActions = ({
           </div>
           <QuantumButton 
             variant="outline"
-            onClick={stopTreatment}
+            onClick={handleStopTreatment}
           >
             <div className="flex flex-col items-center">
               <span>DETENER</span>
@@ -73,7 +87,7 @@ const TreatmentActions = ({
           </div>
           <QuantumButton 
             className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
-            onClick={startTreatment}
+            onClick={handleStartTreatment}
             disabled={!canStartTreatment}
           >
             <div className="flex flex-col items-center">

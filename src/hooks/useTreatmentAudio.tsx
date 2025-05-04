@@ -16,6 +16,7 @@ export const useTreatmentAudio = () => {
   const timerRef = useRef<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
   const pausedTimeRemainingRef = useRef<number | null>(null);
+  const isStoppingRef = useRef<boolean>(false);
 
   // Format time function
   const formatTime = (minutes: number) => {
@@ -33,7 +34,7 @@ export const useTreatmentAudio = () => {
       // Save remaining time
       pausedTimeRemainingRef.current = timeRemaining;
       
-      // Stop oscillators
+      // Stop oscillators but don't reset isPlaying
       if (oscillatorRef.current) {
         try {
           oscillatorRef.current.stop();
@@ -78,6 +79,11 @@ export const useTreatmentAudio = () => {
 
   const restartAudio = () => {
     try {
+      if (isStoppingRef.current) {
+        console.log("Audio is currently stopping, can't restart yet");
+        return;
+      }
+
       // Initialize audio context
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
       if (!AudioContext) {
@@ -131,6 +137,7 @@ export const useTreatmentAudio = () => {
     // Clear existing timer
     if (timerRef.current) {
       window.clearInterval(timerRef.current);
+      timerRef.current = null;
     }
     
     console.log(`Starting timer with ${initialTimeMinutes} minutes`);
@@ -149,7 +156,6 @@ export const useTreatmentAudio = () => {
       const elapsedMinutes = elapsedMs / (1000 * 60);
       const newTimeRemaining = Math.max(0, initialTimeMinutes - elapsedMinutes);
       
-      console.log(`Timer update: ${newTimeRemaining.toFixed(2)} minutes remaining`);
       setTimeRemaining(newTimeRemaining);
       
       if (newTimeRemaining <= 0) {
@@ -160,16 +166,21 @@ export const useTreatmentAudio = () => {
   };
 
   const startAudio = () => {
-    if (isPlaying) {
-      console.log("Audio already playing, not starting again");
+    console.log("startAudio called, isPlaying:", isPlaying, "isStoppingRef:", isStoppingRef.current);
+    
+    if (isPlaying || isStoppingRef.current) {
+      console.log("Audio already playing or stopping, not starting again");
       return;
     }
+    
+    // Reset stopping flag
+    isStoppingRef.current = false;
     
     console.log(`Starting audio with frequency: ${frequency[0]} Hz, duration: ${duration[0]} minutes`);
     
     try {
       // Stop any existing audio
-      stopAudio();
+      cleanupAudioResources();
       
       // Initialize audio context
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
@@ -243,9 +254,7 @@ export const useTreatmentAudio = () => {
     }
   };
 
-  const stopAudio = () => {
-    console.log("Stopping treatment audio...");
-    
+  const cleanupAudioResources = () => {
     if (oscillatorRef.current) {
       try {
         oscillatorRef.current.stop();
@@ -281,12 +290,26 @@ export const useTreatmentAudio = () => {
       timerRef.current = null;
       console.log("Timer cleared");
     }
+  };
+
+  const stopAudio = () => {
+    console.log("Stopping treatment audio...");
     
-    setIsPlaying(false);
-    setBackgroundModeActive(false);
-    pausedTimeRemainingRef.current = null;
-    startTimeRef.current = null;
-    console.log("Audio treatment fully stopped");
+    // Set the stopping flag to prevent race conditions
+    isStoppingRef.current = true;
+    
+    // Clean up audio resources
+    cleanupAudioResources();
+    
+    // Reset state after a small delay to ensure UI updates properly
+    setTimeout(() => {
+      setIsPlaying(false);
+      setBackgroundModeActive(false);
+      pausedTimeRemainingRef.current = null;
+      startTimeRef.current = null;
+      isStoppingRef.current = false;
+      console.log("Audio treatment fully stopped");
+    }, 100);
   };
 
   // Add event listener for visibility change

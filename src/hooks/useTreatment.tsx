@@ -37,6 +37,7 @@ export const useTreatment = () => {
   const [audioSubliminalPlaying, setAudioSubliminalPlaying] = useState(false);
   const [backgroundModeActive, setBackgroundModeActive] = useState(false);
   const audioSourceRef = useRef<string | null>(null);
+  const isStartingTreatment = useRef<boolean>(false);
 
   // Select a preset
   const selectPreset = (preset: TreatmentPreset) => {
@@ -179,13 +180,16 @@ export const useTreatment = () => {
     });
   };
 
-  // Start the treatment - With explicit audio initialization
+  // Start the treatment - With explicit audio initialization and prevention of double starts
   const startTreatment = () => {
-    if (audio.isPlaying) {
-      console.log("Treatment already playing, not starting again");
+    if (audio.isPlaying || isStartingTreatment.current) {
+      console.log("Treatment already playing or starting, not starting again");
       return;
     }
-
+    
+    // Set the flag to prevent multiple start attempts
+    isStartingTreatment.current = true;
+    
     // Debug logging
     console.log("Starting treatment with frequency:", audio.frequency[0], "Hz");
     console.log("Configured duration:", audio.duration[0], "minutes");
@@ -199,7 +203,9 @@ export const useTreatment = () => {
     // Only after starting the audio, we start the subliminal if it exists
     if (audioFile) {
       console.log("Starting subliminal audio associated with treatment");
-      playSubliminalAudio();
+      setTimeout(() => {
+        playSubliminalAudio();
+      }, 300); // Small delay to ensure main audio starts first
     }
 
     // Show toast notification
@@ -210,6 +216,11 @@ export const useTreatment = () => {
     });
     
     console.log("Treatment fully started");
+    
+    // Reset the starting flag after a delay to prevent rapid start/stop cycles
+    setTimeout(() => {
+      isStartingTreatment.current = false;
+    }, 1000);
   };
 
   // Stop the treatment
