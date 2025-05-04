@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { Card } from '@/components/ui/card';
 import PatternSection from './PatternSection';
 import ReceptorSection from './ReceptorSection';
@@ -54,7 +54,8 @@ interface CustomManifestLeftPanelProps {
   canStart?: boolean;
 }
 
-const CustomManifestLeftPanel = ({
+// Use memo to prevent unnecessary re-renders
+const CustomManifestLeftPanel = memo(({
   patternImage,
   setPatternImage,
   patternImages,
@@ -100,17 +101,6 @@ const CustomManifestLeftPanel = ({
   formatTimeRemaining = (time) => "",
   canStart = false
 }: CustomManifestLeftPanelProps) => {
-  // Solo validamos la intención
-  const isIntentionValid = intention.trim() !== "";
-                 
-  console.log("CustomManifestLeftPanel canStart:", { 
-    intention, 
-    intentionValid: intention.trim() !== "", 
-    patternImage, 
-    patternImagesLength: patternImages.length,
-    canStart
-  });
-  
   return (
     <div className="lg:col-span-1 space-y-6">
       <Card className="p-6 quantum-card">
@@ -171,7 +161,7 @@ const CustomManifestLeftPanel = ({
         clearAudio={clearAudio}
       />
       
-      {/* Rendering action buttons outside of the control panels to avoid flickering */}
+      {/* Fixed action buttons outside - to prevent flickering */}
       <Card className="p-4 quantum-card border-quantum-primary">
         <ManifestActionButtons
           isManifestActive={isManifestActive}
@@ -185,6 +175,8 @@ const CustomManifestLeftPanel = ({
       </Card>
     </div>
   );
-};
+});
+
+CustomManifestLeftPanel.displayName = 'CustomManifestLeftPanel';
 
 export default CustomManifestLeftPanel;

@@ -1,8 +1,7 @@
 
+import React, { memo } from 'react';
 import { Rocket, StopCircle, Smartphone, Infinity } from 'lucide-react';
-import { useEffect } from 'react';
 import ManifestActionButtons from './controls/ManifestActionButtons';
-import { toast } from '@/components/ui/use-toast';
 
 interface ManifestActionsProps {
   isManifestActive: boolean;
@@ -16,7 +15,7 @@ interface ManifestActionsProps {
   intention?: string; 
 }
 
-const ManifestActions = ({
+const ManifestActions = memo(({
   isManifestActive,
   canStart,
   timeRemaining,
@@ -27,18 +26,7 @@ const ManifestActions = ({
   indefiniteTime = false,
   intention = "", 
 }: ManifestActionsProps) => {
-  // Log intention changes for debugging
-  useEffect(() => {
-    console.log("ManifestActions - Intention actualizada:", {
-      intention,
-      intentionLength: intention ? intention.length : 0,
-      intentionValid: intention && intention.trim() !== "",
-      canStart,
-      isManifestActive
-    });
-  }, [intention, canStart, isManifestActive]);
-  
-  // Strict verification ONLY for valid intention
+  // Simplify validation to just check intention
   const isIntentionValid = Boolean(intention && intention.trim() !== "");
   
   // Simplify validation to just check intention
@@ -72,6 +60,8 @@ const ManifestActions = ({
       )}
     </div>
   );
-};
+});
+
+ManifestActions.displayName = 'ManifestActions';
 
 export default ManifestActions;

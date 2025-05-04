@@ -1,5 +1,5 @@
 
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, memo } from 'react';
 import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
 import TreatmentVisualizer from '@/components/treatment/TreatmentVisualizer';
 import { ManifestPattern } from '@/data/manifestPatterns';
@@ -54,7 +54,8 @@ interface CustomManifestProps {
   setIndefiniteTime?: (value: boolean) => void;
 }
 
-const CustomManifest: React.FC<CustomManifestProps> = ({
+// Memoize the component to prevent unnecessary re-renders
+const CustomManifest: React.FC<CustomManifestProps> = memo(({
   intention,
   setIntention,
   patternImage,
@@ -102,18 +103,6 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
   indefiniteTime = false,
   setIndefiniteTime = () => {}
 }) => {
-  // Log para rastrear el valor de intención y patrones cuando cambian
-  useEffect(() => {
-    console.log("CustomManifest - Estado actualizado:", {
-      intention,
-      intentionLength: intention ? intention.length : 0,
-      intentionValid: intention && intention.trim() !== "",
-      patternImage,
-      patternImagesCount: patternImages ? patternImages.length : 0,
-      patternImages,
-    });
-  }, [intention, patternImage, patternImages]);
-  
   // Envoltura memoizada para startManifestation con validación previa
   const handleStartManifestation = useCallback(() => {
     console.log("CustomManifest - Verificación pre-start:", {
@@ -136,19 +125,11 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
         variant: "destructive",
       });
     }
-  }, [intention, startManifestation, patternImage, patternImages]);
+  }, [intention, startManifestation]);
                   
   // Calculated values - solo validamos la intención
   const isIntentionValid = Boolean(intention && intention.trim() !== "");
   const canStart = isIntentionValid;
-  
-  console.log("CustomManifest - Estado final de canStart:", {
-    canStart,
-    isIntentionValid,
-    intention,
-    patternImage,
-    patternImagesLength: patternImages.length
-  });
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -231,6 +212,8 @@ const CustomManifest: React.FC<CustomManifestProps> = ({
       </div>
     </div>
   );
-};
+});
+
+CustomManifest.displayName = 'CustomManifest';
 
 export default CustomManifest;

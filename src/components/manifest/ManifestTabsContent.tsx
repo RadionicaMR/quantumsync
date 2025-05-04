@@ -15,6 +15,9 @@ const ManifestTabsContent = ({
   patterns,
   ...coreProps
 }: ManifestTabsContentProps) => {
+  // Make sure the currentImage type is correct for both tabs
+  const { currentImage } = coreProps;
+  
   return (
     <>
       <TabsContent value="presets" className="w-full">

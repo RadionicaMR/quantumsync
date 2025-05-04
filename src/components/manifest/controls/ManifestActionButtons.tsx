@@ -1,4 +1,5 @@
 
+import React, { memo } from 'react';
 import QuantumButton from '@/components/QuantumButton';
 import { Rocket, StopCircle } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
@@ -13,7 +14,7 @@ interface ManifestActionButtonsProps {
   intention: string;
 }
 
-const ManifestActionButtons = ({
+const ManifestActionButtons = memo(({
   isManifestActive,
   timeRemaining,
   formatTimeRemaining,
@@ -24,12 +25,6 @@ const ManifestActionButtons = ({
 }: ManifestActionButtonsProps) => {
   // Add a console log to debug button click
   const handleStartClick = () => {
-    console.log("ManifestActionButtons: Start manifestation button clicked", {
-      canStart,
-      intention,
-      intentionValid: intention && intention.trim() !== ""
-    });
-    
     if (intention && intention.trim() !== "") {
       startManifestation();
     } else {
@@ -88,6 +83,8 @@ const ManifestActionButtons = ({
       )}
     </div>
   );
-};
+});
+
+ManifestActionButtons.displayName = 'ManifestActionButtons';
 
 export default ManifestActionButtons;
