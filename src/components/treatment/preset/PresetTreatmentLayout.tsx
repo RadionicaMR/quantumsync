@@ -67,7 +67,7 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
             </select>
           </div>
           
-          {/* Frequency Module - RESTORED */}
+          {/* Frequency Module */}
           <FrequencyControlsSection
             frequency={frequency}
             setFrequency={setFrequency}

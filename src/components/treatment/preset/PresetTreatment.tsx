@@ -74,7 +74,7 @@ const PresetTreatment = (props: PresetTreatmentProps) => {
         <Card className="quantum-card p-6">
           <h3 className="text-xl font-semibold mb-4">Configuración</h3>
           
-          {/* Frequency Module - RESTORED */}
+          {/* Frequency Module */}
           <FrequencyControlsSection
             frequency={props.frequency}
             setFrequency={props.setFrequency}
@@ -87,17 +87,7 @@ const PresetTreatment = (props: PresetTreatmentProps) => {
             isPlaying={props.isPlaying}
           />
           
-          <ImageUploaderSection
-            isPlaying={props.isPlaying}
-            radionicImage={props.radionicImage}
-            setRadionicImage={props.setRadionicImage}
-            receptorImage={props.receptorImage}
-            setReceptorImage={props.setReceptorImage}
-            radionicImages={props.radionicImages}
-            setRadionicImages={props.setRadionicImages}
-            receptorImages={props.receptorImages}
-            setReceptorImages={props.setReceptorImages}
-          />
+          {/* Moved the ImageUploaderSection from here */}
           
           <RateSection
             rate1={props.rate1}
@@ -128,8 +118,25 @@ const PresetTreatment = (props: PresetTreatmentProps) => {
         </Card>
       </div>
       
-      {/* Right Column - Visualizer */}
+      {/* Right Column - Images and Visualizer */}
       <div className="lg:col-span-2">
+        {/* Image uploader now at the top of the right column */}
+        <Card className="quantum-card p-6">
+          <h3 className="text-xl font-semibold mb-4">Imágenes de Tratamiento</h3>
+          <ImageUploaderSection
+            isPlaying={props.isPlaying}
+            radionicImage={props.radionicImage}
+            setRadionicImage={props.setRadionicImage}
+            receptorImage={props.receptorImage}
+            setReceptorImage={props.setReceptorImage}
+            radionicImages={props.radionicImages}
+            setRadionicImages={props.setRadionicImages}
+            receptorImages={props.receptorImages}
+            setReceptorImages={props.setReceptorImages}
+          />
+        </Card>
+        
+        {/* Visualizer below the images */}
         <TreatmentVisualizerSection
           radionicImage={props.radionicImage}
           setRadionicImage={props.setRadionicImage}
