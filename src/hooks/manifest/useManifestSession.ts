@@ -22,13 +22,12 @@ export const useManifestSession = () => {
     backgroundModeActive: subliminalBackgroundActive 
   } = useManifestSubliminal();
 
-  // Iniciar Manifestación: comienza audio subliminal si disponible
+  // Start Manifestation: begin subliminal audio if available
   const startManifestation = (forcedIntention?: string) => {
-    // CORRECCIÓN CRÍTICA: Usar la intención forzada si está disponible
-    // o usar la del state como fallback
+    // Use forced intention if available or use state intention as fallback
     const currentIntention = forcedIntention || state.intention;
     
-    console.log("StartManifestation - INTENCIÓN RECIBIDA:", {
+    console.log("StartManifestation - INTENTION RECEIVED:", {
       forcedIntention,
       stateIntention: state.intention,
       finalIntention: currentIntention,
@@ -37,9 +36,9 @@ export const useManifestSession = () => {
       activeTab: state.activeTab
     });
     
-    // VALIDACIÓN ESTRICTA: Verificamos que la intención exista y no esté vacía
+    // Strict validation: Verify that intention exists and is not empty
     if (!currentIntention || currentIntention.trim() === "") {
-      console.error("ERROR CRÍTICO: Intención vacía o indefinida", {
+      console.error("CRITICAL ERROR: Empty or undefined intention", {
         forcedIntention,
         stateIntention: state.intention
       });
@@ -51,14 +50,14 @@ export const useManifestSession = () => {
       return;
     }
     
-    console.log("INTENCIÓN VALIDADA CORRECTAMENTE:", currentIntention);
+    console.log("INTENTION CORRECTLY VALIDATED:", currentIntention);
     
-    // Actualizar la intención en el state si usamos la intención forzada
+    // Update intention in state if using forced intention
     if (forcedIntention && forcedIntention !== state.intention) {
       state.setIntention(forcedIntention);
     }
 
-    // Es crucial establecer el estado activo ANTES de continuar
+    // It's crucial to set active state BEFORE continuing
     state.setIsManifestActive(true);
     
     // Start sound if enabled
@@ -66,12 +65,12 @@ export const useManifestSession = () => {
       startAudio(state.manifestFrequency[0]);
     }
 
-    // AUDIO SUBLIMINAL: inicia audio si fue subido
+    // SUBLIMINAL AUDIO: start audio if uploaded
     if (audioFile) {
       playSubliminalAudio();
     }
 
-    // Establecer una velocidad para la rotación de imágenes basada en manifestSpeed o visualSpeed
+    // Set a speed for image rotation based on manifestSpeed or visualSpeed
     const speed = state.visualSpeed?.[0] || state.manifestSpeed?.[0] || 10;
     const switchInterval = 1000 / speed;
 
@@ -92,12 +91,12 @@ export const useManifestSession = () => {
     }, switchInterval);
     setHypnoticTimer(hypnoticTimer);
     
-    console.log("Manifestación activada, ahora configurando temporizadores");
+    console.log("Manifestation activated, now setting up timers");
 
     // Only set exposure and countdown timers if not indefinite time
     if (!state.indefiniteTime) {
       const exposureTimeInMs = state.exposureTime[0] * 60 * 1000;
-      state.setTimeRemaining(state.exposureTime[0] * 60); // Set in minutes originally
+      state.setTimeRemaining(state.exposureTime[0] * 60); // Set in seconds originally
 
       const countdownTimer = setInterval(() => {
         if (!document.hidden) {
@@ -124,7 +123,7 @@ export const useManifestSession = () => {
       state.setTimeRemaining(-1);
     }
     
-    console.log("Manifestación iniciada correctamente con:", {
+    console.log("Manifestation successfully started with:", {
       intention: currentIntention,
       activeTab: state.activeTab,
       patternImages: state.patternImages ? state.patternImages.length : 0,
@@ -134,9 +133,9 @@ export const useManifestSession = () => {
     });
   };
 
-  // Detener Manifestación: para audio subliminal si está en reproducción
+  // Stop Manifestation: stop subliminal audio if playing
   const stopManifestation = () => {
-    console.log("Deteniendo manifestación");
+    console.log("Stopping manifestation");
     stopAudio();
     clearAllTimers();
     state.setTimeRemaining(null);
@@ -146,10 +145,10 @@ export const useManifestSession = () => {
       title: "Manifestación detenida",
       description: "El proceso de manifestación ha sido detenido manualmente."
     });
-    console.log("Manifestación detenida");
+    console.log("Manifestation stopped");
   };
 
-  // Limpieza al desmontar
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       stopAudio();

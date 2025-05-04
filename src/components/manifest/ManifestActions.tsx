@@ -29,15 +29,12 @@ const ManifestActions = memo(({
   // Simplify validation to just check intention
   const isIntentionValid = Boolean(intention && intention.trim() !== "");
   
-  // Simplify validation to just check intention
-  const isButtonEnabled = isIntentionValid;
-  
   console.log("ManifestActions render:", { 
     isManifestActive, 
     timeRemaining, 
-    isButtonEnabled,
     intention,
-    intentionValid: isIntentionValid
+    intentionValid: isIntentionValid,
+    canStart
   });
   
   return (
@@ -49,7 +46,7 @@ const ManifestActions = memo(({
         formatTimeRemaining={formatTimeRemaining}
         startManifestation={startManifestation}
         stopManifestation={stopManifestation}
-        canStart={isButtonEnabled}
+        canStart={canStart}
         intention={intention}
       />
       

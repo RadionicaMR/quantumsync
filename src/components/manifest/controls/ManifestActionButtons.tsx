@@ -1,5 +1,5 @@
 
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 import QuantumButton from '@/components/QuantumButton';
 import { Rocket, StopCircle } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
@@ -23,7 +23,18 @@ const ManifestActionButtons = memo(({
   canStart,
   intention
 }: ManifestActionButtonsProps) => {
-  // Usar useCallback para memorizar la función y evitar renderizados innecesarios
+  
+  // Debugging log to check component rendering and props
+  useEffect(() => {
+    console.log("ManifestActionButtons mounted/updated:", {
+      isManifestActive,
+      timeRemaining,
+      intention,
+      canStart
+    });
+  }, [isManifestActive, timeRemaining, intention, canStart]);
+  
+  // Use useCallback to memorize the function and avoid unnecessary renders
   const handleStartClick = useCallback(() => {
     if (intention && intention.trim() !== "") {
       console.log("ManifestActionButtons - Starting manifestation with intention:", intention);

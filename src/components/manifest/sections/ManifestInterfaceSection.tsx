@@ -80,10 +80,8 @@ const ManifestInterfaceSection = memo(({
   
   // CRUCIAL: Explicitly pass the intention when starting manifestation
   const handleStartManifestation = useCallback(() => {
-    console.log("ManifestInterfaceSection - Iniciando con intención:", intention);
-    if (intention && intention.trim() !== "") {
-      startManifestation(intention);
-    }
+    console.log("ManifestInterfaceSection - Starting with intention:", intention);
+    startManifestation(intention);
   }, [intention, startManifestation]);
   
   return (

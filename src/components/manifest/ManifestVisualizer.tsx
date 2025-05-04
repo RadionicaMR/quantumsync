@@ -3,6 +3,8 @@ import React, { useEffect } from 'react';
 import { ManifestPattern } from '@/data/manifestPatterns';
 import PulsingOverlay from './visualizer/PulsingOverlay';
 import IntentionOverlay from './visualizer/IntentionOverlay';
+import PatternLayer from './visualizer/PatternLayer';
+import ReceptorLayer from './visualizer/ReceptorLayer';
 
 interface ManifestVisualizerProps {
   currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';
@@ -89,10 +91,13 @@ const ManifestVisualizer: React.FC<ManifestVisualizerProps> = ({
   const patternImageSrc = getPatternImageSrc();
   const receptorImageSrc = getReceptorImageSrc();
   
+  // Normalize the current image value
+  // Treat 'radionic' as 'pattern' for consistency
+  const normalizedCurrentImage = currentImage === 'radionic' ? 'pattern' : currentImage;
+  
   // Determine which image to show based on the current state
-  // Treat 'pattern' and 'radionic' the same for consistency
-  const showPatternImage = currentImage === 'pattern' || currentImage === 'radionic' || currentImage === 'mix';
-  const showReceptorImage = currentImage === 'receptor' || currentImage === 'mix';
+  const showPatternImage = normalizedCurrentImage === 'pattern' || normalizedCurrentImage === 'mix';
+  const showReceptorImage = normalizedCurrentImage === 'receptor' || normalizedCurrentImage === 'mix';
 
   // Calculate animation speed based on visualSpeed - invert so higher values = faster animation
   const animationDuration = Math.max(0.5, 5 - (visualSpeed[0] / 4));
@@ -108,54 +113,21 @@ const ManifestVisualizer: React.FC<ManifestVisualizerProps> = ({
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full h-full p-4">
-          {/* Pattern Image */}
-          {showPatternImage && (
-            <div className="flex items-center justify-center h-full">
-              {patternImageSrc ? (
-                <img 
-                  src={patternImageSrc} 
-                  alt="Patrón de Manifestación" 
-                  className="max-w-full max-h-full object-contain shadow-lg rounded"
-                  style={{
-                    animation: isActive ? `pulse ${animationDuration}s infinite alternate ease-in-out` : 'none'
-                  }}
-                />
-              ) : selectedPattern ? (
-                <div className="bg-primary/10 p-6 rounded-lg text-center">
-                  <h3 className="font-semibold mb-2">Patrón Seleccionado</h3>
-                  <p>{patterns.find(p => p.id === selectedPattern)?.name || "Patrón"}</p>
-                </div>
-              ) : null}
-            </div>
-          )}
-
-          {/* Receptor Image or Name */}
-          {showReceptorImage && (
-            <div className="flex items-center justify-center h-full">
-              {receptorImageSrc ? (
-                <img 
-                  src={receptorImageSrc} 
-                  alt="Receptor de Manifestación" 
-                  className="max-w-full max-h-full object-contain shadow-lg rounded"
-                  style={{
-                    animation: isActive ? `pulse ${animationDuration}s infinite alternate-reverse ease-in-out` : 'none'
-                  }}
-                />
-              ) : receptorName ? (
-                <div 
-                  className="bg-secondary/10 p-6 rounded-lg text-center"
-                  style={{
-                    animation: isActive ? `pulse ${animationDuration}s infinite alternate` : 'none'
-                  }}
-                >
-                  <h3 className="font-semibold mb-2">Receptor</h3>
-                  <p className="text-xl">{receptorName}</p>
-                </div>
-              ) : null}
-            </div>
-          )}
-        </div>
+        {/* Pattern Layer */}
+        <PatternLayer 
+          isVisible={showPatternImage}
+          currentPatternImageSrc={patternImageSrc}
+          pulseDuration={animationDuration}
+        />
+        
+        {/* Receptor Layer */}
+        <ReceptorLayer 
+          isVisible={showReceptorImage}
+          currentReceptorImageSrc={receptorImageSrc}
+          receptorName={receptorName}
+          hasReceptorImage={Boolean(receptorImageSrc)}
+          pulseDuration={animationDuration}
+        />
       </div>
 
       {/* Overlay information when active */}
