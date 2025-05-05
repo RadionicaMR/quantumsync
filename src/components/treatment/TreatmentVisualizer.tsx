@@ -8,7 +8,7 @@ interface TreatmentVisualizerProps {
   receptorImage: string | null;
   radionicImages: string[];
   receptorImages: string[];
-  currentImage: 'radionic' | 'receptor' | 'mix' | 'pattern';  // Updated to include 'pattern'
+  currentImage: 'radionic' | 'receptor' | 'mix' | 'pattern';
   hypnoticEffect: boolean;
   frequency: number[];
   intensity: number[];
@@ -62,28 +62,12 @@ const TreatmentVisualizer = ({
   const hasReceptorName = receptorName && receptorName.trim().length > 0;
   const hasImages = hasRadionicImages || hasReceptorImages || hasReceptorName;
 
-  // Calculate animation speed based on hypnotic speed - faster speed = shorter duration
-  const animationDuration = Math.max(0.1, 20 / hypnoticSpeed[0]);
-  
-  // Calculate faster animation speed for RATE texts based on hypnotic speed
-  const rateAnimationDuration = Math.max(5, 15 - hypnoticSpeed[0]);
-
-  // Pulse animation duration based on hypnotic speed
-  const pulseDuration = Math.max(0.5, 5 - (hypnoticSpeed[0] / 4));
-
-  // Normalize currentImage value - treat 'pattern' as 'radionic' for compatibility
-  const adjustedCurrentImage = currentImage === 'pattern' ? 'radionic' : currentImage;
-
-  // En la sección de Manifestación Personal, evitamos la alternancia
-  // Dejamos fijado en "mix" para que se muestren ambas imágenes superpuestas
-  const finalCurrentImage = 'mix';
-
   return (
     <div className={`relative aspect-square w-full bg-black rounded-lg overflow-hidden ${isIOS ? 'ios-momentum-scroll' : ''}`}>
       {/* Show blended images */}
       {hasImages && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-          {/* Radionic Images - Siempre visibles */}
+          {/* Radionic Images - Always visible, NO ANIMATION */}
           {hasRadionicImages && (
             <div className="absolute inset-0 flex items-center justify-center z-10">
               {radionicImagesArray.map((img, index) => (
@@ -95,17 +79,14 @@ const TreatmentVisualizer = ({
                   style={{ 
                     opacity: 1,
                     mixBlendMode: 'screen',
-                    filter: 'contrast(1.2) brightness(1.1)',
-                    transition: `opacity ${animationDuration/2}s ease-in-out`,
-                    // Sin animación pulsante para evitar titilar
-                    animation: 'none'
+                    filter: 'contrast(1.2) brightness(1.1)'
                   }}
                 />
               ))}
             </div>
           )}
           
-          {/* Receptor Images - Siempre visibles */}
+          {/* Receptor Images - Always visible, NO ANIMATION */}
           <div className="absolute inset-0 flex items-center justify-center z-20">
             {/* Show receptor images if available */}
             {hasReceptorImages && receptorImagesArray.map((img, index) => (
@@ -117,10 +98,7 @@ const TreatmentVisualizer = ({
                 style={{ 
                   opacity: 1,
                   mixBlendMode: 'multiply',
-                  filter: 'contrast(1.2) brightness(1.1)',
-                  transition: `opacity ${animationDuration/2}s ease-in-out`,
-                  // Sin animación pulsante para evitar titilar
-                  animation: 'none'
+                  filter: 'contrast(1.2) brightness(1.1)'
                 }}
               />
             ))}
@@ -129,12 +107,6 @@ const TreatmentVisualizer = ({
             {hasReceptorName && (!hasReceptorImages) && (
               <div 
                 className="absolute inset-0 flex items-center justify-center"
-                style={{
-                  opacity: 1,
-                  transition: `opacity ${animationDuration/2}s ease-in-out`,
-                  // Sin animación pulsante para evitar titilar
-                  animation: 'none'
-                }}
               >
                 <div className="text-2xl font-bold text-white bg-black/50 px-6 py-4 rounded-lg">
                   {receptorName}
@@ -145,11 +117,11 @@ const TreatmentVisualizer = ({
         </div>
       )}
       
-      {/* Overlay con los pulsos circulares */}
+      {/* Static circular overlay instead of animated */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
-        <div className="w-12 h-12 bg-quantum-primary/20 rounded-full animate-ping"></div>
-        <div className="w-24 h-24 bg-quantum-primary/15 rounded-full animate-ping" style={{ animationDelay: '0.2s' }}></div>
-        <div className="w-36 h-36 bg-quantum-primary/10 rounded-full animate-ping" style={{ animationDelay: '0.4s' }}></div>
+        <div className="w-12 h-12 bg-quantum-primary/20 rounded-full"></div>
+        <div className="w-24 h-24 bg-quantum-primary/15 rounded-full"></div>
+        <div className="w-36 h-36 bg-quantum-primary/10 rounded-full"></div>
       </div>
       
       {/* Información y RATES */}
@@ -157,7 +129,7 @@ const TreatmentVisualizer = ({
         Frecuencia: {frequency[0]} Hz | Intensidad: {intensity[0]}%
       </div>
       
-      {/* RATES sin animación aleatoria para evitar titilar */}
+      {/* RATES sin animación */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-40">
         <div className="relative w-full h-full max-w-[90%] max-h-[90%]">
           {rate1 && (
@@ -169,8 +141,6 @@ const TreatmentVisualizer = ({
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  // Sin animación para evitar titilar
-                  animation: 'none', 
                   textShadow: '0 0 5px rgba(59, 130, 246, 0.7)'
                 }}>
               {rate1}
@@ -185,8 +155,6 @@ const TreatmentVisualizer = ({
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  // Sin animación para evitar titilar
-                  animation: 'none',
                   textShadow: '0 0 5px rgba(59, 130, 246, 0.7)'
                 }}>
               {rate2}
@@ -201,8 +169,6 @@ const TreatmentVisualizer = ({
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  // Sin animación para evitar titilar 
-                  animation: 'none',
                   textShadow: '0 0 5px rgba(59, 130, 246, 0.7)'
                 }}>
               {rate3}

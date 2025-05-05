@@ -1,3 +1,4 @@
+
 import React, { useEffect, useCallback, memo } from 'react';
 import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
 import TreatmentVisualizer from '@/components/treatment/TreatmentVisualizer';
@@ -103,9 +104,9 @@ const CustomManifest = memo(({
   indefiniteTime = false,
   setIndefiniteTime = () => {}
 }: CustomManifestProps) => {
-  // Envoltura memoizada para startManifestation con validación previa
+  // Wrapper for startManifestation with validation
   const handleStartManifestation = useCallback(() => {
-    console.log("CustomManifest - Verificación pre-start:", {
+    console.log("CustomManifest - Pre-start verification:", {
       intention,
       intentionLength: intention ? intention.length : 0,
       intentionValid: intention && intention.trim() !== "",
@@ -114,9 +115,9 @@ const CustomManifest = memo(({
       patternImages,
     });
     
-    // IMPORTANTE: Solo validamos la intención, eliminamos la validación de patrón
+    // IMPORTANT: We only validate intention
     if (intention && intention.trim() !== "") {
-      console.log("CustomManifest - Iniciando con intención:", intention);
+      console.log("CustomManifest - Starting with intention:", intention);
       startManifestation(intention);
     } else {
       toast({
@@ -127,16 +128,13 @@ const CustomManifest = memo(({
     }
   }, [intention, startManifestation]);
                   
-  // Calculated values - solo validamos la intención
+  // Calculated values - only validate intention
   const isIntentionValid = Boolean(intention && intention.trim() !== "");
   const canStart = isIntentionValid;
 
-  // Para la manifestación personal, siempre usamos 'mix' para evitar titilar
-  const fixedCurrentImage = 'mix';
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      {/* Panel izquierdo: configuraciones */}
+      {/* Left panel: configuration */}
       <CustomManifestLeftPanel
         intention={intention}
         setIntention={setIntention}
@@ -184,7 +182,7 @@ const CustomManifest = memo(({
         canStart={canStart}
       />
       
-      {/* Panel derecho: Visualizador de tratamiento adaptado para manifestación */}
+      {/* Right panel: Treatment Visualizer adapted for manifestation */}
       <div className="lg:col-span-2">
         <Card className="bg-card/80 dark:bg-black/40 rounded-lg p-6 mb-4">
           <h3 className="text-xl font-semibold mb-2 text-center">Visualizador de Manifestación Cuántica</h3>
@@ -201,8 +199,8 @@ const CustomManifest = memo(({
             receptorImage={receptorImage}
             radionicImages={patternImages}
             receptorImages={receptorImages}
-            currentImage={fixedCurrentImage} // Siempre usamos 'mix' para evitar titilar
-            hypnoticEffect={isManifestActive}
+            currentImage="mix"
+            hypnoticEffect={false}
             frequency={manifestFrequency}
             intensity={visualSpeed}
             rate1={rate1}

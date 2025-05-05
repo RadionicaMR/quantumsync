@@ -1,7 +1,6 @@
 
 import React, { useEffect } from 'react';
 import { ManifestPattern } from '@/data/manifestPatterns';
-import PulsingOverlay from './visualizer/PulsingOverlay';
 import IntentionOverlay from './visualizer/IntentionOverlay';
 import PatternLayer from './visualizer/PatternLayer';
 import ReceptorLayer from './visualizer/ReceptorLayer';
@@ -91,16 +90,15 @@ const ManifestVisualizer: React.FC<ManifestVisualizerProps> = ({
   const patternImageSrc = getPatternImageSrc();
   const receptorImageSrc = getReceptorImageSrc();
   
-  // Normalize the current image value
-  // Treat 'radionic' as 'pattern' for consistency
-  const normalizedCurrentImage = currentImage === 'radionic' ? 'pattern' : currentImage;
+  // For preset patterns, determine which images to show based on current mode
+  let showPatternImage = true;
+  let showReceptorImage = true;
   
-  // Determine which image to show based on the current state
-  const showPatternImage = normalizedCurrentImage === 'pattern' || normalizedCurrentImage === 'mix';
-  const showReceptorImage = normalizedCurrentImage === 'receptor' || normalizedCurrentImage === 'mix';
-
-  // Calculate animation speed based on visualSpeed - invert so higher values = faster animation
-  const animationDuration = Math.max(0.5, 5 - (visualSpeed[0] / 4));
+  // For predefined manifests, toggle between pattern and receptor if active
+  if (isActive && currentImage !== 'mix') {
+    showPatternImage = currentImage === 'pattern' || currentImage === 'radionic';
+    showReceptorImage = currentImage === 'receptor';
+  }
 
   return (
     <div className="relative min-h-[300px] bg-black/20 dark:bg-black/40 rounded-lg overflow-hidden p-4">
@@ -113,21 +111,27 @@ const ManifestVisualizer: React.FC<ManifestVisualizerProps> = ({
           </div>
         )}
 
-        {/* Pattern Layer */}
-        <PatternLayer 
-          isVisible={showPatternImage}
-          currentPatternImageSrc={patternImageSrc}
-          pulseDuration={animationDuration}
-        />
+        {/* Pattern Layer - No animations */}
+        {showPatternImage && (
+          <PatternLayer 
+            isVisible={true}
+            currentPatternImageSrc={patternImageSrc}
+            pulseDuration={0}
+            noAnimation={true}
+          />
+        )}
         
-        {/* Receptor Layer */}
-        <ReceptorLayer 
-          isVisible={showReceptorImage}
-          currentReceptorImageSrc={receptorImageSrc}
-          receptorName={receptorName}
-          hasReceptorImage={Boolean(receptorImageSrc)}
-          pulseDuration={animationDuration}
-        />
+        {/* Receptor Layer - No animations */}
+        {showReceptorImage && (
+          <ReceptorLayer 
+            isVisible={true}
+            currentReceptorImageSrc={receptorImageSrc}
+            receptorName={receptorName}
+            hasReceptorImage={Boolean(receptorImageSrc)}
+            pulseDuration={0}
+            noAnimation={true}
+          />
+        )}
       </div>
 
       {/* Overlay information when active */}
@@ -143,12 +147,22 @@ const ManifestVisualizer: React.FC<ManifestVisualizerProps> = ({
         </div>
       )}
       
-      {/* Pulse overlay when active */}
-      {isActive && <PulsingOverlay />}
+      {/* Static circles instead of pulsing overlay */}
+      {isActive && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
+          <div className="w-12 h-12 bg-quantum-primary/20 rounded-full"></div>
+          <div className="w-24 h-24 bg-quantum-primary/15 rounded-full"></div>
+          <div className="w-36 h-36 bg-quantum-primary/10 rounded-full"></div>
+        </div>
+      )}
       
-      {/* Intention overlay when active */}
+      {/* Intention overlay when active - No animations */}
       {isActive && intention && (
-        <IntentionOverlay intention={intention} pulseDuration={animationDuration} />
+        <IntentionOverlay 
+          intention={intention} 
+          pulseDuration={0}
+          noAnimation={true}
+        />
       )}
     </div>
   );

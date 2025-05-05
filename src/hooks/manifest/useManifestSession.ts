@@ -70,28 +70,35 @@ export const useManifestSession = () => {
       playSubliminalAudio();
     }
 
-    // Set a speed for image rotation based on manifestSpeed or visualSpeed
-    const speed = state.visualSpeed?.[0] || state.manifestSpeed?.[0] || 10;
-    
-    // Use a proper interval that's not too fast
-    const switchInterval = Math.max(2000, 5000 / speed);
-
-    // Important: Only toggle between pattern and receptor images
-    const hypnoticTimer = setInterval(() => {
-      if (!document.hidden) {
-        state.setCurrentImage((prev) => {
-          // Only toggle between pattern and receptor, avoiding 'mix'
-          if (prev === 'pattern' || prev === 'radionic') {
-            return 'receptor';
-          } else {
-            return 'pattern';
-          }
-        });
-      }
-    }, switchInterval);
-    setHypnoticTimer(hypnoticTimer);
-    
-    console.log("Manifestation activated with interval:", switchInterval);
+    // Important: Set the currentImage to 'pattern' for Preset Patterns 
+    // or 'mix' for Personal Manifestation based on the active tab
+    if (state.activeTab === 'personal') {
+      // For personal manifestation, always use 'mix' to avoid flickering
+      state.setCurrentImage('mix');
+    } else {
+      // For preset patterns, start with 'pattern' to begin alternation
+      state.setCurrentImage('pattern');
+      
+      // Only set hypnotic timer for preset patterns tab to alternate images
+      const speed = state.visualSpeed?.[0] || state.manifestSpeed?.[0] || 10;
+      const switchInterval = Math.max(2000, 5000 / speed);
+      
+      const hypnoticTimer = setInterval(() => {
+        if (!document.hidden) {
+          state.setCurrentImage((prev) => {
+            // Only toggle between pattern and receptor, avoiding 'mix'
+            if (prev === 'pattern' || prev === 'radionic') {
+              return 'receptor';
+            } else {
+              return 'pattern';
+            }
+          });
+        }
+      }, switchInterval);
+      
+      setHypnoticTimer(hypnoticTimer);
+      console.log("Image alternation timer set with interval:", switchInterval);
+    }
 
     // Only set exposure and countdown timers if not indefinite time
     if (!state.indefiniteTime) {
@@ -122,9 +129,6 @@ export const useManifestSession = () => {
       // If indefinite time, set timeRemaining to -1 to indicate indefinite
       state.setTimeRemaining(-1);
     }
-    
-    // Set currentImage to pattern to start the alternation
-    state.setCurrentImage('pattern');
     
     // Show completed toast notification
     toast({
