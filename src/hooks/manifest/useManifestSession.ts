@@ -70,30 +70,26 @@ export const useManifestSession = () => {
       playSubliminalAudio();
     }
 
-    // Important: Set the currentImage to 'pattern' for Preset Patterns 
-    // or 'mix' for Personal Manifestation based on the active tab
+    // Handle image alternation differently based on active tab
     if (state.activeTab === 'personal') {
-      // For personal manifestation, always use 'mix' to avoid flickering
+      // For personal manifestation, always use 'mix' to show both images simultaneously
       state.setCurrentImage('mix');
     } else {
-      // For preset patterns, start with 'pattern' to begin alternation
+      // For preset patterns, start with 'pattern' and set up alternation
       state.setCurrentImage('pattern');
       
-      // Only set hypnotic timer for preset patterns tab to alternate images
-      // Calculate interval based on manifestSpeed (for presets) or visualSpeed (for personal)
-      const speed = state.activeTab === 'presets' 
-        ? (state.manifestSpeed?.[0] || 10) 
-        : (state.visualSpeed?.[0] || 10);
+      // Calculate interval based on manifestSpeed for proper alternation speed
+      const speed = Math.max(1, state.manifestSpeed[0] || 10);
       
       // Faster speed = shorter interval (inverse relationship)
-      const switchInterval = 5000 / Math.max(1, speed);
+      const switchInterval = 5000 / speed;
       
       console.log("Setting up alternation timer with speed:", speed, "interval:", switchInterval);
       
       const hypnoticTimer = setInterval(() => {
         if (!document.hidden) {
           state.setCurrentImage((prev) => {
-            // Only toggle between pattern and receptor for presets
+            // Toggle between pattern and receptor for presets
             return prev === 'pattern' ? 'receptor' : 'pattern';
           });
         }

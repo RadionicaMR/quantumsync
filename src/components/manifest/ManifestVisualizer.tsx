@@ -90,14 +90,22 @@ const ManifestVisualizer: React.FC<ManifestVisualizerProps> = ({
   const patternImageSrc = getPatternImageSrc();
   const receptorImageSrc = getReceptorImageSrc();
   
-  // For preset patterns, determine which images to show based on current mode
-  let showPatternImage = true;
-  let showReceptorImage = true;
+  // Determine which images to show based on current mode
+  let showPatternImage = false;
+  let showReceptorImage = false;
   
-  // For predefined manifests, toggle between pattern and receptor if active
-  if (isActive && currentImage !== 'mix') {
-    showPatternImage = currentImage === 'pattern' || currentImage === 'radionic';
-    showReceptorImage = currentImage === 'receptor';
+  if (currentImage === 'mix') {
+    // In mix mode, show both
+    showPatternImage = true;
+    showReceptorImage = true;
+  } else if (currentImage === 'pattern' || currentImage === 'radionic') {
+    // In pattern/radionic mode, show only pattern
+    showPatternImage = true;
+    showReceptorImage = false;
+  } else if (currentImage === 'receptor') {
+    // In receptor mode, show only receptor
+    showPatternImage = false;
+    showReceptorImage = true;
   }
 
   return (

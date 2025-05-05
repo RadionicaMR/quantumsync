@@ -46,8 +46,7 @@ const ReceptorLayer: React.FC<ReceptorLayerProps> = ({
           style={{ 
             opacity: 1,
             mixBlendMode: 'multiply',
-            filter: 'contrast(1.2) brightness(1.1)',
-            animation: 'none' // Never animate
+            filter: 'contrast(1.2) brightness(1.1)'
           }}
         />
       )}
@@ -56,10 +55,6 @@ const ReceptorLayer: React.FC<ReceptorLayerProps> = ({
       {hasReceptorNameText && (!hasReceptorImage) && (
         <div 
           className="absolute inset-0 flex items-center justify-center"
-          style={{
-            opacity: 1,
-            animation: 'none' // Never animate
-          }}
         >
           <div className="text-2xl font-bold text-white bg-black/50 px-6 py-4 rounded-lg">
             {receptorName}

@@ -38,8 +38,7 @@ const PatternLayer: React.FC<PatternLayerProps> = ({
         style={{ 
           opacity: 1,
           mixBlendMode: 'screen',
-          filter: 'contrast(1.2) brightness(1.1)',
-          animation: 'none' // Never animate
+          filter: 'contrast(1.2) brightness(1.1)'
         }}
       />
     </div>
