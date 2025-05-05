@@ -112,11 +112,10 @@ const CustomManifest = memo(({
       intentionLength: intention ? intention.length : 0,
       intentionValid: intention && intention.trim() !== "",
       patternImage,
-      patternImagesCount: patternImages ? patternImages.length : 0,
-      patternImages,
+      receptorImage
     });
     
-    // IMPORTANT: We only validate intention
+    // Pass intention explicitly to startManifestation
     if (intention && intention.trim() !== "") {
       console.log("CustomManifest - Starting with intention:", intention);
       startManifestation(intention);
@@ -200,12 +199,12 @@ const CustomManifest = memo(({
           
           <TreatmentVisualizer
             isPlaying={isManifestActive}
-            visualFeedback={true} // Siempre debe ser true para mostrar el visualizador
+            visualFeedback={true} // Always true to show visualizer
             radionicImage={patternImage}
             receptorImage={receptorImage}
             radionicImages={patternImages}
             receptorImages={receptorImages}
-            currentImage="mix" // Always use mix for personal manifestation to avoid flickering
+            currentImage={currentImage} // Use the actual currentImage value
             hypnoticEffect={false} // No hypnotic effect for personal manifestation
             frequency={manifestFrequency}
             intensity={visualSpeed}
@@ -217,7 +216,7 @@ const CustomManifest = memo(({
           />
         </Card>
         
-        {/* Botón DETENER explícito fuera del panel izquierdo */}
+        {/* Single ManifestActions component */}
         <Card className="bg-card/90 dark:bg-black/40 p-4 rounded-lg mt-4">
           <ManifestActions
             isManifestActive={isManifestActive}

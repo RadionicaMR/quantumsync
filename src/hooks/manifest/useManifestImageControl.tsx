@@ -6,7 +6,7 @@ export const useManifestImageControl = (
   isManifestActive: boolean,
   visualSpeed: number[]
 ) => {
-  // Referencias
+  // References
   const manifestIntervalRef = useRef<NodeJS.Timeout | number | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(performance.now());
@@ -14,7 +14,7 @@ export const useManifestImageControl = (
   // Mobile detection
   const { isIOS, isSafari } = useIsMobile();
   
-  // Limpiar al desmontar
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       console.log("Cleaning up useManifestImageControl");
@@ -29,43 +29,35 @@ export const useManifestImageControl = (
     };
   }, []);
   
-  // Función para establecer la imagen actual
-  const setCurrentImage = (
-    prev: 'pattern' | 'receptor' | 'mix' | 'radionic'
-  ): 'pattern' | 'receptor' | 'mix' | 'radionic' => {
-    // Toggle between 'pattern' and 'receptor' states
-    return prev === 'pattern' ? 'receptor' : 'pattern';
-  };
-  
-  // Función para iniciar la alternancia de imágenes
+  // Function to start image alternation
   const startImageAlternation = (
     currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic',
     setCurrentImage: (value: ((prev: 'pattern' | 'receptor' | 'mix' | 'radionic') => 'pattern' | 'receptor' | 'mix' | 'radionic') | 'pattern' | 'receptor' | 'mix' | 'radionic') => void
   ) => {
-    console.log("Starting image alternation in Manifest with currentImage:", currentImage);
+    console.log("Starting image alternation with currentImage:", currentImage);
     
-    // Limpia cualquier intervalo/frame de animación existente
+    // Clean up any existing interval/animation frame
     stopImageAlternation();
     
-    // Establece la imagen inicial - usando 'pattern' para consistencia con las expectativas del componente
+    // Set the initial image to 'pattern' for consistency
     setCurrentImage('pattern');
     
-    // Calcula el intervalo basado en la configuración de velocidad (más rápido = intervalo más corto)
+    // Calculate the interval based on the speed setting (higher speed = shorter interval)
     const speed = (visualSpeed && visualSpeed.length > 0) ? visualSpeed[0] : 10;
     const switchInterval = 2000 / Math.max(1, speed);
     
     console.log("Setting up image alternation with interval:", switchInterval);
     
-    // Usar requestAnimationFrame para iOS/Safari para mejor rendimiento
+    // Use requestAnimationFrame for iOS/Safari for better performance
     if (isIOS || isSafari) {
       const animate = (currentTime: number) => {
-        if (!isManifestActive) return; // Detener si no está activo
+        if (!isManifestActive) return; // Stop if not active
         
         const elapsed = currentTime - lastTimeRef.current;
         
         if (elapsed > switchInterval) {
           setCurrentImage(prev => {
-            // Alternar entre estados 'pattern' y 'receptor'
+            // Toggle between 'pattern' and 'receptor' states
             console.log("Switching image from", prev, "to", prev === 'pattern' ? 'receptor' : 'pattern');
             return prev === 'pattern' ? 'receptor' : 'pattern';
           });
@@ -78,10 +70,10 @@ export const useManifestImageControl = (
       lastTimeRef.current = performance.now();
       animationFrameRef.current = requestAnimationFrame(animate);
     } else {
-      // Intervalo estándar para otros navegadores
+      // Standard interval for other browsers
       manifestIntervalRef.current = setInterval(() => {
         setCurrentImage(prev => {
-          // Alternar entre estados 'pattern' y 'receptor'
+          // Toggle between 'pattern' and 'receptor' states
           console.log("Switching image from", prev, "to", prev === 'pattern' ? 'receptor' : 'pattern');
           return prev === 'pattern' ? 'receptor' : 'pattern';
         });
@@ -89,25 +81,25 @@ export const useManifestImageControl = (
     }
   };
   
-  // Función para detener la alternancia de imágenes
+  // Function to stop image alternation
   const stopImageAlternation = (
     setCurrentImage?: (value: 'pattern' | 'receptor' | 'mix' | 'radionic') => void
   ) => {
-    console.log("Stopping image alternation in Manifest");
+    console.log("Stopping image alternation");
     
-    // Limpiar intervalo si existe
+    // Clear interval if it exists
     if (manifestIntervalRef.current) {
       clearInterval(manifestIntervalRef.current as NodeJS.Timeout);
       manifestIntervalRef.current = null;
     }
     
-    // Limpiar frame de animación si existe
+    // Clear animation frame if it exists
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
       animationFrameRef.current = null;
     }
     
-    // Resetear a vista mixta
+    // Reset to mixed view
     if (setCurrentImage) {
       setCurrentImage('mix');
     }

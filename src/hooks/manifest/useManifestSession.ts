@@ -35,12 +35,13 @@ export const useManifestSession = (
     // Use forced intention if available or use state intention as fallback
     const currentIntention = forcedIntention || state.intention;
     
-    console.log("StartManifestation - INTENTION RECEIVED:", {
+    // Debug logs for intention validation
+    console.log("StartManifestation - VALIDATION:", {
       forcedIntention,
       stateIntention: state.intention,
       finalIntention: currentIntention,
       intentionLength: currentIntention ? currentIntention.length : 0,
-      intentionValid: currentIntention && currentIntention.trim() !== "",
+      intentionValid: Boolean(currentIntention && currentIntention.trim() !== ""),
       activeTab: state.activeTab
     });
     
@@ -80,10 +81,11 @@ export const useManifestSession = (
 
     // Handle image alternation differently based on active tab
     if (state.activeTab === 'personal') {
-      // For personal manifestation, always use 'mix' to show both images simultaneously
-      state.setCurrentImage('mix');
+      // For personal manifestation, use the current image state
+      // Used to be forced to 'mix' but this was causing issues
+      console.log("Starting personal manifestation, maintaining image state:", state.currentImage);
     } else {
-      // Para patrones preestablecidos, iniciar la alternancia de imágenes
+      // For preset patterns, start image alternation
       console.log("Starting image alternation for preset tab");
       startImageAlternation(state.currentImage, state.setCurrentImage);
     }
@@ -118,7 +120,7 @@ export const useManifestSession = (
       state.setTimeRemaining(-1);
     }
     
-    // Show completed toast notification
+    // Show started toast notification
     toast({
       title: "Manifestación iniciada",
       description: "El proceso ha comenzado correctamente."

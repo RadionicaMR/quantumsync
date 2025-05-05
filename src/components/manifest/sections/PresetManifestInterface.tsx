@@ -62,6 +62,13 @@ const PresetManifestInterface = ({
   backgroundModeActive,
   indefiniteTime
 }: PresetManifestInterfaceProps) => {
+  console.log("PresetManifestInterface render:", { 
+    isManifestActive, 
+    canStart, 
+    intention, 
+    currentImage 
+  });
+
   return (
     <div className="space-y-4">
       {/* Visualizer Card */}
@@ -92,22 +99,8 @@ const PresetManifestInterface = ({
           />
         </div>
         
+        {/* Single ManifestActions component - removing the duplicate */}
         <ManifestActions 
-          isManifestActive={isManifestActive}
-          canStart={canStart}
-          timeRemaining={timeRemaining}
-          startManifestation={startManifestation}
-          stopManifestation={stopManifestation}
-          formatTimeRemaining={formatTimeRemaining}
-          backgroundModeActive={backgroundModeActive}
-          indefiniteTime={indefiniteTime}
-          intention={intention}
-        />
-      </Card>
-      
-      {/* Botón DETENER explícito adicional para garantizar su visibilidad */}
-      <Card className="bg-card/90 dark:bg-black/40 p-4 rounded-lg">
-        <ManifestActions
           isManifestActive={isManifestActive}
           canStart={canStart}
           timeRemaining={timeRemaining}

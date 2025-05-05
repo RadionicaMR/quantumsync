@@ -1,5 +1,5 @@
 
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import { Rocket, StopCircle, Smartphone, Infinity } from 'lucide-react';
 import ManifestActionButtons from './controls/ManifestActionButtons';
 
@@ -26,7 +26,7 @@ const ManifestActions = memo(({
   indefiniteTime = false,
   intention = "", 
 }: ManifestActionsProps) => {
-  // Simplify validation to just check intention
+  // Always check for a non-empty intention
   const isIntentionValid = Boolean(intention && intention.trim() !== "");
   
   console.log("ManifestActions render:", { 
@@ -36,17 +36,22 @@ const ManifestActions = memo(({
     intentionValid: isIntentionValid,
     canStart
   });
+
+  // Log on mount and when isManifestActive changes
+  useEffect(() => {
+    console.log("ManifestActions - Active state changed:", isManifestActive);
+  }, [isManifestActive]);
   
   return (
     <div className="flex flex-col space-y-2">
-      {/* Make sure the buttons are visible by passing necessary props */}
+      {/* Make sure buttons are visible by passing necessary props */}
       <ManifestActionButtons
         isManifestActive={isManifestActive}
         timeRemaining={timeRemaining}
         formatTimeRemaining={formatTimeRemaining}
         startManifestation={startManifestation}
         stopManifestation={stopManifestation}
-        canStart={isIntentionValid} // Use local validation to ensure consistent button state
+        canStart={isIntentionValid} // Use local validation based on intention
         intention={intention}
       />
       

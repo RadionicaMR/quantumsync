@@ -24,13 +24,14 @@ const ManifestActionButtons = memo(({
   intention
 }: ManifestActionButtonsProps) => {
   
-  // Debugging log to check component rendering and props
+  // Debugging log to check initial render and props
   useEffect(() => {
     console.log("ManifestActionButtons mounted/updated:", {
       isManifestActive,
       timeRemaining,
       intention,
-      canStart
+      canStart,
+      intentionValid: Boolean(intention && intention.trim() !== "")
     });
   }, [isManifestActive, timeRemaining, intention, canStart]);
   
@@ -40,6 +41,7 @@ const ManifestActionButtons = memo(({
       console.log("ManifestActionButtons - Starting manifestation with intention:", intention);
       startManifestation();
     } else {
+      console.error("Cannot start manifestation - empty intention:", intention);
       toast({
         title: "No se puede iniciar la manifestación",
         description: "Asegúrate de tener una intención definida.",
@@ -48,16 +50,15 @@ const ManifestActionButtons = memo(({
     }
   }, [intention, startManifestation]);
 
-  // Simplify validation to just check for intention
+  // Always calculate button enabled state locally based on intention
   const isButtonEnabled = Boolean(intention && intention.trim() !== "");
   
-  console.log("ManifestActionButtons render:", {
+  console.log("ManifestActionButtons render state:", {
     isManifestActive,
-    timeRemaining,
     isButtonEnabled,
-    intention,
-    hasIntention: Boolean(intention),
-    intentionTrimmed: intention?.trim() !== ""
+    intentionExists: Boolean(intention),
+    intentionLength: intention?.length,
+    timeRemaining
   });
 
   return (
