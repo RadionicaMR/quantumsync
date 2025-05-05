@@ -64,34 +64,46 @@ const PresetManifestInterface = ({
 }: PresetManifestInterfaceProps) => {
   return (
     <div className="space-y-4">
-      <ManifestInterfaceSection
-        currentImage={currentImage}
-        isManifestActive={isManifestActive}
-        patternImage={patternImage}
-        patternImages={patternImages}
-        receptorImage={receptorImage}
-        receptorImages={receptorImages}
-        canStart={canStart}
-        timeRemaining={timeRemaining}
-        startManifestation={startManifestation}
-        stopManifestation={stopManifestation}
-        formatTimeRemaining={formatTimeRemaining}
-        selectedPattern={selectedPattern}
-        patterns={patterns}
-        manifestPatterns={manifestPatterns}
-        intention={intention}
-        manifestSound={manifestSound}
-        manifestFrequency={manifestFrequency}
-        exposureTime={exposureTime}
-        manifestSpeed={manifestSpeed}
-        visualSpeed={visualSpeed}
-        rate1={rate1}
-        rate2={rate2}
-        rate3={rate3}
-        receptorName={receptorName}
-        backgroundModeActive={backgroundModeActive}
-        indefiniteTime={indefiniteTime}
-      />
+      {/* Visualizer Card */}
+      <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg">
+        <div className="mb-6">
+          <h3 className="text-xl font-bold mb-4">Visualizador de Manifestación</h3>
+          
+          <ManifestVisualizer 
+            currentImage={currentImage}
+            patternImage={patternImage}
+            patternImages={patternImages}
+            receptorImage={receptorImage}
+            receptorImages={receptorImages}
+            isActive={isManifestActive}
+            selectedPattern={selectedPattern}
+            patterns={patterns}
+            manifestPatterns={manifestPatterns}
+            intention={intention}
+            manifestSound={manifestSound}
+            manifestFrequency={manifestFrequency}
+            exposureTime={exposureTime}
+            manifestSpeed={manifestSpeed}
+            visualSpeed={visualSpeed}
+            rate1={rate1}
+            rate2={rate2}
+            rate3={rate3}
+            receptorName={receptorName}
+          />
+        </div>
+        
+        <ManifestActions 
+          isManifestActive={isManifestActive}
+          canStart={canStart}
+          timeRemaining={timeRemaining}
+          startManifestation={startManifestation}
+          stopManifestation={stopManifestation}
+          formatTimeRemaining={formatTimeRemaining}
+          backgroundModeActive={backgroundModeActive}
+          indefiniteTime={indefiniteTime}
+          intention={intention}
+        />
+      </Card>
       
       {/* Botón DETENER explícito adicional para garantizar su visibilidad */}
       <Card className="bg-card/90 dark:bg-black/40 p-4 rounded-lg">
