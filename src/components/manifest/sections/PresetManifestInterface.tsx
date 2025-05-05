@@ -99,7 +99,7 @@ const PresetManifestInterface = ({
           />
         </div>
         
-        {/* Single ManifestActions component - removing the duplicate */}
+        {/* Single ManifestActions component with intention passed explicitly */}
         <ManifestActions 
           isManifestActive={isManifestActive}
           canStart={canStart}

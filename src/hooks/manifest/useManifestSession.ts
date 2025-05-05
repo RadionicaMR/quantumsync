@@ -31,15 +31,13 @@ export const useManifestSession = (
   } = useManifestSubliminal();
 
   // Start Manifestation: begin subliminal audio if available
-  const startManifestation = (forcedIntention?: string) => {
-    // Use forced intention if available or use state intention as fallback
-    const currentIntention = forcedIntention || state.intention;
+  const startManifestation = () => {
+    // Use state intention directly - simplify the flow
+    const currentIntention = state.intention;
     
     // Debug logs for intention validation
     console.log("StartManifestation - VALIDATION:", {
-      forcedIntention,
       stateIntention: state.intention,
-      finalIntention: currentIntention,
       intentionLength: currentIntention ? currentIntention.length : 0,
       intentionValid: Boolean(currentIntention && currentIntention.trim() !== ""),
       activeTab: state.activeTab
@@ -48,7 +46,6 @@ export const useManifestSession = (
     // Strict validation: Verify that intention exists and is not empty
     if (!currentIntention || currentIntention.trim() === "") {
       console.error("CRITICAL ERROR: Empty or undefined intention", {
-        forcedIntention,
         stateIntention: state.intention
       });
       toast({
@@ -60,11 +57,6 @@ export const useManifestSession = (
     }
     
     console.log("INTENTION CORRECTLY VALIDATED:", currentIntention);
-    
-    // Update intention in state if using forced intention
-    if (forcedIntention && forcedIntention !== state.intention) {
-      state.setIntention(forcedIntention);
-    }
 
     // It's crucial to set active state BEFORE continuing
     state.setIsManifestActive(true);

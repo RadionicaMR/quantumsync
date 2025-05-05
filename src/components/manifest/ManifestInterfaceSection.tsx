@@ -13,7 +13,7 @@ interface ManifestInterfaceSectionProps {
   receptorImages: string[];
   canStart: boolean;
   timeRemaining: number | null;
-  startManifestation: (intention?: string) => void;
+  startManifestation: () => void;
   stopManifestation: () => void;
   formatTimeRemaining: (time: number) => string;
   backgroundModeActive?: boolean;
@@ -70,12 +70,6 @@ const ManifestInterfaceSection = memo(({
   // Ensure we use a stable currentImage value for the visualizer
   const stableCurrentImage = currentImage === 'radionic' ? 'pattern' : currentImage;
   
-  // CRUCIAL: Explicitly pass the intention when starting manifestation
-  const handleStartManifestation = useCallback(() => {
-    console.log("ManifestInterfaceSection - Starting with intention:", intention);
-    startManifestation(intention);
-  }, [intention, startManifestation]);
-  
   return (
     <div className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-lg">
       <h3 className="text-xl font-semibold mb-4">Interfaz de Manifestación</h3>
@@ -106,7 +100,7 @@ const ManifestInterfaceSection = memo(({
         isManifestActive={isManifestActive}
         canStart={canStart}
         timeRemaining={timeRemaining}
-        startManifestation={handleStartManifestation}
+        startManifestation={startManifestation}
         stopManifestation={stopManifestation}
         formatTimeRemaining={formatTimeRemaining}
         backgroundModeActive={backgroundModeActive}
