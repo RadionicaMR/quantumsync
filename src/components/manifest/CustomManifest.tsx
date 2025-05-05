@@ -132,6 +132,11 @@ const CustomManifest = memo(({
   const isIntentionValid = Boolean(intention && intention.trim() !== "");
   const canStart = isIntentionValid;
 
+  // Log when manifest active state changes
+  useEffect(() => {
+    console.log("CustomManifest - isManifestActive changed:", isManifestActive);
+  }, [isManifestActive]);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       {/* Left panel: configuration */}
@@ -194,7 +199,7 @@ const CustomManifest = memo(({
           
           <TreatmentVisualizer
             isPlaying={isManifestActive}
-            visualFeedback={true}
+            visualFeedback={true} // Siempre debe ser true para mostrar el visualizador
             radionicImage={patternImage}
             receptorImage={receptorImage}
             radionicImages={patternImages}

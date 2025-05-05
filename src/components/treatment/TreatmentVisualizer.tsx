@@ -38,11 +38,6 @@ const TreatmentVisualizer = ({
 }: TreatmentVisualizerProps) => {
   const { isIOS } = useIsMobile();
   
-  // Early return if not playing or visualFeedback is disabled
-  if (!isPlaying || !visualFeedback) {
-    return null;
-  }
-  
   console.log("TreatmentVisualizer rendering with:", { 
     isPlaying, 
     visualFeedback, 
@@ -67,10 +62,22 @@ const TreatmentVisualizer = ({
   const showRadionic = currentImage === 'mix' || currentImage === 'radionic' || currentImage === 'pattern';
   const showReceptor = currentImage === 'mix' || currentImage === 'receptor';
 
+  // Eliminar la comprobación de visualFeedback para que siempre muestre el visualizador
+  // cuando isPlaying sea true, independientemente de visualFeedback
+  if (!isPlaying) {
+    return (
+      <div className="relative aspect-square w-full bg-black/10 dark:bg-black/20 rounded-lg overflow-hidden flex items-center justify-center">
+        <p className="text-center text-muted-foreground px-4">
+          Complete los campos requeridos y haga clic en Iniciar Manifestación.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className={`relative aspect-square w-full bg-black rounded-lg overflow-hidden ${isIOS ? 'ios-momentum-scroll' : ''}`}>
       {/* Show blended images */}
-      {hasImages && (
+      {(hasImages || isPlaying) && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
           {/* Radionic Images - Show based on currentImage */}
           {hasRadionicImages && showRadionic && (
@@ -88,6 +95,15 @@ const TreatmentVisualizer = ({
                   }}
                 />
               ))}
+            </div>
+          )}
+          
+          {/* Si no hay imágenes radionicas pero estamos en modo activo, mostrar un mensaje */}
+          {isPlaying && showRadionic && !hasRadionicImages && (
+            <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/40">
+              <div className="text-xl text-quantum-primary font-medium bg-black/50 px-6 py-3 rounded-lg">
+                Patrón de Manifestación
+              </div>
             </div>
           )}
           
@@ -114,6 +130,15 @@ const TreatmentVisualizer = ({
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-2xl font-bold text-white bg-black/50 px-6 py-4 rounded-lg">
                     {receptorName}
+                  </div>
+                </div>
+              )}
+              
+              {/* Si no hay imágenes de receptor ni nombre pero estamos en modo activo, mostrar un mensaje */}
+              {isPlaying && showReceptor && !hasReceptorImages && !hasReceptorName && (
+                <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/40">
+                  <div className="text-xl text-quantum-primary font-medium bg-black/50 px-6 py-3 rounded-lg">
+                    Receptor Universal
                   </div>
                 </div>
               )}
