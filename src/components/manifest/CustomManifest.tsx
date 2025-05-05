@@ -5,6 +5,7 @@ import TreatmentVisualizer from '@/components/treatment/TreatmentVisualizer';
 import { ManifestPattern } from '@/data/manifestPatterns';
 import { toast } from '@/components/ui/use-toast';
 import { Card } from '@/components/ui/card';
+import ManifestActions from './ManifestActions';
 
 interface CustomManifestProps {
   intention: string;
@@ -213,6 +214,21 @@ const CustomManifest = memo(({
             rate3={rate3}
             hypnoticSpeed={visualSpeed}
             receptorName={receptorName}
+          />
+        </Card>
+        
+        {/* Botón DETENER explícito fuera del panel izquierdo */}
+        <Card className="bg-card/90 dark:bg-black/40 p-4 rounded-lg mt-4">
+          <ManifestActions
+            isManifestActive={isManifestActive}
+            canStart={canStart}
+            timeRemaining={timeRemaining}
+            startManifestation={handleStartManifestation}
+            stopManifestation={stopManifestation}
+            formatTimeRemaining={formatTimeRemaining}
+            backgroundModeActive={backgroundModeActive}
+            indefiniteTime={indefiniteTime}
+            intention={intention}
           />
         </Card>
       </div>

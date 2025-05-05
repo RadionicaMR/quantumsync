@@ -84,26 +84,8 @@ export const useManifestSession = (
       state.setCurrentImage('mix');
     } else {
       // Para patrones preestablecidos, iniciar la alternancia de imágenes
+      console.log("Starting image alternation for preset tab");
       startImageAlternation(state.currentImage, state.setCurrentImage);
-      
-      // Calculate interval based on manifestSpeed for proper alternation speed
-      const speed = Math.max(1, state.manifestSpeed[0] || 10);
-      
-      // Faster speed = shorter interval (inverse relationship)
-      const switchInterval = 5000 / speed;
-      
-      console.log("Setting up alternation timer with speed:", speed, "interval:", switchInterval);
-      
-      const hypnoticTimer = setInterval(() => {
-        if (!document.hidden) {
-          state.setCurrentImage((prev) => {
-            // Toggle between pattern and receptor for presets
-            return prev === 'pattern' ? 'receptor' : 'pattern';
-          });
-        }
-      }, switchInterval);
-      
-      setHypnoticTimer(hypnoticTimer);
     }
 
     // Only set exposure and countdown timers if not indefinite time

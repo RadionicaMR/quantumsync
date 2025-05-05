@@ -38,7 +38,7 @@ const ManifestActions = memo(({
   });
   
   return (
-    <div className="flex flex-col space-y-2 mt-6">
+    <div className="flex flex-col space-y-2">
       {/* Make sure the buttons are visible by passing necessary props */}
       <ManifestActionButtons
         isManifestActive={isManifestActive}

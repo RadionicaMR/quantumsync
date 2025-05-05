@@ -1,12 +1,12 @@
 
-import React, { memo, useCallback } from 'react';
+import React from 'react';
+import { ManifestPattern } from '@/data/manifestPatterns';
+import { Card } from '@/components/ui/card';
 import ManifestVisualizer from '../ManifestVisualizer';
 import ManifestActions from '../ManifestActions';
-import { ManifestPattern } from '@/data/manifestPatterns';
-import { useEffect } from 'react';
 
 interface ManifestInterfaceSectionProps {
-  currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';  // Includes 'pattern' and 'radionic'
+  currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';
   isManifestActive: boolean;
   patternImage: string | null;
   patternImages: string[];
@@ -14,11 +14,9 @@ interface ManifestInterfaceSectionProps {
   receptorImages: string[];
   canStart: boolean;
   timeRemaining: number | null;
-  startManifestation: (intention?: string) => void;
+  startManifestation: () => void;
   stopManifestation: () => void;
   formatTimeRemaining: (time: number) => string;
-  backgroundModeActive?: boolean;
-  // Added properties to resolve type errors
   selectedPattern: string;
   patterns: ManifestPattern[];
   manifestPatterns: Record<string, string>;
@@ -27,16 +25,16 @@ interface ManifestInterfaceSectionProps {
   manifestFrequency: number[];
   exposureTime: number[];
   manifestSpeed: number[];
-  visualSpeed?: number[];
-  rate1?: string; 
-  rate2?: string;
-  rate3?: string;
-  receptorName?: string;
-  indefiniteTime?: boolean;
+  visualSpeed: number[];
+  rate1: string;
+  rate2: string;
+  rate3: string;
+  receptorName: string;
+  backgroundModeActive: boolean;
+  indefiniteTime: boolean;
 }
 
-// Memoize the component to prevent unnecessary re-renders
-const ManifestInterfaceSection = memo(({
+const ManifestInterfaceSection = ({
   currentImage,
   isManifestActive,
   patternImage,
@@ -48,8 +46,6 @@ const ManifestInterfaceSection = memo(({
   startManifestation,
   stopManifestation,
   formatTimeRemaining,
-  backgroundModeActive = false,
-  // Added props
   selectedPattern,
   patterns,
   manifestPatterns,
@@ -58,73 +54,59 @@ const ManifestInterfaceSection = memo(({
   manifestFrequency,
   exposureTime,
   manifestSpeed,
-  visualSpeed = [10],
-  rate1 = "",
-  rate2 = "",
-  rate3 = "",
-  receptorName = "",
-  indefiniteTime = false
+  visualSpeed,
+  rate1,
+  rate2,
+  rate3,
+  receptorName,
+  backgroundModeActive,
+  indefiniteTime
 }: ManifestInterfaceSectionProps) => {
-  // Convert manifestPatterns record to array if needed
-  const patternsArray = Array.isArray(patterns) ? patterns : [];
-  
-  // Log intention changes for debugging
-  useEffect(() => {
-    console.log("ManifestInterfaceSection - Intention actualizada:", {
-      intention,
-      intentionLength: intention ? intention.length : 0,
-      intentionValid: intention && intention.trim() !== "",
-      isManifestActive
-    });
-  }, [intention, isManifestActive]);
-  
-  // CRUCIAL: Explicitly pass the intention when starting manifestation
-  const handleStartManifestation = useCallback(() => {
-    console.log("ManifestInterfaceSection - Starting with intention:", intention);
-    startManifestation(intention);
-  }, [intention, startManifestation]);
-  
+  console.log('ManifestInterfaceSection render with currentImage:', currentImage);
+
   return (
-    <div className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-lg">
-      <h3 className="text-xl font-semibold mb-4">Interfaz de Manifestación</h3>
-      
-      <ManifestVisualizer
-        currentImage={currentImage}
-        patternImage={patternImage}
-        patternImages={patternImages}
-        receptorImage={receptorImage}
-        receptorImages={receptorImages}
-        isActive={isManifestActive}
-        selectedPattern={selectedPattern}
-        patterns={patternsArray}
-        manifestPatterns={manifestPatterns}
-        intention={intention}
-        manifestSound={manifestSound}
-        manifestFrequency={manifestFrequency}
-        exposureTime={exposureTime}
-        manifestSpeed={manifestSpeed}
-        visualSpeed={visualSpeed}
-        rate1={rate1}
-        rate2={rate2}
-        rate3={rate3}
-        receptorName={receptorName}
-      />
-      
-      <ManifestActions 
-        isManifestActive={isManifestActive}
-        canStart={canStart}
-        timeRemaining={timeRemaining}
-        startManifestation={handleStartManifestation}
-        stopManifestation={stopManifestation}
-        formatTimeRemaining={formatTimeRemaining}
-        backgroundModeActive={backgroundModeActive}
-        indefiniteTime={indefiniteTime}
-        intention={intention}
-      />
+    <div>
+      <Card className="p-6 quantum-card">
+        <div className="mb-6">
+          <h3 className="text-xl font-bold mb-4">Visualizador de Manifestación</h3>
+          
+          <ManifestVisualizer 
+            currentImage={currentImage}
+            patternImage={patternImage}
+            patternImages={patternImages}
+            receptorImage={receptorImage}
+            receptorImages={receptorImages}
+            isActive={isManifestActive}
+            selectedPattern={selectedPattern}
+            patterns={patterns}
+            manifestPatterns={manifestPatterns}
+            intention={intention}
+            manifestSound={manifestSound}
+            manifestFrequency={manifestFrequency}
+            exposureTime={exposureTime}
+            manifestSpeed={manifestSpeed}
+            visualSpeed={visualSpeed}
+            rate1={rate1}
+            rate2={rate2}
+            rate3={rate3}
+            receptorName={receptorName}
+          />
+        </div>
+        
+        <ManifestActions 
+          isManifestActive={isManifestActive}
+          canStart={canStart}
+          timeRemaining={timeRemaining}
+          startManifestation={startManifestation}
+          stopManifestation={stopManifestation}
+          formatTimeRemaining={formatTimeRemaining}
+          backgroundModeActive={backgroundModeActive}
+          indefiniteTime={indefiniteTime}
+          intention={intention}
+        />
+      </Card>
     </div>
   );
-});
-
-ManifestInterfaceSection.displayName = 'ManifestInterfaceSection';
+};
 
 export default ManifestInterfaceSection;

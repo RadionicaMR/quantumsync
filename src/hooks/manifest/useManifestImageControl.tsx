@@ -42,7 +42,7 @@ export const useManifestImageControl = (
     currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic',
     setCurrentImage: (value: ((prev: 'pattern' | 'receptor' | 'mix' | 'radionic') => 'pattern' | 'receptor' | 'mix' | 'radionic') | 'pattern' | 'receptor' | 'mix' | 'radionic') => void
   ) => {
-    console.log("Starting image alternation in Manifest");
+    console.log("Starting image alternation in Manifest with currentImage:", currentImage);
     
     // Limpia cualquier intervalo/frame de animación existente
     stopImageAlternation();
@@ -66,6 +66,7 @@ export const useManifestImageControl = (
         if (elapsed > switchInterval) {
           setCurrentImage(prev => {
             // Alternar entre estados 'pattern' y 'receptor'
+            console.log("Switching image from", prev, "to", prev === 'pattern' ? 'receptor' : 'pattern');
             return prev === 'pattern' ? 'receptor' : 'pattern';
           });
           lastTimeRef.current = currentTime;
@@ -81,6 +82,7 @@ export const useManifestImageControl = (
       manifestIntervalRef.current = setInterval(() => {
         setCurrentImage(prev => {
           // Alternar entre estados 'pattern' y 'receptor'
+          console.log("Switching image from", prev, "to", prev === 'pattern' ? 'receptor' : 'pattern');
           return prev === 'pattern' ? 'receptor' : 'pattern';
         });
       }, switchInterval);

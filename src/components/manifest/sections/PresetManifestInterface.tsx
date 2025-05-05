@@ -2,6 +2,8 @@
 import React from 'react';
 import { ManifestPattern } from '@/data/manifestPatterns';
 import ManifestInterfaceSection from './ManifestInterfaceSection';
+import { Card } from '@/components/ui/card';
+import ManifestActions from '../ManifestActions';
 
 interface PresetManifestInterfaceProps {
   currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';
@@ -61,7 +63,7 @@ const PresetManifestInterface: React.FC<PresetManifestInterfaceProps> = ({
   indefiniteTime
 }) => {
   return (
-    <div className="lg:col-span-2">
+    <div className="space-y-4">
       <ManifestInterfaceSection
         currentImage={currentImage}
         isManifestActive={isManifestActive}
@@ -90,8 +92,23 @@ const PresetManifestInterface: React.FC<PresetManifestInterfaceProps> = ({
         backgroundModeActive={backgroundModeActive}
         indefiniteTime={indefiniteTime}
       />
+      
+      {/* Botón DETENER explícito adicional para garantizar su visibilidad */}
+      <Card className="bg-card/90 dark:bg-black/40 p-4 rounded-lg">
+        <ManifestActions
+          isManifestActive={isManifestActive}
+          canStart={canStart}
+          timeRemaining={timeRemaining}
+          startManifestation={startManifestation}
+          stopManifestation={stopManifestation}
+          formatTimeRemaining={formatTimeRemaining}
+          backgroundModeActive={backgroundModeActive}
+          indefiniteTime={indefiniteTime}
+          intention={intention}
+        />
+      </Card>
     </div>
   );
-};
+});
 
 export default PresetManifestInterface;
