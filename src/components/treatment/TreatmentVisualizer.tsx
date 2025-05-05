@@ -74,15 +74,17 @@ const TreatmentVisualizer = ({
   // Normalize currentImage value - treat 'pattern' as 'radionic' for compatibility
   const adjustedCurrentImage = currentImage === 'pattern' ? 'radionic' : currentImage;
 
-  console.log("Treatment visualizer rendering with adjusted image:", adjustedCurrentImage);
+  // En la sección de Manifestación Personal, evitamos la alternancia
+  // Dejamos fijado en "mix" para que se muestren ambas imágenes superpuestas
+  const finalCurrentImage = 'mix';
 
   return (
     <div className={`relative aspect-square w-full bg-black rounded-lg overflow-hidden ${isIOS ? 'ios-momentum-scroll' : ''}`}>
       {/* Show blended images */}
       {hasImages && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-          {/* Radionic Images - Only show when current is radionic or mix */}
-          {(adjustedCurrentImage === 'radionic' || adjustedCurrentImage === 'mix') && hasRadionicImages && (
+          {/* Radionic Images - Siempre visibles */}
+          {hasRadionicImages && (
             <div className="absolute inset-0 flex items-center justify-center z-10">
               {radionicImagesArray.map((img, index) => (
                 <img 
@@ -95,50 +97,51 @@ const TreatmentVisualizer = ({
                     mixBlendMode: 'screen',
                     filter: 'contrast(1.2) brightness(1.1)',
                     transition: `opacity ${animationDuration/2}s ease-in-out`,
-                    animation: `pulse ${pulseDuration}s infinite alternate ease-in-out`
+                    // Sin animación pulsante para evitar titilar
+                    animation: 'none'
                   }}
                 />
               ))}
             </div>
           )}
           
-          {/* Receptor Images - Only show when current is receptor or mix */}
-          {(adjustedCurrentImage === 'receptor' || adjustedCurrentImage === 'mix') && (
-            <div className="absolute inset-0 flex items-center justify-center z-20">
-              {/* Show receptor images if available */}
-              {hasReceptorImages && receptorImagesArray.map((img, index) => (
-                <img 
-                  key={`receptor-${index}`}
-                  src={img}
-                  alt={`Efecto receptor ${index + 1}`}
-                  className="absolute inset-0 w-full h-full object-contain"
-                  style={{ 
-                    opacity: 1,
-                    mixBlendMode: 'multiply',
-                    filter: 'contrast(1.2) brightness(1.1)',
-                    transition: `opacity ${animationDuration/2}s ease-in-out`,
-                    animation: `pulse ${pulseDuration}s infinite alternate-reverse ease-in-out`
-                  }}
-                />
-              ))}
-              
-              {/* Show receptor name when needed */}
-              {hasReceptorName && (!hasReceptorImages) && (
-                <div 
-                  className="absolute inset-0 flex items-center justify-center"
-                  style={{
-                    opacity: 1,
-                    transition: `opacity ${animationDuration/2}s ease-in-out`,
-                    animation: `pulse ${pulseDuration}s infinite alternate`
-                  }}
-                >
-                  <div className="text-2xl font-bold text-white bg-black/50 px-6 py-4 rounded-lg">
-                    {receptorName}
-                  </div>
+          {/* Receptor Images - Siempre visibles */}
+          <div className="absolute inset-0 flex items-center justify-center z-20">
+            {/* Show receptor images if available */}
+            {hasReceptorImages && receptorImagesArray.map((img, index) => (
+              <img 
+                key={`receptor-${index}`}
+                src={img}
+                alt={`Efecto receptor ${index + 1}`}
+                className="absolute inset-0 w-full h-full object-contain"
+                style={{ 
+                  opacity: 1,
+                  mixBlendMode: 'multiply',
+                  filter: 'contrast(1.2) brightness(1.1)',
+                  transition: `opacity ${animationDuration/2}s ease-in-out`,
+                  // Sin animación pulsante para evitar titilar
+                  animation: 'none'
+                }}
+              />
+            ))}
+            
+            {/* Show receptor name when needed */}
+            {hasReceptorName && (!hasReceptorImages) && (
+              <div 
+                className="absolute inset-0 flex items-center justify-center"
+                style={{
+                  opacity: 1,
+                  transition: `opacity ${animationDuration/2}s ease-in-out`,
+                  // Sin animación pulsante para evitar titilar
+                  animation: 'none'
+                }}
+              >
+                <div className="text-2xl font-bold text-white bg-black/50 px-6 py-4 rounded-lg">
+                  {receptorName}
                 </div>
-              )}
-            </div>
-          )}
+              </div>
+            )}
+          </div>
         </div>
       )}
       
@@ -154,7 +157,7 @@ const TreatmentVisualizer = ({
         Frecuencia: {frequency[0]} Hz | Intensidad: {intensity[0]}%
       </div>
       
-      {/* RATES con movimiento aleatorio dentro de la imagen */}
+      {/* RATES sin animación aleatoria para evitar titilar */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-40">
         <div className="relative w-full h-full max-w-[90%] max-h-[90%]">
           {rate1 && (
@@ -166,7 +169,8 @@ const TreatmentVisualizer = ({
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  animation: `random-move ${rateAnimationDuration}s infinite alternate`,
+                  // Sin animación para evitar titilar
+                  animation: 'none', 
                   textShadow: '0 0 5px rgba(59, 130, 246, 0.7)'
                 }}>
               {rate1}
@@ -181,7 +185,8 @@ const TreatmentVisualizer = ({
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  animation: `random-move ${rateAnimationDuration + 3}s infinite alternate-reverse`,
+                  // Sin animación para evitar titilar
+                  animation: 'none',
                   textShadow: '0 0 5px rgba(59, 130, 246, 0.7)'
                 }}>
               {rate2}
@@ -196,7 +201,8 @@ const TreatmentVisualizer = ({
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  animation: `random-move ${rateAnimationDuration + 5}s infinite`,
+                  // Sin animación para evitar titilar 
+                  animation: 'none',
                   textShadow: '0 0 5px rgba(59, 130, 246, 0.7)'
                 }}>
               {rate3}

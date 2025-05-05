@@ -1,4 +1,3 @@
-
 import React, { useEffect, useCallback, memo } from 'react';
 import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
 import TreatmentVisualizer from '@/components/treatment/TreatmentVisualizer';
@@ -132,8 +131,8 @@ const CustomManifest = memo(({
   const isIntentionValid = Boolean(intention && intention.trim() !== "");
   const canStart = isIntentionValid;
 
-  // Adjust the current image for Treatment Visualizer compatibility
-  const normalizedCurrentImage = currentImage === 'radionic' ? 'pattern' : currentImage;
+  // Para la manifestación personal, siempre usamos 'mix' para evitar titilar
+  const fixedCurrentImage = 'mix';
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -202,7 +201,7 @@ const CustomManifest = memo(({
             receptorImage={receptorImage}
             radionicImages={patternImages}
             receptorImages={receptorImages}
-            currentImage={normalizedCurrentImage}
+            currentImage={fixedCurrentImage} // Siempre usamos 'mix' para evitar titilar
             hypnoticEffect={isManifestActive}
             frequency={manifestFrequency}
             intensity={visualSpeed}
