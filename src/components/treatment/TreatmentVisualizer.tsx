@@ -61,14 +61,19 @@ const TreatmentVisualizer = ({
   const hasReceptorImages = receptorImagesArray.length > 0;
   const hasReceptorName = receptorName && receptorName.trim().length > 0;
   const hasImages = hasRadionicImages || hasReceptorImages || hasReceptorName;
+  
+  // For mix view, show both radionic and receptor
+  // For specific views, only show the selected type
+  const showRadionic = currentImage === 'mix' || currentImage === 'radionic' || currentImage === 'pattern';
+  const showReceptor = currentImage === 'mix' || currentImage === 'receptor';
 
   return (
     <div className={`relative aspect-square w-full bg-black rounded-lg overflow-hidden ${isIOS ? 'ios-momentum-scroll' : ''}`}>
       {/* Show blended images */}
       {hasImages && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-          {/* Radionic Images - Always visible, NO ANIMATION */}
-          {hasRadionicImages && (
+          {/* Radionic Images - Show based on currentImage */}
+          {hasRadionicImages && showRadionic && (
             <div className="absolute inset-0 flex items-center justify-center z-10">
               {radionicImagesArray.map((img, index) => (
                 <img 
@@ -86,34 +91,34 @@ const TreatmentVisualizer = ({
             </div>
           )}
           
-          {/* Receptor Images - Always visible, NO ANIMATION */}
-          <div className="absolute inset-0 flex items-center justify-center z-20">
-            {/* Show receptor images if available */}
-            {hasReceptorImages && receptorImagesArray.map((img, index) => (
-              <img 
-                key={`receptor-${index}`}
-                src={img}
-                alt={`Efecto receptor ${index + 1}`}
-                className="absolute inset-0 w-full h-full object-contain"
-                style={{ 
-                  opacity: 1,
-                  mixBlendMode: 'multiply',
-                  filter: 'contrast(1.2) brightness(1.1)'
-                }}
-              />
-            ))}
-            
-            {/* Show receptor name when needed */}
-            {hasReceptorName && (!hasReceptorImages) && (
-              <div 
-                className="absolute inset-0 flex items-center justify-center"
-              >
-                <div className="text-2xl font-bold text-white bg-black/50 px-6 py-4 rounded-lg">
-                  {receptorName}
+          {/* Receptor Images - Show based on currentImage */}
+          {showReceptor && (
+            <div className="absolute inset-0 flex items-center justify-center z-20">
+              {/* Show receptor images if available */}
+              {hasReceptorImages && receptorImagesArray.map((img, index) => (
+                <img 
+                  key={`receptor-${index}`}
+                  src={img}
+                  alt={`Efecto receptor ${index + 1}`}
+                  className="absolute inset-0 w-full h-full object-contain"
+                  style={{ 
+                    opacity: 1,
+                    mixBlendMode: 'multiply',
+                    filter: 'contrast(1.2) brightness(1.1)'
+                  }}
+                />
+              ))}
+              
+              {/* Show receptor name when needed */}
+              {hasReceptorName && (!hasReceptorImages) && showReceptor && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-2xl font-bold text-white bg-black/50 px-6 py-4 rounded-lg">
+                    {receptorName}
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
       )}
       

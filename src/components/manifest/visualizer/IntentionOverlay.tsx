@@ -21,8 +21,8 @@ const IntentionOverlay: React.FC<IntentionOverlayProps> = ({
       <div 
         className="text-center max-w-[80%] bg-black/40 px-4 py-2 rounded-lg backdrop-blur-sm"
         style={{
-          animation: 'none', // Never animate
-          opacity: 0.8
+          animation: noAnimation ? 'none' : `pulse ${pulseDuration}s ease-in-out infinite`,
+          opacity: 0.9
         }}
       >
         <p className="text-white text-lg md:text-xl font-medium">{intention}</p>

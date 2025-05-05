@@ -80,24 +80,26 @@ export const useManifestSession = () => {
       state.setCurrentImage('pattern');
       
       // Only set hypnotic timer for preset patterns tab to alternate images
-      const speed = state.visualSpeed?.[0] || state.manifestSpeed?.[0] || 10;
-      const switchInterval = Math.max(2000, 5000 / speed);
+      // Calculate interval based on manifestSpeed (for presets) or visualSpeed (for personal)
+      const speed = state.activeTab === 'presets' 
+        ? (state.manifestSpeed?.[0] || 10) 
+        : (state.visualSpeed?.[0] || 10);
+      
+      // Faster speed = shorter interval (inverse relationship)
+      const switchInterval = 5000 / Math.max(1, speed);
+      
+      console.log("Setting up alternation timer with speed:", speed, "interval:", switchInterval);
       
       const hypnoticTimer = setInterval(() => {
         if (!document.hidden) {
           state.setCurrentImage((prev) => {
-            // Only toggle between pattern and receptor, avoiding 'mix'
-            if (prev === 'pattern' || prev === 'radionic') {
-              return 'receptor';
-            } else {
-              return 'pattern';
-            }
+            // Only toggle between pattern and receptor for presets
+            return prev === 'pattern' ? 'receptor' : 'pattern';
           });
         }
       }, switchInterval);
       
       setHypnoticTimer(hypnoticTimer);
-      console.log("Image alternation timer set with interval:", switchInterval);
     }
 
     // Only set exposure and countdown timers if not indefinite time

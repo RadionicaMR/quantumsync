@@ -111,27 +111,23 @@ const ManifestVisualizer: React.FC<ManifestVisualizerProps> = ({
           </div>
         )}
 
-        {/* Pattern Layer - No animations */}
-        {showPatternImage && (
-          <PatternLayer 
-            isVisible={true}
-            currentPatternImageSrc={patternImageSrc}
-            pulseDuration={0}
-            noAnimation={true}
-          />
-        )}
+        {/* Pattern Layer - Show only when it should be visible */}
+        <PatternLayer 
+          isVisible={showPatternImage}
+          currentPatternImageSrc={patternImageSrc}
+          pulseDuration={0}
+          noAnimation={true}
+        />
         
-        {/* Receptor Layer - No animations */}
-        {showReceptorImage && (
-          <ReceptorLayer 
-            isVisible={true}
-            currentReceptorImageSrc={receptorImageSrc}
-            receptorName={receptorName}
-            hasReceptorImage={Boolean(receptorImageSrc)}
-            pulseDuration={0}
-            noAnimation={true}
-          />
-        )}
+        {/* Receptor Layer - Show only when it should be visible */}
+        <ReceptorLayer 
+          isVisible={showReceptorImage}
+          currentReceptorImageSrc={receptorImageSrc}
+          receptorName={receptorName}
+          hasReceptorImage={Boolean(receptorImageSrc)}
+          pulseDuration={0}
+          noAnimation={true}
+        />
       </div>
 
       {/* Overlay information when active */}
@@ -156,7 +152,7 @@ const ManifestVisualizer: React.FC<ManifestVisualizerProps> = ({
         </div>
       )}
       
-      {/* Intention overlay when active - No animations */}
+      {/* Intention overlay - Always show when active regardless of currentImage */}
       {isActive && intention && (
         <IntentionOverlay 
           intention={intention} 
