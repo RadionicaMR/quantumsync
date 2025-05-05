@@ -1,17 +1,13 @@
 
 export const useManifestUtils = () => {
-  // Format time remaining for display
-  const formatTimeRemaining = (minutes: number): string => {
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    
-    if (hours > 0) {
-      return `${hours}h ${remainingMinutes}m`;
-    }
-    return `${remainingMinutes}m`;
+  // Función para formatear el tiempo restante
+  const formatTimeRemaining = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  return { formatTimeRemaining };
+  return {
+    formatTimeRemaining
+  };
 };
-
-export type ManifestUtils = ReturnType<typeof useManifestUtils>;

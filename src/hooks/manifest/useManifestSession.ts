@@ -6,7 +6,15 @@ import { useManifestTimers } from './useManifestTimers';
 import { useManifestSubliminal } from './useManifestSubliminal';
 import { toast } from "@/components/ui/use-toast";
 
-export const useManifestSession = () => {
+export const useManifestSession = (
+  startImageAlternation: (
+    currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic',
+    setCurrentImage: (value: ((prev: 'pattern' | 'receptor' | 'mix' | 'radionic') => 'pattern' | 'receptor' | 'mix' | 'radionic') | 'pattern' | 'receptor' | 'mix' | 'radionic') => void
+  ) => void,
+  stopImageAlternation: (
+    setCurrentImage?: (value: 'pattern' | 'receptor' | 'mix' | 'radionic') => void
+  ) => void
+) => {
   const state = useManifestState();
   const { startAudio, stopAudio, backgroundModeActive: audioBackgroundActive } = useManifestAudio();
   const { 
@@ -75,8 +83,8 @@ export const useManifestSession = () => {
       // For personal manifestation, always use 'mix' to show both images simultaneously
       state.setCurrentImage('mix');
     } else {
-      // For preset patterns, start with 'pattern' and set up alternation
-      state.setCurrentImage('pattern');
+      // Para patrones preestablecidos, iniciar la alternancia de imágenes
+      startImageAlternation(state.currentImage, state.setCurrentImage);
       
       // Calculate interval based on manifestSpeed for proper alternation speed
       const speed = Math.max(1, state.manifestSpeed[0] || 10);
@@ -144,7 +152,7 @@ export const useManifestSession = () => {
     state.setIsManifestActive(false);
     
     // Reset to mix view instead of alternating
-    state.setCurrentImage('mix');
+    stopImageAlternation(state.setCurrentImage);
     
     stopSubliminalAudio();
     toast({
