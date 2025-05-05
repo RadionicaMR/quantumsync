@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { ManifestPattern } from '@/data/manifestPatterns';
-import ManifestInterfaceSection from './ManifestInterfaceSection';
 import { Card } from '@/components/ui/card';
+import ManifestVisualizer from '../ManifestVisualizer';
 import ManifestActions from '../ManifestActions';
 
 interface PresetManifestInterfaceProps {
@@ -34,7 +34,7 @@ interface PresetManifestInterfaceProps {
   indefiniteTime: boolean;
 }
 
-const PresetManifestInterface: React.FC<PresetManifestInterfaceProps> = ({
+const PresetManifestInterface = ({
   currentImage,
   isManifestActive,
   patternImage,
@@ -61,7 +61,7 @@ const PresetManifestInterface: React.FC<PresetManifestInterfaceProps> = ({
   receptorName,
   backgroundModeActive,
   indefiniteTime
-}) => {
+}: PresetManifestInterfaceProps) => {
   return (
     <div className="space-y-4">
       <ManifestInterfaceSection
@@ -109,6 +109,6 @@ const PresetManifestInterface: React.FC<PresetManifestInterfaceProps> = ({
       </Card>
     </div>
   );
-});
+};
 
 export default PresetManifestInterface;
