@@ -61,48 +61,50 @@ const ManifestActionButtons = memo(({
     timeRemaining
   });
 
+  // CRITICAL FIX: Force render the stop button when isManifestActive is true
+  if (isManifestActive) {
+    return (
+      <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-background/50">
+        <div className="text-quantum-primary font-medium">
+          {timeRemaining !== null && timeRemaining !== -1 && (
+            <span>Tiempo restante: {formatTimeRemaining(Math.ceil(timeRemaining))}</span>
+          )}
+          {timeRemaining === -1 && (
+            <span>Tiempo indefinido</span>
+          )}
+        </div>
+        <QuantumButton 
+          variant="secondary"
+          onClick={stopManifestation}
+          className="bg-red-500 hover:bg-red-600 text-white font-bold"
+        >
+          <div className="flex items-center justify-center">
+            <StopCircle className="mr-2 h-4 w-4" />
+            <span>DETENER MANIFESTACIÓN</span>
+          </div>
+        </QuantumButton>
+      </div>
+    );
+  }
+
+  // Start button for inactive state
   return (
     <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-background/50">
-      {isManifestActive ? (
-        <>
-          <div className="text-quantum-primary font-medium">
-            {timeRemaining !== null && timeRemaining !== -1 && (
-              <span>Tiempo restante: {formatTimeRemaining(Math.ceil(timeRemaining))}</span>
-            )}
-            {timeRemaining === -1 && (
-              <span>Tiempo indefinido</span>
-            )}
-          </div>
-          <QuantumButton 
-            variant="secondary"
-            onClick={stopManifestation}
-            className="bg-red-500 hover:bg-red-600 text-white font-bold"
-          >
-            <div className="flex items-center justify-center">
-              <StopCircle className="mr-2 h-4 w-4" />
-              <span>DETENER MANIFESTACIÓN</span>
-            </div>
-          </QuantumButton>
-        </>
-      ) : (
-        <>
-          <div className="text-muted-foreground">
-            {isButtonEnabled
-              ? 'Listo para iniciar manifestación' 
-              : 'Completa los campos requeridos para continuar'}
-          </div>
-          <QuantumButton 
-            className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
-            onClick={handleStartClick}
-            disabled={!isButtonEnabled}
-          >
-            <div className="flex items-center justify-center">
-              <Rocket className="mr-2 h-5 w-5" />
-              <span>INICIAR MANIFESTACIÓN</span>
-            </div>
-          </QuantumButton>
-        </>
-      )}
+      <div className="text-muted-foreground">
+        {isButtonEnabled
+          ? 'Listo para iniciar manifestación' 
+          : 'Completa los campos requeridos para continuar'}
+      </div>
+      <QuantumButton 
+        className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
+        onClick={handleStartClick}
+        disabled={!isButtonEnabled}
+      >
+        <div className="flex items-center justify-center">
+          <Rocket className="mr-2 h-5 w-5" />
+          <span>INICIAR MANIFESTACIÓN</span>
+        </div>
+      </QuantumButton>
     </div>
   );
 });

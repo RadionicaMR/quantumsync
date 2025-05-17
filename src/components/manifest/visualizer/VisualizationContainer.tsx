@@ -13,6 +13,7 @@ interface VisualizationContainerProps {
   isActive: boolean;
   intention: string;
   receptorName?: string;
+  visualSpeed?: number;
 }
 
 const VisualizationContainer: React.FC<VisualizationContainerProps> = ({
@@ -22,7 +23,8 @@ const VisualizationContainer: React.FC<VisualizationContainerProps> = ({
   receptorImageSrc,
   isActive,
   intention,
-  receptorName = ""
+  receptorName = "",
+  visualSpeed = 10
 }) => {
   const showEmptyState = !isActive && !patternImageSrc && !receptorImageSrc && !receptorName;
   
@@ -55,7 +57,10 @@ const VisualizationContainer: React.FC<VisualizationContainerProps> = ({
       />
 
       {/* Static overlay circles */}
-      <StaticOverlayCircles isVisible={isActive} />
+      <StaticOverlayCircles 
+        isVisible={isActive} 
+        visualSpeed={visualSpeed}
+      />
       
       {/* Intention overlay */}
       {isActive && intention && (
