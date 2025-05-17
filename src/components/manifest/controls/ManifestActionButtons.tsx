@@ -61,8 +61,9 @@ const ManifestActionButtons = memo(({
     timeRemaining
   });
 
-  // CRITICAL FIX: Force render the stop button when isManifestActive is true
+  // Force render the stop button when isManifestActive is true
   if (isManifestActive) {
+    console.log("Rendering STOP button - manifest is active");
     return (
       <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-background/50">
         <div className="text-quantum-primary font-medium">

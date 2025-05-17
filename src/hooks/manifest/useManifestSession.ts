@@ -32,10 +32,10 @@ export const useManifestSession = (
 
   // Start Manifestation with option to pass intention directly
   const startManifestation = (passedIntention?: string) => {
-    // CRITICAL FIX: Use passed intention if available, otherwise use state intention
+    // Use passed intention if available, otherwise use state intention
     const currentIntention = passedIntention || state.intention;
     
-    console.log("StartManifestation - CRITICAL CHECK:", {
+    console.log("StartManifestation - Starting:", {
       passedIntention,
       stateIntention: state.intention,
       finalIntention: currentIntention,
@@ -46,7 +46,7 @@ export const useManifestSession = (
     
     // Strict validation: Verify that intention exists and is not empty
     if (!currentIntention || currentIntention.trim() === "") {
-      console.error("CRITICAL ERROR: Empty or undefined intention", {
+      console.error("ERROR: Empty or undefined intention", {
         passedIntention,
         stateIntention: state.intention
       });
@@ -58,9 +58,9 @@ export const useManifestSession = (
       return;
     }
     
-    console.log("INTENTION CORRECTLY VALIDATED:", currentIntention);
+    console.log("INTENTION VALIDATED:", currentIntention);
 
-    // It's crucial to set active state BEFORE continuing
+    // IMPORTANT: Set active state to true BEFORE continuing with any other operations
     state.setIsManifestActive(true);
     
     // Start sound if enabled
@@ -68,18 +68,15 @@ export const useManifestSession = (
       startAudio(state.manifestFrequency[0]);
     }
 
-    // SUBLIMINAL AUDIO: start audio if uploaded
+    // Start subliminal audio if uploaded
     if (audioFile) {
       playSubliminalAudio();
     }
 
-    // Handle image alternation differently based on active tab
+    // Handle image alternation based on active tab
     if (state.activeTab === 'personal') {
-      // For personal manifestation, use the current image state
-      // Used to be forced to 'mix' but this was causing issues
-      console.log("Starting personal manifestation, maintaining image state:", state.currentImage);
+      console.log("Starting personal manifestation with current image:", state.currentImage);
     } else {
-      // For preset patterns, start image alternation
       console.log("Starting image alternation for preset tab");
       startImageAlternation(state.currentImage, state.setCurrentImage);
     }
@@ -87,7 +84,7 @@ export const useManifestSession = (
     // Only set exposure and countdown timers if not indefinite time
     if (!state.indefiniteTime) {
       const exposureTimeInMs = state.exposureTime[0] * 60 * 1000;
-      state.setTimeRemaining(state.exposureTime[0] * 60); // Set in seconds originally
+      state.setTimeRemaining(state.exposureTime[0] * 60); // Set in seconds
 
       const countdownTimer = setInterval(() => {
         if (!document.hidden) {
@@ -110,7 +107,7 @@ export const useManifestSession = (
       }, exposureTimeInMs);
       setExposureTimer(exposureTimer);
     } else {
-      // If indefinite time, set timeRemaining to -1 to indicate indefinite
+      // If indefinite time, set timeRemaining to -1 
       state.setTimeRemaining(-1);
     }
     
@@ -121,12 +118,14 @@ export const useManifestSession = (
     });
   };
 
-  // Stop Manifestation: stop subliminal audio if playing
+  // Stop Manifestation
   const stopManifestation = () => {
     console.log("Stopping manifestation");
     stopAudio();
     clearAllTimers();
     state.setTimeRemaining(null);
+    
+    // IMPORTANT: Set active state to false
     state.setIsManifestActive(false);
     
     // Reset to mix view instead of alternating

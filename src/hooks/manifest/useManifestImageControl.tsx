@@ -14,8 +14,21 @@ export const useManifestImageControl = (
   // Mobile detection
   const { isIOS, isSafari } = useIsMobile();
   
-  // Cleanup on unmount
+  // Cleanup on unmount or when isManifestActive changes
   useEffect(() => {
+    // When isManifestActive becomes false, clean up
+    if (!isManifestActive) {
+      if (manifestIntervalRef.current) {
+        clearInterval(manifestIntervalRef.current as NodeJS.Timeout);
+        manifestIntervalRef.current = null;
+      }
+      
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+    }
+    
     return () => {
       console.log("Cleaning up useManifestImageControl");
       
@@ -27,7 +40,7 @@ export const useManifestImageControl = (
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, []);
+  }, [isManifestActive]);
   
   // Function to start image alternation
   const startImageAlternation = (
@@ -46,7 +59,7 @@ export const useManifestImageControl = (
     const speed = (visualSpeed && visualSpeed.length > 0) ? visualSpeed[0] : 10;
     const switchInterval = 2000 / Math.max(1, speed);
     
-    console.log("Setting up image alternation with interval:", switchInterval);
+    console.log("Image alternation interval:", switchInterval, "ms with speed:", speed);
     
     // Use requestAnimationFrame for iOS/Safari for better performance
     if (isIOS || isSafari) {
