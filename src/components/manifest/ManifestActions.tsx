@@ -7,7 +7,7 @@ interface ManifestActionsProps {
   isManifestActive: boolean;
   canStart: boolean;
   timeRemaining: number | null;
-  startManifestation: () => void;
+  startManifestation: (intention?: string) => void;
   stopManifestation: () => void;
   formatTimeRemaining: (time: number) => string;
   backgroundModeActive?: boolean;
@@ -49,7 +49,7 @@ const ManifestActions = memo(({
         isManifestActive={isManifestActive}
         timeRemaining={timeRemaining}
         formatTimeRemaining={formatTimeRemaining}
-        startManifestation={startManifestation}
+        startManifestation={() => startManifestation(intention)} // FIXED: Pass the intention directly
         stopManifestation={stopManifestation}
         canStart={isIntentionValid} // Use local validation based on intention
         intention={intention}

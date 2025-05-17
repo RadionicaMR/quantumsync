@@ -30,14 +30,15 @@ export const useManifestSession = (
     backgroundModeActive: subliminalBackgroundActive 
   } = useManifestSubliminal();
 
-  // Start Manifestation: begin subliminal audio if available
-  const startManifestation = () => {
-    // Log the current state intention value directly from the hook
-    const currentIntention = state.intention;
+  // Start Manifestation with option to pass intention directly
+  const startManifestation = (passedIntention?: string) => {
+    // CRITICAL FIX: Use passed intention if available, otherwise use state intention
+    const currentIntention = passedIntention || state.intention;
     
-    // Debug logs for intention validation
-    console.log("StartManifestation - VALIDATION:", {
+    console.log("StartManifestation - CRITICAL CHECK:", {
+      passedIntention,
       stateIntention: state.intention,
+      finalIntention: currentIntention,
       intentionLength: currentIntention ? currentIntention.length : 0,
       intentionValid: Boolean(currentIntention && currentIntention.trim() !== ""),
       activeTab: state.activeTab
@@ -46,6 +47,7 @@ export const useManifestSession = (
     // Strict validation: Verify that intention exists and is not empty
     if (!currentIntention || currentIntention.trim() === "") {
       console.error("CRITICAL ERROR: Empty or undefined intention", {
+        passedIntention,
         stateIntention: state.intention
       });
       toast({
