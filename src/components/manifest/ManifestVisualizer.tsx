@@ -1,9 +1,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { ManifestPattern } from '@/data/manifestPatterns';
-import IntentionOverlay from './visualizer/IntentionOverlay';
-import PatternLayer from './visualizer/PatternLayer';
-import ReceptorLayer from './visualizer/ReceptorLayer';
+import VisualizationContainer from './visualizer/VisualizationContainer';
+import ManifestVisualizerInfo from './visualizer/ManifestVisualizerInfo';
 
 interface ManifestVisualizerProps {
   currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';
@@ -153,64 +152,24 @@ const ManifestVisualizer: React.FC<ManifestVisualizerProps> = ({
 
   return (
     <div className="relative min-h-[300px] bg-black/20 dark:bg-black/40 rounded-lg overflow-hidden p-4">
-      <div className="absolute inset-0 flex items-center justify-center">
-        {!isActive && !patternImageSrc && !receptorImageSrc && !receptorName && (
-          <div className="text-center p-4">
-            <p className="text-muted-foreground">
-              Configura tu manifestación seleccionando un patrón e intención
-            </p>
-          </div>
-        )}
-
-        {/* Pattern Layer - Show only when it should be visible */}
-        <PatternLayer 
-          isVisible={showPatternImage}
-          currentPatternImageSrc={patternImageSrc}
-          pulseDuration={0}
-          noAnimation={true}
-        />
-        
-        {/* Receptor Layer - Show only when it should be visible */}
-        <ReceptorLayer 
-          isVisible={showReceptorImage}
-          currentReceptorImageSrc={receptorImageSrc}
-          receptorName={receptorName}
-          hasReceptorImage={Boolean(receptorImageSrc)}
-          pulseDuration={0}
-          noAnimation={true}
-        />
-      </div>
-
-      {/* Overlay information when active */}
-      {isActive && (
-        <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white p-3 text-sm">
-          <div className="grid grid-cols-2 gap-2 text-center">
-            <div>Frecuencia: {manifestFrequency[0]}Hz</div>
-            <div>Velocidad: {visualSpeed[0]}</div>
-            {rate1 && <div>Tasa 1: {rate1}</div>}
-            {rate2 && <div>Tasa 2: {rate2}</div>}
-            {rate3 && <div>Tasa 3: {rate3}</div>}
-          </div>
-        </div>
-      )}
+      <VisualizationContainer
+        showPatternImage={showPatternImage}
+        showReceptorImage={showReceptorImage}
+        patternImageSrc={patternImageSrc}
+        receptorImageSrc={receptorImageSrc}
+        isActive={isActive}
+        intention={intention}
+        receptorName={receptorName}
+      />
       
-      {/* Static circles instead of pulsing overlay */}
-      {isActive && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
-          <div className="w-12 h-12 bg-quantum-primary/20 rounded-full"></div>
-          <div className="w-24 h-24 bg-quantum-primary/15 rounded-full"></div>
-          <div className="w-36 h-36 bg-quantum-primary/10 rounded-full"></div>
-        </div>
-      )}
-      
-      {/* Intention overlay - Always show when active regardless of currentImage */}
-      {isActive && intention && (
-        <IntentionOverlay 
-          intention={intention} 
-          pulseDuration={0}
-          noAnimation={true}
-        />
-      )}
+      <ManifestVisualizerInfo
+        isActive={isActive}
+        manifestFrequency={manifestFrequency}
+        visualSpeed={visualSpeed}
+        rate1={rate1}
+        rate2={rate2}
+        rate3={rate3}
+      />
     </div>
   );
 };
