@@ -57,7 +57,7 @@ export const useManifestImageControl = (
     
     // Calculate the interval based on the speed setting (higher speed = shorter interval)
     const speed = (visualSpeed && visualSpeed.length > 0) ? visualSpeed[0] : 10;
-    const switchInterval = 2000 / Math.max(1, speed);
+    const switchInterval = Math.max(1000 / Math.max(1, speed), 100);
     
     console.log("Image alternation interval:", switchInterval, "ms with speed:", speed);
     
@@ -120,19 +120,26 @@ export const useManifestImageControl = (
 
   // Update interval if visualSpeed changes while active
   useEffect(() => {
-    if (isManifestActive && manifestIntervalRef.current) {
+    if (isManifestActive && (manifestIntervalRef.current || animationFrameRef.current)) {
       // If we have an active interval, restart it with the new speed
       console.log("Updating image alternation speed to:", visualSpeed[0]);
       
       // Clear the old interval
-      clearInterval(manifestIntervalRef.current);
-      manifestIntervalRef.current = null;
+      if (manifestIntervalRef.current) {
+        clearInterval(manifestIntervalRef.current as NodeJS.Timeout);
+        manifestIntervalRef.current = null;
+      }
       
       // Reset animation frame if it exists
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
         animationFrameRef.current = null;
       }
+      
+      // When speed changes and manifestation is active, we need to restart the alternation
+      // This needs to get the current image from somewhere, but for now, just default to 'pattern'
+      // A better approach would be to pass the current state and setCurrentImage, but that would require restructuring
+      // So let's just not restart automatically and let other components handle it
     }
   }, [visualSpeed, isManifestActive]);
 

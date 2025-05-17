@@ -73,13 +73,9 @@ export const useManifestSession = (
       playSubliminalAudio();
     }
 
-    // Handle image alternation based on active tab
-    if (state.activeTab === 'personal') {
-      console.log("Starting personal manifestation with current image:", state.currentImage);
-    } else {
-      console.log("Starting image alternation for preset tab");
-      startImageAlternation(state.currentImage, state.setCurrentImage);
-    }
+    // Always start image alternation regardless of tab
+    console.log("Starting image alternation with current image:", state.currentImage);
+    startImageAlternation(state.currentImage, state.setCurrentImage);
 
     // Only set exposure and countdown timers if not indefinite time
     if (!state.indefiniteTime) {

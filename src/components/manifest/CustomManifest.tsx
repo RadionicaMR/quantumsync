@@ -1,4 +1,3 @@
-
 import React, { useEffect, useCallback, memo } from 'react';
 import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
 import TreatmentVisualizer from '@/components/treatment/TreatmentVisualizer';
@@ -56,7 +55,6 @@ interface CustomManifestProps {
   setIndefiniteTime?: (value: boolean) => void;
 }
 
-// Memoize the component to prevent unnecessary re-renders
 const CustomManifest = memo(({
   intention,
   setIntention,

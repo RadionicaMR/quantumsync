@@ -44,14 +44,13 @@ const ManifestActions = memo(({
   
   return (
     <div className="flex flex-col space-y-2">
-      {/* Make sure buttons are visible by passing necessary props */}
       <ManifestActionButtons
         isManifestActive={isManifestActive}
         timeRemaining={timeRemaining}
         formatTimeRemaining={formatTimeRemaining}
-        startManifestation={() => startManifestation(intention)} // FIXED: Pass the intention directly
+        startManifestation={() => startManifestation(intention)}
         stopManifestation={stopManifestation}
-        canStart={isIntentionValid} // Use local validation based on intention
+        canStart={canStart}
         intention={intention}
       />
       

@@ -17,7 +17,7 @@ const StaticOverlayCircles: React.FC<StaticOverlayCirclesProps> = ({
     
     if (isVisible) {
       // Calculate interval based on visualSpeed (higher speed = shorter interval)
-      const intervalTime = 2000 / Math.max(1, visualSpeed);
+      const intervalTime = Math.max(1000 / Math.max(1, visualSpeed), 100);
       console.log("StaticOverlayCircles: Setting up interval with time:", intervalTime, "ms, speed:", visualSpeed);
       
       intervalId = setInterval(() => {
