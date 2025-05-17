@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ManifestState } from './types';
 
 export const useManifestState = (): ManifestState & {
@@ -47,6 +47,17 @@ export const useManifestState = (): ManifestState & {
   // Add manifestSpeed state with default value
   const [manifestSpeed, setManifestSpeed] = useState([10]);
 
+  // Add effect to log intention changes
+  useEffect(() => {
+    console.log("useManifestState - Intention changed:", intention);
+  }, [intention]);
+
+  // Custom intention setter with logging
+  const setIntentionWithLogging = (value: string) => {
+    console.log("useManifestState - Setting intention to:", value);
+    setIntention(value);
+  };
+
   return {
     intention,
     isManifestActive,
@@ -69,7 +80,7 @@ export const useManifestState = (): ManifestState & {
     indefiniteTime,
     manifestSpeed,
     // Setters
-    setIntention,
+    setIntention: setIntentionWithLogging,
     setIsManifestActive,
     setVisualSpeed,
     setPatternImage,

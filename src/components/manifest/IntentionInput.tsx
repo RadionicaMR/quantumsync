@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -12,6 +12,17 @@ const IntentionInput: React.FC<IntentionInputProps> = ({
   intention,
   setIntention
 }) => {
+  // Log intention changes for debugging
+  useEffect(() => {
+    console.log("IntentionInput main - Current intention value:", intention);
+  }, [intention]);
+
+  const handleIntentionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    console.log("IntentionInput main - Setting new intention:", newValue);
+    setIntention(newValue);
+  };
+
   return (
     <div className="mb-6">
       <Label htmlFor="intention" className="mb-2 block">Establece tu intención</Label>
@@ -20,7 +31,7 @@ const IntentionInput: React.FC<IntentionInputProps> = ({
         placeholder="Escribe tu intención con claridad y precisión..."
         className="quantum-input"
         value={intention}
-        onChange={(e) => setIntention(e.target.value)}
+        onChange={handleIntentionChange}
         rows={4}
       />
     </div>

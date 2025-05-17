@@ -32,7 +32,7 @@ export const useManifestSession = (
 
   // Start Manifestation: begin subliminal audio if available
   const startManifestation = () => {
-    // Use state intention directly - simplify the flow
+    // Log the current state intention value directly from the hook
     const currentIntention = state.intention;
     
     // Debug logs for intention validation
