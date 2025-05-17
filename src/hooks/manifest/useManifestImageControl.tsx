@@ -105,6 +105,24 @@ export const useManifestImageControl = (
     }
   };
 
+  // Update interval if visualSpeed changes while active
+  useEffect(() => {
+    if (isManifestActive && manifestIntervalRef.current) {
+      // If we have an active interval, restart it with the new speed
+      console.log("Updating image alternation speed to:", visualSpeed[0]);
+      
+      // Clear the old interval
+      clearInterval(manifestIntervalRef.current);
+      manifestIntervalRef.current = null;
+      
+      // Reset animation frame if it exists
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+    }
+  }, [visualSpeed, isManifestActive]);
+
   return {
     startImageAlternation,
     stopImageAlternation

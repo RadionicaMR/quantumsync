@@ -1,5 +1,6 @@
 
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useEffect, useState } from 'react';
 
 interface TreatmentVisualizerProps {
   isPlaying: boolean;
@@ -37,6 +38,7 @@ const TreatmentVisualizer = ({
   receptorName = '',
 }: TreatmentVisualizerProps) => {
   const { isIOS } = useIsMobile();
+  const [displayAlternate, setDisplayAlternate] = useState(false);
   
   console.log("TreatmentVisualizer rendering with:", { 
     isPlaying, 
@@ -47,6 +49,34 @@ const TreatmentVisualizer = ({
     hasReceptorImage: !!receptorImage || receptorImages.length > 0,
     receptorName
   });
+
+  // Effect to handle image alternation when active
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
+    
+    if (isPlaying && hypnoticEffect) {
+      // Calculate interval based on hypnoticSpeed (higher speed = shorter interval)
+      const speed = hypnoticSpeed[0] || 10;
+      const intervalTime = 2000 / Math.max(1, speed); // 2000ms at speed 1, scaled down as speed increases
+      
+      console.log(`Setting up treatment image alternation interval: ${intervalTime}ms at speed ${speed}`);
+      
+      // Set up the alternating interval
+      intervalId = setInterval(() => {
+        setDisplayAlternate(prev => !prev);
+      }, intervalTime);
+    } else {
+      // Reset to default display when inactive
+      setDisplayAlternate(false);
+    }
+    
+    // Clean up interval on unmount or when dependencies change
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isPlaying, hypnoticEffect, hypnoticSpeed]);
 
   // Use the multi-image arrays if they have content, otherwise fall back to the single image
   const radionicImagesArray = radionicImages.length > 0 ? radionicImages : (radionicImage ? [radionicImage] : []);
@@ -59,8 +89,27 @@ const TreatmentVisualizer = ({
   
   // For mix view, show both radionic and receptor
   // For specific views, only show the selected type
-  const showRadionic = currentImage === 'mix' || currentImage === 'radionic' || currentImage === 'pattern';
-  const showReceptor = currentImage === 'mix' || currentImage === 'receptor';
+  // When hypnoticEffect is active, use alternation based on displayAlternate state
+  let showRadionic = currentImage === 'mix';
+  let showReceptor = currentImage === 'mix';
+  
+  if (hypnoticEffect && isPlaying) {
+    if (displayAlternate) {
+      showRadionic = false;
+      showReceptor = true;
+    } else {
+      showRadionic = true;
+      showReceptor = false;
+    }
+  } else {
+    // Normal display logic when not using hypnotic effect
+    if (currentImage === 'radionic' || currentImage === 'pattern') {
+      showRadionic = true;
+    }
+    if (currentImage === 'receptor') {
+      showReceptor = true;
+    }
+  }
 
   // Eliminar la comprobación de visualFeedback para que siempre muestre el visualizador
   // cuando isPlaying sea true, independientemente de visualFeedback
@@ -157,6 +206,7 @@ const TreatmentVisualizer = ({
       {/* Información y RATES */}
       <div className="absolute bottom-3 left-3 text-xs md:text-sm text-white z-40 font-mono bg-black/40 px-2 py-1 rounded">
         Frecuencia: {frequency[0]} Hz | Intensidad: {intensity[0]}%
+        {hypnoticEffect && <span> | Velocidad: {hypnoticSpeed[0]}</span>}
       </div>
       
       {/* RATES sin animación */}
