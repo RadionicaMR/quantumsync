@@ -88,6 +88,14 @@ export const useManifestSession = (
             if (prev !== null && prev > 0) {
               return prev - 1;
             }
+            // Si llegamos a 0, detener la manifestación
+            if (prev === 0) {
+              stopManifestation();
+              toast({
+                title: "Manifestación completada",
+                description: `Tu intención "${currentIntention}" ha sido completamente programada.`,
+              });
+            }
             return prev;
           });
         }

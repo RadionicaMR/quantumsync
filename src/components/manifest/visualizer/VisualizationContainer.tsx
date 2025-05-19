@@ -58,7 +58,7 @@ const VisualizationContainer: React.FC<VisualizationContainerProps> = ({
         noAnimation={true}
       />
 
-      {/* Static overlay circles - Now with correct visualization speed */}
+      {/* Static overlay circles - Using actual visualSpeed value */}
       <StaticOverlayCircles 
         isVisible={isActive} 
         visualSpeed={visualSpeed}
