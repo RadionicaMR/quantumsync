@@ -88,8 +88,9 @@ export const useManifestSession = (
             if (prev !== null && prev > 0) {
               return prev - 1;
             }
-            // Si llegamos a 0, detener la manifestación
+            // Si llegamos a 0, detener la manifestación automáticamente
             if (prev === 0) {
+              console.log("Time reached 0, stopping manifestation");
               stopManifestation();
               toast({
                 title: "Manifestación completada",
@@ -102,7 +103,9 @@ export const useManifestSession = (
       }, 1000);
       setCountdownTimer(countdownTimer);
 
+      // Additional safety - exposure timer to force stop manifestation
       const exposureTimer = setTimeout(() => {
+        console.log("Exposure timer triggered, stopping manifestation");
         stopManifestation();
         toast({
           title: "Manifestación completada",

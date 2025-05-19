@@ -54,10 +54,12 @@ const TreatmentVisualizer = ({
   useEffect(() => {
     let intervalId: NodeJS.Timeout | null = null;
     
-    if (isPlaying && hypnoticEffect) {
+    if (isPlaying) {
+      // Always alternate images when playing, regardless of hypnoticEffect
       // Calculate interval based on hypnoticSpeed (higher speed = shorter interval)
       const speed = hypnoticSpeed[0] || 10;
-      const intervalTime = 2000 / Math.max(1, speed); // 2000ms at speed 1, scaled down as speed increases
+      // More aggressive formula for faster alternation
+      const intervalTime = Math.max(2000 / Math.max(1, speed * 5), 40); 
       
       console.log(`Setting up treatment image alternation interval: ${intervalTime}ms at speed ${speed}`);
       
@@ -76,7 +78,7 @@ const TreatmentVisualizer = ({
         clearInterval(intervalId);
       }
     };
-  }, [isPlaying, hypnoticEffect, hypnoticSpeed]);
+  }, [isPlaying, hypnoticSpeed]);
 
   // Use the multi-image arrays if they have content, otherwise fall back to the single image
   const radionicImagesArray = radionicImages.length > 0 ? radionicImages : (radionicImage ? [radionicImage] : []);
@@ -89,11 +91,11 @@ const TreatmentVisualizer = ({
   
   // For mix view, show both radionic and receptor
   // For specific views, only show the selected type
-  // When hypnoticEffect is active, use alternation based on displayAlternate state
+  // When active and playing, use alternation based on displayAlternate state
   let showRadionic = currentImage === 'mix';
   let showReceptor = currentImage === 'mix';
   
-  if (hypnoticEffect && isPlaying) {
+  if (isPlaying) {
     if (displayAlternate) {
       showRadionic = false;
       showReceptor = true;
@@ -102,7 +104,7 @@ const TreatmentVisualizer = ({
       showReceptor = false;
     }
   } else {
-    // Normal display logic when not using hypnotic effect
+    // Normal display logic when not active
     if (currentImage === 'radionic' || currentImage === 'pattern') {
       showRadionic = true;
     }
@@ -196,11 +198,11 @@ const TreatmentVisualizer = ({
         </div>
       )}
       
-      {/* Static circular overlay instead of animated */}
+      {/* Animated circular overlay */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
-        <div className="w-12 h-12 bg-quantum-primary/20 rounded-full"></div>
-        <div className="w-24 h-24 bg-quantum-primary/15 rounded-full"></div>
-        <div className="w-36 h-36 bg-quantum-primary/10 rounded-full"></div>
+        <div className={`w-12 h-12 ${displayAlternate ? 'bg-quantum-primary/60' : 'bg-quantum-primary/20'} rounded-full transition-colors duration-50`}></div>
+        <div className={`w-24 h-24 ${displayAlternate ? 'bg-quantum-primary/40' : 'bg-quantum-primary/15'} rounded-full transition-colors duration-50`}></div>
+        <div className={`w-36 h-36 ${displayAlternate ? 'bg-quantum-primary/20' : 'bg-quantum-primary/10'} rounded-full transition-colors duration-50`}></div>
       </div>
       
       {/* Información y RATES */}

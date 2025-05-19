@@ -61,6 +61,7 @@ const ManifestActionButtons = memo(({
     timeRemaining
   });
 
+  // Make sure we show the stop UI when active
   if (isManifestActive) {
     return (
       <div className="flex items-center justify-between p-4 border border-border rounded-lg bg-background/50">

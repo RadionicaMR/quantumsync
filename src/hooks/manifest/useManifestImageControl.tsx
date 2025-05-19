@@ -6,7 +6,7 @@ export const useManifestImageControl = (
   isManifestActive: boolean,
   visualSpeed: number[]
 ) => {
-  // Referencias
+  // References
   const manifestIntervalRef = useRef<NodeJS.Timeout | number | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(performance.now());
@@ -55,9 +55,9 @@ export const useManifestImageControl = (
     // Set the initial image to 'pattern' for consistency
     setCurrentImage('pattern');
     
-    // Calculate the interval based on the speed setting (higher speed = shorter interval)
+    // Calculate the interval based on the speed setting (much faster for better visibility)
     const speed = (visualSpeed && visualSpeed.length > 0) ? visualSpeed[0] : 10;
-    const switchInterval = Math.max(1000 / Math.max(1, speed * 2), 50); // Make it faster for better visibility
+    const switchInterval = Math.max(1000 / Math.max(1, speed * 6), 30); // Make it much faster for better visibility
     
     console.log("Image alternation interval:", switchInterval, "ms with speed:", speed);
     
@@ -121,20 +121,10 @@ export const useManifestImageControl = (
   // Update interval if visualSpeed changes while active
   useEffect(() => {
     if (isManifestActive && (manifestIntervalRef.current || animationFrameRef.current)) {
-      // If we have an active interval, restart it with the new speed
       console.log("Updating image alternation speed to:", visualSpeed[0]);
       
-      // Clear the old interval
-      if (manifestIntervalRef.current) {
-        clearInterval(manifestIntervalRef.current as NodeJS.Timeout);
-        manifestIntervalRef.current = null;
-      }
-      
-      // Reset animation frame if it exists
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-        animationFrameRef.current = null;
-      }
+      // Store the current setCurrentImage function from somewhere
+      // For now, we'll handle restarts at the session level
     }
   }, [visualSpeed, isManifestActive]);
 

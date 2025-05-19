@@ -26,7 +26,12 @@ const VisualizationContainer: React.FC<VisualizationContainerProps> = ({
   receptorName = "",
   visualSpeed = 10
 }) => {
-  console.log("VisualizationContainer render with:", { isActive, visualSpeed, showPattern: showPatternImage, showReceptor: showReceptorImage });
+  console.log("VisualizationContainer render with:", { 
+    isActive, 
+    visualSpeed, 
+    showPattern: showPatternImage, 
+    showReceptor: showReceptorImage 
+  });
   
   const showEmptyState = !isActive && !patternImageSrc && !receptorImageSrc && !receptorName;
   
@@ -58,7 +63,7 @@ const VisualizationContainer: React.FC<VisualizationContainerProps> = ({
         noAnimation={true}
       />
 
-      {/* Static overlay circles - Using actual visualSpeed value */}
+      {/* Static overlay circles - using enhanced visual speed */}
       <StaticOverlayCircles 
         isVisible={isActive} 
         visualSpeed={visualSpeed}
