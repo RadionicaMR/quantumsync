@@ -8,7 +8,6 @@ import React from "react"; // Make sure React is imported
 import Index from "./pages/Index";
 import Diagnose from "./pages/Diagnose";
 import Treat from "./pages/Treat";
-import Manifest from "./pages/Manifest";
 import Manifestation from "./pages/Manifestation"; // Import the new Manifestation page
 import Affiliate from "./pages/Affiliate";
 import NotFound from "./pages/NotFound";
@@ -48,11 +47,6 @@ const App = () => (
               <Route path="/treat" element={
                 <ProtectedRoute>
                   <Treat />
-                </ProtectedRoute>
-              } />
-              <Route path="/manifest" element={
-                <ProtectedRoute>
-                  <Manifest />
                 </ProtectedRoute>
               } />
               {/* Nueva ruta para equilibrar chakras */}

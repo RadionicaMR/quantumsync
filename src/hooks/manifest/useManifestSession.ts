@@ -1,162 +1,132 @@
-
-import { useEffect } from 'react';
-import { useManifestState } from './useManifestState';
-import { useManifestAudio } from './useManifestAudio';
-import { useManifestTimers } from './useManifestTimers';
-import { useManifestSubliminal } from './useManifestSubliminal';
-import { toast } from "@/components/ui/use-toast";
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { toast } from '@/components/ui/use-toast';
 
 export const useManifestSession = (
-  startImageAlternation: (
-    currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic',
-    setCurrentImage: (value: ((prev: 'pattern' | 'receptor' | 'mix' | 'radionic') => 'pattern' | 'receptor' | 'mix' | 'radionic') | 'pattern' | 'receptor' | 'mix' | 'radionic') => void
-  ) => void,
-  stopImageAlternation: (
-    setCurrentImage?: (value: 'pattern' | 'receptor' | 'mix' | 'radionic') => void
-  ) => void
+  startImageAlternation: () => void,
+  stopImageAlternation: () => void
 ) => {
-  const state = useManifestState();
-  const { startAudio, stopAudio, backgroundModeActive: audioBackgroundActive } = useManifestAudio();
-  const { 
-    clearAllTimers, 
-    setHypnoticTimer, 
-    setExposureTimer, 
-    setCountdownTimer 
-  } = useManifestTimers();
-  const { 
-    playSubliminalAudio, 
-    stopSubliminalAudio,
-    audioFile,
-    backgroundModeActive: subliminalBackgroundActive 
-  } = useManifestSubliminal();
+  const [isManifestActive, setIsManifestActive] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerIdRef = useRef<number | null>(null);
+  const [currentIntention, setCurrentIntention] = useState<string>("");
+  const [indefiniteTime, setIndefiniteTime] = useState<boolean>(false);
 
-  // Start Manifestation with option to pass intention directly
-  const startManifestation = (passedIntention?: string) => {
-    // Use passed intention if available, otherwise use state intention
-    const currentIntention = passedIntention || state.intention;
-    
-    console.log("StartManifestation - Starting:", {
-      passedIntention,
-      stateIntention: state.intention,
-      finalIntention: currentIntention,
-      intentionLength: currentIntention ? currentIntention.length : 0,
-      intentionValid: Boolean(currentIntention && currentIntention.trim() !== ""),
-      activeTab: state.activeTab
-    });
-    
-    // Strict validation: Verify that intention exists and is not empty
-    if (!currentIntention || currentIntention.trim() === "") {
-      console.error("ERROR: Empty or undefined intention", {
-        passedIntention,
-        stateIntention: state.intention
-      });
-      toast({
-        title: "No se puede iniciar la manifestación",
-        description: "Asegúrate de tener una intención definida.",
-        variant: "destructive",
-      });
-      return;
+  // Clean up function to clear timer
+  const clearTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
-    
-    console.log("INTENTION VALIDATED:", currentIntention);
-
-    // IMPORTANT: Set active state to true BEFORE continuing with any other operations
-    state.setIsManifestActive(true);
-    
-    // Start sound if enabled
-    if (state.manifestSound) {
-      startAudio(state.manifestFrequency[0]);
+    if (timerIdRef.current) {
+      window.clearInterval(timerIdRef.current);
+      timerIdRef.current = null;
     }
-
-    // Start subliminal audio if uploaded
-    if (audioFile) {
-      playSubliminalAudio();
-    }
-
-    // Always start image alternation regardless of tab
-    console.log("Starting image alternation with current image:", state.currentImage);
-    startImageAlternation(state.currentImage, state.setCurrentImage);
-
-    // Only set exposure and countdown timers if not indefinite time
-    if (!state.indefiniteTime) {
-      const exposureTimeInMs = state.exposureTime[0] * 60 * 1000;
-      state.setTimeRemaining(state.exposureTime[0] * 60); // Set in seconds
-
-      const countdownTimer = setInterval(() => {
-        if (!document.hidden) {
-          state.setTimeRemaining((prev) => {
-            if (prev !== null && prev > 0) {
-              return prev - 1;
-            }
-            // Si llegamos a 0, detener la manifestación automáticamente
-            if (prev === 0) {
-              console.log("Time reached 0, stopping manifestation");
-              stopManifestation();
-              toast({
-                title: "Manifestación completada",
-                description: `Tu intención "${currentIntention}" ha sido completamente programada.`,
-              });
-            }
-            return prev;
-          });
-        }
-      }, 1000);
-      setCountdownTimer(countdownTimer);
-
-      // Additional safety - exposure timer to force stop manifestation
-      const exposureTimer = setTimeout(() => {
-        console.log("Exposure timer triggered, stopping manifestation");
-        stopManifestation();
-        toast({
-          title: "Manifestación completada",
-          description: `Tu intención "${currentIntention}" ha sido completamente programada.`,
-        });
-      }, exposureTimeInMs);
-      setExposureTimer(exposureTimer);
-    } else {
-      // If indefinite time, set timeRemaining to -1 
-      state.setTimeRemaining(-1);
-    }
-    
-    // Show started toast notification
-    toast({
-      title: "Manifestación iniciada",
-      description: "El proceso ha comenzado correctamente."
-    });
-  };
-
-  // Stop Manifestation
-  const stopManifestation = () => {
-    console.log("Stopping manifestation");
-    stopAudio();
-    clearAllTimers();
-    state.setTimeRemaining(null);
-    
-    // IMPORTANT: Set active state to false
-    state.setIsManifestActive(false);
-    
-    // Reset to mix view instead of alternating
-    stopImageAlternation(state.setCurrentImage);
-    
-    stopSubliminalAudio();
-    toast({
-      title: "Manifestación detenida",
-      description: "El proceso de manifestación ha sido detenido."
-    });
-  };
-
-  // Cleanup on unmount
+  }, []);
+  
+  // Effect to clean up timer on unmount
   useEffect(() => {
     return () => {
-      stopAudio();
-      clearAllTimers();
-      stopSubliminalAudio();
+      clearTimer();
+      stopImageAlternation();
     };
+  }, [clearTimer, stopImageAlternation]);
+
+  // Start manifestation function with explicit intention parameter
+  const startManifestation = useCallback((intention?: string) => {
+    console.log("Starting manifestation with intention:", intention);
+    
+    if (isManifestActive) {
+      console.log("Manifestation already active, stopping first");
+      stopImageAlternation();
+      clearTimer();
+    }
+    
+    // Store the provided intention
+    if (intention) {
+      setCurrentIntention(intention);
+    }
+    
+    // Set active state first to trigger visualizer
+    setIsManifestActive(true);
+    
+    // Start image alternation
+    startImageAlternation();
+    
+    // Only set up timer if not in indefinite mode
+    if (!indefiniteTime) {
+      // Default exposure time (5 minutes)
+      const exposureDuration = 5 * 60; 
+      setTimeRemaining(exposureDuration);
+      
+      // Set up interval to count down
+      const timer = setInterval(() => {
+        setTimeRemaining(prev => {
+          if (prev === null || prev <= 1) {
+            // Time's up - clean up and return null
+            clearTimer();
+            stopImageAlternation();
+            setIsManifestActive(false);
+            toast({
+              title: "Manifestación completada",
+              description: "La sesión de manifestación ha finalizado."
+            });
+            return null;
+          }
+          // Otherwise just decrement
+          return prev - 1;
+        });
+      }, 1000);
+      
+      // Store the timer reference
+      timerRef.current = timer;
+    }
+    
+    // Notification
+    toast({
+      title: "Manifestación iniciada",
+      description: indefiniteTime 
+        ? "Manifestación en modo indefinido. Puedes detenerla cuando desees."
+        : "La manifestación está en curso. Se detendrá automáticamente al finalizar.",
+    });
+  }, [isManifestActive, indefiniteTime, startImageAlternation, stopImageAlternation, clearTimer]);
+
+  // Stop manifestation function
+  const stopManifestation = useCallback(() => {
+    console.log("Stopping manifestation");
+    
+    // Clean up timer
+    clearTimer();
+    
+    // Stop image alternation
+    stopImageAlternation();
+    
+    // Reset state
+    setIsManifestActive(false);
+    setTimeRemaining(null);
+    
+    // Notification
+    toast({
+      title: "Manifestación detenida",
+      description: "La sesión de manifestación ha sido detenida."
+    });
+  }, [clearTimer, stopImageAlternation]);
+
+  // Helper function to format time
+  const formatTimeRemaining = useCallback((time: number): string => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }, []);
 
   return {
+    isManifestActive,
+    timeRemaining,
     startManifestation,
     stopManifestation,
-    backgroundModeActive: audioBackgroundActive || subliminalBackgroundActive
+    formatTimeRemaining,
+    currentIntention,
+    indefiniteTime,
+    setIndefiniteTime
   };
 };

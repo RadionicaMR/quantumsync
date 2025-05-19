@@ -1,3 +1,4 @@
+
 import React, { useEffect, useCallback, memo } from 'react';
 import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
 import TreatmentVisualizer from '@/components/treatment/TreatmentVisualizer';

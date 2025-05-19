@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, LogIn, User, LogOut } from 'lucide-react';
@@ -47,8 +48,8 @@ const Navbar = () => {
               <Link to="/treat" className="neon-text hover:text-primary transition-colors text-sm md:text-base">
                 Tratamiento
               </Link>
-              <Link to="/manifest" className="neon-text hover:text-primary transition-colors text-sm md:text-base">
-                Manifestación
+              <Link to="/manifestation" className="neon-text hover:text-primary transition-colors text-sm md:text-base">
+                Manifestar
               </Link>
               <Link to="/affiliate" className="neon-text hover:text-primary transition-colors text-sm md:text-base">
                 Afiliados
@@ -147,11 +148,11 @@ const Navbar = () => {
                 Tratamiento
               </Link>
               <Link 
-                to="/manifest" 
+                to="/manifestation" 
                 className="neon-text hover:text-primary transition-colors py-1"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Manifestación
+                Manifestar
               </Link>
               <Link 
                 to="/affiliate" 
