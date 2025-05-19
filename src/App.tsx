@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Diagnose from "./pages/Diagnose";
 import Treat from "./pages/Treat";
 import Manifest from "./pages/Manifest";
+import Manifestation from "./pages/Manifestation"; // Import the new Manifestation page
 import Affiliate from "./pages/Affiliate";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
@@ -58,6 +59,12 @@ const App = () => (
               <Route path="/balance-chakras" element={
                 <ProtectedRoute>
                   <BalanceChakras />
+                </ProtectedRoute>
+              } />
+              {/* Nueva ruta para la página de manifestación */}
+              <Route path="/manifestation" element={
+                <ProtectedRoute>
+                  <Manifestation />
                 </ProtectedRoute>
               } />
               <Route path="/affiliate" element={
