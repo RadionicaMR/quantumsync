@@ -93,7 +93,13 @@ const PresetManifestConfigPanel: React.FC<PresetManifestConfigPanelProps> = ({
           selectPattern={selectPattern}
         />
 
-        <IntentionInput intention={intention} setIntention={setIntention} />
+        <div className="mt-6">
+          <IntentionInput 
+            intention={intention} 
+            setIntention={setIntention} 
+            isDisabled={isManifestActive}
+          />
+        </div>
 
         <div className="mt-6">
           <ReceptorNameInput 
