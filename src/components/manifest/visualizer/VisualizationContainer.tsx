@@ -30,7 +30,8 @@ const VisualizationContainer: React.FC<VisualizationContainerProps> = ({
     isActive, 
     visualSpeed, 
     showPattern: showPatternImage, 
-    showReceptor: showReceptorImage 
+    showReceptor: showReceptorImage,
+    intention 
   });
   
   const showEmptyState = !isActive && !patternImageSrc && !receptorImageSrc && !receptorName;
@@ -70,13 +71,11 @@ const VisualizationContainer: React.FC<VisualizationContainerProps> = ({
       />
       
       {/* Intention overlay */}
-      {isActive && intention && (
-        <IntentionOverlay 
-          intention={intention} 
-          pulseDuration={0}
-          noAnimation={true}
-        />
-      )}
+      <IntentionOverlay 
+        intention={intention} 
+        pulseDuration={0}
+        noAnimation={true}
+      />
     </div>
   );
 };

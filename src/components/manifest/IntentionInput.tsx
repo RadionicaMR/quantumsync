@@ -6,11 +6,13 @@ import { Textarea } from '@/components/ui/textarea';
 interface IntentionInputProps {
   intention: string;
   setIntention: (value: string) => void;
+  isDisabled?: boolean;
 }
 
 const IntentionInput: React.FC<IntentionInputProps> = ({
   intention,
-  setIntention
+  setIntention,
+  isDisabled = false
 }) => {
   // Log intention changes for debugging
   useEffect(() => {
@@ -18,7 +20,7 @@ const IntentionInput: React.FC<IntentionInputProps> = ({
   }, [intention]);
 
   const handleIntentionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newValue = e.target.value;
+    const newValue = e.target.value.slice(0, 300);
     console.log("IntentionInput main - Setting new intention:", newValue);
     setIntention(newValue);
   };
@@ -32,8 +34,13 @@ const IntentionInput: React.FC<IntentionInputProps> = ({
         className="quantum-input"
         value={intention}
         onChange={handleIntentionChange}
+        disabled={isDisabled}
         rows={4}
+        maxLength={300}
       />
+      <p className="text-xs text-muted-foreground mt-1">
+        {intention.length}/300 caracteres
+      </p>
     </div>
   );
 };
