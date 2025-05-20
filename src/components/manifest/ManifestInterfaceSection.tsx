@@ -1,11 +1,11 @@
 
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useState, useEffect } from 'react';
 import ManifestVisualizer from './ManifestVisualizer';
 import ManifestActions from './ManifestActions';
 import { ManifestPattern } from '@/data/manifestPatterns';
 
 interface ManifestInterfaceSectionProps {
-  currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';  // Includes 'pattern' and 'radionic'
+  currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';
   isManifestActive: boolean;
   patternImage: string | null;
   patternImages: string[];
@@ -13,11 +13,10 @@ interface ManifestInterfaceSectionProps {
   receptorImages: string[];
   canStart: boolean;
   timeRemaining: number | null;
-  startManifestation: () => void;
-  stopManifestation: () => void;
+  startManifestation: (intention?: string) => any;
+  stopManifestation: () => any;
   formatTimeRemaining: (time: number) => string;
   backgroundModeActive?: boolean;
-  // Added properties to resolve type errors
   selectedPattern: string;
   patterns: ManifestPattern[];
   manifestPatterns: Record<string, string>;
@@ -36,7 +35,7 @@ interface ManifestInterfaceSectionProps {
 
 // Memoize the component to prevent unnecessary re-renders
 const ManifestInterfaceSection = memo(({
-  currentImage,
+  currentImage: externalCurrentImage,
   isManifestActive,
   patternImage,
   patternImages,
@@ -48,7 +47,6 @@ const ManifestInterfaceSection = memo(({
   stopManifestation,
   formatTimeRemaining,
   backgroundModeActive = false,
-  // Added props
   selectedPattern,
   patterns,
   manifestPatterns,
@@ -64,11 +62,54 @@ const ManifestInterfaceSection = memo(({
   receptorName = "",
   indefiniteTime = false
 }: ManifestInterfaceSectionProps) => {
+  // Local state to manage the current image
+  const [localCurrentImage, setLocalCurrentImage] = 
+      useState<'pattern' | 'receptor' | 'mix' | 'radionic'>(externalCurrentImage);
+  
+  // Store image alternation functions
+  const [startImageAlternationFn, setStartImageAlternationFn] = useState<any>(null);
+  const [stopImageAlternationFn, setStopImageAlternationFn] = useState<any>(null);
+  
+  // Ensure we use a stable currentImage value for the visualizer
+  const stableCurrentImage = localCurrentImage === 'radionic' ? 'pattern' : localCurrentImage;
+  
+  // Update local state when external state changes
+  useEffect(() => {
+    if (!isManifestActive) {
+      setLocalCurrentImage('mix');
+    }
+  }, [isManifestActive]);
+  
   // Convert manifestPatterns record to array if needed
   const patternsArray = Array.isArray(patterns) ? patterns : [];
   
-  // Ensure we use a stable currentImage value for the visualizer
-  const stableCurrentImage = currentImage === 'radionic' ? 'pattern' : currentImage;
+  // Handle start manifestation
+  const handleStartManifestation = useCallback(() => {
+    // Start manifestation and get the function to start image alternation
+    const startImageAlternationWithState = startManifestation(intention);
+    
+    // Store the function to use later
+    setStartImageAlternationFn(() => startImageAlternationWithState);
+    
+    // Call the function with current state
+    if (startImageAlternationWithState) {
+      startImageAlternationWithState(localCurrentImage, setLocalCurrentImage);
+    }
+  }, [intention, startManifestation, localCurrentImage]);
+  
+  // Handle stop manifestation
+  const handleStopManifestation = useCallback(() => {
+    // Stop manifestation and get the function to stop image alternation
+    const stopImageAlternationWithState = stopManifestation();
+    
+    // Store the function to use later
+    setStopImageAlternationFn(() => stopImageAlternationWithState);
+    
+    // Call the function with current state
+    if (stopImageAlternationWithState) {
+      stopImageAlternationWithState(setLocalCurrentImage);
+    }
+  }, [stopManifestation]);
   
   return (
     <div className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-lg">
@@ -100,8 +141,8 @@ const ManifestInterfaceSection = memo(({
         isManifestActive={isManifestActive}
         canStart={canStart}
         timeRemaining={timeRemaining}
-        startManifestation={startManifestation}
-        stopManifestation={stopManifestation}
+        startManifestation={handleStartManifestation}
+        stopManifestation={handleStopManifestation}
         formatTimeRemaining={formatTimeRemaining}
         backgroundModeActive={backgroundModeActive}
         indefiniteTime={indefiniteTime}

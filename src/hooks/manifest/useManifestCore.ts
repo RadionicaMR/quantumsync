@@ -6,14 +6,41 @@ import { useManifestUtils } from './useManifestUtils';
 import { useManifestAudio } from './useManifestAudio';
 import { ManifestPattern } from '@/data/manifestPatterns';
 import { useManifestImageControl } from './useManifestImageControl';
+import { useCallback } from 'react';
 
 export const useManifestCore = (patterns: ManifestPattern[]) => {
   const state = useManifestState();
   const subliminal = useManifestSubliminal();
   const imageControl = useManifestImageControl(state.isManifestActive, state.visualSpeed);
-  const session = useManifestSession(imageControl.startImageAlternation, imageControl.stopImageAlternation);
+  const session = useManifestSession(
+    imageControl.startImageAlternation,
+    imageControl.stopImageAlternation
+  );
   const utils = useManifestUtils();
   const audio = useManifestAudio();
+
+  // Create wrapper functions to connect the session and image control
+  const startManifestationWithVisualization = useCallback((intention?: string) => {
+    // First start the session
+    session.startManifestation(intention);
+    
+    // Get the function to start image alternation and call it with the current state
+    const startImageAlternationWithState = session.getStartImageAlternation();
+    
+    // This function will be called by components that have access to currentImage and setCurrentImage
+    return startImageAlternationWithState;
+  }, [session]);
+  
+  const stopManifestationWithVisualization = useCallback(() => {
+    // First stop the session
+    session.stopManifestation();
+    
+    // Get the function to stop image alternation and call it
+    const stopImageAlternationWithState = session.getStopImageAlternation();
+    
+    // This function will be called by components that have access to setCurrentImage
+    return stopImageAlternationWithState;
+  }, [session]);
 
   return {
     // State and utils
@@ -42,9 +69,17 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
       }
     },
     
-    // Session control
-    startManifestation: session.startManifestation,
-    stopManifestation: session.stopManifestation,
+    // Session control with visualization
+    startManifestation: startManifestationWithVisualization,
+    stopManifestation: stopManifestationWithVisualization,
+    
+    // Original session properties
+    isManifestActive: session.isManifestActive,
+    timeRemaining: session.timeRemaining,
+    formatTimeRemaining: session.formatTimeRemaining,
+    currentIntention: session.currentIntention,
+    indefiniteTime: session.indefiniteTime,
+    setIndefiniteTime: session.setIndefiniteTime,
     
     // Subliminal audio
     ...subliminal,

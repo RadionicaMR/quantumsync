@@ -2,8 +2,8 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
 
 export const useManifestSession = (
-  startImageAlternation: () => void,
-  stopImageAlternation: () => void
+  startImageAlternationFn: () => (currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic', setCurrentImage: (value: any) => void) => void,
+  stopImageAlternationFn: () => (setCurrentImage?: (value: 'pattern' | 'receptor' | 'mix' | 'radionic') => void) => void
 ) => {
   const [isManifestActive, setIsManifestActive] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
@@ -11,6 +11,16 @@ export const useManifestSession = (
   const timerIdRef = useRef<number | null>(null);
   const [currentIntention, setCurrentIntention] = useState<string>("");
   const [indefiniteTime, setIndefiniteTime] = useState<boolean>(false);
+  
+  // Store references to the image alternation functions
+  const startImageAlternation = useRef(startImageAlternationFn());
+  const stopImageAlternation = useRef(stopImageAlternationFn());
+  
+  // Update the refs when the functions change
+  useEffect(() => {
+    startImageAlternation.current = startImageAlternationFn();
+    stopImageAlternation.current = stopImageAlternationFn();
+  }, [startImageAlternationFn, stopImageAlternationFn]);
 
   // Clean up function to clear timer
   const clearTimer = useCallback(() => {
@@ -28,9 +38,10 @@ export const useManifestSession = (
   useEffect(() => {
     return () => {
       clearTimer();
-      stopImageAlternation();
+      // We can't call stopImageAlternation here because it needs setCurrentImage
+      // This will be handled in useManifestImageControl's own cleanup
     };
-  }, [clearTimer, stopImageAlternation]);
+  }, [clearTimer]);
 
   // Start manifestation function with explicit intention parameter
   const startManifestation = useCallback((intention?: string) => {
@@ -38,7 +49,7 @@ export const useManifestSession = (
     
     if (isManifestActive) {
       console.log("Manifestation already active, stopping first");
-      stopImageAlternation();
+      // We'll handle this in the component that uses this hook
       clearTimer();
     }
     
@@ -50,8 +61,7 @@ export const useManifestSession = (
     // Set active state first to trigger visualizer
     setIsManifestActive(true);
     
-    // Start image alternation
-    startImageAlternation();
+    // The actual startImageAlternation will be called by components that have access to currentImage and setCurrentImage
     
     // Only set up timer if not in indefinite mode
     if (!indefiniteTime) {
@@ -65,7 +75,7 @@ export const useManifestSession = (
           if (prev === null || prev <= 1) {
             // Time's up - clean up and return null
             clearTimer();
-            stopImageAlternation();
+            // We'll handle stopping the image alternation in the component
             setIsManifestActive(false);
             toast({
               title: "Manifestación completada",
@@ -89,7 +99,7 @@ export const useManifestSession = (
         ? "Manifestación en modo indefinido. Puedes detenerla cuando desees."
         : "La manifestación está en curso. Se detendrá automáticamente al finalizar.",
     });
-  }, [isManifestActive, indefiniteTime, startImageAlternation, stopImageAlternation, clearTimer]);
+  }, [isManifestActive, indefiniteTime, clearTimer]);
 
   // Stop manifestation function
   const stopManifestation = useCallback(() => {
@@ -98,8 +108,7 @@ export const useManifestSession = (
     // Clean up timer
     clearTimer();
     
-    // Stop image alternation
-    stopImageAlternation();
+    // The actual stopImageAlternation will be called by components that have access to setCurrentImage
     
     // Reset state
     setIsManifestActive(false);
@@ -110,7 +119,7 @@ export const useManifestSession = (
       title: "Manifestación detenida",
       description: "La sesión de manifestación ha sido detenida."
     });
-  }, [clearTimer, stopImageAlternation]);
+  }, [clearTimer]);
 
   // Helper function to format time
   const formatTimeRemaining = useCallback((time: number): string => {
@@ -127,6 +136,9 @@ export const useManifestSession = (
     formatTimeRemaining,
     currentIntention,
     indefiniteTime,
-    setIndefiniteTime
+    setIndefiniteTime,
+    // Pass the image alternation functions
+    getStartImageAlternation: () => startImageAlternation.current,
+    getStopImageAlternation: () => stopImageAlternation.current
   };
 };

@@ -1,5 +1,5 @@
 
-import React, { useEffect, useCallback, memo } from 'react';
+import React, { useEffect, useCallback, memo, useState } from 'react';
 import CustomManifestLeftPanel from './sections/CustomManifestLeftPanel';
 import TreatmentVisualizer from '@/components/treatment/TreatmentVisualizer';
 import { ManifestPattern } from '@/data/manifestPatterns';
@@ -34,8 +34,8 @@ interface CustomManifestProps {
   setRate3: (rate: string) => void;
   isManifestActive: boolean;
   timeRemaining: number | null;
-  startManifestation: (intention?: string) => void;
-  stopManifestation: () => void;
+  startManifestation: (intention?: string) => any;
+  stopManifestation: () => any;
   formatTimeRemaining: (time: number) => string;
   currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic';
   receptorName: string;
@@ -104,6 +104,13 @@ const CustomManifest = memo(({
   indefiniteTime = false,
   setIndefiniteTime = () => {}
 }: CustomManifestProps) => {
+  // Local state to manage the image display
+  const [localCurrentImage, setLocalCurrentImage] = useState<'pattern' | 'receptor' | 'mix' | 'radionic'>(currentImage);
+  
+  // Store image alternation functions
+  const [startImageAlternationFn, setStartImageAlternationFn] = useState<any>(null);
+  const [stopImageAlternationFn, setStopImageAlternationFn] = useState<any>(null);
+
   // Wrapper for startManifestation with validation
   const handleStartManifestation = useCallback(() => {
     console.log("CustomManifest - Pre-start verification:", {
@@ -114,10 +121,20 @@ const CustomManifest = memo(({
       receptorImage
     });
     
-    // Pass intention explicitly to startManifestation
+    // Check if intention is valid
     if (intention && intention.trim() !== "") {
       console.log("CustomManifest - Starting with intention:", intention);
-      startManifestation(intention);
+      
+      // Start manifestation and get the function to start image alternation
+      const startImageAlternationWithState = startManifestation(intention);
+      
+      // Store the function to use later
+      setStartImageAlternationFn(() => startImageAlternationWithState);
+      
+      // Call the function with current state
+      if (startImageAlternationWithState) {
+        startImageAlternationWithState(localCurrentImage, setLocalCurrentImage);
+      }
     } else {
       toast({
         title: "No se puede iniciar la manifestación",
@@ -125,7 +142,21 @@ const CustomManifest = memo(({
         variant: "destructive",
       });
     }
-  }, [intention, startManifestation]);
+  }, [intention, startManifestation, localCurrentImage]);
+  
+  // Handle stop manifestation
+  const handleStopManifestation = useCallback(() => {
+    // Stop manifestation and get the function to stop image alternation
+    const stopImageAlternationWithState = stopManifestation();
+    
+    // Store the function to use later
+    setStopImageAlternationFn(() => stopImageAlternationWithState);
+    
+    // Call the function with current state
+    if (stopImageAlternationWithState) {
+      stopImageAlternationWithState(setLocalCurrentImage);
+    }
+  }, [stopManifestation]);
                   
   // Calculated values - only validate intention
   const isIntentionValid = Boolean(intention && intention.trim() !== "");
@@ -134,7 +165,17 @@ const CustomManifest = memo(({
   // Log when manifest active state changes
   useEffect(() => {
     console.log("CustomManifest - isManifestActive changed:", isManifestActive);
+    
+    // Reset to mix view when becoming inactive
+    if (!isManifestActive) {
+      setLocalCurrentImage('mix');
+    }
   }, [isManifestActive]);
+  
+  // Ensure we use the local state for image display
+  useEffect(() => {
+    console.log("Current image updated to:", localCurrentImage);
+  }, [localCurrentImage]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -181,7 +222,7 @@ const CustomManifest = memo(({
         setIndefiniteTime={setIndefiniteTime}
         timeRemaining={timeRemaining}
         startManifestation={handleStartManifestation}
-        stopManifestation={stopManifestation}
+        stopManifestation={handleStopManifestation}
         formatTimeRemaining={formatTimeRemaining}
         canStart={canStart}
       />
@@ -203,7 +244,7 @@ const CustomManifest = memo(({
             receptorImage={receptorImage}
             radionicImages={patternImages}
             receptorImages={receptorImages}
-            currentImage={currentImage} // Use the actual currentImage value
+            currentImage={localCurrentImage} // Use the local state
             hypnoticEffect={false} // No hypnotic effect for personal manifestation
             frequency={manifestFrequency}
             intensity={visualSpeed}
@@ -222,7 +263,7 @@ const CustomManifest = memo(({
             canStart={canStart}
             timeRemaining={timeRemaining}
             startManifestation={handleStartManifestation}
-            stopManifestation={stopManifestation}
+            stopManifestation={handleStopManifestation}
             formatTimeRemaining={formatTimeRemaining}
             backgroundModeActive={backgroundModeActive}
             indefiniteTime={indefiniteTime}
