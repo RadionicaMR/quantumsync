@@ -78,6 +78,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return true;
       }
       
+      // Nuevo acceso especial para Carina Fuenza
+      if (email === 'fuenzacari@gmail.com' && password === 'carina2025') {
+        const carinaUser: User = {
+          email,
+          name: 'Carina Fuenza',
+          isAdmin: false
+        };
+        setUser(carinaUser);
+        localStorage.setItem('user', JSON.stringify(carinaUser));
+        return true;
+      }
+      
       // Verificar si el usuario existe en la lista de usuarios general
       const storedUsersList = localStorage.getItem('usersList');
       

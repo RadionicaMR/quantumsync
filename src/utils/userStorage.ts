@@ -69,6 +69,13 @@ export const initializeDefaultUsers = (): AdminUser[] => {
       email: 'parapsicologodamiangomez@gmail.com',
       password: 'damian2025',
       dateCreated: '2025-04-21'
+    },
+    {
+      id: '4',
+      name: 'Carina Fuenza',
+      email: 'fuenzacari@gmail.com',
+      password: 'carina2025',
+      dateCreated: '2025-05-21'
     }
   ];
   localStorage.setItem('usersList', JSON.stringify(defaultUsers));
@@ -135,6 +142,11 @@ export const ensureSpecialUsersExist = (): void => {
     user.email.toLowerCase() === 'parapsicologodamiangomez@gmail.com'
   );
   
+  // Verificar si Carina Fuenza ya existe
+  const carinaExists = usersList.some(user => 
+    user.email.toLowerCase() === 'fuenzacari@gmail.com'
+  );
+  
   if (!damianExists) {
     // Añadir a Damian Gomez si no existe
     addUser(usersList, {
@@ -143,6 +155,16 @@ export const ensureSpecialUsersExist = (): void => {
       password: 'damian2025'
     });
     console.log('Usuario especial Damian Gomez añadido');
+  }
+  
+  if (!carinaExists) {
+    // Añadir a Carina Fuenza si no existe
+    addUser(usersList, {
+      name: 'Carina Fuenza',
+      email: 'fuenzacari@gmail.com',
+      password: 'carina2025'
+    });
+    console.log('Usuario especial Carina Fuenza añadido');
   }
 };
 

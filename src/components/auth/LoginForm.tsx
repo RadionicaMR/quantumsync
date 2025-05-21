@@ -125,6 +125,7 @@ const LoginForm = ({ onToggleRecovery }: LoginFormProps) => {
       <div className="text-center text-xs text-muted-foreground mt-2 p-2 border border-dashed rounded-md">
         <p className="font-medium">Usuarios de demostración:</p>
         <p>Email: parapsicologodamiangomez@gmail.com <br/> Contraseña: damian2025</p>
+        <p className="mt-1">Email: fuenzacari@gmail.com <br/> Contraseña: carina2025</p>
       </div>
     </form>
   );
