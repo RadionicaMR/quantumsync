@@ -1,3 +1,4 @@
+
 import React, { memo } from 'react';
 import { Card } from '@/components/ui/card';
 import PatternSection from './PatternSection';
@@ -7,6 +8,7 @@ import { ManifestControls } from '../ManifestControls';
 import ManifestActionButtons from '../controls/ManifestActionButtons';
 import IntentionInput from '../controls/IntentionInput';
 import ReceptorNameInput from '../ReceptorNameInput';
+import ManifestationBox from '../controls/ManifestationBox';
 
 interface CustomManifestLeftPanelProps {
   patternImage: string | null;
@@ -104,6 +106,12 @@ const CustomManifestLeftPanel = memo(({
 }: CustomManifestLeftPanelProps) => {
   return (
     <div className="lg:col-span-1 space-y-6">
+      <ManifestationBox
+        intention={intention}
+        setIntention={setIntention}
+        isDisabled={isManifestActive}
+      />
+      
       <Card className="p-6 quantum-card">
         <div className="mb-4">
           <h3 className="text-xl font-semibold mb-2">Intención de Manifestación</h3>
