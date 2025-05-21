@@ -1,4 +1,3 @@
-
 import React, { memo } from 'react';
 import { Card } from '@/components/ui/card';
 import PatternSection from './PatternSection';
@@ -7,6 +6,7 @@ import AudioSubliminalSection from './AudioSubliminalSection';
 import { ManifestControls } from '../ManifestControls';
 import ManifestActionButtons from '../controls/ManifestActionButtons';
 import IntentionInput from '../controls/IntentionInput';
+import ReceptorNameInput from '../ReceptorNameInput';
 
 interface CustomManifestLeftPanelProps {
   patternImage: string | null;
