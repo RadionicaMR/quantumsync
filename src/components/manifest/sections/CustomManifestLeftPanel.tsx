@@ -6,7 +6,7 @@ import ReceptorSection from './ReceptorSection';
 import AudioSubliminalSection from './AudioSubliminalSection';
 import { ManifestControls } from '../ManifestControls';
 import ManifestActionButtons from '../controls/ManifestActionButtons';
-import IntentionInput from '../IntentionInput';
+import IntentionInput from '../controls/IntentionInput';
 
 interface CustomManifestLeftPanelProps {
   patternImage: string | null;
@@ -106,6 +106,7 @@ const CustomManifestLeftPanel = memo(({
     <div className="lg:col-span-1 space-y-6">
       <Card className="p-6 quantum-card">
         <div className="mb-4">
+          <h3 className="text-xl font-semibold mb-2">Intención de Manifestación</h3>
           <IntentionInput 
             intention={intention} 
             setIntention={setIntention}

@@ -3,7 +3,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { ManifestPattern } from '@/data/manifestPatterns';
 import PatternSelection from '../PatternSelection';
-import IntentionInput from '../IntentionInput';
+import IntentionInput from '../controls/IntentionInput';
 import AudioControls from '../AudioControls';
 import FrequencyControls from '../FrequencyControls';
 import TimingControls from '../TimingControls';

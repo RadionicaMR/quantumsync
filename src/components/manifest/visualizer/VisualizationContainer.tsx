@@ -31,13 +31,13 @@ const VisualizationContainer: React.FC<VisualizationContainerProps> = ({
     visualSpeed, 
     showPattern: showPatternImage, 
     showReceptor: showReceptorImage,
-    intention 
+    intention
   });
   
   const showEmptyState = !isActive && !patternImageSrc && !receptorImageSrc && !receptorName;
   
   return (
-    <div className="absolute inset-0 flex items-center justify-center">
+    <div className="relative h-full w-full min-h-[300px] flex items-center justify-center border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
       {showEmptyState && (
         <div className="text-center p-4">
           <p className="text-muted-foreground">
@@ -70,11 +70,11 @@ const VisualizationContainer: React.FC<VisualizationContainerProps> = ({
         visualSpeed={visualSpeed}
       />
       
-      {/* Intention overlay */}
+      {/* Intention overlay - always show when there's an intention */}
       <IntentionOverlay 
         intention={intention} 
-        pulseDuration={0}
-        noAnimation={true}
+        pulseDuration={5}
+        noAnimation={!isActive}
       />
     </div>
   );

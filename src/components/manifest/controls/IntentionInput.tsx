@@ -26,12 +26,12 @@ const IntentionInput = ({
   };
 
   return (
-    <div>
-      <Label htmlFor="intention" className="mb-2 block">Establece tu intención</Label>
+    <div className="mb-4">
+      <Label htmlFor="intention" className="mb-2 block font-medium">Establece tu intención</Label>
       <Textarea 
         id="intention" 
         placeholder="Escribe tu intención con claridad y precisión..."
-        className="quantum-input"
+        className="quantum-input min-h-[120px]"
         value={intention}
         onChange={handleIntentionChange}
         disabled={isDisabled}
