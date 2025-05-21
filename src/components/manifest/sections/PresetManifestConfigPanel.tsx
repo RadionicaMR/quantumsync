@@ -87,19 +87,21 @@ const PresetManifestConfigPanel: React.FC<PresetManifestConfigPanelProps> = ({
       <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-md">
         <h3 className="text-xl font-semibold mb-4">Configuración</h3>
 
-        <PatternSelection
-          patterns={patterns}
-          selectedPattern={selectedPattern}
-          selectPattern={selectPattern}
-        />
-
-        <div className="mt-6">
+        {/* Prominently show the intention input first */}
+        <div className="mt-2 mb-6">
+          <h4 className="text-lg font-medium mb-2">Intención de Manifestación</h4>
           <IntentionInput 
             intention={intention} 
             setIntention={setIntention} 
             isDisabled={isManifestActive}
           />
         </div>
+
+        <PatternSelection
+          patterns={patterns}
+          selectedPattern={selectedPattern}
+          selectPattern={selectPattern}
+        />
 
         <div className="mt-6">
           <ReceptorNameInput 

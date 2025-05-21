@@ -27,11 +27,11 @@ const IntentionInput: React.FC<IntentionInputProps> = ({
 
   return (
     <div className="mb-6">
-      <Label htmlFor="intention" className="mb-2 block">Establece tu intención</Label>
+      <Label htmlFor="intention" className="mb-2 block font-medium text-lg">Establece tu intención</Label>
       <Textarea 
         id="intention" 
         placeholder="Escribe tu intención con claridad y precisión..."
-        className="quantum-input"
+        className="quantum-input min-h-[120px]"
         value={intention}
         onChange={handleIntentionChange}
         disabled={isDisabled}

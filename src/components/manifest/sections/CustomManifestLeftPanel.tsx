@@ -113,6 +113,17 @@ const CustomManifestLeftPanel = memo(({
             isDisabled={isManifestActive}
           />
         </div>
+      </Card>
+      
+      <Card className="p-6 quantum-card">
+        <div className="mb-4">
+          <h3 className="text-xl font-semibold mb-2">Configuración de Receptor</h3>
+          <ReceptorNameInput 
+            receptorName={receptorName}
+            setReceptorName={setReceptorName}
+            isActive={isManifestActive}
+          />
+        </div>
         
         <ManifestControls
           intention={intention}

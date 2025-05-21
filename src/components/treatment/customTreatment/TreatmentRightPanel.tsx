@@ -130,16 +130,9 @@ const TreatmentRightPanel = ({
             />
           </div>
           
-          {/* Imagen del receptor */}
+          {/* Imagen del receptor - Sin duplicar el nombre del receptor */}
           <div>
             <h4 className="mb-2 font-medium">Imagen del Receptor</h4>
-            <div className="mb-4">
-              <ReceptorNameInput
-                receptorName={receptorName}
-                setReceptorName={setReceptorName}
-                isPlaying={isPlaying}
-              />
-            </div>
             <ImageUploader
               label="Subir Imagen del Receptor"
               image={receptorImage}
@@ -203,6 +196,7 @@ const TreatmentRightPanel = ({
           rate3={rate3}
           hypnoticSpeed={hypnoticSpeed}
           isPlaying={isPlaying}
+          receptorName={receptorName}
         />
         
         <div className="mt-6">
