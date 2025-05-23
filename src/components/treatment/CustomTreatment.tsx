@@ -5,17 +5,17 @@ import TreatmentRightPanel from './customTreatment/TreatmentRightPanel';
 
 interface CustomTreatmentProps {
   frequency: number[];
-  setFrequency: (value: number[]) => void;
+  setFrequency: (frequency: number[]) => void;
   duration: number[];
-  setDuration: (value: number[]) => void;
+  setDuration: (duration: number[]) => void;
   intensity: number[];
-  setIntensity: (value: number[]) => void;
+  setIntensity: (intensity: number[]) => void;
   rate1: string;
-  setRate1: (value: string) => void;
+  setRate1: (rate: string) => void;
   rate2: string;
-  setRate2: (value: string) => void;
+  setRate2: (rate: string) => void;
   rate3: string;
-  setRate3: (value: string) => void;
+  setRate3: (rate: string) => void;
   radionicImage: string | null;
   setRadionicImage: (image: string | null) => void;
   radionicImages: string[];
@@ -25,15 +25,15 @@ interface CustomTreatmentProps {
   receptorImages: string[];
   setReceptorImages: (images: string[]) => void;
   hypnoticSpeed: number[];
-  setHypnoticSpeed: (value: number[]) => void;
+  setHypnoticSpeed: (speed: number[]) => void;
   useHeadphones: boolean;
-  setUseHeadphones: (value: boolean) => void;
+  setUseHeadphones: (useHeadphones: boolean) => void;
   visualFeedback: boolean;
-  setVisualFeedback: (value: boolean) => void;
+  setVisualFeedback: (visualFeedback: boolean) => void;
   isPlaying: boolean;
-  timeRemaining: number;
-  formatTime: (minutes: number) => string;
-  currentImage: 'radionic' | 'receptor' | 'mix' | 'pattern';
+  timeRemaining: number | null;
+  formatTime: (time: number | null) => string;
+  currentImage: 'radionic' | 'receptor' | 'mix';
   hypnoticEffect: boolean;
   startTreatment: () => void;
   stopTreatment: () => void;
@@ -42,7 +42,7 @@ interface CustomTreatmentProps {
   audioFile: File | null;
   setAudioFile: (file: File | null) => void;
   audioVolume: number;
-  setAudioVolume: (vol: number) => void;
+  setAudioVolume: (volume: number) => void;
   audioSubliminalPlaying: boolean;
   playSubliminalAudio: () => void;
   stopSubliminalAudio: () => void;
@@ -50,134 +50,120 @@ interface CustomTreatmentProps {
   setAudioLoop?: (loop: boolean) => void;
   clearAudio?: () => void;
   backgroundModeActive?: boolean;
+  intention?: string; // Add intention prop
 }
 
-const CustomTreatment = (props: CustomTreatmentProps) => {
-  const {
-    frequency,
-    setFrequency,
-    duration,
-    setDuration,
-    intensity,
-    setIntensity,
-    rate1,
-    setRate1,
-    rate2,
-    setRate2,
-    rate3,
-    setRate3,
-    radionicImage,
-    setRadionicImage,
-    radionicImages,
-    setRadionicImages,
-    receptorImage,
-    setReceptorImage,
-    receptorImages,
-    setReceptorImages,
-    hypnoticSpeed,
-    setHypnoticSpeed,
-    useHeadphones,
-    setUseHeadphones,
-    visualFeedback,
-    setVisualFeedback,
-    isPlaying,
-    timeRemaining,
-    formatTime,
-    currentImage,
-    hypnoticEffect,
-    startTreatment,
-    stopTreatment,
-    receptorName,
-    setReceptorName,
-    audioFile,
-    setAudioFile,
-    audioVolume,
-    setAudioVolume,
-    audioSubliminalPlaying,
-    playSubliminalAudio,
-    stopSubliminalAudio,
-    audioLoop = true,
-    setAudioLoop = () => {},
-    clearAudio = () => {},
-    backgroundModeActive = false,
-  } = props;
-
+const CustomTreatment: React.FC<CustomTreatmentProps> = ({
+  frequency,
+  setFrequency,
+  duration,
+  setDuration,
+  intensity,
+  setIntensity,
+  rate1,
+  setRate1,
+  rate2,
+  setRate2,
+  rate3,
+  setRate3,
+  radionicImage,
+  setRadionicImage,
+  radionicImages,
+  setRadionicImages,
+  receptorImage,
+  setReceptorImage,
+  receptorImages,
+  setReceptorImages,
+  hypnoticSpeed,
+  setHypnoticSpeed,
+  useHeadphones,
+  setUseHeadphones,
+  visualFeedback,
+  setVisualFeedback,
+  isPlaying,
+  timeRemaining,
+  formatTime,
+  currentImage,
+  hypnoticEffect,
+  startTreatment,
+  stopTreatment,
+  receptorName,
+  setReceptorName,
+  audioFile,
+  setAudioFile,
+  audioVolume,
+  setAudioVolume,
+  audioSubliminalPlaying,
+  playSubliminalAudio,
+  stopSubliminalAudio,
+  audioLoop = true,
+  setAudioLoop = () => {},
+  clearAudio = () => {},
+  backgroundModeActive = false,
+  intention = "" // Default to empty string
+}) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      {/* Panel izquierdo - Controles */}
-      <div className="lg:col-span-1 w-full">
-        <TreatmentLeftPanel
-          frequency={frequency}
-          setFrequency={setFrequency}
-          duration={duration}
-          setDuration={setDuration}
-          intensity={intensity}
-          setIntensity={setIntensity}
-          rate1={rate1}
-          setRate1={setRate1}
-          rate2={rate2}
-          setRate2={setRate2}
-          rate3={rate3}
-          setRate3={setRate3}
-          hypnoticSpeed={hypnoticSpeed}
-          setHypnoticSpeed={setHypnoticSpeed}
-          isPlaying={isPlaying}
-          receptorName={receptorName}
-          setReceptorName={setReceptorName}
-        />
-      </div>
+      <TreatmentLeftPanel
+        frequency={frequency}
+        setFrequency={setFrequency}
+        duration={duration}
+        setDuration={setDuration}
+        intensity={intensity}
+        setIntensity={setIntensity}
+        rate1={rate1}
+        setRate1={setRate1}
+        rate2={rate2}
+        setRate2={setRate2}
+        rate3={rate3}
+        setRate3={setRate3}
+        hypnoticSpeed={hypnoticSpeed}
+        setHypnoticSpeed={setHypnoticSpeed}
+        isPlaying={isPlaying}
+        receptorName={receptorName}
+        setReceptorName={setReceptorName}
+      />
       
-      {/* Panel derecho - Upload y visualización */}
-      <div className="lg:col-span-2 w-full">
-        <TreatmentRightPanel
-          frequency={frequency}
-          setFrequency={setFrequency}
-          duration={duration}
-          setDuration={setDuration}
-          intensity={intensity}
-          setIntensity={setIntensity}
-          radionicImage={radionicImage}
-          setRadionicImage={setRadionicImage}
-          radionicImages={radionicImages}
-          setRadionicImages={setRadionicImages}
-          receptorImage={receptorImage}
-          setReceptorImage={setReceptorImage}
-          receptorImages={receptorImages}
-          setReceptorImages={setReceptorImages}
-          useHeadphones={useHeadphones}
-          setUseHeadphones={setUseHeadphones}
-          visualFeedback={visualFeedback}
-          setVisualFeedback={setVisualFeedback}
-          isPlaying={isPlaying}
-          timeRemaining={timeRemaining}
-          formatTime={formatTime}
-          currentImage={currentImage}
-          hypnoticEffect={hypnoticEffect}
-          startTreatment={startTreatment}
-          stopTreatment={stopTreatment}
-          rate1={rate1}
-          setRate1={setRate1}
-          rate2={rate2}
-          setRate2={setRate2}
-          rate3={rate3}
-          setRate3={setRate3}
-          hypnoticSpeed={hypnoticSpeed}
-          setHypnoticSpeed={setHypnoticSpeed}
-          receptorName={receptorName}
-          setReceptorName={setReceptorName}
-          audioFile={audioFile}
-          setAudioFile={setAudioFile}
-          audioVolume={audioVolume}
-          setAudioVolume={setAudioVolume}
-          audioSubliminalPlaying={audioSubliminalPlaying}
-          playSubliminalAudio={playSubliminalAudio}
-          stopSubliminalAudio={stopSubliminalAudio}
-          audioLoop={audioLoop}
-          setAudioLoop={setAudioLoop}
-          clearAudio={clearAudio}
-          backgroundModeActive={backgroundModeActive}
-        />
-      </div>
+      <TreatmentRightPanel
+        isPlaying={isPlaying}
+        timeRemaining={timeRemaining}
+        formatTime={formatTime}
+        startTreatment={startTreatment}
+        stopTreatment={stopTreatment}
+        visualFeedback={visualFeedback}
+        setVisualFeedback={setVisualFeedback}
+        useHeadphones={useHeadphones}
+        setUseHeadphones={setUseHeadphones}
+        radionicImage={radionicImage}
+        setRadionicImage={setRadionicImage}
+        radionicImages={radionicImages}
+        setRadionicImages={setRadionicImages}
+        receptorImage={receptorImage}
+        setReceptorImage={setReceptorImage}
+        receptorImages={receptorImages}
+        setReceptorImages={setReceptorImages}
+        currentImage={currentImage}
+        hypnoticEffect={hypnoticEffect}
+        frequency={frequency}
+        intensity={intensity}
+        rate1={rate1}
+        rate2={rate2}
+        rate3={rate3}
+        hypnoticSpeed={hypnoticSpeed}
+        receptorName={receptorName}
+        audioFile={audioFile}
+        setAudioFile={setAudioFile}
+        audioVolume={audioVolume}
+        setAudioVolume={setAudioVolume}
+        audioSubliminalPlaying={audioSubliminalPlaying}
+        playSubliminalAudio={playSubliminalAudio}
+        stopSubliminalAudio={stopSubliminalAudio}
+        audioLoop={audioLoop}
+        setAudioLoop={setAudioLoop}
+        clearAudio={clearAudio}
+        backgroundModeActive={backgroundModeActive}
+        intention={intention} // Pass intention to the right panel
+      />
     </div>
   );
 };

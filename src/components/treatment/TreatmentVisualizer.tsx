@@ -18,6 +18,7 @@ interface TreatmentVisualizerProps {
   rate3: string;
   hypnoticSpeed?: number[];
   receptorName?: string;
+  intention?: string; // Add intention prop
 }
 
 const TreatmentVisualizer = ({
@@ -36,6 +37,7 @@ const TreatmentVisualizer = ({
   rate3,
   hypnoticSpeed = [10],
   receptorName = '',
+  intention = '', // Default to empty string
 }: TreatmentVisualizerProps) => {
   const { isIOS } = useIsMobile();
   const [displayAlternate, setDisplayAlternate] = useState(false);
@@ -47,7 +49,8 @@ const TreatmentVisualizer = ({
     hypnoticEffect,
     hasRadionicImage: !!radionicImage || radionicImages.length > 0,
     hasReceptorImage: !!receptorImage || receptorImages.length > 0,
-    receptorName
+    receptorName,
+    intention
   });
 
   // Effect to handle image alternation when active
@@ -87,6 +90,7 @@ const TreatmentVisualizer = ({
   const hasRadionicImages = radionicImagesArray.length > 0;
   const hasReceptorImages = receptorImagesArray.length > 0;
   const hasReceptorName = receptorName && receptorName.trim().length > 0;
+  const hasIntention = intention && intention.trim().length > 0;
   const hasImages = hasRadionicImages || hasReceptorImages || hasReceptorName;
   
   // For mix view, show both radionic and receptor
@@ -204,6 +208,15 @@ const TreatmentVisualizer = ({
         <div className={`w-24 h-24 ${displayAlternate ? 'bg-quantum-primary/40' : 'bg-quantum-primary/15'} rounded-full transition-colors duration-50`}></div>
         <div className={`w-36 h-36 ${displayAlternate ? 'bg-quantum-primary/20' : 'bg-quantum-primary/10'} rounded-full transition-colors duration-50`}></div>
       </div>
+
+      {/* Display intention when provided */}
+      {hasIntention && (
+        <div className="absolute inset-0 flex items-center justify-center z-40 pointer-events-none">
+          <div className="max-w-[80%] text-center bg-black/60 px-6 py-4 rounded-lg backdrop-blur-sm animate-pulse">
+            <p className="text-white text-lg md:text-xl font-medium">{intention}</p>
+          </div>
+        </div>
+      )}
       
       {/* Información y RATES */}
       <div className="absolute bottom-3 left-3 text-xs md:text-sm text-white z-40 font-mono bg-black/40 px-2 py-1 rounded">

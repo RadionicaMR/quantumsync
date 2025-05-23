@@ -21,6 +21,7 @@ export const useTreatmentCore = () => {
   const [hypnoticEffect, setHypnoticEffect] = useState(false);
   const [receptorName, setReceptorName] = useState('');
   const [hypnoticSpeed, setHypnoticSpeed] = useState([10]);
+  const [intention, setIntention] = useState(''); // Add intention state
   
   // Custom hooks
   const audio = useTreatmentAudio();
@@ -59,6 +60,7 @@ export const useTreatmentCore = () => {
     // Debug logging
     console.log("Starting treatment with frequency:", audio.frequency[0], "Hz");
     console.log("Configured duration:", audio.duration[0], "minutes");
+    console.log("Intention for manifestation:", intention);
     
     // First set the hypnotic effect (visual change)
     setHypnoticEffect(true);
@@ -74,9 +76,11 @@ export const useTreatmentCore = () => {
 
     // Show toast notification
     const target = receptorName ? ` para ${receptorName}` : '';
+    const intentionMsg = intention ? ` con intención: "${intention.substring(0, 30)}${intention.length > 30 ? '...' : ''}"` : '';
+    
     toast({
       title: "Tratamiento iniciado",
-      description: `Aplicando frecuencia de ${audio.frequency[0]}Hz${target}`,
+      description: `Aplicando frecuencia de ${audio.frequency[0]}Hz${target}${intentionMsg}`,
     });
     
     console.log("Treatment fully started");
@@ -121,6 +125,9 @@ export const useTreatmentCore = () => {
     setReceptorName,
     hypnoticSpeed,
     setHypnoticSpeed,
+    // Intention for manifestation
+    intention,
+    setIntention,
     // Actions
     selectPreset,
     startTreatment,

@@ -12,6 +12,7 @@ import { treatmentPresets } from '@/data/treatmentPresets';
 import { useTreatment } from '@/hooks/useTreatment';
 import { toast } from '@/components/ui/use-toast';
 import AudioUploader from '@/components/AudioUploader';
+import ManifestationBoxAdapter from '@/components/manifest/ManifestationBoxAdapter';
 
 const Manifestation = () => {
   const treatment = useTreatment();
@@ -52,9 +53,22 @@ const Manifestation = () => {
         subtitle="Crea y dirige tu propia realidad a través de patrones cuánticos y radiónicos"
       />
 
-      {/* Removed the "How it works" section as requested */}
+      {/* Main section with manifestation box prominently displayed */}
+      <section className="py-4 px-4">
+        <div className="container mx-auto">
+          <ManifestationBoxAdapter 
+            intention={treatment.intention || ""}
+            setIntention={(val) => {
+              if (typeof treatment.setIntention === 'function') {
+                treatment.setIntention(val);
+              }
+            }}
+            isActive={treatment.isPlaying}
+          />
+        </div>
+      </section>
 
-      <section className="py-12 px-4">
+      <section className="py-6 px-4">
         <div className="container mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
@@ -69,7 +83,6 @@ const Manifestation = () => {
             </TabsList>
             
             <TabsContent value="presets" className="w-full">
-              {/* Puedes poner el Uploader también aquí si el usuario lo desea en ambas pestañas */}
               <PresetTreatment
                 presets={treatmentPresets}
                 selectedPreset={treatment.selectedPreset}
