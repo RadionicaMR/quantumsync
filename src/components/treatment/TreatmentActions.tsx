@@ -11,6 +11,7 @@ interface TreatmentActionsProps {
   stopTreatment: () => void;
   receptorName?: string;
   backgroundModeActive?: boolean;
+  intention?: string; // Add intention prop for manifestation context
 }
 
 const TreatmentActions = ({
@@ -21,9 +22,10 @@ const TreatmentActions = ({
   stopTreatment,
   receptorName,
   backgroundModeActive = false,
+  intention
 }: TreatmentActionsProps) => {
-  // Treatment can start if at least the receptor name is filled
-  const canStartTreatment = !!receptorName?.trim();
+  // Treatment can start if at least the receptor name OR intention is filled
+  const canStartTreatment = !!(receptorName?.trim() || intention?.trim());
   
   // Local state for displaying the remaining time
   const [displayTimeString, setDisplayTimeString] = useState<string>("");
@@ -61,6 +63,17 @@ const TreatmentActions = ({
     }
   };
   
+  // Get appropriate message based on context
+  const getReadyMessage = () => {
+    if (intention?.trim()) {
+      return "Listo para iniciar manifestación";
+    }
+    if (receptorName?.trim()) {
+      return "Listo para iniciar tratamiento personalizado";
+    }
+    return "Ingrese el nombre del receptor o intención para iniciar";
+  };
+  
   return (
     <div className="flex items-center justify-between">
       {isPlaying ? (
@@ -72,7 +85,7 @@ const TreatmentActions = ({
                 <span>Tratamiento en segundo plano: {displayTimeString} restante</span>
               </>
             ) : (
-              <span>Tratamiento en progreso: {displayTimeString} restante</span>
+              <span>{intention?.trim() ? 'Manifestación' : 'Tratamiento'} en progreso: {displayTimeString} restante</span>
             )}
           </div>
           <QuantumButton 
@@ -81,17 +94,14 @@ const TreatmentActions = ({
           >
             <div className="flex flex-col items-center">
               <span>DETENER</span>
-              <span>TRATAMIENTO</span>
+              <span>{intention?.trim() ? 'MANIFESTACIÓN' : 'TRATAMIENTO'}</span>
             </div>
           </QuantumButton>
         </>
       ) : (
         <>
           <div className="text-muted-foreground">
-            {canStartTreatment
-              ? "Listo para iniciar tratamiento personalizado"
-              : "Ingrese el nombre del receptor para iniciar"
-            }
+            {getReadyMessage()}
           </div>
           <QuantumButton 
             className="bg-orange-500 hover:bg-orange-600 text-white glow-orange"
@@ -100,7 +110,7 @@ const TreatmentActions = ({
           >
             <div className="flex flex-col items-center">
               <span>INICIAR</span>
-              <span>TRATAMIENTO</span>
+              <span>{intention?.trim() ? 'MANIFESTACIÓN' : 'TRATAMIENTO'}</span>
             </div>
           </QuantumButton>
         </>

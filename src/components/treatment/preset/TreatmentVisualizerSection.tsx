@@ -28,7 +28,7 @@ interface TreatmentVisualizerSectionProps {
   hypnoticSpeed?: number[];
   receptorName?: string;
   backgroundModeActive?: boolean;
-  intention?: string; // Add intention prop
+  intention?: string;
 }
 
 const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
@@ -55,7 +55,7 @@ const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
   hypnoticSpeed = [10],
   receptorName = "",
   backgroundModeActive = false,
-  intention = "" // Default to empty string
+  intention = ""
 }) => {
   return (
     <div className="space-y-6">
@@ -78,7 +78,7 @@ const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
           rate3={rate3}
           hypnoticSpeed={hypnoticSpeed}
           receptorName={receptorName}
-          intention={intention} // Pass intention to visualizer
+          intention={intention}
         />
       </Card>
       
@@ -90,6 +90,8 @@ const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
           startTreatment={startTreatment}
           stopTreatment={stopTreatment}
           backgroundModeActive={backgroundModeActive}
+          receptorName={receptorName}
+          intention={intention}
         />
         
         <div className="mt-4">

@@ -45,7 +45,7 @@ interface TreatmentRightPanelProps {
   setAudioLoop?: (loop: boolean) => void;
   clearAudio?: () => void;
   backgroundModeActive?: boolean;
-  intention?: string; // Add intention prop
+  intention?: string;
 }
 
 const TreatmentRightPanel = ({
@@ -86,7 +86,7 @@ const TreatmentRightPanel = ({
   setAudioLoop = () => {},
   clearAudio = () => {},
   backgroundModeActive = false,
-  intention = "" // Default to empty string
+  intention = ""
 }: TreatmentRightPanelProps) => {
   return (
     <div className="lg:col-span-2 space-y-6">
@@ -109,7 +109,7 @@ const TreatmentRightPanel = ({
           rate3={rate3}
           hypnoticSpeed={hypnoticSpeed}
           receptorName={receptorName}
-          intention={intention} // Pass intention to visualizer
+          intention={intention}
         />
       </Card>
       
@@ -121,6 +121,8 @@ const TreatmentRightPanel = ({
           startTreatment={startTreatment}
           stopTreatment={stopTreatment}
           backgroundModeActive={backgroundModeActive}
+          receptorName={receptorName}
+          intention={intention}
         />
         
         <div className="mt-4">
