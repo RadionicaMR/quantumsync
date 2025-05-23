@@ -30,6 +30,9 @@ const ImageUploaderSection = ({
   setReceptorName,
   isDisabled = false,
 }: ImageUploaderSectionProps) => {
+  // Combine isPlaying and isDisabled
+  const disabled = isDisabled || isPlaying;
+  
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <ImageUploader
@@ -39,7 +42,7 @@ const ImageUploaderSection = ({
         setImage={setReceptorImage}
         images={receptorImages}
         setImages={setReceptorImages}
-        isPlaying={isDisabled || isPlaying}
+        isPlaying={disabled}
       />
       
       <ImageUploader
@@ -49,7 +52,7 @@ const ImageUploaderSection = ({
         setImage={setRadionicImage}
         images={radionicImages}
         setImages={setRadionicImages}
-        isPlaying={isDisabled || isPlaying}
+        isPlaying={disabled}
       />
     </div>
   );

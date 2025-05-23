@@ -47,7 +47,7 @@ const AudioSubliminalSection = ({
         stopAudio={stopSubliminalAudio}
         isDisabled={disabled}
         audioLoop={audioLoop}
-        setLoop={setAudioLoop}
+        setAudioLoop={setAudioLoop}
         clearAudio={clearAudio}
       />
     </Card>

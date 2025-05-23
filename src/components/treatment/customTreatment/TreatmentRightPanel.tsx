@@ -141,18 +141,29 @@ const TreatmentRightPanel = ({
         <div className="mb-6">
           <h4 className="text-lg mb-2">Imágenes Radiónicas</h4>
           <SingleImageUploader 
-            currentImage={radionicImage} 
-            setCurrentImage={setRadionicImage}
+            image={radionicImage} 
+            onImageChange={setRadionicImage}
             isDisabled={isPlaying}
+            placeholder="Imagen radiónica"
+            inputId="radionic-image"
           />
           
           <div className="mt-2">
             <MultipleImagesGrid
               images={radionicImages}
-              setImages={setRadionicImages}
-              currentImage={radionicImage}
-              setCurrentImage={setRadionicImage}
+              onRemoveImage={(index) => {
+                const newImages = [...radionicImages];
+                newImages.splice(index, 1);
+                setRadionicImages(newImages);
+              }}
+              onAddImageClick={() => {
+                document.getElementById('radionic-images-input')?.click();
+              }}
               isDisabled={isPlaying}
+              maxImages={3}
+              onImageAdded={(image) => {
+                setRadionicImages([...radionicImages, image]);
+              }}
             />
           </div>
         </div>
@@ -160,18 +171,29 @@ const TreatmentRightPanel = ({
         <div>
           <h4 className="text-lg mb-2">Imágenes del Receptor</h4>
           <SingleImageUploader 
-            currentImage={receptorImage} 
-            setCurrentImage={setReceptorImage}
+            image={receptorImage} 
+            onImageChange={setReceptorImage}
             isDisabled={isPlaying}
+            placeholder="Imagen del receptor"
+            inputId="receptor-image"
           />
           
           <div className="mt-2">
             <MultipleImagesGrid
               images={receptorImages}
-              setImages={setReceptorImages}
-              currentImage={receptorImage}
-              setCurrentImage={setReceptorImage}
+              onRemoveImage={(index) => {
+                const newImages = [...receptorImages];
+                newImages.splice(index, 1);
+                setReceptorImages(newImages);
+              }}
+              onAddImageClick={() => {
+                document.getElementById('receptor-images-input')?.click();
+              }}
               isDisabled={isPlaying}
+              maxImages={3}
+              onImageAdded={(image) => {
+                setReceptorImages([...receptorImages, image]);
+              }}
             />
           </div>
         </div>
@@ -190,8 +212,8 @@ const TreatmentRightPanel = ({
           playAudio={playSubliminalAudio}
           stopAudio={stopSubliminalAudio}
           isDisabled={isPlaying && !audioSubliminalPlaying}
-          loop={audioLoop}
-          setLoop={setAudioLoop}
+          audioLoop={audioLoop}
+          setAudioLoop={setAudioLoop}
           clearAudio={clearAudio}
         />
       </Card>
