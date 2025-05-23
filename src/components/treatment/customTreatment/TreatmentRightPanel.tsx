@@ -129,6 +129,7 @@ const TreatmentRightPanel = ({
             setUseHeadphones={setUseHeadphones}
             visualFeedback={visualFeedback}
             setVisualFeedback={setVisualFeedback}
+            isPlaying={isPlaying}
           />
         </div>
       </Card>
@@ -186,8 +187,8 @@ const TreatmentRightPanel = ({
           audioVolume={audioVolume}
           setAudioVolume={setAudioVolume}
           isPlaying={audioSubliminalPlaying}
-          play={playSubliminalAudio}
-          stop={stopSubliminalAudio}
+          playAudio={playSubliminalAudio}
+          stopAudio={stopSubliminalAudio}
           isDisabled={isPlaying && !audioSubliminalPlaying}
           loop={audioLoop}
           setLoop={setAudioLoop}

@@ -7,7 +7,7 @@ interface SettingsTogglesProps {
   setUseHeadphones: (value: boolean) => void;
   visualFeedback: boolean;
   setVisualFeedback: (value: boolean) => void;
-  isPlaying: boolean;
+  isPlaying?: boolean;
 }
 
 const SettingsToggles = ({
@@ -15,7 +15,7 @@ const SettingsToggles = ({
   setUseHeadphones,
   visualFeedback,
   setVisualFeedback,
-  isPlaying,
+  isPlaying = false,
 }: SettingsTogglesProps) => {
   return (
     <div className="flex flex-col sm:flex-row gap-6 justify-between w-full">

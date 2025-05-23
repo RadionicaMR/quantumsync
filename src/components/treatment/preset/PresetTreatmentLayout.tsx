@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { TreatmentPreset } from '@/hooks/treatment/useTreatmentCore';
 import TreatmentVisualizerSection from './TreatmentVisualizerSection';
@@ -169,6 +170,7 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
         />
         
         <ImageUploaderSection 
+          isPlaying={isPlaying}
           radionicImage={radionicImage}
           setRadionicImage={setRadionicImage}
           radionicImages={radionicImages}
@@ -177,13 +179,12 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
           setReceptorImage={setReceptorImage}
           receptorImages={receptorImages}
           setReceptorImages={setReceptorImages}
-          isDisabled={isPlaying}
         />
         
         <ReceptorSection 
           receptorName={receptorName}
           setReceptorName={setReceptorName}
-          isDisabled={isPlaying}
+          isPlaying={isPlaying}
         />
         
         <RateSection
@@ -193,7 +194,7 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
           setRate2={setRate2}
           rate3={rate3}
           setRate3={setRate3}
-          isDisabled={isPlaying}
+          isPlaying={isPlaying}
         />
         
         <AudioSubliminalSection 
@@ -204,7 +205,7 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
           audioSubliminalPlaying={audioSubliminalPlaying}
           playSubliminalAudio={playSubliminalAudio}
           stopSubliminalAudio={stopSubliminalAudio}
-          isDisabled={isPlaying && !audioSubliminalPlaying}
+          isPlaying={isPlaying}
         />
       </div>
     </div>

@@ -11,7 +11,8 @@ interface RateSectionProps {
   setRate2: (value: string) => void;
   rate3: string;
   setRate3: (value: string) => void;
-  isPlaying: boolean;
+  isPlaying?: boolean;
+  isDisabled?: boolean;
 }
 
 const RateSection: React.FC<RateSectionProps> = ({
@@ -21,8 +22,11 @@ const RateSection: React.FC<RateSectionProps> = ({
   setRate2,
   rate3,
   setRate3,
-  isPlaying,
+  isPlaying = false,
+  isDisabled = false,
 }) => {
+  const disabled = isDisabled || isPlaying;
+
   return (
     <Card className="p-6 quantum-card">
       <div className="mb-4">
@@ -41,7 +45,7 @@ const RateSection: React.FC<RateSectionProps> = ({
             onChange={(e) => setRate1(e.target.value)}
             placeholder="Ej: 23-45-67"
             className="font-mono"
-            disabled={isPlaying}
+            disabled={disabled}
           />
         </div>
         
@@ -53,7 +57,7 @@ const RateSection: React.FC<RateSectionProps> = ({
             onChange={(e) => setRate2(e.target.value)}
             placeholder="Ej: 98-76-54"
             className="font-mono"
-            disabled={isPlaying}
+            disabled={disabled}
           />
         </div>
         
@@ -65,7 +69,7 @@ const RateSection: React.FC<RateSectionProps> = ({
             onChange={(e) => setRate3(e.target.value)}
             placeholder="Ej: Energía"
             className="font-mono"
-            disabled={isPlaying}
+            disabled={disabled}
           />
         </div>
       </div>

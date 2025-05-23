@@ -13,6 +13,7 @@ interface ImageUploaderSectionProps {
   setReceptorImages: (images: string[]) => void;
   receptorName?: string;
   setReceptorName?: (name: string) => void;
+  isDisabled?: boolean;
 }
 
 const ImageUploaderSection = ({
@@ -27,6 +28,7 @@ const ImageUploaderSection = ({
   setReceptorImages,
   receptorName,
   setReceptorName,
+  isDisabled = false,
 }: ImageUploaderSectionProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -37,7 +39,7 @@ const ImageUploaderSection = ({
         setImage={setReceptorImage}
         images={receptorImages}
         setImages={setReceptorImages}
-        isPlaying={isPlaying}
+        isPlaying={isDisabled || isPlaying}
       />
       
       <ImageUploader
@@ -47,7 +49,7 @@ const ImageUploaderSection = ({
         setImage={setRadionicImage}
         images={radionicImages}
         setImages={setRadionicImages}
-        isPlaying={isPlaying}
+        isPlaying={isDisabled || isPlaying}
       />
     </div>
   );

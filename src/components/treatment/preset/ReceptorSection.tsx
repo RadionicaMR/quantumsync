@@ -6,17 +6,19 @@ import ReceptorNameInput from '@/components/treatment/ReceptorNameInput';
 interface ReceptorSectionProps {
   receptorName: string;
   setReceptorName: (name: string) => void;
-  isPlaying: boolean;
+  isPlaying?: boolean;
   receptorImage?: string | null;
   receptorImages?: string[];
+  isDisabled?: boolean;
 }
 
 const ReceptorSection: React.FC<ReceptorSectionProps> = ({
   receptorName,
   setReceptorName,
-  isPlaying,
+  isPlaying = false,
   receptorImage,
   receptorImages,
+  isDisabled = false,
 }) => {
   return (
     <Card className="p-6 quantum-card">
@@ -24,7 +26,7 @@ const ReceptorSection: React.FC<ReceptorSectionProps> = ({
       <ReceptorNameInput
         receptorName={receptorName}
         setReceptorName={setReceptorName}
-        isPlaying={isPlaying}
+        isPlaying={isDisabled || isPlaying}
       />
     </Card>
   );

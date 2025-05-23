@@ -98,6 +98,7 @@ const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
             setUseHeadphones={setUseHeadphones}
             visualFeedback={visualFeedback}
             setVisualFeedback={setVisualFeedback}
+            isPlaying={isPlaying}
           />
         </div>
       </Card>

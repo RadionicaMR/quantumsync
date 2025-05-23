@@ -10,10 +10,11 @@ interface AudioSubliminalSectionProps {
   audioSubliminalPlaying: boolean;
   playSubliminalAudio: () => void;
   stopSubliminalAudio: () => void;
-  isPlaying: boolean;
+  isPlaying?: boolean;
   audioLoop?: boolean;
   setAudioLoop?: (loop: boolean) => void;
   clearAudio?: () => void;
+  isDisabled?: boolean;
 }
 
 const AudioSubliminalSection = ({
@@ -24,11 +25,15 @@ const AudioSubliminalSection = ({
   audioSubliminalPlaying,
   playSubliminalAudio,
   stopSubliminalAudio,
-  isPlaying,
+  isPlaying = false,
   audioLoop = true,
   setAudioLoop = () => {},
   clearAudio = () => {},
+  isDisabled = false,
 }: AudioSubliminalSectionProps) => {
+  // Combine isPlaying and isDisabled
+  const disabled = isDisabled || (isPlaying && !audioSubliminalPlaying);
+  
   return (
     <Card className="p-6 quantum-card">
       <h3 className="text-xl font-semibold mb-4">Audio Subliminal (opcional)</h3>
@@ -40,9 +45,9 @@ const AudioSubliminalSection = ({
         isPlaying={audioSubliminalPlaying}
         playAudio={playSubliminalAudio}
         stopAudio={stopSubliminalAudio}
-        isDisabled={isPlaying}
+        isDisabled={disabled}
         audioLoop={audioLoop}
-        setAudioLoop={setAudioLoop}
+        setLoop={setAudioLoop}
         clearAudio={clearAudio}
       />
     </Card>
