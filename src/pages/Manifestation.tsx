@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -153,9 +154,9 @@ const Manifestation = () => {
                     setIntensity={treatment.setIntensity}
                     rate1={treatment.rate1}
                     setRate1={treatment.setRate1}
-                    rate2={treatment.setRate2}
+                    rate2={treatment.rate2}
                     setRate2={treatment.setRate2}
-                    rate3={treatment.setRate3}
+                    rate3={treatment.rate3}
                     setRate3={treatment.setRate3}
                     radionicImage={treatment.radionicImage}
                     setRadionicImage={treatment.setRadionicImage}
