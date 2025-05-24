@@ -1,3 +1,4 @@
+
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useEffect, useState } from 'react';
 
@@ -50,7 +51,8 @@ const TreatmentVisualizer = ({
     hasRadionicImage: !!radionicImage || radionicImages.length > 0,
     hasReceptorImage: !!receptorImage || receptorImages.length > 0,
     receptorName,
-    intention
+    intention,
+    intentionLength: intention ? intention.length : 0
   });
 
   // Effect to handle image alternation when active
@@ -88,7 +90,9 @@ const TreatmentVisualizer = ({
     let animationId: number | null = null;
     let startTime: number | null = null;
     
-    if (isPlaying && intention) {
+    if (isPlaying && intention && intention.trim().length > 0) {
+      console.log("Starting intention circular animation for:", intention);
+      
       const animate = (timestamp: number) => {
         if (!startTime) startTime = timestamp;
         const elapsed = timestamp - startTime;
@@ -98,7 +102,7 @@ const TreatmentVisualizer = ({
         const angle = (elapsed * speed * 0.001) % (2 * Math.PI); // Full circle every few seconds
         
         // Calculate position on circle (centered at 50%, radius varies)
-        const radius = 25; // 25% from center
+        const radius = 30; // 30% from center for better visibility
         const centerX = 50;
         const centerY = 50;
         
@@ -132,6 +136,13 @@ const TreatmentVisualizer = ({
   const hasIntention = intention && intention.trim().length > 0;
   const hasImages = hasRadionicImages || hasReceptorImages || hasReceptorName;
   
+  console.log("Intention display check:", {
+    hasIntention,
+    intention,
+    isPlaying,
+    intentionPosition
+  });
+  
   // For mix view, show both radionic and receptor
   // For specific views, only show the selected type
   // When active and playing, use alternation based on displayAlternate state
@@ -156,8 +167,7 @@ const TreatmentVisualizer = ({
     }
   }
 
-  // Eliminar la comprobación de visualFeedback para que siempre muestre el visualizador
-  // cuando isPlaying sea true, independientemente de visualFeedback
+  // Always show visualizer when playing
   if (!isPlaying) {
     return (
       <div className="relative aspect-square w-full bg-black/10 dark:bg-black/20 rounded-lg overflow-hidden flex items-center justify-center">
@@ -248,7 +258,7 @@ const TreatmentVisualizer = ({
         <div className={`w-36 h-36 ${displayAlternate ? 'bg-quantum-primary/20' : 'bg-quantum-primary/10'} rounded-full transition-colors duration-50`}></div>
       </div>
 
-      {/* Display intention moving in circles when provided */}
+      {/* Display intention moving in circles when provided and playing */}
       {hasIntention && isPlaying && (
         <div 
           className="absolute z-50 pointer-events-none transition-all duration-100 ease-linear"
@@ -258,8 +268,8 @@ const TreatmentVisualizer = ({
             transform: 'translate(-50%, -50%)'
           }}
         >
-          <div className="bg-gradient-to-r from-quantum-primary/80 to-purple-500/80 px-4 py-2 rounded-lg backdrop-blur-sm border border-quantum-primary/30 shadow-lg">
-            <p className="text-white text-sm md:text-base font-medium text-center whitespace-nowrap max-w-[200px] truncate">
+          <div className="bg-gradient-to-r from-yellow-400/90 to-orange-500/90 px-4 py-2 rounded-lg backdrop-blur-sm border-2 border-yellow-300/50 shadow-2xl">
+            <p className="text-black text-sm md:text-base font-bold text-center whitespace-nowrap max-w-[250px] truncate drop-shadow-lg">
               {intention}
             </p>
           </div>
