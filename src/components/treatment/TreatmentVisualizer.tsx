@@ -102,7 +102,7 @@ const TreatmentVisualizer = ({
         const angle = (elapsed * speed * 0.001) % (2 * Math.PI); // Full circle every few seconds
         
         // Calculate position on circle (centered at 50%, radius varies)
-        const radius = 30; // 30% from center for better visibility
+        const radius = 35; // Increased radius for better visibility
         const centerX = 50;
         const centerY = 50;
         
@@ -258,17 +258,17 @@ const TreatmentVisualizer = ({
         <div className={`w-36 h-36 ${displayAlternate ? 'bg-quantum-primary/20' : 'bg-quantum-primary/10'} rounded-full transition-colors duration-50`}></div>
       </div>
 
-      {/* Display intention moving in circles when provided and playing */}
+      {/* Display intention moving in circles when provided and playing - HIGHEST Z-INDEX */}
       {hasIntention && isPlaying && (
         <div 
-          className="absolute z-50 pointer-events-none transition-all duration-100 ease-linear"
+          className="absolute z-[100] pointer-events-none transition-all duration-100 ease-linear"
           style={{ 
             left: `${intentionPosition.x}%`, 
             top: `${intentionPosition.y}%`,
             transform: 'translate(-50%, -50%)'
           }}
         >
-          <div className="bg-gradient-to-r from-yellow-400/90 to-orange-500/90 px-4 py-2 rounded-lg backdrop-blur-sm border-2 border-yellow-300/50 shadow-2xl">
+          <div className="bg-gradient-to-r from-yellow-400 to-orange-500 px-4 py-2 rounded-lg backdrop-blur-sm border-2 border-yellow-300 shadow-2xl">
             <p className="text-black text-sm md:text-base font-bold text-center whitespace-nowrap max-w-[250px] truncate drop-shadow-lg">
               {intention}
             </p>
@@ -278,7 +278,7 @@ const TreatmentVisualizer = ({
 
       {/* Display intention static when not playing */}
       {hasIntention && !isPlaying && (
-        <div className="absolute inset-0 flex items-center justify-center z-40 pointer-events-none">
+        <div className="absolute inset-0 flex items-center justify-center z-[90] pointer-events-none">
           <div className="max-w-[80%] text-center bg-black/60 px-6 py-4 rounded-lg backdrop-blur-sm">
             <p className="text-white text-lg md:text-xl font-medium">{intention}</p>
           </div>

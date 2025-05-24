@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -46,6 +45,8 @@ const Manifestation = () => {
     return image === 'pattern' ? 'radionic' : image;
   };
   
+  console.log("Manifestation page - Current intention:", treatment.intention);
+  
   return (
     <Layout>
       <HeroSection
@@ -59,6 +60,7 @@ const Manifestation = () => {
           <ManifestationBoxAdapter 
             intention={treatment.intention || ""}
             setIntention={(val) => {
+              console.log("Manifestation page - Setting intention:", val);
               if (typeof treatment.setIntention === 'function') {
                 treatment.setIntention(val);
               }
@@ -130,6 +132,7 @@ const Manifestation = () => {
                 playSubliminalAudio={treatment.playSubliminalAudio}
                 stopSubliminalAudio={treatment.stopSubliminalAudio}
                 backgroundModeActive={treatment.backgroundModeActive}
+                intention={treatment.intention} // Make sure intention is passed
               />
             </TabsContent>
             
@@ -150,9 +153,9 @@ const Manifestation = () => {
                     setIntensity={treatment.setIntensity}
                     rate1={treatment.rate1}
                     setRate1={treatment.setRate1}
-                    rate2={treatment.rate2}
+                    rate2={treatment.setRate2}
                     setRate2={treatment.setRate2}
-                    rate3={treatment.rate3}
+                    rate3={treatment.setRate3}
                     setRate3={treatment.setRate3}
                     radionicImage={treatment.radionicImage}
                     setRadionicImage={treatment.setRadionicImage}
@@ -188,6 +191,7 @@ const Manifestation = () => {
                     setAudioLoop={treatment.setAudioLoop}
                     clearAudio={treatment.clearAudio}
                     backgroundModeActive={treatment.backgroundModeActive}
+                    intention={treatment.intention} // Make sure intention is passed
                   />
                 </div>
               </Card>
