@@ -1,4 +1,3 @@
-
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useEffect, useState } from 'react';
 
@@ -41,6 +40,7 @@ const TreatmentVisualizer = ({
 }: TreatmentVisualizerProps) => {
   const { isIOS } = useIsMobile();
   const [displayAlternate, setDisplayAlternate] = useState(false);
+  const [intentionPosition, setIntentionPosition] = useState({ x: 50, y: 50 });
   
   console.log("TreatmentVisualizer rendering with:", { 
     isPlaying, 
@@ -83,7 +83,46 @@ const TreatmentVisualizer = ({
     };
   }, [isPlaying, hypnoticSpeed]);
 
-  // Use the multi-image arrays if they have content, otherwise fall back to the single image
+  // Effect to handle circular movement of intention text
+  useEffect(() => {
+    let animationId: number | null = null;
+    let startTime: number | null = null;
+    
+    if (isPlaying && intention) {
+      const animate = (timestamp: number) => {
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
+        
+        // Calculate circular position based on time
+        const speed = (hypnoticSpeed[0] || 10) / 10; // Normalize speed
+        const angle = (elapsed * speed * 0.001) % (2 * Math.PI); // Full circle every few seconds
+        
+        // Calculate position on circle (centered at 50%, radius varies)
+        const radius = 25; // 25% from center
+        const centerX = 50;
+        const centerY = 50;
+        
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+        
+        setIntentionPosition({ x, y });
+        
+        animationId = requestAnimationFrame(animate);
+      };
+      
+      animationId = requestAnimationFrame(animate);
+    } else {
+      // Reset to center when not active
+      setIntentionPosition({ x: 50, y: 50 });
+    }
+    
+    return () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+    };
+  }, [isPlaying, intention, hypnoticSpeed]);
+
   const radionicImagesArray = radionicImages.length > 0 ? radionicImages : (radionicImage ? [radionicImage] : []);
   const receptorImagesArray = receptorImages.length > 0 ? receptorImages : (receptorImage ? [receptorImage] : []);
 
@@ -209,10 +248,28 @@ const TreatmentVisualizer = ({
         <div className={`w-36 h-36 ${displayAlternate ? 'bg-quantum-primary/20' : 'bg-quantum-primary/10'} rounded-full transition-colors duration-50`}></div>
       </div>
 
-      {/* Display intention when provided */}
-      {hasIntention && (
+      {/* Display intention moving in circles when provided */}
+      {hasIntention && isPlaying && (
+        <div 
+          className="absolute z-50 pointer-events-none transition-all duration-100 ease-linear"
+          style={{ 
+            left: `${intentionPosition.x}%`, 
+            top: `${intentionPosition.y}%`,
+            transform: 'translate(-50%, -50%)'
+          }}
+        >
+          <div className="bg-gradient-to-r from-quantum-primary/80 to-purple-500/80 px-4 py-2 rounded-lg backdrop-blur-sm border border-quantum-primary/30 shadow-lg">
+            <p className="text-white text-sm md:text-base font-medium text-center whitespace-nowrap max-w-[200px] truncate">
+              {intention}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Display intention static when not playing */}
+      {hasIntention && !isPlaying && (
         <div className="absolute inset-0 flex items-center justify-center z-40 pointer-events-none">
-          <div className="max-w-[80%] text-center bg-black/60 px-6 py-4 rounded-lg backdrop-blur-sm animate-pulse">
+          <div className="max-w-[80%] text-center bg-black/60 px-6 py-4 rounded-lg backdrop-blur-sm">
             <p className="text-white text-lg md:text-xl font-medium">{intention}</p>
           </div>
         </div>
