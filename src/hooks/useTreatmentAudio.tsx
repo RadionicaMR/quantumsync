@@ -160,7 +160,7 @@ export const useTreatmentAudio = () => {
       setTimeRemaining(newTimeRemaining);
       
       if (newTimeRemaining <= 0) {
-        console.log("Time's up, stopping audio");
+        console.log("Time's up, stopping audio automatically");
         stopAudio();
       }
     }, intervalMS);

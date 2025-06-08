@@ -7,6 +7,7 @@ export const useTimer = () => {
   const timerRef = useRef<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
   const isRunningRef = useRef<boolean>(false);
+  const onTimerCompleteRef = useRef<(() => void) | null>(null);
 
   // Format time function
   const formatTime = (minutes: number) => {
@@ -15,7 +16,7 @@ export const useTimer = () => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const startTimer = (initialTimeMinutes: number) => {
+  const startTimer = (initialTimeMinutes: number, onComplete?: () => void) => {
     // Prevent starting multiple timers
     if (isRunningRef.current) {
       console.log("Timer is already running, not starting a new one");
@@ -31,6 +32,7 @@ export const useTimer = () => {
     console.log(`Starting timer with ${initialTimeMinutes} minutes`);
     startTimeRef.current = Date.now();
     isRunningRef.current = true;
+    onTimerCompleteRef.current = onComplete || null;
     
     // Set initial time
     setTimeRemaining(initialTimeMinutes);
@@ -39,7 +41,7 @@ export const useTimer = () => {
     const intervalMS = 1000; // Update every second
     
     timerRef.current = window.setInterval(() => {
-      if (!startTimeRef.current) {
+      if (!startTimeRef.current || !isRunningRef.current) {
         clearTimer();
         return;
       }
@@ -51,7 +53,13 @@ export const useTimer = () => {
       setTimeRemaining(newTimeRemaining);
       
       if (newTimeRemaining <= 0) {
-        console.log("Time's up, timer completed");
+        console.log("Time's up, timer completed - calling onComplete");
+        
+        // Call the completion callback before clearing
+        if (onTimerCompleteRef.current) {
+          onTimerCompleteRef.current();
+        }
+        
         clearTimer();
       }
     }, intervalMS);
@@ -65,6 +73,7 @@ export const useTimer = () => {
     }
     startTimeRef.current = null;
     isRunningRef.current = false;
+    onTimerCompleteRef.current = null;
   };
 
   // Clean up on unmount

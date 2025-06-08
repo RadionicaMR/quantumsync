@@ -42,6 +42,12 @@ export const useTreatmentAudio = () => {
     isRunningRef
   } = useTimer();
 
+  // Function to stop audio when timer completes
+  const stopAudioOnTimerComplete = () => {
+    console.log("Timer completed - stopping audio treatment");
+    stopAudio();
+  };
+
   // Function to restart audio after background mode
   const restartAudio = () => {
     try {
@@ -176,9 +182,9 @@ export const useTreatmentAudio = () => {
       // IMPORTANT: First update state
       setIsPlaying(true);
       
-      // Then start the timer
+      // Then start the timer with completion callback
       const durationInMinutes = duration[0];
-      startTimer(durationInMinutes);
+      startTimer(durationInMinutes, stopAudioOnTimerComplete);
       
       console.log("Treatment started successfully:",
         "Frequency:", frequency[0],
