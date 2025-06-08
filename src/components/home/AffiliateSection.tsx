@@ -15,7 +15,16 @@ const AffiliateSection = () => {
             <p className="text-muted-foreground mb-6">
               QuantumSync no es solo una herramienta para transformar tu vida, sino también una oportunidad para generar ingresos. Nuestro plan de compensación está diseñado para recompensar tus esfuerzos en la promoción de la aplicación, creando un modelo justo y escalable.
             </p>
-            <QuantumButton onClick={() => navigate('/affiliate')}>Conviértete en Afiliado (MUY PRONTO)</QuantumButton>
+            <div className="space-y-3">
+              <QuantumButton onClick={() => navigate('/affiliate-register')}>
+                Conviértete en Afiliado
+              </QuantumButton>
+              <div className="text-sm text-muted-foreground">
+                <p>✓ 30% de comisión por venta</p>
+                <p>✓ Enlaces personalizados</p>
+                <p>✓ Dashboard completo</p>
+              </div>
+            </div>
           </div>
           <div className="relative">
             <div className="absolute inset-0 bg-quantum-primary/10 rounded-full animate-pulse-soft"></div>

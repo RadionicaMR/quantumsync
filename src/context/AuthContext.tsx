@@ -1,5 +1,5 @@
-
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
+import { getAffiliateByEmail } from '@/utils/affiliateStorage';
 
 interface User {
   email: string;
@@ -137,6 +137,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setLoading(true);
       console.log(`Intentando registrar usuario: ${name}, ${email}`);
       
+      // Check for affiliate referral
+      const referralCode = localStorage.getItem('referralCode');
+      
       // Inicializar la lista de usuarios si no existe
       const storedUsersList = localStorage.getItem('usersList');
       let usersList = storedUsersList ? JSON.parse(storedUsersList) : [];
@@ -170,6 +173,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       // Guardar la lista actualizada
       localStorage.setItem('usersList', JSON.stringify(usersList));
+      
+      // If there's a referral code, track the sale
+      if (referralCode) {
+        try {
+          const { addAffiliateSale } = await import('@/utils/affiliateStorage');
+          addAffiliateSale(referralCode, email, name);
+          console.log(`Sale tracked for affiliate: ${referralCode}`);
+          
+          // Clear the referral code after successful conversion
+          localStorage.removeItem('referralCode');
+        } catch (error) {
+          console.error('Error tracking affiliate sale:', error);
+        }
+      }
       
       // Iniciar sesión automáticamente con el nuevo usuario
       setUser(newUser);
