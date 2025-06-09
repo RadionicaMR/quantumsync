@@ -1,24 +1,27 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Plus } from 'lucide-react';
+import { Plus, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { AdminUser, NewUserForm } from '@/types/admin';
+import { Affiliate } from '@/types/affiliate';
 import { loadUsers, addUser, deleteUser, updateUserPassword, synchronizeAllUsers } from '@/utils/userStorage';
+import { loadAffiliates } from '@/utils/affiliateStorage';
 import AdminHeader from '@/components/admin/AdminHeader';
 import AddUserForm from '@/components/admin/AddUserForm';
 import UsersTable from '@/components/admin/UsersTable';
+import AffiliatesTable from '@/components/admin/AffiliatesTable';
 
 const Admin = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [user, setUser] = useState<any>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
+  const [affiliates, setAffiliates] = useState<Affiliate[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [loading, setLoading] = useState(true);
   
@@ -32,10 +35,12 @@ const Admin = () => {
         setUser(parsedUser);
         // Cargamos los usuarios inmediatamente
         loadAllUsers();
+        loadAllAffiliates();
         
         // Set up an interval to refresh users periodically
         const interval = setInterval(() => {
           loadAllUsers();
+          loadAllAffiliates();
         }, 30000); // Reload every 30 seconds
         
         return () => clearInterval(interval);
@@ -65,6 +70,24 @@ const Admin = () => {
       setLoading(false);
     }
   };
+
+  // Función para cargar afiliados
+  const loadAllAffiliates = async () => {
+    try {
+      const allAffiliates = loadAffiliates();
+      console.log('Afiliados cargados en el panel de admin:', allAffiliates);
+      setAffiliates(allAffiliates);
+    } catch (error) {
+      console.error('Error al cargar afiliados:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "No se pudieron cargar los afiliados.",
+      });
+    }
+  };
+
+  // ... keep existing code (handleLogout, handleAddUser, handleDeleteUser, handleUpdatePassword functions)
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -188,17 +211,22 @@ const Admin = () => {
                   <div>
                     <h2 className="text-xl font-bold">Gestión de Afiliados</h2>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Administrar solicitudes y comisiones de afiliados
+                      Total de afiliados: {affiliates.length} | Pendientes: {affiliates.filter(a => a.status === 'pending').length}
                     </p>
                   </div>
+                  <Button 
+                    className="bg-gradient-to-r from-green-600 to-emerald-500 flex items-center gap-2"
+                    onClick={loadAllAffiliates}
+                  >
+                    <Users size={16} />
+                    Actualizar Lista
+                  </Button>
                 </div>
                 
-                <div className="text-center py-8 text-muted-foreground">
-                  <p>Panel de gestión de afiliados implementado</p>
-                  <p className="text-sm mt-2">
-                    Aquí podrás aprobar solicitudes, ver estadísticas y gestionar comisiones
-                  </p>
-                </div>
+                <AffiliatesTable 
+                  affiliates={affiliates}
+                  onAffiliateUpdate={loadAllAffiliates}
+                />
               </Card>
             </TabsContent>
           </Tabs>

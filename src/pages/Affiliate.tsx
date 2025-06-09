@@ -18,7 +18,7 @@ const Affiliate = () => {
               Únete a nuestro programa de afiliados y gana comisiones refiriendo nuevos usuarios a QuantumSync.
             </p>
             
-            <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 p-6 rounded-lg mb-6">
+            <div className="bg-quantum-gradient-soft p-6 rounded-lg mb-6">
               <h2 className="text-xl font-semibold mb-4">Beneficios del Programa</h2>
               <ul className="space-y-2">
                 <li className="flex items-center">
@@ -45,7 +45,7 @@ const Affiliate = () => {
             </div>
           </div>
           
-          <div className="bg-white dark:bg-card p-6 rounded-xl shadow-lg">
+          <div className="bg-card p-6 rounded-xl shadow-lg border">
             <h3 className="text-xl font-semibold mb-4">¿Cómo funciona?</h3>
             <div className="space-y-4">
               <div className="flex items-start">
