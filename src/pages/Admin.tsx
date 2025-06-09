@@ -4,7 +4,7 @@ import Layout from '@/components/Layout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Plus, Users } from 'lucide-react';
+import { Plus, Users, BarChart3 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { AdminUser, NewUserForm } from '@/types/admin';
@@ -15,6 +15,7 @@ import AdminHeader from '@/components/admin/AdminHeader';
 import AddUserForm from '@/components/admin/AddUserForm';
 import UsersTable from '@/components/admin/UsersTable';
 import AffiliatesTable from '@/components/admin/AffiliatesTable';
+import AffiliateGlobalStats from '@/components/admin/AffiliateGlobalStats';
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -87,8 +88,6 @@ const Admin = () => {
     }
   };
 
-  // ... keep existing code (handleLogout, handleAddUser, handleDeleteUser, handleUpdatePassword functions)
-
   const handleLogout = () => {
     localStorage.removeItem('user');
     navigate('/login');
@@ -160,9 +159,10 @@ const Admin = () => {
           transition={{ duration: 0.3, delay: 0.2 }}
         >
           <Tabs defaultValue="users" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsList className="grid w-full grid-cols-3 mb-8">
               <TabsTrigger value="users">Gestión de Usuarios</TabsTrigger>
               <TabsTrigger value="affiliates">Gestión de Afiliados</TabsTrigger>
+              <TabsTrigger value="affiliate-stats">Estadísticas de Afiliados</TabsTrigger>
             </TabsList>
             
             <TabsContent value="users">
@@ -227,6 +227,34 @@ const Admin = () => {
                   affiliates={affiliates}
                   onAffiliateUpdate={loadAllAffiliates}
                 />
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="affiliate-stats">
+              <Card className="p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <div>
+                    <h2 className="text-xl font-bold">Estadísticas del Programa de Afiliados</h2>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Vista global de performance y métricas
+                    </p>
+                  </div>
+                  <Button 
+                    className="bg-gradient-to-r from-purple-600 to-pink-500 flex items-center gap-2"
+                    onClick={() => {
+                      loadAllAffiliates();
+                      toast({
+                        title: "Estadísticas actualizadas",
+                        description: "Los datos han sido refrescados",
+                      });
+                    }}
+                  >
+                    <BarChart3 size={16} />
+                    Actualizar Estadísticas
+                  </Button>
+                </div>
+                
+                <AffiliateGlobalStats />
               </Card>
             </TabsContent>
           </Tabs>

@@ -1,5 +1,5 @@
 
-import { Affiliate, AffiliateSale, AffiliateClick } from "@/types/affiliate";
+import { Affiliate, AffiliateSale, AffiliateClick, AffiliateStats, AffiliateDetailedStats } from "@/types/affiliate";
 
 // Generate unique affiliate code
 export const generateAffiliateCode = (name: string, email: string): string => {
@@ -61,6 +61,15 @@ export const updateAffiliateStatus = (affiliateId: string, status: 'pending' | '
   saveAffiliates(updated);
 };
 
+// Update commission payment status
+export const updateCommissionPayment = (saleId: string, status: 'paid' | 'pending', paymentDate?: string, notes?: string): void => {
+  const sales = loadAffiliateSales();
+  const updated = sales.map(s => 
+    s.id === saleId ? { ...s, status, paymentDate, notes } : s
+  );
+  saveAffiliateSales(updated);
+};
+
 // Get affiliate by code
 export const getAffiliateByCode = (code: string): Affiliate | null => {
   const affiliates = loadAffiliates();
@@ -83,18 +92,29 @@ export const saveAffiliateSales = (sales: AffiliateSale[]): void => {
   localStorage.setItem('affiliateSales', JSON.stringify(sales));
 };
 
-export const addAffiliateSale = (affiliateCode: string, userEmail: string, userName: string): void => {
+export const addAffiliateSale = (
+  affiliateCode: string, 
+  userEmail: string, 
+  userName: string, 
+  saleAmount: number = 100, 
+  currency: 'USD' | 'ARS' = 'USD'
+): void => {
   const affiliate = getAffiliateByCode(affiliateCode);
   if (!affiliate || affiliate.status !== 'approved') return;
   
   const sales = loadAffiliateSales();
+  const commissionAmount = saleAmount * (affiliate.commissionRate / 100);
+  
   const newSale: AffiliateSale = {
     id: Date.now().toString(),
     affiliateCode,
     userEmail,
     userName,
     saleDate: new Date().toISOString(),
-    commissionAmount: 100 * (affiliate.commissionRate / 100), // Asumiendo precio base de $100
+    saleAmount,
+    currency,
+    commissionAmount,
+    commissionCurrency: currency,
     status: 'pending'
   };
   
@@ -108,7 +128,7 @@ export const addAffiliateSale = (affiliateCode: string, userEmail: string, userN
       return {
         ...a,
         totalSales: a.totalSales + 1,
-        totalCommissions: a.totalCommissions + newSale.commissionAmount
+        totalCommissions: a.totalCommissions + commissionAmount
       };
     }
     return a;
@@ -136,6 +156,8 @@ export const trackAffiliateClick = (affiliateCode: string, page: string): void =
     affiliateCode,
     timestamp: new Date().toISOString(),
     page,
+    userAgent: navigator.userAgent,
+    referrer: document.referrer,
     converted: false
   };
   
@@ -152,24 +174,129 @@ export const trackAffiliateClick = (affiliateCode: string, page: string): void =
   saveAffiliates(updated);
 };
 
-// Get affiliate stats
-export const getAffiliateStats = (affiliateCode: string) => {
+// Get detailed affiliate stats
+export const getAffiliateDetailedStats = (affiliateCode: string): AffiliateDetailedStats | null => {
+  const affiliate = getAffiliateByCode(affiliateCode);
+  if (!affiliate) return null;
+  
   const sales = loadAffiliateSales().filter(s => s.affiliateCode === affiliateCode);
   const clicks = loadAffiliateClicks().filter(c => c.affiliateCode === affiliateCode);
+  
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+  
+  // Filter current month data
+  const thisMonthSales = sales.filter(s => {
+    const saleDate = new Date(s.saleDate);
+    return saleDate.getMonth() === currentMonth && saleDate.getFullYear() === currentYear;
+  });
+  
+  const thisMonthClicks = clicks.filter(c => {
+    const clickDate = new Date(c.timestamp);
+    return clickDate.getMonth() === currentMonth && clickDate.getFullYear() === currentYear;
+  });
   
   const totalClicks = clicks.length;
   const totalConversions = sales.length;
   const conversionRate = totalClicks > 0 ? (totalConversions / totalClicks) * 100 : 0;
+  
   const totalCommissions = sales.reduce((sum, sale) => sum + sale.commissionAmount, 0);
   const pendingCommissions = sales.filter(s => s.status === 'pending').reduce((sum, sale) => sum + sale.commissionAmount, 0);
   const paidCommissions = sales.filter(s => s.status === 'paid').reduce((sum, sale) => sum + sale.commissionAmount, 0);
   
+  const totalSalesUSD = sales.filter(s => s.currency === 'USD').reduce((sum, sale) => sum + sale.saleAmount, 0);
+  const totalSalesARS = sales.filter(s => s.currency === 'ARS').reduce((sum, sale) => sum + sale.saleAmount, 0);
+  
+  const averageOrderValue = sales.length > 0 ? (totalSalesUSD + totalSalesARS) / sales.length : 0;
+  
+  // Generate monthly stats for the last 6 months
+  const monthlyStats = [];
+  for (let i = 5; i >= 0; i--) {
+    const targetDate = new Date(currentYear, currentMonth - i, 1);
+    const monthSales = sales.filter(s => {
+      const saleDate = new Date(s.saleDate);
+      return saleDate.getMonth() === targetDate.getMonth() && saleDate.getFullYear() === targetDate.getFullYear();
+    });
+    const monthClicks = clicks.filter(c => {
+      const clickDate = new Date(c.timestamp);
+      return clickDate.getMonth() === targetDate.getMonth() && clickDate.getFullYear() === targetDate.getFullYear();
+    });
+    
+    monthlyStats.push({
+      month: targetDate.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' }),
+      clicks: monthClicks.length,
+      sales: monthSales.length,
+      commissions: monthSales.reduce((sum, sale) => sum + sale.commissionAmount, 0)
+    });
+  }
+  
   return {
+    affiliate,
+    recentSales: sales.slice(-10).reverse(), // Last 10 sales
+    monthlyStats,
     totalClicks,
     totalConversions,
     conversionRate,
     totalCommissions,
     pendingCommissions,
-    paidCommissions
+    paidCommissions,
+    totalSalesUSD,
+    totalSalesARS,
+    averageOrderValue,
+    clicksThisMonth: thisMonthClicks.length,
+    salesThisMonth: thisMonthSales.length,
+    commissionsThisMonth: thisMonthSales.reduce((sum, sale) => sum + sale.commissionAmount, 0)
+  };
+};
+
+// Get all affiliate sales for admin
+export const getAllAffiliateSales = (): AffiliateSale[] => {
+  return loadAffiliateSales();
+};
+
+// Get global affiliate statistics
+export const getGlobalAffiliateStats = () => {
+  const affiliates = loadAffiliates();
+  const sales = loadAffiliateSales();
+  const clicks = loadAffiliateClicks();
+  
+  const totalAffiliates = affiliates.length;
+  const activeAffiliates = affiliates.filter(a => a.status === 'approved').length;
+  const pendingAffiliates = affiliates.filter(a => a.status === 'pending').length;
+  
+  const totalSales = sales.length;
+  const totalRevenue = sales.reduce((sum, sale) => sum + sale.saleAmount, 0);
+  const totalCommissionsPaid = sales.filter(s => s.status === 'paid').reduce((sum, sale) => sum + sale.commissionAmount, 0);
+  const totalCommissionsPending = sales.filter(s => s.status === 'pending').reduce((sum, sale) => sum + sale.commissionAmount, 0);
+  
+  const totalClicks = clicks.length;
+  const conversionRate = totalClicks > 0 ? (totalSales / totalClicks) * 100 : 0;
+  
+  return {
+    totalAffiliates,
+    activeAffiliates,
+    pendingAffiliates,
+    totalSales,
+    totalRevenue,
+    totalCommissionsPaid,
+    totalCommissionsPending,
+    totalClicks,
+    conversionRate
+  };
+};
+
+// Legacy function for backward compatibility
+export const getAffiliateStats = (affiliateCode: string) => {
+  const detailed = getAffiliateDetailedStats(affiliateCode);
+  if (!detailed) return null;
+  
+  return {
+    totalClicks: detailed.totalClicks,
+    totalConversions: detailed.totalConversions,
+    conversionRate: detailed.conversionRate,
+    totalCommissions: detailed.totalCommissions,
+    pendingCommissions: detailed.pendingCommissions,
+    paidCommissions: detailed.paidCommissions
   };
 };

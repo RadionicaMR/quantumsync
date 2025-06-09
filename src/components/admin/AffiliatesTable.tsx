@@ -3,10 +3,11 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, XCircle, User } from 'lucide-react';
+import { CheckCircle, XCircle, User, Eye } from 'lucide-react';
 import { Affiliate } from '@/types/affiliate';
-import { updateAffiliateStatus } from '@/utils/affiliateStorage';
+import { updateAffiliateStatus, getAffiliateDetailedStats } from '@/utils/affiliateStorage';
 import { useToast } from '@/hooks/use-toast';
+import AffiliateDetailModal from './AffiliateDetailModal';
 
 interface AffiliatesTableProps {
   affiliates: Affiliate[];
@@ -16,6 +17,9 @@ interface AffiliatesTableProps {
 const AffiliatesTable = ({ affiliates, onAffiliateUpdate }: AffiliatesTableProps) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState<string | null>(null);
+  const [selectedAffiliate, setSelectedAffiliate] = useState<string | null>(null);
+  const [affiliateStats, setAffiliateStats] = useState<any>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleStatusUpdate = async (affiliateId: string, status: 'approved' | 'rejected') => {
     setLoading(affiliateId);
@@ -36,6 +40,19 @@ const AffiliatesTable = ({ affiliates, onAffiliateUpdate }: AffiliatesTableProps
     } finally {
       setLoading(null);
     }
+  };
+
+  const handleViewDetails = (affiliate: Affiliate) => {
+    const stats = getAffiliateDetailedStats(affiliate.affiliateCode);
+    setAffiliateStats(stats);
+    setSelectedAffiliate(affiliate.id);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedAffiliate(null);
+    setAffiliateStats(null);
   };
 
   const getStatusBadge = (status: Affiliate['status']) => {
@@ -60,62 +77,79 @@ const AffiliatesTable = ({ affiliates, onAffiliateUpdate }: AffiliatesTableProps
   }
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Nombre</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Código de Afiliado</TableHead>
-            <TableHead>Fecha de Registro</TableHead>
-            <TableHead>Estado</TableHead>
-            <TableHead>Comisiones</TableHead>
-            <TableHead>Ventas</TableHead>
-            <TableHead>Acciones</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {affiliates.map((affiliate) => (
-            <TableRow key={affiliate.id}>
-              <TableCell className="font-medium">{affiliate.name}</TableCell>
-              <TableCell>{affiliate.email}</TableCell>
-              <TableCell className="font-mono text-sm">{affiliate.affiliateCode}</TableCell>
-              <TableCell>{affiliate.dateRegistered}</TableCell>
-              <TableCell>{getStatusBadge(affiliate.status)}</TableCell>
-              <TableCell>${affiliate.totalCommissions.toFixed(2)}</TableCell>
-              <TableCell>{affiliate.totalSales}</TableCell>
-              <TableCell>
-                {affiliate.status === 'pending' && (
+    <>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Nombre</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Código</TableHead>
+              <TableHead>Registro</TableHead>
+              <TableHead>Estado</TableHead>
+              <TableHead>Comisiones</TableHead>
+              <TableHead>Ventas</TableHead>
+              <TableHead>Clicks</TableHead>
+              <TableHead>Acciones</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {affiliates.map((affiliate) => (
+              <TableRow key={affiliate.id}>
+                <TableCell className="font-medium">{affiliate.name}</TableCell>
+                <TableCell>{affiliate.email}</TableCell>
+                <TableCell className="font-mono text-sm">{affiliate.affiliateCode}</TableCell>
+                <TableCell>{affiliate.dateRegistered}</TableCell>
+                <TableCell>{getStatusBadge(affiliate.status)}</TableCell>
+                <TableCell>${affiliate.totalCommissions.toFixed(2)}</TableCell>
+                <TableCell>{affiliate.totalSales}</TableCell>
+                <TableCell>{affiliate.totalClicks}</TableCell>
+                <TableCell>
                   <div className="flex space-x-2">
                     <Button
                       size="sm"
-                      onClick={() => handleStatusUpdate(affiliate.id, 'approved')}
-                      disabled={loading === affiliate.id}
-                      className="bg-green-600 hover:bg-green-700"
+                      variant="outline"
+                      onClick={() => handleViewDetails(affiliate)}
+                      className="bg-blue-50 hover:bg-blue-100"
                     >
-                      <CheckCircle className="h-4 w-4" />
+                      <Eye className="h-4 w-4" />
                     </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => handleStatusUpdate(affiliate.id, 'rejected')}
-                      disabled={loading === affiliate.id}
-                    >
-                      <XCircle className="h-4 w-4" />
-                    </Button>
+                    
+                    {affiliate.status === 'pending' && (
+                      <>
+                        <Button
+                          size="sm"
+                          onClick={() => handleStatusUpdate(affiliate.id, 'approved')}
+                          disabled={loading === affiliate.id}
+                          className="bg-green-600 hover:bg-green-700"
+                        >
+                          <CheckCircle className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleStatusUpdate(affiliate.id, 'rejected')}
+                          disabled={loading === affiliate.id}
+                        >
+                          <XCircle className="h-4 w-4" />
+                        </Button>
+                      </>
+                    )}
                   </div>
-                )}
-                {affiliate.status !== 'pending' && (
-                  <span className="text-sm text-muted-foreground">
-                    {affiliate.status === 'approved' ? 'Activo' : 'Inactivo'}
-                  </span>
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <AffiliateDetailModal
+        affiliateStats={affiliateStats}
+        isOpen={modalOpen}
+        onClose={handleCloseModal}
+        onUpdate={onAffiliateUpdate}
+      />
+    </>
   );
 };
 
