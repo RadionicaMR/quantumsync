@@ -90,7 +90,7 @@ const Affiliate = () => {
               <ul className="space-y-2">
                 <li className="flex items-center">
                   <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
-                  30% de comisión por cada venta
+                  50% de comisión por cada venta
                 </li>
                 <li className="flex items-center">
                   <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
@@ -133,7 +133,7 @@ const Affiliate = () => {
                 <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center mr-3 mt-1">3</div>
                 <div>
                   <h4 className="font-medium">Gana</h4>
-                  <p className="text-sm text-muted-foreground">Recibe 30% de comisión por cada usuario que se registre</p>
+                  <p className="text-sm text-muted-foreground">Recibe 50% de comisión por cada usuario que se registre</p>
                 </div>
               </div>
             </div>

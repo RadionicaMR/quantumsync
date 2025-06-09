@@ -20,7 +20,7 @@ const AffiliateSection = () => {
                 Conviértete en Afiliado
               </QuantumButton>
               <div className="text-sm text-muted-foreground">
-                <p>✓ 30% de comisión por venta</p>
+                <p>✓ 50% de comisión por venta</p>
                 <p>✓ Enlaces personalizados</p>
                 <p>✓ Dashboard completo</p>
               </div>

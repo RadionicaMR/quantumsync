@@ -41,7 +41,7 @@ export const addAffiliate = (affiliateData: {
     affiliateCode: generateAffiliateCode(affiliateData.name, affiliateData.email),
     dateRegistered: new Date().toISOString().split('T')[0],
     status: 'pending',
-    commissionRate: 30, // 30% por defecto
+    commissionRate: 50, // 50% por defecto
     totalCommissions: 0,
     totalSales: 0,
     totalClicks: 0

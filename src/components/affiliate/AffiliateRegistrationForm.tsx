@@ -156,7 +156,7 @@ const AffiliateRegistrationForm = ({ onSubmit, loading, error }: AffiliateRegist
       <div className="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 p-4 rounded-lg">
         <h3 className="font-semibold mb-2">¿Qué obtienes como afiliado?</h3>
         <ul className="text-sm space-y-1">
-          <li>• 30% de comisión por cada venta</li>
+          <li>• 50% de comisión por cada venta</li>
           <li>• Enlaces personalizados para tracking</li>
           <li>• Dashboard con estadísticas en tiempo real</li>
           <li>• Materiales de marketing exclusivos</li>
