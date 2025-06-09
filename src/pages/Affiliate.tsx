@@ -1,11 +1,78 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import QuantumButton from '@/components/QuantumButton';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card } from '@/components/ui/card';
+import { getAffiliateByEmail } from '@/utils/affiliateStorage';
+import { useToast } from '@/hooks/use-toast';
 
 const Affiliate = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [showLogin, setShowLogin] = useState(false);
+  const [loginData, setLoginData] = useState({ email: '', password: '' });
+  const [loading, setLoading] = useState(false);
+
+  const handleAffiliateLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const affiliate = getAffiliateByEmail(loginData.email);
+      
+      if (!affiliate) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No se encontró un afiliado con este email",
+        });
+        setLoading(false);
+        return;
+      }
+
+      if (affiliate.password !== loginData.password) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Contraseña incorrecta",
+        });
+        setLoading(false);
+        return;
+      }
+
+      if (affiliate.status !== 'approved') {
+        toast({
+          variant: "destructive",
+          title: "Cuenta no aprobada",
+          description: "Tu cuenta de afiliado aún está pendiente de aprobación",
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Store affiliate session
+      localStorage.setItem('affiliateSession', affiliate.email);
+      
+      toast({
+        title: "Acceso exitoso",
+        description: "Bienvenido a tu dashboard de afiliado",
+      });
+      
+      navigate('/affiliate-dashboard');
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Error al acceder al dashboard",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Layout>
@@ -83,11 +150,44 @@ const Affiliate = () => {
           
           <QuantumButton 
             className="bg-gray-500 text-white px-8 py-3 rounded-full"
-            onClick={() => navigate('/affiliate-dashboard')}
+            onClick={() => setShowLogin(!showLogin)}
           >
-            Acceder al Dashboard
+            {showLogin ? 'Ocultar Acceso' : 'Acceder al Dashboard'}
           </QuantumButton>
         </div>
+
+        {showLogin && (
+          <div className="mt-8 max-w-md mx-auto">
+            <Card className="p-6">
+              <h3 className="text-xl font-semibold mb-4 text-center">Acceso para Afiliados</h3>
+              <form onSubmit={handleAffiliateLogin} className="space-y-4">
+                <div>
+                  <Label htmlFor="email">Email de Afiliado</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={loginData.email}
+                    onChange={(e) => setLoginData(prev => ({ ...prev, email: e.target.value }))}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="password">Contraseña</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={loginData.password}
+                    onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
+                    required
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? 'Accediendo...' : 'Acceder al Dashboard'}
+                </Button>
+              </form>
+            </Card>
+          </div>
+        )}
       </div>
     </Layout>
   );
