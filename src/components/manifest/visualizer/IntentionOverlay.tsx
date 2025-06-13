@@ -19,9 +19,9 @@ const IntentionOverlay: React.FC<IntentionOverlayProps> = ({
       className="absolute inset-0 flex flex-col items-center justify-center z-30 pointer-events-none"
     >
       <div 
-        className={`text-center max-w-[80%] bg-black/40 px-6 py-4 rounded-lg backdrop-blur-sm ${noAnimation ? '' : 'animate-pulse'}`}
+        className={`text-center max-w-[80%] px-2 py-1 rounded ${noAnimation ? '' : 'animate-pulse'}`}
       >
-        <p className="text-white text-lg md:text-xl font-medium">{intention}</p>
+        <p className="text-white text-lg md:text-xl font-medium drop-shadow-lg">{intention}</p>
       </div>
     </div>
   );

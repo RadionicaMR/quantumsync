@@ -1,4 +1,3 @@
-
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useEffect, useState } from 'react';
 
@@ -18,7 +17,7 @@ interface TreatmentVisualizerProps {
   rate3: string;
   hypnoticSpeed?: number[];
   receptorName?: string;
-  intention?: string; // Add intention prop
+  intention?: string;
 }
 
 const TreatmentVisualizer = ({
@@ -37,7 +36,7 @@ const TreatmentVisualizer = ({
   rate3,
   hypnoticSpeed = [10],
   receptorName = '',
-  intention = '', // Default to empty string
+  intention = '',
 }: TreatmentVisualizerProps) => {
   const { isIOS } = useIsMobile();
   const [displayAlternate, setDisplayAlternate] = useState(false);
@@ -60,24 +59,18 @@ const TreatmentVisualizer = ({
     let intervalId: NodeJS.Timeout | null = null;
     
     if (isPlaying) {
-      // Always alternate images when playing, regardless of hypnoticEffect
-      // Calculate interval based on hypnoticSpeed (higher speed = shorter interval)
       const speed = hypnoticSpeed[0] || 10;
-      // More aggressive formula for faster alternation
       const intervalTime = Math.max(2000 / Math.max(1, speed * 5), 40); 
       
       console.log(`Setting up treatment image alternation interval: ${intervalTime}ms at speed ${speed}`);
       
-      // Set up the alternating interval
       intervalId = setInterval(() => {
         setDisplayAlternate(prev => !prev);
       }, intervalTime);
     } else {
-      // Reset to default display when inactive
       setDisplayAlternate(false);
     }
     
-    // Clean up interval on unmount or when dependencies change
     return () => {
       if (intervalId) {
         clearInterval(intervalId);
@@ -85,26 +78,23 @@ const TreatmentVisualizer = ({
     };
   }, [isPlaying, hypnoticSpeed]);
 
-  // Effect to handle circular movement of intention text
+  // Effect to handle smooth circular movement of intention text
   useEffect(() => {
     let animationId: number | null = null;
-    let startTime: number | null = null;
     
     if (isPlaying && intention && intention.trim().length > 0) {
-      console.log("Starting intention circular animation for:", intention);
+      console.log("Starting smooth intention circular animation for:", intention);
       
-      const animate = (timestamp: number) => {
-        if (!startTime) startTime = timestamp;
-        const elapsed = timestamp - startTime;
+      const animate = () => {
+        const time = Date.now() * 0.001; // Convert to seconds for smoother animation
+        const speed = (hypnoticSpeed[0] || 10) / 20; // Slower, more fluid movement
         
-        // Calculate circular position based on time
-        const speed = (hypnoticSpeed[0] || 10) / 10; // Normalize speed
-        const angle = (elapsed * speed * 0.001) % (2 * Math.PI); // Full circle every few seconds
-        
-        // Calculate position on circle (centered at 50%, radius varies)
-        const radius = 35; // Increased radius for better visibility
+        // Calculate smooth circular position
+        const radius = 30; // Slightly smaller radius for better visibility
         const centerX = 50;
         const centerY = 50;
+        
+        const angle = time * speed; // Continuous time-based animation
         
         const x = centerX + radius * Math.cos(angle);
         const y = centerY + radius * Math.sin(angle);
@@ -116,7 +106,6 @@ const TreatmentVisualizer = ({
       
       animationId = requestAnimationFrame(animate);
     } else {
-      // Reset to center when not active
       setIntentionPosition({ x: 50, y: 50 });
     }
     
@@ -143,9 +132,6 @@ const TreatmentVisualizer = ({
     intentionPosition
   });
   
-  // For mix view, show both radionic and receptor
-  // For specific views, only show the selected type
-  // When active and playing, use alternation based on displayAlternate state
   let showRadionic = currentImage === 'mix';
   let showReceptor = currentImage === 'mix';
   
@@ -158,7 +144,6 @@ const TreatmentVisualizer = ({
       showReceptor = false;
     }
   } else {
-    // Normal display logic when not active
     if (currentImage === 'radionic' || currentImage === 'pattern') {
       showRadionic = true;
     }
@@ -180,10 +165,8 @@ const TreatmentVisualizer = ({
 
   return (
     <div className={`relative aspect-square w-full bg-black rounded-lg overflow-hidden ${isIOS ? 'ios-momentum-scroll' : ''}`}>
-      {/* Show blended images */}
       {(hasImages || isPlaying) && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-          {/* Radionic Images - Show based on currentImage */}
           {hasRadionicImages && showRadionic && (
             <div className="absolute inset-0 flex items-center justify-center z-10">
               {radionicImagesArray.map((img, index) => (
@@ -202,7 +185,6 @@ const TreatmentVisualizer = ({
             </div>
           )}
           
-          {/* Si no hay imágenes radionicas pero estamos en modo activo, mostrar un mensaje */}
           {isPlaying && showRadionic && !hasRadionicImages && (
             <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/40">
               <div className="text-xl text-quantum-primary font-medium bg-black/50 px-6 py-3 rounded-lg">
@@ -211,10 +193,8 @@ const TreatmentVisualizer = ({
             </div>
           )}
           
-          {/* Receptor Images - Show based on currentImage */}
           {showReceptor && (
             <div className="absolute inset-0 flex items-center justify-center z-20">
-              {/* Show receptor images if available */}
               {hasReceptorImages && receptorImagesArray.map((img, index) => (
                 <img 
                   key={`receptor-${index}`}
@@ -229,7 +209,6 @@ const TreatmentVisualizer = ({
                 />
               ))}
               
-              {/* Show receptor name when needed */}
               {hasReceptorName && (!hasReceptorImages) && showReceptor && (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-2xl font-bold text-white bg-black/50 px-6 py-4 rounded-lg">
@@ -238,7 +217,6 @@ const TreatmentVisualizer = ({
                 </div>
               )}
               
-              {/* Si no hay imágenes de receptor ni nombre pero estamos en modo activo, mostrar un mensaje */}
               {isPlaying && showReceptor && !hasReceptorImages && !hasReceptorName && (
                 <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/40">
                   <div className="text-xl text-quantum-primary font-medium bg-black/50 px-6 py-3 rounded-lg">
@@ -251,47 +229,41 @@ const TreatmentVisualizer = ({
         </div>
       )}
       
-      {/* Animated circular overlay */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
         <div className={`w-12 h-12 ${displayAlternate ? 'bg-quantum-primary/60' : 'bg-quantum-primary/20'} rounded-full transition-colors duration-50`}></div>
         <div className={`w-24 h-24 ${displayAlternate ? 'bg-quantum-primary/40' : 'bg-quantum-primary/15'} rounded-full transition-colors duration-50`}></div>
         <div className={`w-36 h-36 ${displayAlternate ? 'bg-quantum-primary/20' : 'bg-quantum-primary/10'} rounded-full transition-colors duration-50`}></div>
       </div>
 
-      {/* Display intention moving in circles when provided and playing - HIGHEST Z-INDEX */}
       {hasIntention && isPlaying && (
         <div 
-          className="absolute z-[100] pointer-events-none transition-all duration-100 ease-linear"
+          className="absolute z-[100] pointer-events-none"
           style={{ 
             left: `${intentionPosition.x}%`, 
             top: `${intentionPosition.y}%`,
-            transform: 'translate(-50%, -50%)'
+            transform: 'translate(-50%, -50%)',
+            transition: 'none' // Remove any CSS transitions for smoother animation
           }}
         >
-          <div className="bg-gradient-to-r from-yellow-400 to-orange-500 px-4 py-2 rounded-lg backdrop-blur-sm border-2 border-yellow-300 shadow-2xl">
-            <p className="text-black text-sm md:text-base font-bold text-center whitespace-nowrap max-w-[250px] truncate drop-shadow-lg">
-              {intention}
-            </p>
-          </div>
+          <p className="text-white text-sm md:text-base font-bold text-center whitespace-nowrap max-w-[250px] truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+            {intention}
+          </p>
         </div>
       )}
 
-      {/* Display intention static when not playing */}
       {hasIntention && !isPlaying && (
         <div className="absolute inset-0 flex items-center justify-center z-[90] pointer-events-none">
-          <div className="max-w-[80%] text-center bg-black/60 px-6 py-4 rounded-lg backdrop-blur-sm">
-            <p className="text-white text-lg md:text-xl font-medium">{intention}</p>
+          <div className="max-w-[80%] text-center">
+            <p className="text-white text-lg md:text-xl font-medium drop-shadow-lg">{intention}</p>
           </div>
         </div>
       )}
       
-      {/* Información y RATES */}
       <div className="absolute bottom-3 left-3 text-xs md:text-sm text-white z-40 font-mono bg-black/40 px-2 py-1 rounded">
         Frecuencia: {frequency[0]} Hz | Intensidad: {intensity[0]}%
         {hypnoticEffect && <span> | Velocidad: {hypnoticSpeed[0]}</span>}
       </div>
       
-      {/* RATES sin animación */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-40">
         <div className="relative w-full h-full max-w-[90%] max-h-[90%]">
           {rate1 && (
