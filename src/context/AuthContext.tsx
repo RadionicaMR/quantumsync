@@ -41,7 +41,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       setLoading(true);
-      console.log(`Intentando login con email: ${email} y password: ${password}`);
+      console.log(`[LOGIN] Intentando login con email: ${email} y password: ${password}`);
       
       // Comprobar si es el administrador
       if (email === 'mauriramosgs@gmail.com' && password === 'bere1603') {
@@ -52,6 +52,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         };
         setUser(adminUser);
         localStorage.setItem('user', JSON.stringify(adminUser));
+        console.log(`[LOGIN] Admin login exitoso`);
         return true;
       }
       
@@ -64,6 +65,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         };
         setUser(specialUser);
         localStorage.setItem('user', JSON.stringify(specialUser));
+        console.log(`[LOGIN] Usuario especial German login exitoso`);
         return true;
       }
       
@@ -76,6 +78,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         };
         setUser(damianUser);
         localStorage.setItem('user', JSON.stringify(damianUser));
+        console.log(`[LOGIN] Usuario especial Damian login exitoso`);
         return true;
       }
       
@@ -88,22 +91,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         };
         setUser(carinaUser);
         localStorage.setItem('user', JSON.stringify(carinaUser));
+        console.log(`[LOGIN] Usuario especial Carina login exitoso`);
         return true;
       }
       
       // Verificar si el usuario existe en la lista de usuarios general
       const storedUsersList = localStorage.getItem('usersList');
+      console.log(`[LOGIN] Contenido de usersList en localStorage:`, storedUsersList);
       
       if (storedUsersList) {
         const usersList = JSON.parse(storedUsersList);
-        console.log("Lista de usuarios:", usersList);
+        console.log(`[LOGIN] Lista de usuarios parseada:`, usersList);
+        console.log(`[LOGIN] Buscando usuario con email: ${email.toLowerCase()} y password: ${password}`);
         
         // Comparación sin distinguir mayúsculas y minúsculas para el email
-        const foundUser = usersList.find((u: any) => 
-          u.email.toLowerCase() === email.toLowerCase() && u.password === password
-        );
+        const foundUser = usersList.find((u: any) => {
+          console.log(`[LOGIN] Comparando: ${u.email.toLowerCase()} === ${email.toLowerCase()} && ${u.password} === ${password}`);
+          return u.email.toLowerCase() === email.toLowerCase() && u.password === password;
+        });
         
-        console.log("Usuario encontrado:", foundUser);
+        console.log(`[LOGIN] Usuario encontrado en la búsqueda:`, foundUser);
         
         if (foundUser) {
           const loggedUser: User = {
@@ -113,15 +120,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           };
           setUser(loggedUser);
           localStorage.setItem('user', JSON.stringify(loggedUser));
+          console.log(`[LOGIN] Login exitoso para usuario registrado:`, loggedUser);
           return true;
         }
+      } else {
+        console.log(`[LOGIN] No hay usersList en localStorage`);
       }
       
       // Si llegamos aquí, no se encontró el usuario
-      console.log("No se encontró el usuario");
+      console.log(`[LOGIN] No se encontró el usuario con email: ${email}`);
       return false;
     } catch (error) {
-      console.error('Error during login:', error);
+      console.error('[LOGIN] Error during login:', error);
       return false;
     } finally {
       setLoading(false);
@@ -136,7 +146,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
     try {
       setLoading(true);
-      console.log(`[REGISTRO] Intentando registrar usuario: ${name}, ${email}`);
+      console.log(`[REGISTRO] === INICIANDO REGISTRO ===`);
+      console.log(`[REGISTRO] Datos recibidos: name="${name}", email="${email}", password="${password}"`);
       
       // Check for affiliate referral
       const referralCode = localStorage.getItem('referralCode');
@@ -144,16 +155,23 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       // Inicializar la lista de usuarios si no existe
       const storedUsersList = localStorage.getItem('usersList');
+      console.log(`[REGISTRO] usersList actual en localStorage:`, storedUsersList);
+      
       let usersList = storedUsersList ? JSON.parse(storedUsersList) : [];
-      console.log(`[REGISTRO] Lista actual de usuarios:`, usersList);
+      console.log(`[REGISTRO] Lista actual de usuarios parseada:`, usersList);
       
       // Comprobar si el email ya existe en la lista de usuarios
-      const emailExists = usersList.some((u: any) => u.email.toLowerCase() === email.toLowerCase());
+      const emailExists = usersList.some((u: any) => {
+        console.log(`[REGISTRO] Verificando si ${u.email.toLowerCase()} === ${email.toLowerCase()}`);
+        return u.email.toLowerCase() === email.toLowerCase();
+      });
       
       if (emailExists) {
-        console.log(`[REGISTRO] Email ya existe: ${email}`);
+        console.log(`[REGISTRO] ❌ Email ya existe: ${email}`);
         return false; // El email ya está registrado
       }
+      
+      console.log(`[REGISTRO] ✅ Email disponible, continuando con el registro`);
       
       // Crear nuevo usuario
       const newUser: User = {
@@ -174,12 +192,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         dateCreated: currentDate
       };
       
+      console.log(`[REGISTRO] Nuevo usuario para almacenamiento:`, newUserForStorage);
+      
       usersList.push(newUserForStorage);
-      console.log(`[REGISTRO] Nuevo usuario creado:`, newUserForStorage);
+      console.log(`[REGISTRO] Lista actualizada de usuarios:`, usersList);
       
       // Guardar la lista actualizada
       localStorage.setItem('usersList', JSON.stringify(usersList));
-      console.log(`[REGISTRO] Lista actualizada guardada en localStorage`);
+      console.log(`[REGISTRO] ✅ Lista guardada en localStorage`);
+      
+      // Verificar que se guardó correctamente
+      const verifyStorage = localStorage.getItem('usersList');
+      console.log(`[REGISTRO] Verificación - usersList después de guardar:`, verifyStorage);
       
       // If there's a referral code, track the sale
       if (referralCode) {
@@ -199,10 +223,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setUser(newUser);
       localStorage.setItem('user', JSON.stringify(newUser));
       
-      console.log(`[REGISTRO] Usuario registrado con éxito y sesión iniciada:`, newUser);
+      console.log(`[REGISTRO] ✅ Usuario registrado con éxito y sesión iniciada:`, newUser);
+      console.log(`[REGISTRO] === REGISTRO COMPLETADO ===`);
       return true;
     } catch (error) {
-      console.error('[REGISTRO] Error during registration:', error);
+      console.error('[REGISTRO] ❌ Error during registration:', error);
       return false;
     } finally {
       setLoading(false);

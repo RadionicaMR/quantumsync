@@ -76,6 +76,13 @@ export const initializeDefaultUsers = (): AdminUser[] => {
       email: 'fuenzacari@gmail.com',
       password: 'carina2025',
       dateCreated: '2025-05-21'
+    },
+    {
+      id: '5',
+      name: 'Karla Caballero Cedillo',
+      email: 'kcaballerocedillo@gmail.com',
+      password: 'karla2025',
+      dateCreated: '2025-06-16'
     }
   ];
   localStorage.setItem('usersList', JSON.stringify(defaultUsers));
@@ -133,6 +140,28 @@ export const updateUserPassword = (users: AdminUser[], userId: string, newPasswo
   return updatedUsers;
 };
 
+// Función específica para añadir el usuario Karla si no existe
+export const ensureKarlaUserExists = (): void => {
+  const usersList = loadUsers();
+  
+  // Verificar si Karla ya existe
+  const karlaExists = usersList.some(user => 
+    user.email.toLowerCase() === 'kcaballerocedillo@gmail.com'
+  );
+  
+  if (!karlaExists) {
+    console.log('[USER-STORAGE] Añadiendo usuario Karla Caballero Cedillo');
+    addUser(usersList, {
+      name: 'Karla Caballero Cedillo',
+      email: 'kcaballerocedillo@gmail.com',
+      password: 'karla2025'
+    });
+    console.log('[USER-STORAGE] Usuario Karla añadido exitosamente');
+  } else {
+    console.log('[USER-STORAGE] Usuario Karla ya existe');
+  }
+};
+
 // Verifica si un usuario específico existe y crea el usuario Damian si no existe
 export const ensureSpecialUsersExist = (): void => {
   const usersList = loadUsers();
@@ -145,6 +174,11 @@ export const ensureSpecialUsersExist = (): void => {
   // Verificar si Carina Fuenza ya existe
   const carinaExists = usersList.some(user => 
     user.email.toLowerCase() === 'fuenzacari@gmail.com'
+  );
+  
+  // Verificar si Karla ya existe
+  const karlaExists = usersList.some(user => 
+    user.email.toLowerCase() === 'kcaballerocedillo@gmail.com'
   );
   
   if (!damianExists) {
@@ -165,6 +199,16 @@ export const ensureSpecialUsersExist = (): void => {
       password: 'carina2025'
     });
     console.log('Usuario especial Carina Fuenza añadido');
+  }
+  
+  if (!karlaExists) {
+    // Añadir a Karla si no existe
+    addUser(usersList, {
+      name: 'Karla Caballero Cedillo',
+      email: 'kcaballerocedillo@gmail.com',
+      password: 'karla2025'
+    });
+    console.log('Usuario especial Karla Caballero Cedillo añadido');
   }
 };
 
@@ -187,5 +231,5 @@ export const synchronizeAllUsers = (): AdminUser[] => {
   return updatedUsers;
 };
 
-// Ejecutar esto para asegurarse de que el usuario especial existe
+// Ejecutar esto para asegurarse de que los usuarios especiales existen
 ensureSpecialUsersExist();
