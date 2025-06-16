@@ -27,6 +27,8 @@ const Register = () => {
     setLoading(true);
     setError('');
 
+    console.log(`[FORM] Iniciando proceso de registro para: ${name} - ${email}`);
+
     // Validaciones básicas
     if (password !== confirmPassword) {
       setError('Las contraseñas no coinciden');
@@ -40,17 +42,28 @@ const Register = () => {
       return;
     }
 
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      setError('Todos los campos son obligatorios');
+      setLoading(false);
+      return;
+    }
+
     try {
+      console.log(`[FORM] Llamando a la función register del contexto`);
       // Usar la función de registro del contexto de autenticación
-      const success = await register(name, email, password);
+      const success = await register(name.trim(), email.trim(), password);
+      
+      console.log(`[FORM] Resultado del registro: ${success}`);
       
       if (success) {
+        console.log(`[FORM] Registro exitoso, mostrando mensaje de éxito`);
         setRegistered(true);
         toast({
           title: "Registro exitoso",
           description: "Tu cuenta ha sido creada correctamente.",
         });
       } else {
+        console.log(`[FORM] Registro falló, mostrando error`);
         setError('El correo electrónico ya está registrado o hubo un problema con el registro.');
         toast({
           variant: "destructive",
@@ -59,7 +72,7 @@ const Register = () => {
         });
       }
     } catch (error) {
-      console.error('Error durante el registro:', error);
+      console.error('[FORM] Error durante el registro:', error);
       setError('Ocurrió un error al registrar la cuenta.');
     } finally {
       setLoading(false);

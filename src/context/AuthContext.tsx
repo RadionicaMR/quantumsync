@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { getAffiliateByEmail } from '@/utils/affiliateStorage';
 
@@ -135,20 +136,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
     try {
       setLoading(true);
-      console.log(`Intentando registrar usuario: ${name}, ${email}`);
+      console.log(`[REGISTRO] Intentando registrar usuario: ${name}, ${email}`);
       
       // Check for affiliate referral
       const referralCode = localStorage.getItem('referralCode');
+      console.log(`[REGISTRO] Código de referido encontrado: ${referralCode}`);
       
       // Inicializar la lista de usuarios si no existe
       const storedUsersList = localStorage.getItem('usersList');
       let usersList = storedUsersList ? JSON.parse(storedUsersList) : [];
+      console.log(`[REGISTRO] Lista actual de usuarios:`, usersList);
       
       // Comprobar si el email ya existe en la lista de usuarios
       const emailExists = usersList.some((u: any) => u.email.toLowerCase() === email.toLowerCase());
       
       if (emailExists) {
-        console.log("Email ya existe:", email);
+        console.log(`[REGISTRO] Email ya existe: ${email}`);
         return false; // El email ya está registrado
       }
       
@@ -163,28 +166,32 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const newId = (usersList.length + 1).toString();
       const currentDate = new Date().toISOString().split('T')[0];
       
-      usersList.push({
+      const newUserForStorage = {
         id: newId,
         name,
         email,
         password,
         dateCreated: currentDate
-      });
+      };
+      
+      usersList.push(newUserForStorage);
+      console.log(`[REGISTRO] Nuevo usuario creado:`, newUserForStorage);
       
       // Guardar la lista actualizada
       localStorage.setItem('usersList', JSON.stringify(usersList));
+      console.log(`[REGISTRO] Lista actualizada guardada en localStorage`);
       
       // If there's a referral code, track the sale
       if (referralCode) {
         try {
           const { addAffiliateSale } = await import('@/utils/affiliateStorage');
           addAffiliateSale(referralCode, email, name);
-          console.log(`Sale tracked for affiliate: ${referralCode}`);
+          console.log(`[REGISTRO] Sale tracked for affiliate: ${referralCode}`);
           
           // Clear the referral code after successful conversion
           localStorage.removeItem('referralCode');
         } catch (error) {
-          console.error('Error tracking affiliate sale:', error);
+          console.error('[REGISTRO] Error tracking affiliate sale:', error);
         }
       }
       
@@ -192,10 +199,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setUser(newUser);
       localStorage.setItem('user', JSON.stringify(newUser));
       
-      console.log("Usuario registrado con éxito:", newUser);
+      console.log(`[REGISTRO] Usuario registrado con éxito y sesión iniciada:`, newUser);
       return true;
     } catch (error) {
-      console.error('Error during registration:', error);
+      console.error('[REGISTRO] Error during registration:', error);
       return false;
     } finally {
       setLoading(false);
