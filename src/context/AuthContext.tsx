@@ -95,6 +95,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return true;
       }
       
+      // Nuevo acceso especial para Javier King
+      if (email === 'jreyesreal@gmail.com' && password === 'javier2025') {
+        const javierUser: User = {
+          email,
+          name: 'Javier King',
+          isAdmin: false
+        };
+        setUser(javierUser);
+        localStorage.setItem('user', JSON.stringify(javierUser));
+        console.log(`[LOGIN] Usuario especial Javier login exitoso`);
+        return true;
+      }
+      
       // Verificar si el usuario existe en la lista de usuarios general
       const storedUsersList = localStorage.getItem('usersList');
       console.log(`[LOGIN] Contenido de usersList en localStorage:`, storedUsersList);
