@@ -83,6 +83,13 @@ export const initializeDefaultUsers = (): AdminUser[] => {
       email: 'kcaballerocedillo@gmail.com',
       password: 'karla2025',
       dateCreated: '2025-06-16'
+    },
+    {
+      id: '6',
+      name: 'Javier King',
+      email: 'jreyesreal@gmail.com',
+      password: 'javier2025',
+      dateCreated: '2025-08-06'
     }
   ];
   localStorage.setItem('usersList', JSON.stringify(defaultUsers));
@@ -181,6 +188,11 @@ export const ensureSpecialUsersExist = (): void => {
     user.email.toLowerCase() === 'kcaballerocedillo@gmail.com'
   );
   
+  // Verificar si Javier ya existe
+  const javierExists = usersList.some(user => 
+    user.email.toLowerCase() === 'jreyesreal@gmail.com'
+  );
+  
   if (!damianExists) {
     // Añadir a Damian Gomez si no existe
     addUser(usersList, {
@@ -209,6 +221,16 @@ export const ensureSpecialUsersExist = (): void => {
       password: 'karla2025'
     });
     console.log('Usuario especial Karla Caballero Cedillo añadido');
+  }
+  
+  if (!javierExists) {
+    // Añadir a Javier King si no existe
+    addUser(usersList, {
+      name: 'Javier King',
+      email: 'jreyesreal@gmail.com',
+      password: 'javier2025'
+    });
+    console.log('Usuario especial Javier King añadido');
   }
 };
 
