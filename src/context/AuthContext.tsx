@@ -46,9 +46,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       setLoading(true);
-      console.log(`[LOGIN] Intentando login con email: ${email} y password: ${password}`);
+      console.log(`[LOGIN] === INICIANDO PROCESO DE LOGIN ===`);
+      console.log(`[LOGIN] Email recibido: "${email}"`);
+      console.log(`[LOGIN] Password recibido: "${password}"`);
+      console.log(`[LOGIN] Verificando credenciales...`);
       
       // Comprobar si es el administrador
+      console.log(`[LOGIN] Verificando admin...`);
       if (email === 'mauriramosgs@gmail.com' && password === 'bere1603') {
         const adminUser: User = {
           email,
@@ -62,6 +66,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
       
       // Acceso para usuarios especiales
+      console.log(`[LOGIN] Verificando German...`);
       if (email === 'germancastroc25@gmail.com' && password === 'german2025') {
         const specialUser: User = {
           email,
@@ -75,6 +80,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
       
       // Nuevo acceso especial para Damian Gomez
+      console.log(`[LOGIN] Verificando Damian...`);
       if (email === 'parapsicologodamiangomez@gmail.com' && password === 'damian2025') {
         const damianUser: User = {
           email,
@@ -88,6 +94,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
       
       // Nuevo acceso especial para Carina Fuenza
+      console.log(`[LOGIN] Verificando Carina...`);
       if (email === 'fuenzacari@gmail.com' && password === 'carina2025') {
         const carinaUser: User = {
           email,
@@ -101,7 +108,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
       
       // Nuevo acceso especial para Javier King
+      console.log(`[LOGIN] Verificando Javier con email: "${email}" password: "${password}"`);
+      console.log(`[LOGIN] Comparando: email === 'jreyesreal@gmail.com' -> ${email === 'jreyesreal@gmail.com'}`);
+      console.log(`[LOGIN] Comparando: password === 'javier2025' -> ${password === 'javier2025'}`);
       if (email === 'jreyesreal@gmail.com' && password === 'javier2025') {
+        console.log(`[LOGIN] ✅ CREDENCIALES DE JAVIER COINCIDEN!`);
         const javierUser: User = {
           email,
           name: 'Javier King',
@@ -111,6 +122,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         localStorage.setItem('user', JSON.stringify(javierUser));
         console.log(`[LOGIN] Usuario especial Javier login exitoso`);
         return true;
+      } else {
+        console.log(`[LOGIN] ❌ Credenciales de Javier NO coinciden`);
       }
       
       // Verificar si el usuario existe en la lista de usuarios general
