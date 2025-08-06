@@ -24,6 +24,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Asegurar que todos los usuarios especiales existen al cargar la aplicación
+    import('@/utils/userStorage').then(({ ensureSpecialUsersExist }) => {
+      ensureSpecialUsersExist();
+    });
+    
     // Verificar si hay un usuario en localStorage al cargar la aplicación
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
