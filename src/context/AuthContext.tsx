@@ -286,7 +286,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    // En lugar de lanzar error inmediatamente, devolvemos valores por defecto
+    console.warn('useAuth is being used outside of AuthProvider, returning default values');
+    return {
+      user: null,
+      loading: false,
+      login: async () => false,
+      logout: () => {},
+      register: async () => false,
+      isAuthenticated: false
+    };
   }
   return context;
 };
