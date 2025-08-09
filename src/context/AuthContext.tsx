@@ -46,14 +46,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       setLoading(true);
+      // Limpiar espacios en blanco al inicio y final (problema común en Safari)
+      const cleanEmail = email.trim().toLowerCase();
+      const cleanPassword = password.trim();
+      
       console.log(`[LOGIN] === INICIANDO PROCESO DE LOGIN ===`);
-      console.log(`[LOGIN] Email recibido: "${email}"`);
-      console.log(`[LOGIN] Password recibido: "${password}"`);
+      console.log(`[LOGIN] Email recibido: "${email}" -> limpiado: "${cleanEmail}"`);
+      console.log(`[LOGIN] Password recibido: "${password}" -> limpiado: "${cleanPassword}"`);
       console.log(`[LOGIN] Verificando credenciales...`);
       
       // Comprobar si es el administrador
       console.log(`[LOGIN] Verificando admin...`);
-      if (email === 'mauriramosgs@gmail.com' && password === 'bere1603') {
+      if (cleanEmail === 'mauriramosgs@gmail.com' && cleanPassword === 'bere1603') {
         const adminUser: User = {
           email,
           name: 'Mauricio Ramos',
@@ -67,9 +71,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       // Acceso para usuarios especiales
       console.log(`[LOGIN] Verificando German...`);
-      if (email === 'germancastroc25@gmail.com' && password === 'german2025') {
+      if (cleanEmail === 'germancastroc25@gmail.com' && cleanPassword === 'german2025') {
         const specialUser: User = {
-          email,
+          email: cleanEmail,
           name: 'German Castro',
           isAdmin: false
         };
@@ -81,9 +85,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       // Nuevo acceso especial para Damian Gomez
       console.log(`[LOGIN] Verificando Damian...`);
-      if (email === 'parapsicologodamiangomez@gmail.com' && password === 'damian2025') {
+      if (cleanEmail === 'parapsicologodamiangomez@gmail.com' && cleanPassword === 'damian2025') {
         const damianUser: User = {
-          email,
+          email: cleanEmail,
           name: 'Damian Gomez',
           isAdmin: false
         };
@@ -95,9 +99,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       // Nuevo acceso especial para Carina Fuenza
       console.log(`[LOGIN] Verificando Carina...`);
-      if (email === 'fuenzacari@gmail.com' && password === 'carina2025') {
+      if (cleanEmail === 'fuenzacari@gmail.com' && cleanPassword === 'carina2025') {
         const carinaUser: User = {
-          email,
+          email: cleanEmail,
           name: 'Carina Fuenza',
           isAdmin: false
         };
@@ -108,13 +112,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
       
       // Nuevo acceso especial para Javier King
-      console.log(`[LOGIN] Verificando Javier con email: "${email}" password: "${password}"`);
-      console.log(`[LOGIN] Comparando: email === 'jreyesreal@gmail.com' -> ${email === 'jreyesreal@gmail.com'}`);
-      console.log(`[LOGIN] Comparando: password === 'javier2025' -> ${password === 'javier2025'}`);
-      if (email === 'jreyesreal@gmail.com' && password === 'javier2025') {
+      console.log(`[LOGIN] Verificando Javier con email: "${email}" -> limpiado: "${cleanEmail}" password: "${password}" -> limpiado: "${cleanPassword}"`);
+      console.log(`[LOGIN] Comparando: cleanEmail === 'jreyesreal@gmail.com' -> ${cleanEmail === 'jreyesreal@gmail.com'}`);
+      console.log(`[LOGIN] Comparando: cleanPassword === 'javier2025' -> ${cleanPassword === 'javier2025'}`);
+      if (cleanEmail === 'jreyesreal@gmail.com' && cleanPassword === 'javier2025') {
         console.log(`[LOGIN] ✅ CREDENCIALES DE JAVIER COINCIDEN!`);
         const javierUser: User = {
-          email,
+          email: cleanEmail,
           name: 'Javier King',
           isAdmin: false
         };
@@ -137,8 +141,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         
         // Comparación sin distinguir mayúsculas y minúsculas para el email
         const foundUser = usersList.find((u: any) => {
-          console.log(`[LOGIN] Comparando: ${u.email.toLowerCase()} === ${email.toLowerCase()} && ${u.password} === ${password}`);
-          return u.email.toLowerCase() === email.toLowerCase() && u.password === password;
+          console.log(`[LOGIN] Comparando: ${u.email.toLowerCase()} === ${cleanEmail} && ${u.password} === ${cleanPassword}`);
+          return u.email.toLowerCase() === cleanEmail && u.password === cleanPassword;
         });
         
         console.log(`[LOGIN] Usuario encontrado en la búsqueda:`, foundUser);
