@@ -90,6 +90,13 @@ export const initializeDefaultUsers = (): AdminUser[] => {
       email: 'jreyesreal@gmail.com',
       password: 'javier2025',
       dateCreated: '2025-08-06'
+    },
+    {
+      id: '7',
+      name: 'Cristina Terapia Integral',
+      email: 'cristina.terapiaintegral@gmail.com',
+      password: 'cristina2025',
+      dateCreated: '2025-09-04'
     }
   ];
   localStorage.setItem('usersList', JSON.stringify(defaultUsers));
@@ -193,6 +200,11 @@ export const ensureSpecialUsersExist = (): void => {
     user.email.toLowerCase() === 'jreyesreal@gmail.com'
   );
   
+  // Verificar si Cristina ya existe
+  const cristinaExists = usersList.some(user => 
+    user.email.toLowerCase() === 'cristina.terapiaintegral@gmail.com'
+  );
+  
   if (!damianExists) {
     // Añadir a Damian Gomez si no existe
     addUser(usersList, {
@@ -231,6 +243,16 @@ export const ensureSpecialUsersExist = (): void => {
       password: 'javier2025'
     });
     console.log('Usuario especial Javier King añadido');
+  }
+  
+  if (!cristinaExists) {
+    // Añadir a Cristina Terapia Integral si no existe
+    addUser(usersList, {
+      name: 'Cristina Terapia Integral',
+      email: 'cristina.terapiaintegral@gmail.com',
+      password: 'cristina2025'
+    });
+    console.log('Usuario especial Cristina Terapia Integral añadido');
   }
 };
 

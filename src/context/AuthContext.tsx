@@ -130,6 +130,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         console.log(`[LOGIN] ❌ Credenciales de Javier NO coinciden`);
       }
       
+      // Nuevo acceso especial para Cristina Terapia Integral
+      console.log(`[LOGIN] Verificando Cristina...`);
+      if (cleanEmail === 'cristina.terapiaintegral@gmail.com' && cleanPassword === 'cristina2025') {
+        const cristinaUser: User = {
+          email: cleanEmail,
+          name: 'Cristina Terapia Integral',
+          isAdmin: false
+        };
+        setUser(cristinaUser);
+        localStorage.setItem('user', JSON.stringify(cristinaUser));
+        console.log(`[LOGIN] Usuario especial Cristina login exitoso`);
+        return true;
+      }
+      
       // Verificar si el usuario existe en la lista de usuarios general
       const storedUsersList = localStorage.getItem('usersList');
       console.log(`[LOGIN] Contenido de usersList en localStorage:`, storedUsersList);
