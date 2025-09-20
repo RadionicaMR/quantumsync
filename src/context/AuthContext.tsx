@@ -151,12 +151,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (storedUsersList) {
         const usersList = JSON.parse(storedUsersList);
         console.log(`[LOGIN] Lista de usuarios parseada:`, usersList);
-        console.log(`[LOGIN] Buscando usuario con email: ${email.toLowerCase()} y password: ${password}`);
+        console.log(`[LOGIN] Buscando usuario con email: ${cleanEmail} y password: ${cleanPassword}`);
         
         // Comparación sin distinguir mayúsculas y minúsculas para el email
         const foundUser = usersList.find((u: any) => {
-          console.log(`[LOGIN] Comparando: ${u.email.toLowerCase()} === ${cleanEmail} && ${u.password} === ${cleanPassword}`);
-          return u.email.toLowerCase() === cleanEmail && u.password === cleanPassword;
+          const userEmailClean = u.email.trim().toLowerCase();
+          const userPasswordClean = u.password.trim();
+          console.log(`[LOGIN] Comparando: "${userEmailClean}" === "${cleanEmail}" && "${userPasswordClean}" === "${cleanPassword}"`);
+          console.log(`[LOGIN] Email match: ${userEmailClean === cleanEmail}, Password match: ${userPasswordClean === cleanPassword}`);
+          return userEmailClean === cleanEmail && userPasswordClean === cleanPassword;
         });
         
         console.log(`[LOGIN] Usuario encontrado en la búsqueda:`, foundUser);
@@ -211,8 +214,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       // Comprobar si el email ya existe en la lista de usuarios
       const emailExists = usersList.some((u: any) => {
-        console.log(`[REGISTRO] Verificando si ${u.email.toLowerCase()} === ${email.toLowerCase()}`);
-        return u.email.toLowerCase() === email.toLowerCase();
+        const existingEmailClean = u.email.trim().toLowerCase();
+        const newEmailClean = email.trim().toLowerCase();
+        console.log(`[REGISTRO] Verificando si "${existingEmailClean}" === "${newEmailClean}"`);
+        return existingEmailClean === newEmailClean;
       });
       
       if (emailExists) {
@@ -235,9 +240,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       const newUserForStorage = {
         id: newId,
-        name,
-        email,
-        password,
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        password: password.trim(),
         dateCreated: currentDate
       };
       
