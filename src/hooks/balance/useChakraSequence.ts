@@ -44,7 +44,7 @@ export const useChakraSequence = () => {
     currentChakra: ChakraName | '',
     getChakrasToBalance: () => ChakraName[],
     isTransitioning: React.MutableRefObject<boolean>,
-    isPlayingRef: React.MutableRefObject<boolean>, // Add playing ref
+    isPlayingRef: React.MutableRefObject<boolean>,
     cleanupTimers: () => void,
     stopSound: () => void,
     setCurrentChakra: (chakra: ChakraName | '') => void,
@@ -61,7 +61,6 @@ export const useChakraSequence = () => {
     duration: number[]
   ) => {
     console.log("moveToNextChakra called, isPlaying:", isPlaying);
-    // ENHANCED: Log the stored playing state as well
     console.log("moveToNextChakra called, isPlayingRef:", isPlayingRef.current);
     
     // CRITICAL FIX: Use the ref for the playing state which is more reliable during transitions
@@ -95,12 +94,81 @@ export const useChakraSequence = () => {
       return;
     }
     
-    // Find current index
-    const currentIndex = currentChakra ? chakrasToBalance.indexOf(currentChakra as ChakraName) : -1;
+    // CRITICAL FIX: Handle the case where we're starting fresh (no current chakra)
+    if (currentChakra === '') {
+      const firstChakra = chakrasToBalance[0];
+      console.log(`Starting fresh with first chakra: ${firstChakra}`);
+      
+      // Set current chakra
+      setCurrentChakra(firstChakra);
+      
+      // Set isTransitioning to true
+      isTransitioning.current = true;
+      
+      // Create completion callback that moves to next chakra
+      const onFirstChakraComplete = () => {
+        console.log(`First chakra ${firstChakra} completed`);
+        isProcessingNextChakra.current = false;
+        
+        // Move to next chakra if there are more and still playing
+        if (chakrasToBalance.length > 1 && isPlayingRef.current) {
+          setTimeout(() => {
+            moveToNextChakra(
+              isPlayingRef.current,
+              firstChakra,
+              getChakrasToBalance,
+              isTransitioning,
+              isPlayingRef,
+              cleanupTimers,
+              stopSound,
+              setCurrentChakra,
+              setProgress,
+              handleChakraTransition,
+              completeSessionFn,
+              duration
+            );
+          }, 100);
+        } else if (chakrasToBalance.length === 1) {
+          // Only one chakra, complete session
+          completeSessionFn();
+        }
+      };
+      
+      // Handle transition to first chakra with minimal delay
+      setTimeout(() => {
+        if (!isPlayingRef.current) {
+          isProcessingNextChakra.current = false;
+          isTransitioning.current = false;
+          return;
+        }
+        
+        handleChakraTransition(
+          '',
+          firstChakra,
+          effectiveIsPlaying,
+          duration,
+          setProgress,
+          onFirstChakraComplete
+        );
+      }, 100);
+      
+      return;
+    }
+    
+    // Find current index for existing chakra
+    const currentIndex = chakrasToBalance.indexOf(currentChakra as ChakraName);
     console.log(`Current chakra: ${currentChakra}, Index: ${currentIndex}, Total: ${chakrasToBalance.length}`);
     
-    // CRITICAL FIX: Use cleaner approach to transition
-    if (currentIndex < chakrasToBalance.length - 1) {
+    // Check if we're on the last chakra
+    if (currentIndex === chakrasToBalance.length - 1) {
+      console.log("On last chakra, completing session");
+      completeSessionFn();
+      isProcessingNextChakra.current = false;
+      return;
+    }
+    
+    // Move to next chakra
+    if (currentIndex >= 0 && currentIndex < chakrasToBalance.length - 1) {
       // Always clean up existing timers before transition
       cleanupTimers();
       stopSound();
@@ -109,7 +177,7 @@ export const useChakraSequence = () => {
       const nextChakra = chakrasToBalance[currentIndex + 1];
       console.log(`Moving to next chakra: ${nextChakra}`);
       
-      // CRITICAL FIX: Store the last processed chakra before setting the next one
+      // Store the last processed chakra
       lastChakraProcessed.current = currentChakra || null;
       
       // Update current chakra first
@@ -118,37 +186,36 @@ export const useChakraSequence = () => {
       // Set isTransitioning to true
       isTransitioning.current = true;
       
-      // Create a nested completion callback for cleaner transition
+      // Create completion callback for this chakra
       const onChakraComplete = () => {
         console.log(`Chakra ${nextChakra} completed, moving to next`);
-        
-        // Reset processing flag
         isProcessingNextChakra.current = false;
         
         // Continue to next chakra if still playing
-        if (effectiveIsPlaying) {
-          // This will be picked up by the next call
-          moveToNextChakra(
-            effectiveIsPlaying,
-            nextChakra,
-            getChakrasToBalance,
-            isTransitioning,
-            isPlayingRef,
-            cleanupTimers,
-            stopSound,
-            setCurrentChakra,
-            setProgress,
-            handleChakraTransition,
-            completeSessionFn,
-            duration
-          );
+        if (isPlayingRef.current) {
+          setTimeout(() => {
+            moveToNextChakra(
+              isPlayingRef.current,
+              nextChakra,
+              getChakrasToBalance,
+              isTransitioning,
+              isPlayingRef,
+              cleanupTimers,
+              stopSound,
+              setCurrentChakra,
+              setProgress,
+              handleChakraTransition,
+              completeSessionFn,
+              duration
+            );
+          }, 100);
         }
       };
       
       // Short delay before transition to ensure UI is ready
       setTimeout(() => {
-        // Double check if we're still playing using the ref
-        if (!isPlayingRef.current && !isPlaying) {
+        // Double check if we're still playing
+        if (!isPlayingRef.current) {
           isProcessingNextChakra.current = false;
           isTransitioning.current = false;
           return;
@@ -163,44 +230,12 @@ export const useChakraSequence = () => {
           setProgress,
           onChakraComplete
         );
-      }, 200);
-      
-    } else if (currentIndex === chakrasToBalance.length - 1) {
-      // We're on the last chakra, complete the session
-      console.log("On last chakra, completing session");
+      }, 100);
+    } else {
+      // Current chakra not found in list, complete session
+      console.log("Current chakra not found in balance list, completing session");
       completeSessionFn();
       isProcessingNextChakra.current = false;
-    } else {
-      // Special case: No current chakra but we have chakras to balance
-      // Start with the first one
-      if (chakrasToBalance.length > 0) {
-        const firstChakra = chakrasToBalance[0];
-        console.log(`No current chakra, starting with first: ${firstChakra}`);
-        
-        // Set current chakra
-        setCurrentChakra(firstChakra);
-        
-        // Set isTransitioning to true
-        isTransitioning.current = true;
-        
-        // Handle transition to first chakra
-        setTimeout(() => {
-          handleChakraTransition(
-            '',
-            firstChakra,
-            effectiveIsPlaying,
-            duration,
-            setProgress,
-            () => {
-              isProcessingNextChakra.current = false;
-            }
-          );
-        }, 200);
-      } else {
-        // No chakras to balance
-        completeSessionFn();
-        isProcessingNextChakra.current = false;
-      }
     }
   }, []);
 
