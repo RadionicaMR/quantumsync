@@ -113,7 +113,7 @@ const TreatmentRightPanel = ({
         />
       </Card>
       
-      <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg">
+      <Card className={`bg-card/90 dark:bg-black/40 p-6 rounded-lg ${isPlaying ? 'border-2 border-quantum-primary/60 bg-quantum-primary/5' : ''}`}>
         <TreatmentActions 
           isPlaying={isPlaying}
           timeRemaining={timeRemaining}

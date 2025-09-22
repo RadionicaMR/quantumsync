@@ -30,6 +30,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     notifyCompletion,
     notifyMissingName,
     notifyNoChakras,
+    notifyNoBlockedChakras,
     getCurrentFrequency,
     isTransitioning,
     handleChakraTransition,
@@ -132,7 +133,10 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
       duration,
       notifyMissingName,
       notifyNoChakras,
-      notifyStart // Fixed here - now compatible with the updated function signature
+      notifyStart, // Fixed here - now compatible with the updated function signature
+      balanceOption, // Pass balance option
+      initialChakraStates, // Pass initial chakra states
+      notifyNoBlockedChakras // Pass the new notification
     );
   }, [
     startBalancingBase,
@@ -152,7 +156,10 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     notifyMissingName,
     notifyNoChakras,
     notifyStart,
-    isPlayingRef
+    isPlayingRef,
+    balanceOption,
+    initialChakraStates,
+    notifyNoBlockedChakras
   ]);
 
   // Create a stopBalancing callback for this specific instance

@@ -48,12 +48,20 @@ export const useChakraNotifications = () => {
     });
   }, []);
 
+  const notifyNoBlockedChakras = useCallback(() => {
+    toast({
+      title: "No se encontraron chakras bloqueados",
+      description: "Se procederá a equilibrar todos los chakras ya que no hay chakras específicamente cerrados o bloqueados.",
+    });
+  }, []);
+
   return {
     notifyStart,
     notifyStop,
     notifyCompletion,
     notifyChakraChange,
     notifyMissingName,
-    notifyNoChakras
+    notifyNoChakras,
+    notifyNoBlockedChakras
   };
 };

@@ -44,6 +44,7 @@ export const useChakraSessionManager = (
     notifyCompletion,
     notifyMissingName,
     notifyNoChakras,
+    notifyNoBlockedChakras,
     getCurrentFrequency
   } = useChakraControls();
   
@@ -88,6 +89,7 @@ export const useChakraSessionManager = (
     notifyCompletion,
     notifyMissingName,
     notifyNoChakras,
+    notifyNoBlockedChakras,
     getCurrentFrequency,
     
     // Transition management

@@ -27,7 +27,10 @@ export const useBalanceActions = () => {
     duration: number[],
     notifyMissingName: () => void,
     notifyNoChakras: () => void,
-    notifyStart: (personName?: string) => void  // Update the signature to make personName optional
+    notifyStart: (personName?: string) => void,
+    balanceOption?: string,
+    initialChakraStates?: any[],
+    notifyNoBlockedChakras?: () => void
   ) => {
     // Check if we have a person name
     if (!personName.trim()) {
@@ -37,6 +40,18 @@ export const useBalanceActions = () => {
     
     // Get chakras to balance
     const chakrasToBalance = getChakrasToBalance();
+    
+    // Check special case: if user selected 'blocked' but no blocked chakras were found
+    if (balanceOption === 'blocked' && initialChakraStates && initialChakraStates.length > 0) {
+      const actuallyBlockedChakras = chakrasToBalance.filter(chakraName => {
+        const chakraData = initialChakraStates.find(c => c.name === chakraName);
+        return chakraData && (chakraData.state === 'CERRADO' || chakraData.state === 'BLOQUEADO');
+      });
+      
+      if (actuallyBlockedChakras.length === 0 && notifyNoBlockedChakras) {
+        notifyNoBlockedChakras();
+      }
+    }
     
     // Check if we have chakras to balance
     if (!chakrasToBalance.length) {

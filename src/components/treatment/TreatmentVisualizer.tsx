@@ -164,7 +164,7 @@ const TreatmentVisualizer = ({
   }
 
   return (
-    <div className={`relative aspect-square w-full bg-black rounded-lg overflow-hidden ${isIOS ? 'ios-momentum-scroll' : ''}`}>
+    <div className={`relative aspect-square w-full bg-gradient-to-br from-black/80 to-black/60 rounded-lg overflow-hidden ${isIOS ? 'ios-momentum-scroll' : ''} border border-quantum-primary/20`}>
       {(hasImages || isPlaying) && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
           {hasRadionicImages && showRadionic && (
@@ -176,7 +176,7 @@ const TreatmentVisualizer = ({
                   alt={`Efecto radiónico ${index + 1}`}
                   className="absolute inset-0 w-full h-full object-contain"
                   style={{ 
-                    opacity: 1,
+                    opacity: 0.8,
                     mixBlendMode: 'screen',
                     filter: 'contrast(1.2) brightness(1.1)'
                   }}
@@ -186,8 +186,8 @@ const TreatmentVisualizer = ({
           )}
           
           {isPlaying && showRadionic && !hasRadionicImages && (
-            <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/40">
-              <div className="text-xl text-quantum-primary font-medium bg-black/50 px-6 py-3 rounded-lg">
+            <div className="absolute inset-0 flex items-center justify-center z-10 bg-gradient-to-br from-quantum-primary/20 to-quantum-primary/10">
+              <div className="text-xl text-quantum-primary font-medium bg-black/30 px-6 py-3 rounded-lg border border-quantum-primary/30">
                 Patrón de Manifestación
               </div>
             </div>
@@ -218,8 +218,8 @@ const TreatmentVisualizer = ({
               )}
               
               {isPlaying && showReceptor && !hasReceptorImages && !hasReceptorName && (
-                <div className="absolute inset-0 flex items-center justify-center z-20 bg-black/40">
-                  <div className="text-xl text-quantum-primary font-medium bg-black/50 px-6 py-3 rounded-lg">
+                <div className="absolute inset-0 flex items-center justify-center z-20 bg-gradient-to-br from-quantum-primary/20 to-quantum-primary/10">
+                  <div className="text-xl text-quantum-primary font-medium bg-black/30 px-6 py-3 rounded-lg border border-quantum-primary/30">
                     Receptor Universal
                   </div>
                 </div>
