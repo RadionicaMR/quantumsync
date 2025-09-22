@@ -17,24 +17,23 @@ export const useChakraSelection = (initialChakraStates: any[] = []) => {
       if (initialChakraStates && initialChakraStates.length > 0) {
         const blockedChakras = CHAKRA_ORDER.filter(chakraName => {
           const chakraData = initialChakraStates.find(c => c.name === chakraName);
-          const isBlocked = chakraData && (chakraData.state === 'CERRADO' || chakraData.state === 'BLOQUEADO');
+          const state = (chakraData?.state || '').toString().trim().toLowerCase();
+          const isBlocked = state === 'cerrado' || state === 'bloqueado' || state === 'cerrada' || state === 'bloqueada';
           console.log(`Chakra ${chakraName}: ${chakraData?.state} - isBlocked: ${isBlocked}`);
           return isBlocked;
         });
         console.log('Filtered blocked chakras:', blockedChakras);
         
-        // Si no hay chakras bloqueados, devolver todos con notificación
+        // Si no hay chakras bloqueados, devolver lista vacía (se notificará arriba)
         if (blockedChakras.length === 0) {
-          console.log('No blocked chakras found, falling back to all chakras');
-          // Aquí deberíamos disparar una notificación, pero no podemos hacerlo desde un hook de estado
-          // La notificación la manejaremos en el hook que usa este
-          return [...CHAKRA_ORDER];
+          console.log('No blocked chakras found, returning empty list');
+          return [];
         }
         
         return blockedChakras;
       } else {
-        console.log('No initial chakra states provided, returning all chakras');
-        return [...CHAKRA_ORDER];
+        console.log('No initial chakra states provided, returning empty list for blocked mode');
+        return [];
       }
     }
     
