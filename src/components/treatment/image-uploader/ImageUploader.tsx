@@ -25,7 +25,7 @@ const ImageUploader = ({
   isPlaying,
   maxImages = 3
 }: ImageUploaderProps) => {
-  const [activeTab, setActiveTab] = useState<'single' | 'multiple'>('single');
+  const [activeTab, setActiveTab] = useState<'single' | 'multiple'>('multiple');
   const multipleFileInputRef = useRef<HTMLInputElement>(null);
 
   const handleMultipleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {

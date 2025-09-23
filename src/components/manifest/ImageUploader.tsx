@@ -31,21 +31,34 @@ const ImageUploader = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (isMultiple) {
-          // For multiple images mode
-          if (images.length < maxImages) {
-            setImages([...images, reader.result as string]);
-          }
-        } else {
-          // For single image mode
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      if (isMultiple) {
+        // For multiple images mode - handle multiple files
+        const filesToProcess = Array.from(files).slice(0, maxImages - images.length);
+        
+        Promise.all(filesToProcess.map(file => {
+          return new Promise<string>((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              resolve(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+          });
+        })).then(newImages => {
+          const combined = [...images, ...newImages];
+          const limitedImages = combined.slice(0, maxImages);
+          setImages(limitedImages);
+        });
+      } else {
+        // For single image mode
+        const file = files[0];
+        const reader = new FileReader();
+        reader.onloadend = () => {
           setImage(reader.result as string);
-        }
-      };
-      reader.readAsDataURL(file);
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 
@@ -91,6 +104,7 @@ const ImageUploader = ({
             ref={fileInputRef}
             onChange={handleImageUpload}
             accept="image/*"
+            multiple={isMultiple}
             className="hidden"
             disabled={isDisabled}
           />
@@ -156,6 +170,7 @@ const ImageUploader = ({
             ref={fileInputRef}
             onChange={handleImageUpload}
             accept="image/*"
+            multiple={isMultiple}
             className="hidden"
             disabled={isDisabled}
           />
