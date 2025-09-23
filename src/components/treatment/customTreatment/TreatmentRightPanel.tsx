@@ -199,6 +199,65 @@ const TreatmentRightPanel = ({
             />
           </div>
         </div>
+        
+        {/* Hidden file inputs for multiple image uploads */}
+        <input
+          id="radionic-images-input"
+          type="file"
+          multiple
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+              const filesToProcess = Array.from(files).slice(0, 3 - radionicImages.length);
+              
+              Promise.all(filesToProcess.map(file => {
+                return new Promise<string>((resolve) => {
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    resolve(reader.result as string);
+                  };
+                  reader.readAsDataURL(file);
+                });
+              })).then(newImages => {
+                const combined = [...radionicImages, ...newImages];
+                const limitedImages = combined.slice(0, 3);
+                setRadionicImages(limitedImages);
+              });
+            }
+          }}
+          disabled={isPlaying}
+        />
+        
+        <input
+          id="receptor-images-input"
+          type="file"
+          multiple
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+              const filesToProcess = Array.from(files).slice(0, 3 - receptorImages.length);
+              
+              Promise.all(filesToProcess.map(file => {
+                return new Promise<string>((resolve) => {
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    resolve(reader.result as string);
+                  };
+                  reader.readAsDataURL(file);
+                });
+              })).then(newImages => {
+                const combined = [...receptorImages, ...newImages];
+                const limitedImages = combined.slice(0, 3);
+                setReceptorImages(limitedImages);
+              });
+            }
+          }}
+          disabled={isPlaying}
+        />
       </Card>
       
       {/* Audio subliminal section */}
