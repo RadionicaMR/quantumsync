@@ -161,6 +161,22 @@ export const updateUserPassword = (users: AdminUser[], userId: string, newPasswo
   return updatedUsers;
 };
 
+// Función específica para actualizar el nombre de Genoveva
+export const updateGenovevaName = (): void => {
+  const usersList = loadUsers();
+  
+  const updatedUsers = usersList.map(user => {
+    if (user.email.toLowerCase() === 'imprentaisi@hotmail.com' && user.name !== 'Genoveva') {
+      console.log(`Actualizando nombre de ${user.name} a Genoveva`);
+      return { ...user, name: 'Genoveva' };
+    }
+    return user;
+  });
+  
+  saveUsers(updatedUsers);
+  console.log('Nombre de usuario actualizado a Genoveva');
+};
+
 // Función específica para añadir el usuario Karla si no existe
 export const ensureKarlaUserExists = (): void => {
   const usersList = loadUsers();
@@ -212,10 +228,11 @@ export const ensureSpecialUsersExist = (): void => {
     user.email.toLowerCase() === 'cristina.terapiaintegral@gmail.com'
   );
   
-  // Verificar si Imprenta ISI ya existe
-  const imprentaExists = usersList.some(user => 
+  // Verificar si Genoveva ya existe y actualizar el nombre si es necesario
+  const genoveva = usersList.find(user => 
     user.email.toLowerCase() === 'imprentaisi@hotmail.com'
   );
+  const imprentaExists = !!genoveva;
   
   if (!damianExists) {
     // Añadir a Damian Gomez si no existe
@@ -275,6 +292,16 @@ export const ensureSpecialUsersExist = (): void => {
       password: 'Geno2025'
     });
     console.log('Usuario especial Genoveva añadido');
+  } else if (genoveva && genoveva.name !== 'Genoveva') {
+    // Actualizar el nombre si ya existe pero con nombre diferente
+    const updatedUsers = usersList.map(user => {
+      if (user.email.toLowerCase() === 'imprentaisi@hotmail.com') {
+        return { ...user, name: 'Genoveva' };
+      }
+      return user;
+    });
+    saveUsers(updatedUsers);
+    console.log('Usuario Genoveva actualizado con nuevo nombre');
   }
 };
 
@@ -282,6 +309,9 @@ export const ensureSpecialUsersExist = (): void => {
 export const synchronizeAllUsers = (): AdminUser[] => {
   // Cargamos los usuarios actuales
   const currentUsers = loadUsers();
+  
+  // Actualizamos el nombre de Genoveva si es necesario
+  updateGenovevaName();
   
   // Nos aseguramos de que existan los usuarios especiales
   ensureSpecialUsersExist();
