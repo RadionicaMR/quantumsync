@@ -97,6 +97,13 @@ export const initializeDefaultUsers = (): AdminUser[] => {
       email: 'cristina.terapiaintegral@gmail.com',
       password: 'cristina2025',
       dateCreated: '2025-09-04'
+    },
+    {
+      id: '8',
+      name: 'Imprenta ISI',
+      email: 'imprentaisi@hotmail.com',
+      password: 'Geno2025',
+      dateCreated: '2025-09-23'
     }
   ];
   localStorage.setItem('usersList', JSON.stringify(defaultUsers));
@@ -205,6 +212,11 @@ export const ensureSpecialUsersExist = (): void => {
     user.email.toLowerCase() === 'cristina.terapiaintegral@gmail.com'
   );
   
+  // Verificar si Imprenta ISI ya existe
+  const imprentaExists = usersList.some(user => 
+    user.email.toLowerCase() === 'imprentaisi@hotmail.com'
+  );
+  
   if (!damianExists) {
     // Añadir a Damian Gomez si no existe
     addUser(usersList, {
@@ -253,6 +265,16 @@ export const ensureSpecialUsersExist = (): void => {
       password: 'cristina2025'
     });
     console.log('Usuario especial Cristina Terapia Integral añadido');
+  }
+  
+  if (!imprentaExists) {
+    // Añadir a Imprenta ISI si no existe
+    addUser(usersList, {
+      name: 'Imprenta ISI',
+      email: 'imprentaisi@hotmail.com',
+      password: 'Geno2025'
+    });
+    console.log('Usuario especial Imprenta ISI añadido');
   }
 };
 
