@@ -100,7 +100,7 @@ export const initializeDefaultUsers = (): AdminUser[] => {
     },
     {
       id: '8',
-      name: 'Imprenta ISI',
+      name: 'Genoveva',
       email: 'imprentaisi@hotmail.com',
       password: 'Geno2025',
       dateCreated: '2025-09-23'
@@ -268,13 +268,13 @@ export const ensureSpecialUsersExist = (): void => {
   }
   
   if (!imprentaExists) {
-    // Añadir a Imprenta ISI si no existe
+    // Añadir a Genoveva si no existe
     addUser(usersList, {
-      name: 'Imprenta ISI',
+      name: 'Genoveva',
       email: 'imprentaisi@hotmail.com',
       password: 'Geno2025'
     });
-    console.log('Usuario especial Imprenta ISI añadido');
+    console.log('Usuario especial Genoveva añadido');
   }
 };
 
