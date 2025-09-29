@@ -10,6 +10,7 @@ export const useTreatmentAudio = () => {
   const isStoppingRef = useRef<boolean>(false);
   const isStartingRef = useRef<boolean>(false);
   const treatmentActiveRef = useRef<boolean>(false);
+  const audioMonitorIntervalRef = useRef<number | null>(null);
 
   // Import other hooks
   const { 
@@ -41,6 +42,57 @@ export const useTreatmentAudio = () => {
     clearTimer,
     isRunningRef
   } = useTimer();
+
+  // Function to monitor and maintain audio playback
+  const startAudioMonitor = () => {
+    // Clear any existing monitor
+    if (audioMonitorIntervalRef.current) {
+      window.clearInterval(audioMonitorIntervalRef.current);
+    }
+
+    console.log("Starting audio monitor to prevent audio cuts");
+    
+    audioMonitorIntervalRef.current = window.setInterval(() => {
+      if (!treatmentActiveRef.current || isStoppingRef.current) {
+        return;
+      }
+
+      const context = audioContextRef.current;
+      if (!context) {
+        console.warn("Audio context lost during treatment");
+        return;
+      }
+
+      // Check if audio context is suspended and resume it
+      if (context.state === 'suspended') {
+        console.warn("Audio context suspended - resuming...");
+        context.resume()
+          .then(() => {
+            console.log("Audio context resumed successfully");
+          })
+          .catch(err => {
+            console.error("Failed to resume audio context:", err);
+          });
+      }
+
+      // Verify oscillators are still active
+      const mainOsc = oscillatorRef.current;
+      const harmOsc = harmonicOscillatorRef.current;
+      
+      if (!mainOsc || !harmOsc) {
+        console.warn("Oscillators lost - attempting restart");
+        restartAudio();
+      }
+    }, 2000); // Check every 2 seconds
+  };
+
+  const stopAudioMonitor = () => {
+    if (audioMonitorIntervalRef.current) {
+      window.clearInterval(audioMonitorIntervalRef.current);
+      audioMonitorIntervalRef.current = null;
+      console.log("Audio monitor stopped");
+    }
+  };
 
   // Function to stop audio when timer completes
   const stopAudioOnTimerComplete = () => {
@@ -182,6 +234,9 @@ export const useTreatmentAudio = () => {
       // IMPORTANT: First update state
       setIsPlaying(true);
       
+      // Start audio monitoring to prevent cuts
+      startAudioMonitor();
+      
       // Then start the timer with completion callback
       const durationInMinutes = duration[0];
       startTimer(durationInMinutes, stopAudioOnTimerComplete);
@@ -208,6 +263,9 @@ export const useTreatmentAudio = () => {
     isStoppingRef.current = true;
     treatmentActiveRef.current = false;
     
+    // Stop audio monitoring
+    stopAudioMonitor();
+    
     // Clear timer first
     clearTimer();
     
@@ -227,6 +285,7 @@ export const useTreatmentAudio = () => {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      stopAudioMonitor();
       if (isPlaying) {
         stopAudio();
       }
