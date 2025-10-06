@@ -21,8 +21,8 @@ const FAQSection = () => {
       answer: "Basado en principios de Radiónica Cuántica, la aplicación emite frecuencias específicas dirigidas a tu paciente mediante tu intención y sus datos. La física cuántica demuestra que la distancia no es una barrera para la información energética."
     },
     {
-      question: "¿Puedo probar antes de comprometerme?",
-      answer: "Sí, ofrecemos acceso gratuito para que explores las funcionalidades básicas. Puedes comenzar sin tarjeta de crédito y decidir si es para ti."
+      question: "¿Cuándo se puede cancelar?",
+      answer: "Puedes cancelar en cualquier momento, cuando quieras."
     },
     {
       question: "¿Es compatible con otras terapias?",
