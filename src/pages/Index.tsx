@@ -1,94 +1,48 @@
 
-import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import HeroSection from '@/components/HeroSection';
-import QuantumButton from '@/components/QuantumButton';
-import FeaturesSection from '@/components/home/FeaturesSection';
-import BenefitsSection from '@/components/home/BenefitsSection';
-import FounderSection from '@/components/home/FounderSection';
-import AffiliateSection from '@/components/home/AffiliateSection';
-import CTASection from '@/components/home/CTASection';
-import MissionIntroSection from '@/components/home/MissionIntroSection';
-import CompanyDescriptionSection from '@/components/home/CompanyDescriptionSection';
-import MissionVisionSection from '@/components/home/MissionVisionSection';
-import CoreValuesSection from '@/components/home/CoreValuesSection';
-import AboutSection from '@/components/home/AboutSection';
-import TestimonialsWrapper from '@/components/home/TestimonialsWrapper';
-import { SunIcon, WaveIcon, TargetIcon, ListIcon } from '@/components/home/HomeFeatureIcons';
-import { testimonials, benefitItems, values, features as featuresData } from '@/data/homePageData';
+import NewHeroSection from '@/components/home/NewHeroSection';
+import ProblemSection from '@/components/home/ProblemSection';
+import SolutionSection from '@/components/home/SolutionSection';
+import NewBenefitsSection from '@/components/home/NewBenefitsSection';
+import AppShowcaseSection from '@/components/home/AppShowcaseSection';
+import QuantumFoundationSection from '@/components/home/QuantumFoundationSection';
+import NewTestimonialsSection from '@/components/home/NewTestimonialsSection';
+import FAQSection from '@/components/home/FAQSection';
+import PricingSection from '@/components/home/PricingSection';
+import FinalClosingSection from '@/components/home/FinalClosingSection';
 
 const Index = () => {
-  const navigate = useNavigate();
-  
-  // Map the icon strings to actual components
-  const features = featuresData.map(feature => {
-    let iconComponent;
-    switch (feature.icon) {
-      case 'SunIcon':
-        iconComponent = <SunIcon />;
-        break;
-      case 'WaveIcon':
-        iconComponent = <WaveIcon />;
-        break;
-      case 'TargetIcon':
-        iconComponent = <TargetIcon />;
-        break;
-      case 'ListIcon':
-        iconComponent = <ListIcon />;
-        break;
-      default:
-        iconComponent = null;
-    }
-    
-    return {
-      ...feature,
-      icon: iconComponent
-    };
-  });
-
   return (
     <Layout>
-      {/* Hero Section */}
-      <HeroSection
-        title="Transforma Tu Vida a Través de la Tecnología de Frecuencia Cuántica"
-        subtitle="QuantumSync combina ciencia, tecnología y bienestar para ayudarte a equilibrar tu energía y alcanzar tus objetivos."
-      >
-        <div className="flex justify-center mt-4">
-          <QuantumButton size="lg" className="bg-orange-500 hover:bg-orange-600 text-white glow-orange" onClick={() => navigate('/purchase')}>
-            Adquiere QuantumSync
-          </QuantumButton>
-        </div>
-      </HeroSection>
+      {/* 1. Hero Section */}
+      <NewHeroSection />
 
-      {/* Features Section */}
-      <FeaturesSection features={features} />
+      {/* 2. Problem/Pain Section */}
+      <ProblemSection />
 
-      {/* Mission Intro */}
-      <MissionIntroSection />
+      {/* 3. Solution Section */}
+      <SolutionSection />
 
-      {/* Company Description */}
-      <CompanyDescriptionSection />
+      {/* 4. Benefits Section */}
+      <NewBenefitsSection />
 
-      {/* Mission & Vision */}
-      <MissionVisionSection />
+      {/* 5. App Showcase Section */}
+      <AppShowcaseSection />
 
-      {/* Core Values */}
-      <CoreValuesSection values={values} />
+      {/* 6. Quantum Foundation Section */}
+      <QuantumFoundationSection />
 
-      {/* Founder Section */}
-      <FounderSection />
+      {/* 7. Testimonials Section */}
+      <NewTestimonialsSection />
 
-      {/* Benefits Section */}
-      <BenefitsSection benefitItems={benefitItems} />
+      {/* 8. FAQ Section */}
+      <FAQSection />
 
-      {/* About Section */}
-      <AboutSection />
+      {/* 9. Pricing/CTA Section */}
+      <PricingSection />
 
-      {/* Testimonials */}
-      <TestimonialsWrapper testimonials={testimonials} />
-
-      {/* CTA Section */}
-      <CTASection />
+      {/* 10. Final Closing Section */}
+      <FinalClosingSection />
     </Layout>
   );
 };

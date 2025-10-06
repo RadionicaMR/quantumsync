@@ -13,28 +13,34 @@
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 263.4 70% 50.4%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 245 58% 51%;
+    --secondary-foreground: 0 0% 100%;
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 280 75% 85%;
+    --accent-foreground: 262 83% 58%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 263.4 70% 50.4%;
+    --ring: 262 83% 58%;
     --sidebar-background: 240 10% 3.9%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 263.4 70% 50.4%;
-    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-primary: 262 83% 58%;
+    --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 263.4 70% 50.4%;
-    --quantum-primary: 263.4 70% 50.4%;
+    --sidebar-ring: 262 83% 58%;
+    --quantum-primary: 262 83% 58%;
+    
+    /* Quantum Colors */
+    --quantum-violet: 262 83% 58%;
+    --quantum-blue: 217 91% 60%;
+    --quantum-gold: 45 93% 58%;
+    --quantum-white: 0 0% 100%;
     
     /* iOS specific variables */
     --safe-area-inset-top: env(safe-area-inset-top, 0px);
@@ -50,28 +56,34 @@
     --card-foreground: 0 0% 95%;
     --popover: 20 14.3% 4.1%;
     --popover-foreground: 0 0% 95%;
-    --primary: 263.4 70% 50.4%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 12 6.5% 47.6%;
-    --secondary-foreground: 0 0% 95%;
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 245 58% 51%;
+    --secondary-foreground: 0 0% 100%;
     --muted: 12 6.5% 47.6%;
     --muted-foreground: 240 5% 64.9%;
-    --accent: 12 6.5% 47.6%;
-    --accent-foreground: 0 0% 95%;
+    --accent: 280 75% 85%;
+    --accent-foreground: 262 83% 58%;
     --destructive: 0 85.7% 84.1%;
     --destructive-foreground: 0 0% 95%;
     --border: 12 6.5% 47.6%;
     --input: 12 6.5% 47.6%;
-    --ring: 263.4 70% 50.4%;
+    --ring: 262 83% 58%;
     --sidebar-background: 20 14.3% 4.1%;
     --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 263.4 70% 50.4%;
-    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-primary: 262 83% 58%;
+    --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 12 6.5% 47.6%;
     --sidebar-accent-foreground: 0 0% 95%;
     --sidebar-border: 12 6.5% 47.6%;
-    --sidebar-ring: 263.4 70% 50.4%;
-    --quantum-primary: 263.4 70% 50.4%;
+    --sidebar-ring: 262 83% 58%;
+    --quantum-primary: 262 83% 58%;
+    
+    /* Quantum Colors */
+    --quantum-violet: 262 83% 58%;
+    --quantum-blue: 217 91% 60%;
+    --quantum-gold: 45 93% 58%;
+    --quantum-white: 0 0% 100%;
   }
 }
 
@@ -126,4 +138,27 @@
 .glow-orange:hover {
   box-shadow: 0 0 15px #F97316, 0 0 30px rgba(249, 115, 22, 0.7);
   text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+/* Gradient text effects */
+.gradient-text-quantum {
+  background: linear-gradient(135deg, hsl(var(--quantum-violet)), hsl(var(--quantum-blue)), hsl(var(--quantum-gold)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Energy wave animation */
+@keyframes energy-wave {
+  0% {
+    transform: translateX(-100%) translateY(-50%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(100%) translateY(-50%);
+    opacity: 0;
+  }
 }
