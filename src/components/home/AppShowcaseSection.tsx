@@ -1,5 +1,8 @@
 import { motion } from 'framer-motion';
 import { Smartphone, Sliders, Play } from 'lucide-react';
+import mockupTreatmentPanel from '@/assets/mockup-treatment-panel.png';
+import mockupFrequencySelector from '@/assets/mockup-frequency-selector.png';
+import mockupActiveSession from '@/assets/mockup-active-session.png';
 
 const AppShowcaseSection = () => {
   return (
@@ -55,14 +58,26 @@ const AppShowcaseSection = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 via-blue-500/20 to-purple-600/20 blur-3xl" />
           <div className="relative bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-sm rounded-3xl p-8 border border-purple-500/30">
             <div className="grid md:grid-cols-3 gap-4">
-              <div className="aspect-[9/16] bg-black/40 rounded-2xl border border-purple-400/20 flex items-center justify-center">
-                <div className="text-purple-300/50 text-sm">App Mockup 1</div>
+              <div className="aspect-[9/16] bg-black/40 rounded-2xl border border-purple-400/20 overflow-hidden">
+                <img 
+                  src={mockupTreatmentPanel} 
+                  alt="Panel Principal de Tratamiento - Quantumsync"
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <div className="aspect-[9/16] bg-black/40 rounded-2xl border border-purple-400/20 flex items-center justify-center">
-                <div className="text-purple-300/50 text-sm">App Mockup 2</div>
+              <div className="aspect-[9/16] bg-black/40 rounded-2xl border border-purple-400/20 overflow-hidden">
+                <img 
+                  src={mockupFrequencySelector} 
+                  alt="Selector de Frecuencia Cuántica - Quantumsync"
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <div className="aspect-[9/16] bg-black/40 rounded-2xl border border-purple-400/20 flex items-center justify-center">
-                <div className="text-purple-300/50 text-sm">App Mockup 3</div>
+              <div className="aspect-[9/16] bg-black/40 rounded-2xl border border-purple-400/20 overflow-hidden">
+                <img 
+                  src={mockupActiveSession} 
+                  alt="Sesión Activa de Tratamiento - Quantumsync"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
           </div>
