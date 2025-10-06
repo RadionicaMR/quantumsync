@@ -101,9 +101,10 @@ export const SessionRecordDialog = ({
     setLoading(false);
 
     if (error) {
+      console.error('Error creating patient:', error);
       toast({
         title: 'Error',
-        description: 'No se pudo crear el paciente',
+        description: error.message || 'No se pudo crear el paciente',
         variant: 'destructive',
       });
       return;
