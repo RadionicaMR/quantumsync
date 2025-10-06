@@ -39,15 +39,7 @@ export type Database = {
           therapist_id?: string
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "patients_therapist_id_fkey"
-            columns: ["therapist_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -101,22 +93,7 @@ export type Database = {
           session_type?: Database["public"]["Enums"]["session_type"]
           therapist_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "sessions_patient_id_fkey"
-            columns: ["patient_id"]
-            isOneToOne: false
-            referencedRelation: "patients"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sessions_therapist_id_fkey"
-            columns: ["therapist_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {
