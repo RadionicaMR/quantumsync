@@ -35,7 +35,7 @@ const SessionHistory = () => {
 
   const loadSessions = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+    if (!user || !user.email) {
       toast({
         title: 'Error',
         description: 'Debes iniciar sesión',
@@ -54,7 +54,7 @@ const SessionHistory = () => {
         session_data,
         patient:patients(name)
       `)
-      .eq('therapist_id', user.id)
+      .eq('therapist_id', user.email)
       .order('created_at', { ascending: false });
 
     setLoading(false);
