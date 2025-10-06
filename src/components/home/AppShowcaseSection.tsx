@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Smartphone, Sliders, Play } from 'lucide-react';
-import mockupTreatmentPanel from '@/assets/mockup-treatment-panel.png';
+import mockupChakraBalance from '@/assets/mockup-chakra-balance.png';
 import mockupFrequencySelector from '@/assets/mockup-frequency-selector.png';
 import mockupActiveSession from '@/assets/mockup-active-session.png';
 
@@ -27,7 +27,7 @@ const AppShowcaseSection = () => {
 
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           {[
-            { icon: Smartphone, title: "Panel Principal", desc: "Acceso rápido a todas tus herramientas" },
+            { icon: Smartphone, title: "Equilibrio de Chakras", desc: "Armoniza tu energía vital" },
             { icon: Sliders, title: "Selector de Frecuencia", desc: "Ajusta las vibraciones con precisión" },
             { icon: Play, title: "Sesión Activa", desc: "Monitoreo en tiempo real del tratamiento" }
           ].map((item, index) => (
@@ -60,8 +60,8 @@ const AppShowcaseSection = () => {
             <div className="grid md:grid-cols-3 gap-4">
               <div className="aspect-[9/16] bg-black/40 rounded-2xl border border-purple-400/20 overflow-hidden">
                 <img 
-                  src={mockupTreatmentPanel} 
-                  alt="Panel Principal de Tratamiento - Quantumsync"
+                  src={mockupChakraBalance} 
+                  alt="Equilibrio de Chakras - Quantumsync"
                   className="w-full h-full object-cover"
                 />
               </div>
