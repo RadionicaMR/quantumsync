@@ -1,17 +1,18 @@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { useAuth } from '@/context/AuthContext';
 
 export type SessionType = 'diagnosis' | 'treatment' | 'manifestation' | 'balance_chakras';
 
 export const useSessionRecording = () => {
+  const { user, isAuthenticated } = useAuth();
+
   const recordSession = async (
     patientId: string,
     sessionType: SessionType,
     sessionData: any
   ) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
+    if (!isAuthenticated || !user?.email) {
       toast({
         title: 'Error',
         description: 'Debes iniciar sesión para registrar sesiones',
@@ -24,7 +25,7 @@ export const useSessionRecording = () => {
       .from('sessions')
       .insert({
         patient_id: patientId,
-        therapist_id: user.id,
+        therapist_id: user.email,
         session_type: sessionType,
         session_data: sessionData,
       })

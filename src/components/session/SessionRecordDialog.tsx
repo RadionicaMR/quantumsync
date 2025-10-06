@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { useAuth } from '@/context/AuthContext';
 import {
   Select,
   SelectContent,
@@ -37,6 +38,7 @@ export const SessionRecordDialog = ({
   onConfirm,
   sessionType,
 }: SessionRecordDialogProps) => {
+  const { user, isAuthenticated } = useAuth();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<string>('');
   const [newPatientName, setNewPatientName] = useState('');
@@ -50,13 +52,12 @@ export const SessionRecordDialog = ({
   }, [open]);
 
   const loadPatients = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!isAuthenticated || !user?.email) return;
 
     const { data, error } = await supabase
       .from('patients')
       .select('id, name')
-      .eq('therapist_id', user.id)
+      .eq('therapist_id', user.email)
       .order('name');
 
     if (error) {
@@ -77,22 +78,21 @@ export const SessionRecordDialog = ({
       return;
     }
 
-    setLoading(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+    if (!isAuthenticated || !user?.email) {
       toast({
         title: 'Error',
         description: 'Debes iniciar sesión',
         variant: 'destructive',
       });
-      setLoading(false);
       return;
     }
+
+    setLoading(true);
 
     const { data, error } = await supabase
       .from('patients')
       .insert({
-        therapist_id: user.id,
+        therapist_id: user.email,
         name: newPatientName.trim(),
       })
       .select()
