@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
@@ -14,6 +15,18 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Repeat, Trash2 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface Session {
   id: string;
@@ -26,8 +39,11 @@ interface Session {
 }
 
 const SessionHistory = () => {
+  const navigate = useNavigate();
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [sessionToDelete, setSessionToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     loadSessions();
@@ -102,6 +118,63 @@ const SessionHistory = () => {
     }
   };
 
+  const handleRepeatSession = (session: Session) => {
+    // Only treatment sessions can be repeated for now
+    if (session.session_type === 'treatment') {
+      const sessionData = session.session_data;
+      // Navigate to treatment page with session data
+      navigate('/treat', { 
+        state: { 
+          repeatSession: true,
+          sessionData: {
+            frequency: sessionData.frequency,
+            duration: sessionData.duration,
+            rates: sessionData.rates || [],
+            receptorName: sessionData.receptorName,
+            preset: sessionData.preset
+          }
+        } 
+      });
+      toast({
+        title: 'Tratamiento cargado',
+        description: 'Los datos del tratamiento han sido cargados',
+      });
+    }
+  };
+
+  const confirmDelete = (sessionId: string) => {
+    setSessionToDelete(sessionId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteSession = async () => {
+    if (!sessionToDelete) return;
+
+    const { error } = await supabase
+      .from('sessions')
+      .delete()
+      .eq('id', sessionToDelete);
+
+    if (error) {
+      console.error('Error deleting session:', error);
+      toast({
+        title: 'Error',
+        description: 'No se pudo eliminar la sesión',
+        variant: 'destructive',
+      });
+    } else {
+      toast({
+        title: 'Sesión eliminada',
+        description: 'La sesión ha sido eliminada correctamente',
+      });
+      // Reload sessions
+      loadSessions();
+    }
+
+    setDeleteDialogOpen(false);
+    setSessionToDelete(null);
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -132,6 +205,7 @@ const SessionHistory = () => {
                   <TableHead>Paciente</TableHead>
                   <TableHead>Tipo</TableHead>
                   <TableHead>Detalles</TableHead>
+                  <TableHead className="text-right">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -153,12 +227,51 @@ const SessionHistory = () => {
                     <TableCell className="max-w-xs truncate">
                       {JSON.stringify(session.session_data)}
                     </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex gap-2 justify-end">
+                        {session.session_type === 'treatment' && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleRepeatSession(session)}
+                            title="Repetir tratamiento"
+                          >
+                            <Repeat className="h-4 w-4" />
+                          </Button>
+                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => confirmDelete(session.id)}
+                          title="Eliminar sesión"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </Card>
         )}
+
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>¿Eliminar sesión?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Esta acción no se puede deshacer. La sesión será eliminada permanentemente.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteSession}>
+                Eliminar
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </Layout>
   );

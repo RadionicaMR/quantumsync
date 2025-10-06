@@ -27,8 +27,9 @@ const Treat = () => {
   const [showSessionDialog, setShowSessionDialog] = useState(false);
   const [pendingStart, setPendingStart] = useState(false);
   
-  // Check if we're coming from diagnosis page
+  // Check if we're coming from diagnosis page or repeating a session
   useEffect(() => {
+    // Handle diagnosis import
     if (location.state?.fromDiagnosis && !diagnosisImported) {
       const { personName, diagnosisArea, diagnosisResult } = location.state;
       
@@ -44,6 +45,35 @@ const Treat = () => {
         
         // Mark as imported to prevent showing the toast again
         setDiagnosisImported(true);
+      }
+    }
+
+    // Handle session repeat
+    if (location.state?.repeatSession && location.state?.sessionData) {
+      const { sessionData } = location.state;
+      
+      // Load session data into treatment
+      if (sessionData.receptorName) {
+        treatment.setReceptorName(sessionData.receptorName);
+      }
+      if (sessionData.frequency) {
+        treatment.setFrequency(sessionData.frequency);
+      }
+      if (sessionData.duration) {
+        treatment.setDuration(sessionData.duration);
+      }
+      if (sessionData.rates && sessionData.rates.length >= 3) {
+        treatment.setRate1(sessionData.rates[0] || '');
+        treatment.setRate2(sessionData.rates[1] || '');
+        treatment.setRate3(sessionData.rates[2] || '');
+      }
+      
+      // Select preset if available
+      if (sessionData.preset) {
+        const preset = treatmentPresets.find(p => p.name === sessionData.preset);
+        if (preset) {
+          treatment.selectPreset(preset);
+        }
       }
     }
   }, [location.state, treatment]);
