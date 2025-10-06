@@ -1,6 +1,7 @@
 
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { getAffiliateByEmail } from '@/utils/affiliateStorage';
+import { supabase } from '@/integrations/supabase/client';
 
 interface User {
   email: string;
@@ -18,6 +19,25 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// Ensure there's a backend session for the given email/password
+const ensureBackendSession = async (email: string, password: string) => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.email === email) {
+      return; // already signed in with matching user
+    }
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    if (signInError) {
+      const { error: signUpError } = await supabase.auth.signUp({ email, password });
+      if (!signUpError) {
+        await supabase.auth.signInWithPassword({ email, password });
+      }
+    }
+  } catch (e) {
+    console.error('[AUTH] Error ensuring backend session', e);
+  }
+};
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -63,6 +83,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           name: 'Mauricio Ramos',
           isAdmin: true
         };
+        await ensureBackendSession(cleanEmail, cleanPassword);
         setUser(adminUser);
         localStorage.setItem('user', JSON.stringify(adminUser));
         console.log(`[LOGIN] Admin login exitoso`);
@@ -77,6 +98,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           name: 'German Castro',
           isAdmin: false
         };
+        await ensureBackendSession(cleanEmail, cleanPassword);
         setUser(specialUser);
         localStorage.setItem('user', JSON.stringify(specialUser));
         console.log(`[LOGIN] Usuario especial German login exitoso`);
@@ -91,6 +113,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           name: 'Damian Gomez',
           isAdmin: false
         };
+        await ensureBackendSession(cleanEmail, cleanPassword);
         setUser(damianUser);
         localStorage.setItem('user', JSON.stringify(damianUser));
         console.log(`[LOGIN] Usuario especial Damian login exitoso`);
@@ -105,6 +128,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           name: 'Carina Fuenza',
           isAdmin: false
         };
+        await ensureBackendSession(cleanEmail, cleanPassword);
         setUser(carinaUser);
         localStorage.setItem('user', JSON.stringify(carinaUser));
         console.log(`[LOGIN] Usuario especial Carina login exitoso`);
@@ -122,6 +146,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           name: 'Javier King',
           isAdmin: false
         };
+        await ensureBackendSession(cleanEmail, cleanPassword);
         setUser(javierUser);
         localStorage.setItem('user', JSON.stringify(javierUser));
         console.log(`[LOGIN] Usuario especial Javier login exitoso`);
@@ -138,6 +163,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           name: 'Cristina Terapia Integral',
           isAdmin: false
         };
+        await ensureBackendSession(cleanEmail, cleanPassword);
         setUser(cristinaUser);
         localStorage.setItem('user', JSON.stringify(cristinaUser));
         console.log(`[LOGIN] Usuario especial Cristina login exitoso`);
@@ -170,6 +196,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             name: foundUser.name,
             isAdmin: false
           };
+          await ensureBackendSession(cleanEmail, cleanPassword);
           setUser(loggedUser);
           localStorage.setItem('user', JSON.stringify(loggedUser));
           console.log(`[LOGIN] Login exitoso para usuario registrado:`, loggedUser);
@@ -193,6 +220,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = () => {
     localStorage.removeItem('user');
     setUser(null);
+    try { supabase.auth.signOut(); } catch (e) { console.error('[LOGOUT] Error signing out from backend', e); }
   };
 
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
@@ -274,9 +302,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
       
       // Iniciar sesión automáticamente con el nuevo usuario
+      await ensureBackendSession(email.trim().toLowerCase(), password.trim());
       setUser(newUser);
       localStorage.setItem('user', JSON.stringify(newUser));
-      
       console.log(`[REGISTRO] ✅ Usuario registrado con éxito y sesión iniciada:`, newUser);
       console.log(`[REGISTRO] === REGISTRO COMPLETADO ===`);
       return true;
