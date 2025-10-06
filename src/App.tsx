@@ -18,10 +18,13 @@ import Register from "./pages/Register";
 import Purchase from "./pages/Purchase";
 import Admin from "./pages/Admin";
 import BalanceChakras from "./pages/BalanceChakras"; // Importamos la nueva página
+import Auth from "./pages/Auth";
+import SessionHistory from "./pages/SessionHistory";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AffiliateProtectedRoute from "./components/AffiliateProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import { AffiliateProvider } from "./context/AffiliateContext";
+import { SessionProvider } from "./context/SessionContext";
 
 const queryClient = new QueryClient();
 
@@ -31,56 +34,64 @@ const App = () => (
       <TooltipProvider>
         <AuthProvider>
           <AffiliateProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/purchase" element={<Purchase />} />
-                <Route path="/affiliate-register" element={<AffiliateRegister />} />
-                <Route path="/affiliate-dashboard" element={
-                  <AffiliateProtectedRoute>
-                    <AffiliateDashboard />
-                  </AffiliateProtectedRoute>
-                } />
-                <Route path="/admin" element={
-                  <ProtectedRoute requireAdmin={true}>
-                    <Admin />
-                  </ProtectedRoute>
-                } />
-                <Route path="/diagnose" element={
-                  <ProtectedRoute>
-                    <Diagnose />
-                  </ProtectedRoute>
-                } />
-                <Route path="/treat" element={
-                  <ProtectedRoute>
-                    <Treat />
-                  </ProtectedRoute>
-                } />
-                {/* Nueva ruta para equilibrar chakras */}
-                <Route path="/balance-chakras" element={
-                  <ProtectedRoute>
-                    <BalanceChakras />
-                  </ProtectedRoute>
-                } />
-                {/* Nueva ruta para la página de manifestación */}
-                <Route path="/manifestation" element={
-                  <ProtectedRoute>
-                    <Manifestation />
-                  </ProtectedRoute>
-                } />
-                <Route path="/affiliate" element={
-                  <ProtectedRoute>
-                    <Affiliate />
-                  </ProtectedRoute>
-                } />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
+            <SessionProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/purchase" element={<Purchase />} />
+                  <Route path="/affiliate-register" element={<AffiliateRegister />} />
+                  <Route path="/affiliate-dashboard" element={
+                    <AffiliateProtectedRoute>
+                      <AffiliateDashboard />
+                    </AffiliateProtectedRoute>
+                  } />
+                  <Route path="/admin" element={
+                    <ProtectedRoute requireAdmin={true}>
+                      <Admin />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/session-history" element={
+                    <ProtectedRoute>
+                      <SessionHistory />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/diagnose" element={
+                    <ProtectedRoute>
+                      <Diagnose />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/treat" element={
+                    <ProtectedRoute>
+                      <Treat />
+                    </ProtectedRoute>
+                  } />
+                  {/* Nueva ruta para equilibrar chakras */}
+                  <Route path="/balance-chakras" element={
+                    <ProtectedRoute>
+                      <BalanceChakras />
+                    </ProtectedRoute>
+                  } />
+                  {/* Nueva ruta para la página de manifestación */}
+                  <Route path="/manifestation" element={
+                    <ProtectedRoute>
+                      <Manifestation />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/affiliate" element={
+                    <ProtectedRoute>
+                      <Affiliate />
+                    </ProtectedRoute>
+                  } />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </SessionProvider>
           </AffiliateProvider>
         </AuthProvider>
       </TooltipProvider>

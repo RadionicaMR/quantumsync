@@ -64,6 +64,9 @@ const Navbar = () => {
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate('/session-history')}>
+                    Historial de Sesiones
+                  </DropdownMenuItem>
                   {user?.isAdmin && (
                     <DropdownMenuItem onClick={() => navigate('/admin')}>
                       Panel de Administración
@@ -160,6 +163,13 @@ const Navbar = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Afiliados
+              </Link>
+              <Link 
+                to="/session-history" 
+                className="neon-text hover:text-primary transition-colors py-1"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Historial de Sesiones
               </Link>
               {user?.isAdmin && (
                 <Link 
