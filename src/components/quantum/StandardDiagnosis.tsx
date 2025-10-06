@@ -1,4 +1,5 @@
 
+import { useState, useEffect } from 'react';
 import { useRef } from 'react';
 import PendulumVisual from './PendulumVisual';
 import DiagnosisResult from './DiagnosisResult';
@@ -7,6 +8,9 @@ import DiagnosisStandby from './DiagnosisStandby';
 import { useDiagnosis } from '@/hooks/diagnosis/useDiagnosis';
 import { RecentDiagnosisResult } from '@/hooks/useDiagnosisCache';
 import { useNavigate } from 'react-router-dom';
+import { SessionRecordDialog } from '@/components/session/SessionRecordDialog';
+import { useSessionRecording } from '@/hooks/useSessionRecording';
+import { useSession } from '@/context/SessionContext';
 
 interface StandardDiagnosisProps {
   selectedArea: string | null;
@@ -33,6 +37,10 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
 }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const navigate = useNavigate();
+  const { recordSession } = useSessionRecording();
+  const { currentPatientId, setCurrentPatientId } = useSession();
+  const [showSessionDialog, setShowSessionDialog] = useState(false);
+  const [pendingDiagnosis, setPendingDiagnosis] = useState<string | null>(null);
   
   const {
     isPendulumSwinging,
@@ -49,15 +57,37 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
     getRecentResult,
     addResultToCache
   });
-  
+
+  // Save session when diagnosis completes
+  useEffect(() => {
+    if (diagnosisResult && currentPatientId && selectedArea) {
+      const sessionData = {
+        area: selectedArea,
+        result: diagnosisResult,
+        percentage: diagnosisPercentage,
+      };
+      recordSession(currentPatientId, 'diagnosis', sessionData);
+      setCurrentPatientId(null);
+    }
+  }, [diagnosisResult, currentPatientId, selectedArea]);
+
   const handleStartDiagnosis = () => {
     if (selectedArea) {
-      startMotionDiagnosis(selectedArea);
+      setShowSessionDialog(true);
+      setPendingDiagnosis(selectedArea);
+    }
+  };
+
+  const handleSessionConfirm = (patientId: string | null) => {
+    setCurrentPatientId(patientId);
+    if (pendingDiagnosis) {
+      startMotionDiagnosis(pendingDiagnosis);
+      setPendingDiagnosis(null);
     }
   };
 
   const navigateToTreatment = () => {
-    navigate('/treat', { 
+    navigate('/treat', {
       state: { 
         fromDiagnosis: true, 
         diagnosisArea: selectedArea,
@@ -113,6 +143,13 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
         onStartDiagnosis={handleStartDiagnosis}
         useCameraMode={useCameraMode}
         personName={personName}
+      />
+
+      <SessionRecordDialog
+        open={showSessionDialog}
+        onOpenChange={setShowSessionDialog}
+        onConfirm={handleSessionConfirm}
+        sessionType="diagnosis"
       />
     </>
   );

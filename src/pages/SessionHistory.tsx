@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import {

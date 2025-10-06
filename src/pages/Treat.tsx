@@ -11,14 +11,21 @@ import CallToAction from '@/components/treatment/CallToAction';
 import PresetTreatment from '@/components/treatment/preset/PresetTreatment';
 import { treatmentPresets } from '@/data/treatmentPresets';
 import { useTreatment } from '@/hooks/useTreatment';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import AudioUploader from '@/components/AudioUploader';
+import { SessionRecordDialog } from '@/components/session/SessionRecordDialog';
+import { useSessionRecording } from '@/hooks/useSessionRecording';
+import { useSession } from '@/context/SessionContext';
 
 const Treat = () => {
   const treatment = useTreatment();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("presets");
   const [diagnosisImported, setDiagnosisImported] = useState(false);
+  const { recordSession } = useSessionRecording();
+  const { currentPatientId, setCurrentPatientId } = useSession();
+  const [showSessionDialog, setShowSessionDialog] = useState(false);
+  const [pendingStart, setPendingStart] = useState(false);
   
   // Check if we're coming from diagnosis page
   useEffect(() => {
@@ -40,6 +47,40 @@ const Treat = () => {
       }
     }
   }, [location.state, treatment]);
+
+  // Handle session recording when treatment stops
+  useEffect(() => {
+    if (!treatment.isPlaying && treatment.timeRemaining === 0 && currentPatientId) {
+      let presetName = '';
+      if (treatment.selectedPreset) {
+        presetName = typeof treatment.selectedPreset === 'object' 
+          ? (treatment.selectedPreset as any).name || ''
+          : String(treatment.selectedPreset);
+      }
+      const sessionData = {
+        preset: presetName,
+        frequency: treatment.frequency,
+        duration: treatment.duration,
+        rates: [treatment.rate1, treatment.rate2, treatment.rate3],
+        receptorName: treatment.receptorName,
+      };
+      recordSession(currentPatientId, 'treatment', sessionData);
+      setCurrentPatientId(null);
+    }
+  }, [treatment.isPlaying, treatment.timeRemaining, currentPatientId]);
+
+  const handleStartClick = () => {
+    setShowSessionDialog(true);
+    setPendingStart(true);
+  };
+
+  const handleSessionConfirm = (patientId: string | null) => {
+    setCurrentPatientId(patientId);
+    if (pendingStart) {
+      treatment.startTreatment();
+      setPendingStart(false);
+    }
+  };
   
   // Normalize currentImage value to ensure compatibility
   const normalizeCurrentImage = (image: 'radionic' | 'receptor' | 'mix' | 'pattern'): 'radionic' | 'receptor' | 'mix' => {
@@ -89,7 +130,7 @@ const Treat = () => {
                 timeRemaining={treatment.timeRemaining}
                 formatTime={treatment.formatTime}
                 onSelectPreset={treatment.selectPreset}
-                startTreatment={treatment.startTreatment}
+                startTreatment={handleStartClick}
                 stopTreatment={treatment.stopTreatment}
                 radionicImage={treatment.radionicImage}
                 setRadionicImage={treatment.setRadionicImage}
@@ -163,8 +204,8 @@ const Treat = () => {
                     formatTime={treatment.formatTime}
                     currentImage={normalizeCurrentImage(treatment.currentImage)}
                     hypnoticEffect={treatment.hypnoticEffect}
-                    startTreatment={treatment.startTreatment}
-                    stopTreatment={treatment.stopTreatment}
+                  startTreatment={handleStartClick}
+                  stopTreatment={treatment.stopTreatment}
                     receptorName={treatment.receptorName}
                     setReceptorName={treatment.setReceptorName}
                     audioFile={treatment.audioFile}
@@ -183,6 +224,13 @@ const Treat = () => {
               </Card>
             </TabsContent>
           </Tabs>
+
+          <SessionRecordDialog
+            open={showSessionDialog}
+            onOpenChange={setShowSessionDialog}
+            onConfirm={handleSessionConfirm}
+            sessionType="treatment"
+          />
         </div>
       </section>
 

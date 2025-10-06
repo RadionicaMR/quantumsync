@@ -1,4 +1,5 @@
 
+import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Layout from '@/components/Layout';
@@ -13,6 +14,9 @@ import ProgressDisplay from '@/components/balance/ProgressDisplay';
 import CompletionMessage from '@/components/balance/CompletionMessage';
 import BalanceControls from '@/components/balance/BalanceControls';
 import { useBalanceChakras } from '@/hooks/useBalanceChakras';
+import { SessionRecordDialog } from '@/components/session/SessionRecordDialog';
+import { useSessionRecording } from '@/hooks/useSessionRecording';
+import { useSession } from '@/context/SessionContext';
 
 interface LocationState {
   personName?: string;
@@ -25,6 +29,10 @@ interface LocationState {
 const BalanceChakras = () => {
   const location = useLocation();
   const state = location.state as LocationState || {};
+  const { recordSession } = useSessionRecording();
+  const { currentPatientId, setCurrentPatientId } = useSession();
+  const [showSessionDialog, setShowSessionDialog] = useState(false);
+  const [pendingStart, setPendingStart] = useState(false);
   
   const {
     personName,
@@ -44,6 +52,32 @@ const BalanceChakras = () => {
   } = useBalanceChakras(state.personName || '', state.chakraStates);
   
   const hasChakraStates = state.chakraStates && state.chakraStates.some(c => c.state);
+
+  // Handle session recording when completing
+  useEffect(() => {
+    if (completed && currentPatientId) {
+      const sessionData = {
+        balanceOption,
+        duration: duration[0],
+        chakraStates: state.chakraStates || [],
+      };
+      recordSession(currentPatientId, 'balance_chakras', sessionData);
+      setCurrentPatientId(null);
+    }
+  }, [completed, currentPatientId]);
+
+  const handleStartClick = () => {
+    setShowSessionDialog(true);
+    setPendingStart(true);
+  };
+
+  const handleSessionConfirm = (patientId: string | null) => {
+    setCurrentPatientId(patientId);
+    if (pendingStart) {
+      startBalancing();
+      setPendingStart(false);
+    }
+  };
   
   return (
     <Layout>
@@ -93,11 +127,18 @@ const BalanceChakras = () => {
               isPlaying={isPlaying}
               completed={completed}
               personName={personName}
-              onStart={startBalancing}
+              onStart={handleStartClick}
               onStop={stopBalancing}
               onNavigate={navigateToDiagnose}
             />
           </Card>
+
+          <SessionRecordDialog
+            open={showSessionDialog}
+            onOpenChange={setShowSessionDialog}
+            onConfirm={handleSessionConfirm}
+            sessionType="balance_chakras"
+          />
         </motion.div>
       </div>
     </Layout>
