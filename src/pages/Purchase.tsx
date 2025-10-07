@@ -18,7 +18,7 @@ const Purchase = () => {
 
   const handleConfirm = () => {
     if (selectedOption === 'argentina') {
-      window.location.href = 'https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=2c938084961105bd01961376957d02c5';
+      window.location.href = 'https://mpago.la/2oUZRbt';
     } else if (selectedOption === 'internacional') {
       window.location.href = 'https://www.paypal.com/ncp/payment/4J3UP5EQVBRCW';
     }
