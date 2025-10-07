@@ -1,4 +1,3 @@
-
 import Layout from '@/components/Layout';
 import NewHeroSection from '@/components/home/NewHeroSection';
 import ProblemSection from '@/components/home/ProblemSection';
@@ -10,6 +9,7 @@ import NewTestimonialsSection from '@/components/home/NewTestimonialsSection';
 import FAQSection from '@/components/home/FAQSection';
 import PricingSection from '@/components/home/PricingSection';
 import FinalClosingSection from '@/components/home/FinalClosingSection';
+import CTAButton from '@/components/home/CTAButton';
 
 const Index = () => {
   return (
@@ -20,17 +20,26 @@ const Index = () => {
       {/* 2. Problem/Pain Section */}
       <ProblemSection />
 
+      {/* CTA Button 1 */}
+      <CTAButton />
+
       {/* 3. Solution Section */}
       <SolutionSection />
 
       {/* 4. Benefits Section */}
       <NewBenefitsSection />
 
+      {/* CTA Button 2 */}
+      <CTAButton />
+
       {/* 5. App Showcase Section */}
       <AppShowcaseSection />
 
       {/* 6. Quantum Foundation Section */}
       <QuantumFoundationSection />
+
+      {/* CTA Button 3 */}
+      <CTAButton />
 
       {/* 7. Testimonials Section */}
       <NewTestimonialsSection />

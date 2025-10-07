@@ -64,6 +64,7 @@ const Purchase = () => {
                     <Map className="h-16 w-16 text-white mb-2" />
                     <h2 className="text-2xl font-bold text-white">Soy de Argentina</h2>
                     <p className="text-white/80 mb-2">Pago a través de Mercado Pago</p>
+                    <p className="text-white font-semibold text-lg">Membresía Anual $157.000</p>
                   </div>
                   <div className="p-6">
                     <ul className="space-y-3 mb-6">
@@ -101,6 +102,7 @@ const Purchase = () => {
                     <Map className="h-16 w-16 text-white mb-2" />
                     <h2 className="text-2xl font-bold text-white">Fuera de Argentina</h2>
                     <p className="text-white/80 mb-2">Pago a través de PayPal</p>
+                    <p className="text-white font-semibold text-lg">Membresía Anual us$ 129</p>
                   </div>
                   <div className="p-6">
                     <ul className="space-y-3 mb-6">
