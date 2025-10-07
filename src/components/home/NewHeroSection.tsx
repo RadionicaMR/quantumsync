@@ -69,7 +69,7 @@ const NewHeroSection = () => {
             </Button>
           </motion.div>
 
-          {/* Mockup placeholder with glow effect */}
+          {/* Video de YouTube con efecto glow */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -79,11 +79,13 @@ const NewHeroSection = () => {
             <div className="relative max-w-4xl mx-auto">
               <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 via-blue-500/20 to-purple-600/20 blur-3xl" />
               <div className="relative bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-sm rounded-3xl p-8 border border-purple-500/30 shadow-2xl">
-                <div className="aspect-video bg-black/40 rounded-2xl border border-purple-400/20 flex items-center justify-center overflow-hidden">
-                  <img 
-                    src={mockupChakraBalance} 
-                    alt="QuantumSync App Interface - Equilibrio de Chakras"
-                    className="h-full w-auto object-contain"
+                <div className="aspect-video bg-black/40 rounded-2xl border border-purple-400/20 overflow-hidden">
+                  <iframe
+                    className="w-full h-full"
+                    src="https://www.youtube.com/embed/vLJEFVZj8Jo"
+                    title="QuantumSync - Video de Presentación"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
                   />
                 </div>
               </div>
