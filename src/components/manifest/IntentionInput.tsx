@@ -20,7 +20,7 @@ const IntentionInput: React.FC<IntentionInputProps> = ({
   }, [intention]);
 
   const handleIntentionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newValue = e.target.value.slice(0, 300);
+    const newValue = e.target.value.slice(0, 1500);
     console.log("IntentionInput main - Setting new intention:", newValue);
     setIntention(newValue);
   };
@@ -36,10 +36,10 @@ const IntentionInput: React.FC<IntentionInputProps> = ({
         onChange={handleIntentionChange}
         disabled={isDisabled}
         rows={4}
-        maxLength={300}
+        maxLength={1500}
       />
       <p className="text-xs text-muted-foreground mt-1">
-        {intention.length}/300 caracteres
+        {intention.length}/1500 caracteres
       </p>
     </div>
   );

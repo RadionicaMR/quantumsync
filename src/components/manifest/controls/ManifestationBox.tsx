@@ -16,7 +16,7 @@ const ManifestationBox = ({
   isDisabled = false
 }: ManifestationBoxProps) => {
   const handleIntentionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newValue = e.target.value.slice(0, 300);
+    const newValue = e.target.value.slice(0, 1500);
     console.log("ManifestationBox - Setting new intention:", newValue);
     setIntention(newValue);
   };
@@ -35,10 +35,10 @@ const ManifestationBox = ({
           onChange={handleIntentionChange}
           disabled={isDisabled}
           rows={4}
-          maxLength={300}
+          maxLength={1500}
         />
         <p className="text-xs text-muted-foreground mt-1 text-right">
-          {intention.length}/300 caracteres
+          {intention.length}/1500 caracteres
         </p>
       </div>
     </Card>
