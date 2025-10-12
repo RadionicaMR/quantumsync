@@ -3,6 +3,7 @@ import { useState, useRef } from 'react';
 import { useTreatmentAudio } from './useTreatmentAudio';
 import { useTreatmentImages } from '../useTreatmentImages';
 import { useTreatmentRates } from '../useTreatmentRates';
+import { useSessionRecording } from '@/hooks/useSessionRecording';
 import { toast } from '@/components/ui/use-toast';
 
 // Define and export the TreatmentPreset type
@@ -27,9 +28,11 @@ export const useTreatmentCore = () => {
   const audio = useTreatmentAudio();
   const images = useTreatmentImages();
   const rates = useTreatmentRates();
+  const { recordSession: recordToDatabase } = useSessionRecording();
   
   // Flag to prevent multiple rapid start attempts
   const isStartingTreatment = useRef<boolean>(false);
+  const startTimeRef = useRef<Date | null>(null);
 
   // Select a preset
   const selectPreset = (preset: TreatmentPreset) => {
@@ -56,6 +59,9 @@ export const useTreatmentCore = () => {
     
     // Set the flag to prevent multiple start attempts
     isStartingTreatment.current = true;
+    
+    // Record start time
+    startTimeRef.current = new Date();
     
     // Debug logging
     console.log("Starting treatment with frequency:", audio.frequency[0], "Hz");
@@ -92,8 +98,33 @@ export const useTreatmentCore = () => {
   };
 
   // Stop the treatment
-  const stopTreatment = () => {
+  const stopTreatment = async () => {
     console.log("Stopping treatment");
+    
+    // Calculate duration if we have a start time
+    const duration = startTimeRef.current 
+      ? Math.floor((new Date().getTime() - startTimeRef.current.getTime()) / 1000 / 60)
+      : 0;
+    
+    // Save session to database if we have a receptor name
+    if (receptorName) {
+      await recordToDatabase(
+        receptorName,
+        'treatment',
+        {
+          frequency: audio.frequency[0],
+          duration,
+          preset: selectedPreset,
+          intention,
+          rates: {
+            rate1: rates.rate1[0],
+            rate2: rates.rate2[0],
+            rate3: rates.rate3[0]
+          },
+          completedAt: new Date().toISOString()
+        }
+      );
+    }
     
     // Stop main audio
     audio.stopAudio();
@@ -101,6 +132,9 @@ export const useTreatmentCore = () => {
     // Stop visual effects
     setHypnoticEffect(false);
     images.stopHypnoticEffect();
+    
+    // Reset start time
+    startTimeRef.current = null;
 
     toast({
       title: "Tratamiento detenido",

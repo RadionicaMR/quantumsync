@@ -1,16 +1,19 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
+import { useSessionRecording } from '@/hooks/useSessionRecording';
 
 export const useManifestSession = (
   startImageAlternationFn: () => (currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic', setCurrentImage: (value: any) => void) => void,
   stopImageAlternationFn: () => (setCurrentImage?: (value: 'pattern' | 'receptor' | 'mix' | 'radionic') => void) => void
 ) => {
+  const { recordSession: recordToDatabase } = useSessionRecording();
   const [isManifestActive, setIsManifestActive] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const timerIdRef = useRef<number | null>(null);
   const [currentIntention, setCurrentIntention] = useState<string>("");
   const [indefiniteTime, setIndefiniteTime] = useState<boolean>(false);
+  const startTimeRef = useRef<Date | null>(null);
   
   // Store references to the image alternation functions
   const startImageAlternation = useRef(startImageAlternationFn());
@@ -58,6 +61,9 @@ export const useManifestSession = (
       setCurrentIntention(intention);
     }
     
+    // Record start time
+    startTimeRef.current = new Date();
+    
     // Set active state first to trigger visualizer
     setIsManifestActive(true);
     
@@ -102,8 +108,27 @@ export const useManifestSession = (
   }, [isManifestActive, indefiniteTime, clearTimer]);
 
   // Stop manifestation function
-  const stopManifestation = useCallback(() => {
+  const stopManifestation = useCallback(async () => {
     console.log("Stopping manifestation");
+    
+    // Calculate duration if we have a start time
+    const duration = startTimeRef.current 
+      ? Math.floor((new Date().getTime() - startTimeRef.current.getTime()) / 1000 / 60)
+      : 0;
+    
+    // Save session to database if we have an intention
+    if (currentIntention) {
+      await recordToDatabase(
+        currentIntention,
+        'manifestation',
+        {
+          intention: currentIntention,
+          duration,
+          indefiniteMode: indefiniteTime,
+          completedAt: new Date().toISOString()
+        }
+      );
+    }
     
     // Clean up timer
     clearTimer();
@@ -113,13 +138,14 @@ export const useManifestSession = (
     // Reset state
     setIsManifestActive(false);
     setTimeRemaining(null);
+    startTimeRef.current = null;
     
     // Notification
     toast({
       title: "Manifestación detenida",
       description: "La sesión de manifestación ha sido detenida."
     });
-  }, [clearTimer]);
+  }, [clearTimer, currentIntention, indefiniteTime, recordToDatabase]);
 
   // Helper function to format time
   const formatTimeRemaining = useCallback((time: number): string => {
