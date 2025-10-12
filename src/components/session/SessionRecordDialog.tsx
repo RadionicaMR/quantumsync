@@ -151,7 +151,7 @@ export const SessionRecordDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] z-50">
         <DialogHeader>
           <DialogTitle>Registrar Sesión</DialogTitle>
           <DialogDescription>
