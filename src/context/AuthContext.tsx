@@ -23,17 +23,29 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Ensure there's a backend session for the given email/password
 const ensureBackendSession = async (email: string, password: string) => {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user?.email === email) {
+    const { data: { user: current } } = await supabase.auth.getUser();
+    if (current?.email === email) {
       return; // already signed in with matching user
     }
+
+    // Try sign in first
     const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-    if (signInError) {
-      const { error: signUpError } = await supabase.auth.signUp({ email, password });
-      if (!signUpError) {
-        await supabase.auth.signInWithPassword({ email, password });
-      }
+    if (!signInError) return;
+
+    // If sign in failed, try sign up with redirect (auto-confirm should be enabled)
+    const redirectUrl = `${window.location.origin}/`;
+    const { error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: redirectUrl }
+    });
+
+    if (signUpError) {
+      console.warn('[AUTH] signUp error (may be user exists):', signUpError);
     }
+
+    // Attempt sign in again after sign up (covers already registered users)
+    await supabase.auth.signInWithPassword({ email, password });
   } catch (e) {
     console.error('[AUTH] Error ensuring backend session', e);
   }
@@ -43,25 +55,76 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Asegurar que todos los usuarios especiales existen al cargar la aplicación
-    import('@/utils/userStorage').then(({ ensureSpecialUsersExist }) => {
-      ensureSpecialUsersExist();
-    });
-    
-    // Verificar si hay un usuario en localStorage al cargar la aplicación
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        setUser(parsedUser);
-      } catch (error) {
-        console.error('Error parsing user from localStorage:', error);
-        localStorage.removeItem('user');
+useEffect(() => {
+  // Asegurar que todos los usuarios especiales existen al cargar la aplicación
+  import('@/utils/userStorage').then(({ ensureSpecialUsersExist }) => {
+    ensureSpecialUsersExist();
+  });
+
+  const restoreBackendSessionIfNeeded = async (email: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const sessionEmail = session?.user?.email;
+      if (sessionEmail === email) return; // ya hay sesión válida
+
+      // Determinar contraseña conocida para este usuario
+      const specialPasswords: Record<string, string> = {
+        'mauriramosgs@gmail.com': 'bere1603',
+        'germancastroc25@gmail.com': 'german2025',
+        'parapsicologodamiangomez@gmail.com': 'damian2025',
+        'fuenzacari@gmail.com': 'carina2025',
+        'jreyesreal@gmail.com': 'javier2025',
+      };
+
+      let password = specialPasswords[email.toLowerCase()];
+      if (!password) {
+        const storedUsersList = localStorage.getItem('usersList');
+        if (storedUsersList) {
+          try {
+            const usersList = JSON.parse(storedUsersList);
+            const found = usersList.find((u: any) => (u.email || '').trim().toLowerCase() === email.trim().toLowerCase());
+            if (found?.password) password = (found.password as string).trim();
+          } catch (e) {
+            console.warn('[AUTH] No se pudo parsear usersList:', e);
+          }
+        }
       }
+
+      if (password) {
+        await ensureBackendSession(email, password);
+      } else {
+        console.warn('[AUTH] No se encontró contraseña para restaurar sesión backend');
+      }
+    } catch (e) {
+      console.error('[AUTH] Error restaurando sesión backend:', e);
     }
-    setLoading(false);
-  }, []);
+  };
+
+  // Verificar si hay un usuario en localStorage al cargar la aplicación
+  const storedUser = localStorage.getItem('user');
+  if (storedUser) {
+    try {
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      // Intentar restaurar la sesión del backend si falta
+      if (parsedUser?.email) restoreBackendSessionIfNeeded(parsedUser.email);
+    } catch (error) {
+      console.error('Error parsing user from localStorage:', error);
+      localStorage.removeItem('user');
+    }
+  }
+
+  // Mantener sincronizado el estado de backend (solo logging informativo)
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, _session) => {
+    // Podemos añadir lógica si se requiere reaccionar a cambios
+    // console.log('[AUTH] onAuthStateChange:', _event, _session?.user?.email);
+  });
+
+  setLoading(false);
+  return () => {
+    subscription.unsubscribe();
+  };
+}, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {

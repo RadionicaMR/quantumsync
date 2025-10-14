@@ -62,6 +62,11 @@ export const SessionRecordDialog = ({
 
     if (error) {
       console.error('Error loading patients:', error);
+      toast({
+        title: 'Error al cargar pacientes',
+        description: 'Verifica tu sesión e inténtalo nuevamente.',
+        variant: 'destructive',
+      });
       return;
     }
 
@@ -169,11 +174,15 @@ export const SessionRecordDialog = ({
                     <SelectValue placeholder="Selecciona un paciente" />
                   </SelectTrigger>
                   <SelectContent>
-                    {patients.map((patient) => (
-                      <SelectItem key={patient.id} value={patient.id}>
-                        {patient.name}
-                      </SelectItem>
-                    ))}
+                    {patients.length === 0 ? (
+                      <SelectItem disabled value="__none__">No hay pacientes disponibles</SelectItem>
+                    ) : (
+                      patients.map((patient) => (
+                        <SelectItem key={patient.id} value={patient.id}>
+                          {patient.name}
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
               </div>
