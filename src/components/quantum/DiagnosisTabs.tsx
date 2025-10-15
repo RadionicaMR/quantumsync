@@ -61,8 +61,8 @@ const DiagnosisTabs: React.FC<DiagnosisTabsProps> = ({ isMobile }) => {
             value="pendulum" 
             className="flex flex-col data-[state=active]:bg-quantum-primary/20 data-[state=active]:text-white"
           >
-            <span>Péndulo</span>
-            <span>Virtual</span>
+            <span>VibraCheck</span>
+            <span>Cuántico</span>
           </TabsTrigger>
           <TabsTrigger 
             value="dowsing"
