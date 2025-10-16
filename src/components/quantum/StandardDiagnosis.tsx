@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRef } from 'react';
-import PendulumVisual from './PendulumVisual';
+import VibraCheckVisual from './VibraCheckVisual';
 import DiagnosisResult from './DiagnosisResult';
 import PersonNameInput from './PersonNameInput';
 import DiagnosisStandby from './DiagnosisStandby';
@@ -110,9 +110,8 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
         </div>
       )}
       
-      <PendulumVisual 
-        isPendulumSwinging={isPendulumSwinging} 
-        pendulumAngle={pendulumAngle} 
+      <VibraCheckVisual 
+        isActive={isPendulumSwinging}
       />
       
       {/* Video de la cámara (oculto) */}

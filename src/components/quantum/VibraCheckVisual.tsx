@@ -43,107 +43,165 @@ const VibraCheckVisual: React.FC<VibraCheckVisualProps> = ({ isActive }) => {
         }}
       />
       
-      {/* Figura geométrica principal - Hexágono con capas */}
+      {/* Círculos concéntricos */}
       <motion.div 
         className="absolute flex items-center justify-center"
         style={{ width: size, height: size }}
-        animate={isActive ? {
-          scale: [1, 1.1, 1],
-          rotate: [0, 360]
-        } : {}}
-        transition={{
-          scale: {
+      >
+        {/* Círculo más grande */}
+        <motion.svg 
+          width={size} 
+          height={size} 
+          viewBox="0 0 200 200" 
+          className="absolute"
+          animate={isActive ? {
+            scale: [1, 1.15, 1],
+            opacity: [0.4, 0.5, 0.4]
+          } : {}}
+          transition={{
             duration: 1.2,
             repeat: isActive ? Infinity : 0,
             ease: "easeInOut"
-          },
-          rotate: {
-            duration: 20,
-            repeat: isActive ? Infinity : 0,
-            ease: "linear"
-          }
-        }}
-      >
-        {/* Hexágono exterior */}
-        <svg width={size} height={size} viewBox="0 0 200 200" className="absolute">
+          }}
+        >
           <defs>
-            <linearGradient id="hexGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id="circleGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.6" />
-              <stop offset="50%" stopColor="#7C3AED" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#6366F1" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.4" />
             </linearGradient>
           </defs>
-          <polygon 
-            points="100,20 170,60 170,140 100,180 30,140 30,60" 
+          <circle 
+            cx="100" 
+            cy="100" 
+            r="90" 
             fill="none" 
-            stroke="url(#hexGradient1)" 
-            strokeWidth="2"
+            stroke="url(#circleGradient1)" 
+            strokeWidth="1.5"
             className="drop-shadow-[0_0_10px_rgba(139,92,246,0.5)]"
           />
-        </svg>
+        </motion.svg>
         
-        {/* Hexágono medio */}
-        <svg width={size * 0.7} height={size * 0.7} viewBox="0 0 200 200" className="absolute">
+        {/* Círculo grande */}
+        <motion.svg 
+          width={size * 0.7} 
+          height={size * 0.7} 
+          viewBox="0 0 200 200" 
+          className="absolute"
+          animate={isActive ? {
+            scale: [1, 1.15, 1],
+            opacity: [0.5, 0.6, 0.5]
+          } : {}}
+          transition={{
+            duration: 1.2,
+            repeat: isActive ? Infinity : 0,
+            ease: "easeInOut",
+            delay: 0.1
+          }}
+        >
           <defs>
-            <linearGradient id="hexGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id="circleGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#A78BFA" stopOpacity="0.7" />
-              <stop offset="50%" stopColor="#8B5CF6" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.7" />
+              <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0.5" />
             </linearGradient>
           </defs>
-          <polygon 
-            points="100,30 160,65 160,135 100,170 40,135 40,65" 
+          <circle 
+            cx="100" 
+            cy="100" 
+            r="90" 
             fill="none" 
-            stroke="url(#hexGradient2)" 
-            strokeWidth="3"
+            stroke="url(#circleGradient2)" 
+            strokeWidth="2"
+            className="drop-shadow-[0_0_12px_rgba(139,92,246,0.6)]"
+          />
+        </motion.svg>
+        
+        {/* Círculo medio */}
+        <motion.svg 
+          width={size * 0.5} 
+          height={size * 0.5} 
+          viewBox="0 0 200 200" 
+          className="absolute"
+          animate={isActive ? {
+            scale: [1, 1.15, 1],
+            opacity: [0.6, 0.7, 0.6]
+          } : {}}
+          transition={{
+            duration: 1.2,
+            repeat: isActive ? Infinity : 0,
+            ease: "easeInOut",
+            delay: 0.2
+          }}
+        >
+          <defs>
+            <linearGradient id="circleGradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#C4B5FD" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#A78BFA" stopOpacity="0.6" />
+            </linearGradient>
+          </defs>
+          <circle 
+            cx="100" 
+            cy="100" 
+            r="90" 
+            fill="none" 
+            stroke="url(#circleGradient3)" 
+            strokeWidth="2.5"
             className="drop-shadow-[0_0_15px_rgba(139,92,246,0.7)]"
           />
-        </svg>
+        </motion.svg>
         
-        {/* Círculo central con efecto de latido */}
-        <motion.div
-          className="absolute rounded-full bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center"
-          style={{ width: size * 0.3, height: size * 0.3 }}
+        {/* Círculo pequeño */}
+        <motion.svg 
+          width={size * 0.3} 
+          height={size * 0.3} 
+          viewBox="0 0 200 200" 
+          className="absolute"
           animate={isActive ? {
-            scale: [1, 1.2, 1],
+            scale: [1, 1.15, 1],
+            opacity: [0.7, 0.8, 0.7]
+          } : {}}
+          transition={{
+            duration: 1.2,
+            repeat: isActive ? Infinity : 0,
+            ease: "easeInOut",
+            delay: 0.3
+          }}
+        >
+          <defs>
+            <linearGradient id="circleGradient4" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#DDD6FE" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#C4B5FD" stopOpacity="0.7" />
+            </linearGradient>
+          </defs>
+          <circle 
+            cx="100" 
+            cy="100" 
+            r="90" 
+            fill="none" 
+            stroke="url(#circleGradient4)" 
+            strokeWidth="3"
+            className="drop-shadow-[0_0_20px_rgba(139,92,246,0.8)]"
+          />
+        </motion.svg>
+        
+        {/* Punto central brillante */}
+        <motion.div
+          className="absolute rounded-full bg-gradient-to-br from-purple-400 to-violet-500"
+          style={{ width: size * 0.05, height: size * 0.05 }}
+          animate={isActive ? {
+            scale: [1, 1.5, 1],
             boxShadow: [
-              '0 0 20px rgba(139,92,246,0.5)',
-              '0 0 40px rgba(139,92,246,0.8)',
-              '0 0 20px rgba(139,92,246,0.5)'
+              '0 0 10px rgba(167,139,250,0.6)',
+              '0 0 25px rgba(167,139,250,0.9)',
+              '0 0 10px rgba(167,139,250,0.6)'
             ]
           } : {}}
           transition={{
             duration: 1,
             repeat: isActive ? Infinity : 0,
             ease: "easeInOut",
-            delay: 0.1
+            delay: 0.4
           }}
-        >
-          <div className="text-white text-2xl font-bold holographic-gradient">Q</div>
-        </motion.div>
-        
-        {/* Líneas conectoras radiales */}
-        <svg width={size} height={size} viewBox="0 0 200 200" className="absolute">
-          <defs>
-            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0" />
-              <stop offset="50%" stopColor="#A78BFA" stopOpacity="0.6" />
-              <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          {[0, 60, 120, 180, 240, 300].map((angle, i) => (
-            <line 
-              key={i}
-              x1="100" 
-              y1="100" 
-              x2={100 + 60 * Math.cos((angle * Math.PI) / 180)} 
-              y2={100 + 60 * Math.sin((angle * Math.PI) / 180)} 
-              stroke="url(#lineGradient)" 
-              strokeWidth="1"
-              opacity="0.5"
-            />
-          ))}
-        </svg>
+        />
       </motion.div>
       
       {/* Partículas flotantes */}
