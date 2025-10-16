@@ -68,7 +68,7 @@ const DiagnoseControls: React.FC<DiagnoseControlsProps> = ({
         </Label>
       </div>
       
-      <h4 className="font-medium mb-2">Sensibilidad del Péndulo</h4>
+      <h4 className="font-medium mb-2">Sensibilidad del VibraCheck</h4>
       <Slider
         defaultValue={[50]}
         max={100}

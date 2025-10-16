@@ -31,7 +31,7 @@ const DiagnosisStandby: React.FC<DiagnosisStandbyProps> = ({
           </svg>
         </div>
         <p className="mb-4">Selecciona un área para comenzar tu diagnóstico energético</p>
-        <p className="text-sm">El péndulo virtual te ayudará a identificar desequilibrios en tu campo energético</p>
+        <p className="text-sm">El VibraCheck Cuántico te ayudará a identificar desequilibrios en tu campo energético</p>
       </div>
     );
   }

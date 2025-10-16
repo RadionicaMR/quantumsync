@@ -36,7 +36,7 @@ const InfoSection = () => {
     {
       step: 2,
       title: "Analiza Patrones Energéticos",
-      description: "Nuestro péndulo virtual detecta desequilibrios energéticos sutiles utilizando algoritmos radiónicos avanzados."
+      description: "Nuestro VibraCheck Cuántico detecta desequilibrios energéticos sutiles utilizando algoritmos radiónicos avanzados."
     },
     {
       step: 3,
