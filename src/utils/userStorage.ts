@@ -227,6 +227,11 @@ export const ensureSpecialUsersExist = (): void => {
   const cristinaExists = usersList.some(user => 
     user.email.toLowerCase() === 'cristina.terapiaintegral@gmail.com'
   );
+
+  // Verificar si Mariana ya existe
+  const marianaExists = usersList.some(user =>
+    user.email.toLowerCase() === 'marianasalvatore@hotmail.com'
+  );
   
   // Verificar si Genoveva ya existe y actualizar el nombre si es necesario
   const genoveva = usersList.find(user => 
@@ -282,6 +287,16 @@ export const ensureSpecialUsersExist = (): void => {
       password: 'cristina2025'
     });
     console.log('Usuario especial Cristina Terapia Integral añadido');
+  }
+
+  if (!marianaExists) {
+    // Añadir a Mariana si no existe
+    addUser(usersList, {
+      name: 'Mariana',
+      email: 'marianasalvatore@hotmail.com',
+      password: 'mariana2025'
+    });
+    console.log('Usuario especial Mariana añadido');
   }
   
   if (!imprentaExists) {
