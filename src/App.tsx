@@ -17,6 +17,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Purchase from "./pages/Purchase";
 import Admin from "./pages/Admin";
+import AddUserAdmin from "./pages/AddUserAdmin";
 import BalanceChakras from "./pages/BalanceChakras"; // Importamos la nueva página
 import Auth from "./pages/Auth";
 import SessionHistory from "./pages/SessionHistory";
@@ -53,6 +54,11 @@ const App = () => (
                   <Route path="/admin" element={
                     <ProtectedRoute requireAdmin={true}>
                       <Admin />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/add-user-admin" element={
+                    <ProtectedRoute requireAdmin={true}>
+                      <AddUserAdmin />
                     </ProtectedRoute>
                   } />
                   <Route path="/session-history" element={
