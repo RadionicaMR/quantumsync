@@ -22,7 +22,6 @@ const AffiliateRegister = () => {
     password: '',
     confirmPassword: '',
     country: '',
-    payment_method: 'paypal' as PaymentMethod,
     paypal_email: '',
     mercadopago_alias: '',
     mercadopago_cvu: ''
@@ -49,6 +48,16 @@ const AffiliateRegister = () => {
       return;
     }
 
+    // Validate at least one payment method is provided
+    if (!formData.paypal_email && !formData.mercadopago_alias) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Debes proporcionar al menos un método de pago (PayPal o Mercado Pago)'
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -70,7 +79,10 @@ const AffiliateRegister = () => {
       // 2. Generate affiliate code
       const affiliateCode = generateAffiliateCode(formData.name, formData.email);
 
-      // 3. Create affiliate record
+      // 3. Determine primary payment method (prefer PayPal if provided)
+      const primaryPaymentMethod: PaymentMethod = formData.paypal_email ? 'paypal' : 'mercadopago';
+
+      // 4. Create affiliate record
       const { error: affiliateError } = await supabase
         .from('affiliates')
         .insert({
@@ -78,10 +90,10 @@ const AffiliateRegister = () => {
           name: formData.name,
           email: formData.email,
           country: formData.country,
-          payment_method: formData.payment_method,
-          paypal_email: formData.payment_method === 'paypal' ? formData.paypal_email : null,
-          mercadopago_alias: formData.payment_method === 'mercadopago' ? formData.mercadopago_alias : null,
-          mercadopago_cvu: formData.payment_method === 'mercadopago' ? formData.mercadopago_cvu : null,
+          payment_method: primaryPaymentMethod,
+          paypal_email: formData.paypal_email || null,
+          mercadopago_alias: formData.mercadopago_alias || null,
+          mercadopago_cvu: formData.mercadopago_cvu || null,
           affiliate_code: affiliateCode,
           status: 'active'
         });
@@ -181,64 +193,52 @@ const AffiliateRegister = () => {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="payment_method">
-                <CreditCard className="inline w-4 h-4 mr-2" />
-                Método de pago preferido
-              </Label>
-              <Select
-                value={formData.payment_method}
-                onValueChange={(value: PaymentMethod) => setFormData({ ...formData, payment_method: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="paypal">PayPal (Internacional)</SelectItem>
-                  <SelectItem value="mercadopago">Mercado Pago (Argentina)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <div className="space-y-4 p-4 border rounded-lg bg-muted/20">
+              <h3 className="font-semibold text-sm flex items-center gap-2">
+                <CreditCard className="w-4 h-4" />
+                Métodos de Pago
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Completa al menos uno de los siguientes métodos para recibir tus comisiones
+              </p>
 
-            {formData.payment_method === 'paypal' && (
               <div className="space-y-2">
                 <Label htmlFor="paypal_email">
                   <DollarSign className="inline w-4 h-4 mr-2" />
-                  Email de PayPal
+                  Email de PayPal (Internacional)
                 </Label>
                 <Input
                   id="paypal_email"
                   type="email"
                   value={formData.paypal_email}
                   onChange={(e) => setFormData({ ...formData, paypal_email: e.target.value })}
-                  required
+                  placeholder="tu@email.com"
                 />
               </div>
-            )}
 
-            {formData.payment_method === 'mercadopago' && (
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="mercadopago_alias">Alias de Mercado Pago</Label>
-                  <Input
-                    id="mercadopago_alias"
-                    value={formData.mercadopago_alias}
-                    onChange={(e) => setFormData({ ...formData, mercadopago_alias: e.target.value })}
-                    placeholder="tu.alias.mp"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="mercadopago_cvu">CVU de Mercado Pago</Label>
-                  <Input
-                    id="mercadopago_cvu"
-                    value={formData.mercadopago_cvu}
-                    onChange={(e) => setFormData({ ...formData, mercadopago_cvu: e.target.value })}
-                    placeholder="0000003100000000000000"
-                  />
-                </div>
-              </>
-            )}
+              <div className="space-y-2">
+                <Label htmlFor="mercadopago_alias">
+                  <DollarSign className="inline w-4 h-4 mr-2" />
+                  Alias de Mercado Pago (Argentina)
+                </Label>
+                <Input
+                  id="mercadopago_alias"
+                  value={formData.mercadopago_alias}
+                  onChange={(e) => setFormData({ ...formData, mercadopago_alias: e.target.value })}
+                  placeholder="tu.alias.mp"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="mercadopago_cvu">CVU de Mercado Pago (opcional)</Label>
+                <Input
+                  id="mercadopago_cvu"
+                  value={formData.mercadopago_cvu}
+                  onChange={(e) => setFormData({ ...formData, mercadopago_cvu: e.target.value })}
+                  placeholder="0000003100000000000000"
+                />
+              </div>
+            </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? (

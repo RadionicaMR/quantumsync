@@ -279,36 +279,38 @@ const AffiliateDashboard = () => {
                   <Label>País</Label>
                   <Input value={affiliate.country} readOnly className="mt-2" />
                 </div>
-                <div>
-                  <Label>Método de pago</Label>
-                  <Input 
-                    value={affiliate.payment_method === 'paypal' ? 'PayPal' : 'Mercado Pago'} 
-                    readOnly 
-                    className="mt-2" 
-                  />
+                
+                <div className="space-y-3 pt-4 border-t">
+                  <h4 className="font-semibold text-sm">Métodos de Pago Configurados</h4>
+                  
+                  {affiliate.paypal_email ? (
+                    <div>
+                      <Label>Email de PayPal</Label>
+                      <Input value={affiliate.paypal_email} readOnly className="mt-2" />
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">PayPal: No configurado</p>
+                  )}
+
+                  {affiliate.mercadopago_alias || affiliate.mercadopago_cvu ? (
+                    <>
+                      {affiliate.mercadopago_alias && (
+                        <div>
+                          <Label>Alias de Mercado Pago</Label>
+                          <Input value={affiliate.mercadopago_alias} readOnly className="mt-2" />
+                        </div>
+                      )}
+                      {affiliate.mercadopago_cvu && (
+                        <div>
+                          <Label>CVU de Mercado Pago</Label>
+                          <Input value={affiliate.mercadopago_cvu} readOnly className="mt-2" />
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">Mercado Pago: No configurado</p>
+                  )}
                 </div>
-                {affiliate.payment_method === 'paypal' && affiliate.paypal_email && (
-                  <div>
-                    <Label>Email de PayPal</Label>
-                    <Input value={affiliate.paypal_email} readOnly className="mt-2" />
-                  </div>
-                )}
-                {affiliate.payment_method === 'mercadopago' && (
-                  <>
-                    {affiliate.mercadopago_alias && (
-                      <div>
-                        <Label>Alias de Mercado Pago</Label>
-                        <Input value={affiliate.mercadopago_alias} readOnly className="mt-2" />
-                      </div>
-                    )}
-                    {affiliate.mercadopago_cvu && (
-                      <div>
-                        <Label>CVU de Mercado Pago</Label>
-                        <Input value={affiliate.mercadopago_cvu} readOnly className="mt-2" />
-                      </div>
-                    )}
-                  </>
-                )}
               </div>
             </Card>
           </TabsContent>
