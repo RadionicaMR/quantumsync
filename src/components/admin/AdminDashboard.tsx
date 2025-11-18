@@ -4,13 +4,14 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { useAdminData } from '@/hooks/useAdminData';
 import { useNavigate } from 'react-router-dom';
-import { Users, DollarSign, TrendingUp, LogOut } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, LogOut, ShoppingCart } from 'lucide-react';
 import AffiliatesManagementTab from './AffiliatesManagementTab';
 import AffiliateStatsTab from './AffiliateStatsTab';
+import SalesManagementTab from './SalesManagementTab';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const { adminData, affiliates, loading, reloadData } = useAdminData();
+  const { adminData, affiliates, sales, loading, reloadData } = useAdminData();
 
   const handleLogout = () => {
     navigate('/');
@@ -41,7 +42,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
@@ -65,6 +66,16 @@ const AdminDashboard = () => {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
+              <p className="text-sm text-muted-foreground">Total Ventas</p>
+              <p className="text-2xl font-bold">{sales.length}</p>
+            </div>
+            <ShoppingCart className="h-8 w-8 text-purple-500" />
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
               <p className="text-sm text-muted-foreground">Ingresos Totales</p>
               <p className="text-2xl font-bold">${adminData.totalRevenue.toFixed(2)}</p>
             </div>
@@ -78,11 +89,19 @@ const AdminDashboard = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3, delay: 0.2 }}
       >
-        <Tabs defaultValue="affiliates" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8">
+        <Tabs defaultValue="sales" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-8">
+            <TabsTrigger value="sales">Gestión de Ventas</TabsTrigger>
             <TabsTrigger value="affiliates">Gestión de Afiliados</TabsTrigger>
             <TabsTrigger value="affiliate-stats">Estadísticas Globales</TabsTrigger>
           </TabsList>
+          
+          <TabsContent value="sales">
+            <SalesManagementTab
+              sales={sales}
+              onSaleUpdate={reloadData}
+            />
+          </TabsContent>
           
           <TabsContent value="affiliates">
             <AffiliatesManagementTab

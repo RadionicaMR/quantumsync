@@ -255,7 +255,7 @@ const AffiliateRegister = () => {
           <div className="mt-6 p-4 bg-muted rounded-lg">
             <h3 className="font-semibold mb-2">Beneficios del programa:</h3>
             <ul className="text-sm space-y-1 text-muted-foreground">
-              <li>✓ 30% de comisión en cada venta</li>
+              <li>✓ 50% de comisión en cada venta</li>
               <li>✓ Trackeo de 30 días por cookie</li>
               <li>✓ Dashboard completo con estadísticas</li>
               <li>✓ Pagos automáticos mensuales</li>

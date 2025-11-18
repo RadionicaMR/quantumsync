@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import type { Affiliate } from '@/types/affiliate';
+import type { Affiliate, AffiliateSale } from '@/types/affiliate';
 
 interface AdminData {
   totalUsers: number;
@@ -19,6 +19,7 @@ export const useAdminData = () => {
     monthlyRevenue: 0
   });
   const [affiliates, setAffiliates] = useState<Affiliate[]>([]);
+  const [sales, setSales] = useState<AffiliateSale[]>([]);
   const [loading, setLoading] = useState(true);
 
   const loadData = async () => {
@@ -35,10 +36,20 @@ export const useAdminData = () => {
 
       setAffiliates(affiliatesData || []);
 
+      // Get all sales
+      const { data: salesData, error: salesError } = await supabase
+        .from('affiliate_sales')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (salesError) throw salesError;
+
+      setSales(salesData || []);
+
       // Calculate stats
       const totalAffiliates = affiliatesData?.length || 0;
       const pendingAffiliates = affiliatesData?.filter(a => a.status !== 'active').length || 0;
-      const totalRevenue = affiliatesData?.reduce((sum, a) => sum + (a.total_commissions || 0), 0) || 0;
+      const totalRevenue = salesData?.reduce((sum, s) => sum + (s.sale_amount || 0), 0) || 0;
 
       // Get profiles count
       const { count: usersCount } = await supabase
@@ -67,6 +78,7 @@ export const useAdminData = () => {
   return {
     adminData,
     affiliates,
+    sales,
     loading,
     reloadData: loadData
   };
