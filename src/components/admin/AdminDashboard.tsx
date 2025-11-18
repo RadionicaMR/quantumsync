@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { useAdminData } from '@/hooks/useAdminData';
 import { useNavigate } from 'react-router-dom';
-import { Users, DollarSign, TrendingUp, LogOut, ShoppingCart } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, LogOut, ShoppingCart, BarChart3 } from 'lucide-react';
 import AffiliatesManagementTab from './AffiliatesManagementTab';
 import AffiliateStatsTab from './AffiliateStatsTab';
 import SalesManagementTab from './SalesManagementTab';
@@ -35,10 +35,16 @@ const AdminDashboard = () => {
           <h1 className="text-3xl font-bold">Panel de Administración</h1>
           <p className="text-muted-foreground mt-1">Gestión del Programa de Afiliados</p>
         </div>
-        <Button variant="outline" onClick={handleLogout}>
-          <LogOut className="w-4 h-4 mr-2" />
-          Cerrar Sesión
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => navigate('/admin/reports')}>
+            <BarChart3 className="w-4 h-4 mr-2" />
+            Ver Reportes
+          </Button>
+          <Button variant="outline" onClick={handleLogout}>
+            <LogOut className="w-4 h-4 mr-2" />
+            Cerrar Sesión
+          </Button>
+        </div>
       </div>
 
       {/* Stats Overview */}

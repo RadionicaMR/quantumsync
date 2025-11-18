@@ -17,7 +17,7 @@ const AffiliateProgram = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <Card className="p-6">
             <DollarSign className="h-12 w-12 text-green-500 mb-4" />
             <h3 className="text-xl font-bold mb-2">50% de Comisión</h3>
@@ -39,6 +39,14 @@ const AffiliateProgram = () => {
             <h3 className="text-xl font-bold mb-2">Dashboard Completo</h3>
             <p className="text-muted-foreground">
               Ve tus estadísticas y comisiones en tiempo real
+            </p>
+          </Card>
+
+          <Card className="p-6">
+            <Link className="h-12 w-12 text-orange-500 mb-4" />
+            <h3 className="text-xl font-bold mb-2">Pagos Semanales</h3>
+            <p className="text-muted-foreground">
+              Las comisiones se abonan todos los lunes de cada semana
             </p>
           </Card>
         </div>
