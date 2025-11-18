@@ -21,15 +21,53 @@ const AffiliateGlobalStats = () => {
   }, []);
 
   const loadStats = async () => {
-    const { data: affiliates } = await supabase.from('affiliates').select('*');
-    const { data: sales } = await supabase.from('affiliate_sales').select('*');
-    
-    setStats({
-      totalAffiliates: affiliates?.length || 0,
-      totalClicks: affiliates?.reduce((sum, a) => sum + (a.total_clicks || 0), 0) || 0,
-      totalSales: sales?.length || 0,
-      totalRevenue: sales?.reduce((sum, s) => sum + (s.sale_amount || 0), 0) || 0
-    });
+    try {
+      const { data: affiliates } = await supabase.from('affiliates').select('*');
+      const { data: sales } = await supabase.from('affiliate_sales').select('*');
+      
+      const activeAffiliates = affiliates?.filter(a => a.status === 'active').length || 0;
+      const pendingAffiliates = affiliates?.filter(a => a.status !== 'active').length || 0;
+      
+      const totalClicks = affiliates?.reduce((sum, a) => sum + (a.total_clicks || 0), 0) || 0;
+      const totalSalesCount = sales?.length || 0;
+      const totalRevenue = sales?.reduce((sum, s) => sum + (s.sale_amount || 0), 0) || 0;
+      
+      const totalCommissionsPaid = sales
+        ?.filter(s => s.commission_status === 'paid')
+        .reduce((sum, s) => sum + (s.commission_amount || 0), 0) || 0;
+      
+      const totalCommissionsPending = sales
+        ?.filter(s => s.commission_status === 'pending')
+        .reduce((sum, s) => sum + (s.commission_amount || 0), 0) || 0;
+      
+      const conversionRate = totalClicks > 0 ? (totalSalesCount / totalClicks) * 100 : 0;
+      
+      setStats({
+        totalAffiliates: affiliates?.length || 0,
+        activeAffiliates,
+        pendingAffiliates,
+        totalClicks,
+        totalSales: totalSalesCount,
+        totalRevenue,
+        totalCommissionsPaid,
+        totalCommissionsPending,
+        conversionRate
+      });
+    } catch (error) {
+      console.error('Error loading affiliate stats:', error);
+      // Set default values on error
+      setStats({
+        totalAffiliates: 0,
+        activeAffiliates: 0,
+        pendingAffiliates: 0,
+        totalClicks: 0,
+        totalSales: 0,
+        totalRevenue: 0,
+        totalCommissionsPaid: 0,
+        totalCommissionsPending: 0,
+        conversionRate: 0
+      });
+    }
   };
 
   if (!stats) return <div>Cargando...</div>;
