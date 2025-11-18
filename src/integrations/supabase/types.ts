@@ -14,6 +14,247 @@ export type Database = {
   }
   public: {
     Tables: {
+      affiliate_clicks: {
+        Row: {
+          affiliate_id: string
+          conversion_date: string | null
+          converted: boolean | null
+          created_at: string | null
+          id: string
+          ip_address: string | null
+          page: string | null
+          referrer: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          affiliate_id: string
+          conversion_date?: string | null
+          converted?: boolean | null
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          page?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          affiliate_id?: string
+          conversion_date?: string | null
+          converted?: boolean | null
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          page?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_clicks_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliate_payments: {
+        Row: {
+          admin_notes: string | null
+          affiliate_id: string
+          amount: number
+          id: string
+          paid_at: string | null
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          status: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          affiliate_id: string
+          amount: number
+          id?: string
+          paid_at?: string | null
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          status?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          affiliate_id?: string
+          amount?: number
+          id?: string
+          paid_at?: string | null
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_payments_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliate_sales: {
+        Row: {
+          affiliate_id: string
+          commission_amount: number
+          commission_status:
+            | Database["public"]["Enums"]["commission_status"]
+            | null
+          created_at: string | null
+          currency: string
+          customer_email: string
+          customer_name: string | null
+          id: string
+          notes: string | null
+          payment_date: string | null
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          product_id: string | null
+          sale_amount: number
+          transaction_id: string | null
+        }
+        Insert: {
+          affiliate_id: string
+          commission_amount: number
+          commission_status?:
+            | Database["public"]["Enums"]["commission_status"]
+            | null
+          created_at?: string | null
+          currency: string
+          customer_email: string
+          customer_name?: string | null
+          id?: string
+          notes?: string | null
+          payment_date?: string | null
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          product_id?: string | null
+          sale_amount: number
+          transaction_id?: string | null
+        }
+        Update: {
+          affiliate_id?: string
+          commission_amount?: number
+          commission_status?:
+            | Database["public"]["Enums"]["commission_status"]
+            | null
+          created_at?: string | null
+          currency?: string
+          customer_email?: string
+          customer_name?: string | null
+          id?: string
+          notes?: string | null
+          payment_date?: string | null
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          product_id?: string | null
+          sale_amount?: number
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_sales_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_sales_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliate_settings: {
+        Row: {
+          id: string
+          setting_key: string
+          setting_value: string
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          setting_key: string
+          setting_value: string
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          setting_key?: string
+          setting_value?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      affiliates: {
+        Row: {
+          affiliate_code: string
+          commission_rate: number | null
+          country: string
+          created_at: string | null
+          email: string
+          id: string
+          mercadopago_alias: string | null
+          mercadopago_cvu: string | null
+          name: string
+          paid_commissions: number | null
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          paypal_email: string | null
+          pending_commissions: number | null
+          status: string | null
+          total_clicks: number | null
+          total_commissions: number | null
+          total_sales: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          affiliate_code: string
+          commission_rate?: number | null
+          country: string
+          created_at?: string | null
+          email: string
+          id?: string
+          mercadopago_alias?: string | null
+          mercadopago_cvu?: string | null
+          name: string
+          paid_commissions?: number | null
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          paypal_email?: string | null
+          pending_commissions?: number | null
+          status?: string | null
+          total_clicks?: number | null
+          total_commissions?: number | null
+          total_sales?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          affiliate_code?: string
+          commission_rate?: number | null
+          country?: string
+          created_at?: string | null
+          email?: string
+          id?: string
+          mercadopago_alias?: string | null
+          mercadopago_cvu?: string | null
+          name?: string
+          paid_commissions?: number | null
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          paypal_email?: string | null
+          pending_commissions?: number | null
+          status?: string | null
+          total_clicks?: number | null
+          total_commissions?: number | null
+          total_sales?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       patients: {
         Row: {
           created_at: string | null
@@ -37,6 +278,39 @@ export type Database = {
           name?: string
           notes?: string | null
           therapist_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          price_ars: number | null
+          price_usd: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          price_ars?: number | null
+          price_usd?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          price_ars?: number | null
+          price_usd?: number | null
           updated_at?: string | null
         }
         Relationships: []
@@ -111,6 +385,8 @@ export type Database = {
       auth_email: { Args: never; Returns: string }
     }
     Enums: {
+      commission_status: "pending" | "approved" | "paid"
+      payment_method: "paypal" | "mercadopago"
       session_type:
         | "diagnosis"
         | "treatment"
@@ -243,6 +519,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      commission_status: ["pending", "approved", "paid"],
+      payment_method: ["paypal", "mercadopago"],
       session_type: [
         "diagnosis",
         "treatment",
