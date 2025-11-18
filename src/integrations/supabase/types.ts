@@ -108,10 +108,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      auth_email: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      auth_email: { Args: never; Returns: string }
     }
     Enums: {
       session_type:
