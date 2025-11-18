@@ -1,6 +1,6 @@
 
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import { getAffiliateByEmail } from '@/utils/affiliateStorage';
+import { getAffiliateCookie } from '@/utils/affiliateTracking';
 import { supabase } from '@/integrations/supabase/client';
 
 interface User {
@@ -293,8 +293,8 @@ useEffect(() => {
       console.log(`[REGISTRO] Datos recibidos: name="${name}", email="${email}", password="${password}"`);
       
       // Check for affiliate referral
-      const referralCode = localStorage.getItem('referralCode');
-      console.log(`[REGISTRO] Código de referido encontrado: ${referralCode}`);
+      const affiliateRefCode = localStorage.getItem('referralCode');
+      console.log(`[REGISTRO] Código de referido encontrado: ${affiliateRefCode}`);
       
       // Inicializar la lista de usuarios si no existe
       const storedUsersList = localStorage.getItem('usersList');
@@ -351,14 +351,53 @@ useEffect(() => {
       console.log(`[REGISTRO] Verificación - usersList después de guardar:`, verifyStorage);
       
       // If there's a referral code, track the sale
-      if (referralCode) {
+      if (affiliateRefCode) {
         try {
-          const { addAffiliateSale } = await import('@/utils/affiliateStorage');
-          addAffiliateSale(referralCode, email, name);
-          console.log(`[REGISTRO] Sale tracked for affiliate: ${referralCode}`);
-          
-          // Clear the referral code after successful conversion
-          localStorage.removeItem('referralCode');
+          // Get affiliate by code
+          const { data: affiliate } = await supabase
+            .from('affiliates')
+            .select('*')
+            .eq('affiliate_code', affiliateRefCode)
+            .eq('status', 'active')
+            .maybeSingle();
+
+          if (affiliate) {
+            // Create a sale record - assuming a default product
+            const { data: defaultProduct } = await supabase
+              .from('products')
+              .select('*')
+              .eq('active', true)
+              .limit(1)
+              .maybeSingle();
+
+            if (defaultProduct) {
+              const commissionAmount = (defaultProduct.price_usd || 0) * (affiliate.commission_rate / 100);
+              
+              await supabase.from('affiliate_sales').insert({
+                affiliate_id: affiliate.id,
+                product_id: defaultProduct.id,
+                customer_email: email,
+                customer_name: name,
+                sale_amount: defaultProduct.price_usd || 0,
+                currency: 'USD',
+                commission_amount: commissionAmount,
+                commission_status: 'pending',
+                payment_method: 'paypal'
+              });
+
+              // Update affiliate totals
+              await supabase
+                .from('affiliates')
+                .update({
+                  total_sales: affiliate.total_sales + 1,
+                  total_commissions: affiliate.total_commissions + commissionAmount,
+                  pending_commissions: affiliate.pending_commissions + commissionAmount
+                })
+                .eq('id', affiliate.id);
+
+              console.log(`[REGISTRO] Sale tracked for affiliate: ${affiliateRefCode}`);
+            }
+          }
         } catch (error) {
           console.error('[REGISTRO] Error tracking affiliate sale:', error);
         }

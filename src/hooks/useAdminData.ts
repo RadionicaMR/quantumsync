@@ -1,17 +1,9 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
-import { AdminUser, NewUserForm } from '@/types/admin';
-import { Affiliate } from '@/types/affiliate';
-import { loadUsers, addUser, deleteUser, updateUserPassword, synchronizeAllUsers } from '@/utils/userStorage';
-import { loadAffiliates } from '@/utils/affiliateStorage';
+import { supabase } from '@/integrations/supabase/client';
+import type { Affiliate } from '@/types/affiliate';
 
 export const useAdminData = () => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [user, setUser] = useState<any>(null);
-  const [users, setUsers] = useState<AdminUser[]>([]);
   const [affiliates, setAffiliates] = useState<Affiliate[]>([]);
   const [loading, setLoading] = useState(true);
   

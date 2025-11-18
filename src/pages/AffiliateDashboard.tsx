@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -6,79 +5,118 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  TrendingUp, 
-  Users, 
-  DollarSign, 
-  MousePointerClick, 
-  Copy, 
-  ExternalLink,
-  BarChart3,
-  Calendar,
-  LogOut
-} from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { useAffiliate } from '@/context/AffiliateContext';
-import { getAffiliateStats, loadAffiliateSales } from '@/utils/affiliateStorage';
-import { AffiliateSale } from '@/types/affiliate';
+import { supabase } from '@/integrations/supabase/client';
+import { useAffiliateTracking } from '@/hooks/useAffiliateTracking';
+import { Copy, LogOut, TrendingUp, MousePointer, DollarSign, Users } from 'lucide-react';
+import type { Affiliate, AffiliateSale, AffiliateStats } from '@/types/affiliate';
 
 const AffiliateDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { currentAffiliate, generateAffiliateLink } = useAffiliate();
-  const [stats, setStats] = useState({
-    totalClicks: 0,
-    totalConversions: 0,
-    conversionRate: 0,
-    totalCommissions: 0,
-    pendingCommissions: 0,
-    paidCommissions: 0
-  });
-  const [sales, setSales] = useState<AffiliateSale[]>([]);
-  const [customPath, setCustomPath] = useState('/');
+  const [affiliate, setAffiliate] = useState<Affiliate | null>(null);
+  const [stats, setStats] = useState<AffiliateStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useAffiliateTracking();
 
   useEffect(() => {
-    if (currentAffiliate) {
-      const affiliateStats = getAffiliateStats(currentAffiliate.affiliateCode);
-      setStats(affiliateStats);
-      
-      const affiliateSales = loadAffiliateSales().filter(
-        sale => sale.affiliateCode === currentAffiliate.affiliateCode
-      );
-      setSales(affiliateSales);
-    }
-  }, [currentAffiliate]);
+    loadAffiliateData();
+  }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('affiliateSession');
-    navigate('/');
+  const loadAffiliateData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        navigate('/affiliate-login');
+        return;
+      }
+
+      // Get affiliate data
+      const { data: affiliateData, error } = await supabase
+        .from('affiliates')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (error) throw error;
+      
+      setAffiliate(affiliateData);
+
+      // Get sales
+      const { data: sales } = await supabase
+        .from('affiliate_sales')
+        .select('*')
+        .eq('affiliate_id', affiliateData.id)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      const conversionRate = affiliateData.total_clicks > 0
+        ? (affiliateData.total_sales / affiliateData.total_clicks) * 100
+        : 0;
+
+      setStats({
+        total_clicks: affiliateData.total_clicks,
+        total_sales: affiliateData.total_sales,
+        total_commissions: affiliateData.total_commissions,
+        pending_commissions: affiliateData.pending_commissions,
+        paid_commissions: affiliateData.paid_commissions,
+        conversion_rate: conversionRate,
+        recent_sales: sales || []
+      });
+
+    } catch (error: any) {
+      console.error('Error:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'No se pudieron cargar los datos'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
+  const copyLink = (path: string = '') => {
+    const link = `${window.location.origin}${path}?ref=${affiliate?.affiliate_code}`;
+    navigator.clipboard.writeText(link);
     toast({
-      title: "¡Copiado!",
-      description: "El enlace ha sido copiado al portapapeles",
+      title: 'Link copiado',
+      description: 'El enlace de afiliado ha sido copiado al portapapeles'
     });
   };
 
-  const generateLink = (path: string) => {
-    return generateAffiliateLink(path);
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
   };
 
-  if (!currentAffiliate) {
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-4 text-muted-foreground">Cargando dashboard...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!affiliate) {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-16">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">No autorizado</h1>
+          <Card className="p-8 text-center">
+            <h2 className="text-2xl font-bold mb-4">No se encontró cuenta de afiliado</h2>
             <Button onClick={() => navigate('/affiliate-register')}>
-              Ir al Registro de Afiliados
+              Registrarse como afiliado
             </Button>
-          </div>
+          </Card>
         </div>
       </Layout>
     );
@@ -87,246 +125,192 @@ const AffiliateDashboard = () => {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold">Dashboard de Afiliado</h1>
-            <p className="text-muted-foreground mt-1">
-              Bienvenido, {currentAffiliate.name}
-            </p>
-            <div className="flex items-center gap-2 mt-2">
-              <Badge variant={currentAffiliate.status === 'approved' ? 'default' : 'secondary'}>
-                {currentAffiliate.status === 'approved' ? 'Aprobado' : 'Pendiente'}
-              </Badge>
-              <span className="text-sm text-muted-foreground">
-                Código: {currentAffiliate.affiliateCode}
-              </span>
-            </div>
+            <p className="text-muted-foreground">Bienvenido, {affiliate.name}</p>
           </div>
           <Button variant="outline" onClick={handleLogout}>
-            <LogOut className="w-4 h-4 mr-2" />
-            Cerrar Sesión
+            <LogOut className="mr-2 h-4 w-4" />
+            Cerrar sesión
           </Button>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <Card className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Total Clicks</p>
-                  <p className="text-3xl font-bold">{stats.totalClicks}</p>
-                </div>
-                <MousePointerClick className="w-8 h-8 text-blue-500" />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Clics totales</p>
+                <p className="text-2xl font-bold">{stats?.total_clicks || 0}</p>
               </div>
-            </Card>
-          </motion.div>
+              <MousePointer className="h-8 w-8 text-blue-500" />
+            </div>
+          </Card>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Card className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Conversiones</p>
-                  <p className="text-3xl font-bold">{stats.totalConversions}</p>
-                </div>
-                <Users className="w-8 h-8 text-green-500" />
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Ventas</p>
+                <p className="text-2xl font-bold">{stats?.total_sales || 0}</p>
               </div>
-            </Card>
-          </motion.div>
+              <TrendingUp className="h-8 w-8 text-green-500" />
+            </div>
+          </Card>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <Card className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Tasa Conversión</p>
-                  <p className="text-3xl font-bold">{stats.conversionRate.toFixed(1)}%</p>
-                </div>
-                <TrendingUp className="w-8 h-8 text-purple-500" />
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Conversión</p>
+                <p className="text-2xl font-bold">{stats?.conversion_rate.toFixed(2)}%</p>
               </div>
-            </Card>
-          </motion.div>
+              <Users className="h-8 w-8 text-purple-500" />
+            </div>
+          </Card>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <Card className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Comisiones</p>
-                  <p className="text-3xl font-bold">${stats.totalCommissions}</p>
-                </div>
-                <DollarSign className="w-8 h-8 text-yellow-500" />
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Comisiones</p>
+                <p className="text-2xl font-bold">${stats?.total_commissions.toFixed(2)}</p>
               </div>
-            </Card>
-          </motion.div>
+              <DollarSign className="h-8 w-8 text-yellow-500" />
+            </div>
+          </Card>
         </div>
 
-        {/* Main Content */}
-        <Tabs defaultValue="links" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="links">Enlaces de Afiliado</TabsTrigger>
-            <TabsTrigger value="sales">Historial de Ventas</TabsTrigger>
-            <TabsTrigger value="stats">Estadísticas</TabsTrigger>
+        <Tabs defaultValue="links" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="links">Mis Enlaces</TabsTrigger>
+            <TabsTrigger value="sales">Ventas</TabsTrigger>
+            <TabsTrigger value="profile">Perfil</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="links" className="space-y-6">
+          <TabsContent value="links">
             <Card className="p-6">
-              <h3 className="text-xl font-semibold mb-4">Generador de Enlaces</h3>
+              <h2 className="text-xl font-bold mb-4">Enlaces de Afiliado</h2>
               
-              {/* Pre-configured Links */}
-              <div className="space-y-4 mb-6">
-                <h4 className="font-medium">Enlaces Principales</h4>
-                
-                {[
-                  { path: '/', label: 'Página Principal' },
-                  { path: '/purchase', label: 'Página de Compra' },
-                  { path: '/register', label: 'Registro de Usuario' },
-                  { path: '/diagnose', label: 'Diagnóstico' }
-                ].map((link) => (
-                  <div key={link.path} className="flex items-center gap-2 p-3 border rounded-lg">
-                    <div className="flex-1">
-                      <p className="font-medium">{link.label}</p>
-                      <p className="text-sm text-muted-foreground break-all">
-                        {generateLink(link.path)}
-                      </p>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => copyToClipboard(generateLink(link.path))}
-                    >
-                      <Copy className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-
-              {/* Custom Link Generator */}
-              <div className="border-t pt-6">
-                <h4 className="font-medium mb-4">Crear Enlace Personalizado</h4>
-                <div className="flex gap-2">
-                  <div className="flex-1">
-                    <Label htmlFor="customPath">Ruta personalizada</Label>
-                    <Input
-                      id="customPath"
-                      value={customPath}
-                      onChange={(e) => setCustomPath(e.target.value)}
-                      placeholder="/ruta-personalizada"
-                    />
-                  </div>
-                  <div className="flex items-end">
-                    <Button
-                      onClick={() => copyToClipboard(generateLink(customPath))}
-                      disabled={!customPath}
-                    >
-                      <Copy className="w-4 h-4 mr-2" />
-                      Copiar
+              <div className="space-y-4">
+                <div>
+                  <Label>Código de afiliado</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input value={affiliate.affiliate_code} readOnly />
+                    <Button onClick={() => copyLink()}>
+                      <Copy className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
-                {customPath && (
-                  <p className="text-sm text-muted-foreground mt-2 break-all">
-                    Vista previa: {generateLink(customPath)}
-                  </p>
-                )}
+
+                <div>
+                  <Label>Link principal</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input value={`${window.location.origin}?ref=${affiliate.affiliate_code}`} readOnly />
+                    <Button onClick={() => copyLink()}>
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Link a compra</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Input value={`${window.location.origin}/purchase?ref=${affiliate.affiliate_code}`} readOnly />
+                    <Button onClick={() => copyLink('/purchase')}>
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
               </div>
             </Card>
           </TabsContent>
 
-          <TabsContent value="sales" className="space-y-6">
+          <TabsContent value="sales">
             <Card className="p-6">
-              <h3 className="text-xl font-semibold mb-4">Historial de Ventas</h3>
+              <h2 className="text-xl font-bold mb-4">Historial de Ventas</h2>
               
-              {sales.length === 0 ? (
-                <div className="text-center py-8">
-                  <BarChart3 className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">
-                    Aún no tienes ventas registradas
-                  </p>
-                </div>
-              ) : (
+              {stats?.recent_sales && stats.recent_sales.length > 0 ? (
                 <div className="space-y-4">
-                  {sales.map((sale) => (
-                    <div key={sale.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div>
-                        <p className="font-medium">{sale.userName}</p>
-                        <p className="text-sm text-muted-foreground">{sale.userEmail}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(sale.saleDate).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-semibold text-green-600">
-                          +${sale.commissionAmount}
-                        </p>
-                        <Badge variant={sale.status === 'paid' ? 'default' : 'secondary'}>
-                          {sale.status === 'paid' ? 'Pagado' : 'Pendiente'}
+                  {stats.recent_sales.map((sale: AffiliateSale) => (
+                    <div key={sale.id} className="border rounded-lg p-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-semibold">{sale.customer_name || sale.customer_email}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {new Date(sale.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <Badge variant={
+                          sale.commission_status === 'paid' ? 'default' :
+                          sale.commission_status === 'approved' ? 'secondary' : 'outline'
+                        }>
+                          {sale.commission_status === 'paid' ? 'Pagada' :
+                           sale.commission_status === 'approved' ? 'Aprobada' : 'Pendiente'}
                         </Badge>
+                      </div>
+                      <div className="mt-2 flex justify-between text-sm">
+                        <span>Venta: ${sale.sale_amount.toFixed(2)} {sale.currency}</span>
+                        <span className="font-semibold">Comisión: ${sale.commission_amount.toFixed(2)}</span>
                       </div>
                     </div>
                   ))}
                 </div>
+              ) : (
+                <p className="text-center text-muted-foreground py-8">
+                  Aún no tienes ventas registradas
+                </p>
               )}
             </Card>
           </TabsContent>
 
-          <TabsContent value="stats" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Resumen de Comisiones</h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Total Ganado:</span>
-                    <span className="font-semibold">${stats.totalCommissions}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Pendiente:</span>
-                    <span className="font-semibold text-yellow-600">${stats.pendingCommissions}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Pagado:</span>
-                    <span className="font-semibold text-green-600">${stats.paidCommissions}</span>
-                  </div>
+          <TabsContent value="profile">
+            <Card className="p-6">
+              <h2 className="text-xl font-bold mb-4">Información del Perfil</h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <Label>Nombre</Label>
+                  <Input value={affiliate.name} readOnly className="mt-2" />
                 </div>
-              </Card>
-
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Rendimiento</h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Tasa de Comisión:</span>
-                    <span className="font-semibold">{currentAffiliate.commissionRate}%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Clicks por Conversión:</span>
-                    <span className="font-semibold">
-                      {stats.totalConversions > 0 ? Math.round(stats.totalClicks / stats.totalConversions) : 0}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Valor Promedio:</span>
-                    <span className="font-semibold">
-                      ${stats.totalConversions > 0 ? Math.round(stats.totalCommissions / stats.totalConversions) : 0}
-                    </span>
-                  </div>
+                <div>
+                  <Label>Email</Label>
+                  <Input value={affiliate.email} readOnly className="mt-2" />
                 </div>
-              </Card>
-            </div>
+                <div>
+                  <Label>País</Label>
+                  <Input value={affiliate.country} readOnly className="mt-2" />
+                </div>
+                <div>
+                  <Label>Método de pago</Label>
+                  <Input 
+                    value={affiliate.payment_method === 'paypal' ? 'PayPal' : 'Mercado Pago'} 
+                    readOnly 
+                    className="mt-2" 
+                  />
+                </div>
+                {affiliate.payment_method === 'paypal' && affiliate.paypal_email && (
+                  <div>
+                    <Label>Email de PayPal</Label>
+                    <Input value={affiliate.paypal_email} readOnly className="mt-2" />
+                  </div>
+                )}
+                {affiliate.payment_method === 'mercadopago' && (
+                  <>
+                    {affiliate.mercadopago_alias && (
+                      <div>
+                        <Label>Alias de Mercado Pago</Label>
+                        <Input value={affiliate.mercadopago_alias} readOnly className="mt-2" />
+                      </div>
+                    )}
+                    {affiliate.mercadopago_cvu && (
+                      <div>
+                        <Label>CVU de Mercado Pago</Label>
+                        <Input value={affiliate.mercadopago_cvu} readOnly className="mt-2" />
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>

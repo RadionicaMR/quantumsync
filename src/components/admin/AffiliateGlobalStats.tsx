@@ -10,10 +10,29 @@ import {
   Clock,
   Target
 } from 'lucide-react';
-import { getGlobalAffiliateStats } from '@/utils/affiliateStorage';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 const AffiliateGlobalStats = () => {
-  const stats = getGlobalAffiliateStats();
+  const [stats, setStats] = useState<any>(null);
+
+  useEffect(() => {
+    loadStats();
+  }, []);
+
+  const loadStats = async () => {
+    const { data: affiliates } = await supabase.from('affiliates').select('*');
+    const { data: sales } = await supabase.from('affiliate_sales').select('*');
+    
+    setStats({
+      totalAffiliates: affiliates?.length || 0,
+      totalClicks: affiliates?.reduce((sum, a) => sum + (a.total_clicks || 0), 0) || 0,
+      totalSales: sales?.length || 0,
+      totalRevenue: sales?.reduce((sum, s) => sum + (s.sale_amount || 0), 0) || 0
+    });
+  };
+
+  if (!stats) return <div>Cargando...</div>;
 
   const statCards = [
     {
