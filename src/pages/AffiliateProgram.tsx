@@ -20,9 +20,9 @@ const AffiliateProgram = () => {
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           <Card className="p-6">
             <DollarSign className="h-12 w-12 text-green-500 mb-4" />
-            <h3 className="text-xl font-bold mb-2">30% de Comisión</h3>
+            <h3 className="text-xl font-bold mb-2">50% de Comisión</h3>
             <p className="text-muted-foreground">
-              Gana el 30% en cada venta que generes
+              Gana el 50% en cada venta que generes
             </p>
           </Card>
 
