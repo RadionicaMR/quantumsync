@@ -42,6 +42,13 @@
     --quantum-gold: 45 93% 58%;
     --quantum-white: 0 0% 100%;
     
+    /* Chart Colors */
+    --chart-1: 262 83% 58%;
+    --chart-2: 217 91% 60%;
+    --chart-3: 45 93% 58%;
+    --chart-4: 280 75% 85%;
+    --chart-5: 245 58% 51%;
+    
     /* iOS specific variables */
     --safe-area-inset-top: env(safe-area-inset-top, 0px);
     --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
@@ -84,6 +91,13 @@
     --quantum-blue: 217 91% 60%;
     --quantum-gold: 45 93% 58%;
     --quantum-white: 0 0% 100%;
+    
+    /* Chart Colors */
+    --chart-1: 262 83% 58%;
+    --chart-2: 217 91% 60%;
+    --chart-3: 45 93% 58%;
+    --chart-4: 280 75% 85%;
+    --chart-5: 245 58% 51%;
   }
 }
 
