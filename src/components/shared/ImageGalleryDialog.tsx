@@ -3,10 +3,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ImageGalleryDialogProps, GalleryCategory } from '@/types/gallery';
 import { useImageGallery } from '@/hooks/useImageGallery';
 import ImageGalleryGrid from './ImageGalleryGrid';
-import { Search } from 'lucide-react';
+import { Search, Folder } from 'lucide-react';
 
 const ImageGalleryDialog = ({
   isOpen,
@@ -16,7 +17,7 @@ const ImageGalleryDialog = ({
   maxSelection = 3,
   multiSelect = true
 }: ImageGalleryDialogProps) => {
-  const { images, loading, selectedCategory, setSelectedCategory } = useImageGallery();
+  const { images, loading, selectedCategory, setSelectedCategory, selectedFolder, setSelectedFolder, folders } = useImageGallery();
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -81,14 +82,35 @@ const ImageGalleryDialog = ({
             </TabsList>
           </Tabs>
 
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-            <Input
-              placeholder="Buscar por nombre, descripción o etiquetas..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input
+                placeholder="Buscar por nombre, descripción o etiquetas..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+
+            <div className="relative">
+              <Select value={selectedFolder} onValueChange={setSelectedFolder}>
+                <SelectTrigger className="w-full">
+                  <div className="flex items-center gap-2">
+                    <Folder className="w-4 h-4 text-muted-foreground" />
+                    <SelectValue placeholder="Todas las carpetas" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas las carpetas</SelectItem>
+                  {folders.map((folder) => (
+                    <SelectItem key={folder} value={folder}>
+                      {folder}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="flex-1 overflow-y-auto">
