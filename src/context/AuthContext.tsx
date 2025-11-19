@@ -45,7 +45,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const updateUserFromSession = (supabaseUser: SupabaseUser) => {
     const baseUser: User = {
       email: supabaseUser.email || '',
-      name: supabaseUser.user_metadata?.full_name || supabaseUser.email || '',
+      name: supabaseUser.user_metadata?.full_name || supabaseUser.email?.split('@')[0] || '',
       isAdmin: false,
       userId: supabaseUser.id,
     };
@@ -54,19 +54,29 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.setItem('user', JSON.stringify(baseUser));
     console.log('[AUTH] Base user stored in context:', baseUser);
 
-    // Fetch role in background without blocking login or auth state updates
-    fetchUserRole(supabaseUser.id)
-      .then((isAdmin) => {
+    // Fetch user profile and role in background
+    Promise.all([
+      fetchUserRole(supabaseUser.id),
+      supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', supabaseUser.id)
+        .single()
+    ])
+      .then(([isAdmin, profileResult]) => {
         setUser((prev) => {
           if (!prev || prev.userId !== supabaseUser.id) return prev;
-          const updatedUser = { ...prev, isAdmin };
+          
+          const fullName = profileResult.data?.full_name || prev.name;
+          const updatedUser = { ...prev, name: fullName, isAdmin };
+          
           localStorage.setItem('user', JSON.stringify(updatedUser));
-          console.log('[AUTH] Updated user with role:', updatedUser);
+          console.log('[AUTH] Updated user with profile and role:', updatedUser);
           return updatedUser;
         });
       })
       .catch((error) => {
-        console.error('[AUTH] Error fetching role in background:', error);
+        console.error('[AUTH] Error fetching profile/role in background:', error);
       });
   };
 
