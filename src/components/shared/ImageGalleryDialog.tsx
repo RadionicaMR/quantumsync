@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +20,13 @@ const ImageGalleryDialog = ({
   const { images, loading, selectedCategory, setSelectedCategory, selectedFolder, setSelectedFolder, folders } = useImageGallery();
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Automatically set the category when dialog opens
+  useEffect(() => {
+    if (isOpen && category) {
+      setSelectedCategory(category);
+    }
+  }, [isOpen, category, setSelectedCategory]);
 
   const handleImageSelect = (imageUrl: string) => {
     if (multiSelect) {
