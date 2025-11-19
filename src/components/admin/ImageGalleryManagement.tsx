@@ -25,6 +25,9 @@ const ImageGalleryManagement = () => {
   const { images, loading, refreshGallery } = useImageGallery();
   const [uploading, setUploading] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [bulkUploading, setBulkUploading] = useState(false);
+  const [bulkFiles, setBulkFiles] = useState<File[]>([]);
+  const [bulkCategory, setBulkCategory] = useState<'radionic' | 'pattern' | 'receptor' | 'chakra'>('radionic');
   
   const [formData, setFormData] = useState({
     name: '',
@@ -107,6 +110,85 @@ const ImageGalleryManagement = () => {
     }
   };
 
+  const handleBulkFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const validFiles = files.filter(file => {
+      if (!file.type.startsWith('image/')) {
+        toast.error(`${file.name} no es una imagen válida`);
+        return false;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(`${file.name} excede el límite de 5MB`);
+        return false;
+      }
+      return true;
+    });
+    
+    setBulkFiles(validFiles);
+    toast.success(`${validFiles.length} imágenes seleccionadas`);
+  };
+
+  const handleBulkUpload = async () => {
+    if (bulkFiles.length === 0) {
+      toast.error('Por favor selecciona imágenes para subir');
+      return;
+    }
+
+    setBulkUploading(true);
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const file of bulkFiles) {
+      try {
+        // Usar el nombre del archivo (sin extensión) como nombre de la imagen
+        const fileName = file.name.replace(/\.[^/.]+$/, ''); // Remover extensión
+        const fileExt = file.name.split('.').pop();
+        const storageFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `${bulkCategory}/${storageFileName}`;
+
+        // Subir a Storage
+        const { error: uploadError } = await supabase.storage
+          .from('image-gallery')
+          .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        // Insertar metadatos
+        const { error: insertError } = await supabase
+          .from('image_gallery')
+          .insert({
+            name: fileName,
+            description: null,
+            category: bulkCategory,
+            file_path: filePath,
+            tags: null
+          });
+
+        if (insertError) throw insertError;
+        successCount++;
+      } catch (error) {
+        console.error(`Error uploading ${file.name}:`, error);
+        errorCount++;
+      }
+    }
+
+    setBulkUploading(false);
+    
+    if (successCount > 0) {
+      toast.success(`${successCount} imágenes subidas exitosamente`);
+      refreshGallery();
+    }
+    
+    if (errorCount > 0) {
+      toast.error(`${errorCount} imágenes fallaron al subir`);
+    }
+
+    // Reset
+    setBulkFiles([]);
+    const fileInput = document.getElementById('bulk-upload') as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
+  };
+
   const handleDelete = async (image: typeof images[0]) => {
     try {
       // Eliminar de Storage
@@ -136,6 +218,82 @@ const ImageGalleryManagement = () => {
 
   return (
     <div className="space-y-6">
+      {/* Carga Masiva */}
+      <Card className="p-6 bg-gradient-to-br from-purple-500/10 to-blue-500/10 border-purple-500/30">
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <Upload className="h-5 w-5" />
+          Carga Masiva de Imágenes
+        </h3>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="bulk-category">Categoría para todas las imágenes *</Label>
+            <Select
+              value={bulkCategory}
+              onValueChange={(val) => setBulkCategory(val as any)}
+              disabled={bulkUploading}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="radionic">Gráfico Radiónico</SelectItem>
+                <SelectItem value="pattern">Patrón</SelectItem>
+                <SelectItem value="receptor">Receptor</SelectItem>
+                <SelectItem value="chakra">Chakra</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div>
+            <Label htmlFor="bulk-upload">Seleccionar múltiples imágenes</Label>
+            <Input
+              id="bulk-upload"
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleBulkFileChange}
+              disabled={bulkUploading}
+              className="cursor-pointer"
+            />
+            {bulkFiles.length > 0 && (
+              <div className="mt-2 p-3 bg-background/50 rounded-md">
+                <p className="text-sm font-medium mb-2">
+                  {bulkFiles.length} imágenes seleccionadas:
+                </p>
+                <div className="max-h-40 overflow-y-auto space-y-1">
+                  {bulkFiles.map((file, idx) => (
+                    <p key={idx} className="text-xs text-muted-foreground">
+                      • {file.name} ({(file.size / 1024).toFixed(1)} KB)
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <Button 
+            onClick={handleBulkUpload} 
+            disabled={bulkUploading || bulkFiles.length === 0}
+            className="w-full"
+          >
+            {bulkUploading ? (
+              <>Subiendo {bulkFiles.length} imágenes...</>
+            ) : (
+              <>
+                <Upload className="mr-2 h-4 w-4" />
+                Subir {bulkFiles.length > 0 ? `${bulkFiles.length} Imágenes` : 'Imágenes'}
+              </>
+            )}
+          </Button>
+          
+          <p className="text-xs text-muted-foreground">
+            💡 Los nombres de las imágenes se tomarán de los nombres de archivo (sin extensión). 
+            Asegúrate de que los archivos tengan nombres descriptivos antes de subirlos.
+          </p>
+        </div>
+      </Card>
+
+      {/* Subir imagen individual */}
       <Card className="p-6">
         <h3 className="text-lg font-semibold mb-4">Subir Nueva Imagen</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
