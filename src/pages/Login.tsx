@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,15 +13,11 @@ const Login = () => {
   const [showRecovery, setShowRecovery] = useState(false);
 
   // Redirigir si ya está autenticado
-  if (isAuthenticated) {
-    // Redirigir a admin si es administrador, de lo contrario al diagnóstico
-    if (user?.isAdmin) {
-      navigate('/admin');
-    } else {
-      navigate('/diagnose');
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      navigate(user?.isAdmin ? '/admin' : '/diagnose', { replace: true });
     }
-    return null;
-  }
+  }, [isAuthenticated, user?.isAdmin, navigate]);
 
   const toggleRecoveryMode = () => {
     setShowRecovery(!showRecovery);
@@ -39,7 +34,6 @@ const Login = () => {
               <TabsList className="grid w-full grid-cols-1 mb-6">
                 <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
               </TabsList>
-              
               <TabsContent value="login">
                 <LoginForm onToggleRecovery={toggleRecoveryMode} />
               </TabsContent>

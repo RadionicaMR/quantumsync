@@ -13,6 +13,14 @@ const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps)
   const { user, loading, isAuthenticated } = useAuth();
   const location = useLocation();
 
+  console.log('[ProtectedRoute] state', {
+    loading,
+    isAuthenticated,
+    user,
+    requireAdmin,
+    path: location.pathname,
+  });
+
   if (loading) {
     // Mostramos un spinner más atractivo mientras se verifica la autenticación
     return (
