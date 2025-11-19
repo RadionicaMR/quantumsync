@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAffiliateTracking } from '@/hooks/useAffiliateTracking';
 import { Copy, LogOut, TrendingUp, MousePointer, DollarSign, Users } from 'lucide-react';
 import type { Affiliate, AffiliateSale, AffiliateStats } from '@/types/affiliate';
+import EditAffiliateProfileForm from '@/components/affiliate/EditAffiliateProfileForm';
 
 const AffiliateDashboard = () => {
   const navigate = useNavigate();
@@ -263,56 +264,41 @@ const AffiliateDashboard = () => {
           </TabsContent>
 
           <TabsContent value="profile">
-            <Card className="p-6">
-              <h2 className="text-xl font-bold mb-4">Información del Perfil</h2>
-              
-              <div className="space-y-4">
-                <div>
-                  <Label>Nombre</Label>
-                  <Input value={affiliate.name} readOnly className="mt-2" />
-                </div>
-                <div>
-                  <Label>Email</Label>
-                  <Input value={affiliate.email} readOnly className="mt-2" />
-                </div>
-                <div>
-                  <Label>País</Label>
-                  <Input value={affiliate.country} readOnly className="mt-2" />
-                </div>
-                
-                <div className="space-y-3 pt-4 border-t">
-                  <h4 className="font-semibold text-sm">Métodos de Pago Configurados</h4>
-                  
-                  {affiliate.paypal_email ? (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Información de la Cuenta</h3>
+                <Card className="p-6">
+                  <div className="space-y-4">
                     <div>
-                      <Label>Email de PayPal</Label>
-                      <Input value={affiliate.paypal_email} readOnly className="mt-2" />
+                      <Label>Email de la cuenta</Label>
+                      <Input value={affiliate.email} readOnly className="mt-2 bg-muted" />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Este es el email con el que iniciaste sesión y no se puede cambiar
+                      </p>
                     </div>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">PayPal: No configurado</p>
-                  )}
-
-                  {affiliate.mercadopago_alias || affiliate.mercadopago_cvu ? (
-                    <>
-                      {affiliate.mercadopago_alias && (
-                        <div>
-                          <Label>Alias de Mercado Pago</Label>
-                          <Input value={affiliate.mercadopago_alias} readOnly className="mt-2" />
-                        </div>
-                      )}
-                      {affiliate.mercadopago_cvu && (
-                        <div>
-                          <Label>CVU de Mercado Pago</Label>
-                          <Input value={affiliate.mercadopago_cvu} readOnly className="mt-2" />
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">Mercado Pago: No configurado</p>
-                  )}
-                </div>
+                    <div>
+                      <Label>Código de Afiliado</Label>
+                      <Input value={affiliate.affiliate_code} readOnly className="mt-2 bg-muted" />
+                    </div>
+                    <div>
+                      <Label>Tasa de Comisión</Label>
+                      <Input value={`${affiliate.commission_rate}%`} readOnly className="mt-2 bg-muted" />
+                    </div>
+                  </div>
+                </Card>
               </div>
-            </Card>
+
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Editar Datos de Pago</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Actualiza tu información personal y los datos de pago para recibir tus comisiones
+                </p>
+                <EditAffiliateProfileForm 
+                  affiliate={affiliate} 
+                  onSuccess={loadAffiliateData}
+                />
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
