@@ -3,8 +3,7 @@ import { Card } from "@/components/ui/card";
 import TreatmentVisualizer from "../TreatmentVisualizer";
 import TreatmentActions from "../TreatmentActions";
 import SettingsToggles from "../SettingsToggles";
-import SingleImageUploader from "../image-uploader/SingleImageUploader";
-import MultipleImagesGrid from "../image-uploader/MultipleImagesGrid";
+import ImageUploader from "../image-uploader/ImageUploader";
 import AudioSubliminalControls from "@/components/AudioSubliminalControls";
 
 interface TreatmentRightPanelProps {
@@ -141,123 +140,32 @@ const TreatmentRightPanel = ({
         <h3 className="text-xl font-semibold mb-4">Imágenes Terapéuticas</h3>
         
         <div className="mb-6">
-          <h4 className="text-lg mb-2">Imágenes Radiónicas</h4>
-          <SingleImageUploader 
-            image={radionicImage} 
-            onImageChange={setRadionicImage}
-            isDisabled={isPlaying}
-            placeholder="Imagen radiónica"
-            inputId="radionic-image"
+          <ImageUploader
+            title="Gráfico RADIÓNICO"
+            subtitle="Patrones de tratamiento"
+            image={radionicImage}
+            setImage={setRadionicImage}
+            images={radionicImages}
+            setImages={setRadionicImages}
+            isPlaying={isPlaying}
+            maxImages={3}
+            category="radionic"
           />
-          
-          <div className="mt-2">
-            <MultipleImagesGrid
-              images={radionicImages}
-              onRemoveImage={(index) => {
-                const newImages = [...radionicImages];
-                newImages.splice(index, 1);
-                setRadionicImages(newImages);
-              }}
-              onAddImageClick={() => {
-                document.getElementById('radionic-images-input')?.click();
-              }}
-              isDisabled={isPlaying}
-              maxImages={3}
-              onImageAdded={(image) => {
-                setRadionicImages([...radionicImages, image]);
-              }}
-            />
-          </div>
         </div>
         
         <div>
-          <h4 className="text-lg mb-2">Imágenes del Receptor</h4>
-          <SingleImageUploader 
-            image={receptorImage} 
-            onImageChange={setReceptorImage}
-            isDisabled={isPlaying}
-            placeholder="Imagen del receptor"
-            inputId="receptor-image"
+          <ImageUploader
+            title="Imagen del RECEPTOR"
+            subtitle="Sujeto del tratamiento"
+            image={receptorImage}
+            setImage={setReceptorImage}
+            images={receptorImages}
+            setImages={setReceptorImages}
+            isPlaying={isPlaying}
+            maxImages={3}
+            category="receptor"
           />
-          
-          <div className="mt-2">
-            <MultipleImagesGrid
-              images={receptorImages}
-              onRemoveImage={(index) => {
-                const newImages = [...receptorImages];
-                newImages.splice(index, 1);
-                setReceptorImages(newImages);
-              }}
-              onAddImageClick={() => {
-                document.getElementById('receptor-images-input')?.click();
-              }}
-              isDisabled={isPlaying}
-              maxImages={3}
-              onImageAdded={(image) => {
-                setReceptorImages([...receptorImages, image]);
-              }}
-            />
-          </div>
         </div>
-        
-        {/* Hidden file inputs for multiple image uploads */}
-        <input
-          id="radionic-images-input"
-          type="file"
-          multiple
-          accept="image/*"
-          className="hidden"
-          onChange={(e) => {
-            const files = e.target.files;
-            if (files && files.length > 0) {
-              const filesToProcess = Array.from(files).slice(0, 3 - radionicImages.length);
-              
-              Promise.all(filesToProcess.map(file => {
-                return new Promise<string>((resolve) => {
-                  const reader = new FileReader();
-                  reader.onloadend = () => {
-                    resolve(reader.result as string);
-                  };
-                  reader.readAsDataURL(file);
-                });
-              })).then(newImages => {
-                const combined = [...radionicImages, ...newImages];
-                const limitedImages = combined.slice(0, 3);
-                setRadionicImages(limitedImages);
-              });
-            }
-          }}
-          disabled={isPlaying}
-        />
-        
-        <input
-          id="receptor-images-input"
-          type="file"
-          multiple
-          accept="image/*"
-          className="hidden"
-          onChange={(e) => {
-            const files = e.target.files;
-            if (files && files.length > 0) {
-              const filesToProcess = Array.from(files).slice(0, 3 - receptorImages.length);
-              
-              Promise.all(filesToProcess.map(file => {
-                return new Promise<string>((resolve) => {
-                  const reader = new FileReader();
-                  reader.onloadend = () => {
-                    resolve(reader.result as string);
-                  };
-                  reader.readAsDataURL(file);
-                });
-              })).then(newImages => {
-                const combined = [...receptorImages, ...newImages];
-                const limitedImages = combined.slice(0, 3);
-                setReceptorImages(limitedImages);
-              });
-            }
-          }}
-          disabled={isPlaying}
-        />
       </Card>
       
       {/* Audio subliminal section */}
