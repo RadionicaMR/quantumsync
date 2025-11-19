@@ -1,8 +1,9 @@
 
-import React, { useRef } from 'react';
-import { Upload, Trash2 } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { Upload, Trash2, Library } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import MultipleImagesGrid from '@/components/treatment/image-uploader/MultipleImagesGrid';
+import ImageGalleryDialog from '@/components/shared/ImageGalleryDialog';
 
 interface ImageUploaderProps {
   label: string;
@@ -29,6 +30,7 @@ const ImageUploader = ({
   maxImages = 3
 }: ImageUploaderProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [galleryOpen, setGalleryOpen] = useState(false);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -85,9 +87,29 @@ const ImageUploader = ({
     }
   };
 
+  const handleGallerySelect = (selectedImages: string[]) => {
+    if (isMultiple) {
+      const combined = [...images, ...selectedImages];
+      const limitedImages = combined.slice(0, maxImages);
+      setImages(limitedImages);
+    } else if (selectedImages.length > 0) {
+      setImage(selectedImages[0]);
+    }
+  };
+
   return (
     <>
-      <Label className="mb-2 block">{label}</Label>
+      <div className="flex items-center justify-between mb-2">
+        <Label>{label}</Label>
+        <button
+          onClick={() => setGalleryOpen(true)}
+          disabled={isDisabled}
+          className="flex items-center gap-1 px-2 py-1 text-xs bg-primary/10 hover:bg-primary/20 text-primary rounded-md transition-colors disabled:opacity-50"
+        >
+          <Library className="w-3 h-3" />
+          Galería
+        </button>
+      </div>
       {isMultiple ? (
         // Multiple images mode
         <div className="border-2 border-dashed border-border rounded-xl p-4">
@@ -176,6 +198,14 @@ const ImageUploader = ({
           />
         </div>
       )}
+
+      <ImageGalleryDialog
+        isOpen={galleryOpen}
+        onClose={() => setGalleryOpen(false)}
+        onSelect={handleGallerySelect}
+        maxSelection={isMultiple ? maxImages : 1}
+        multiSelect={isMultiple}
+      />
     </>
   );
 };

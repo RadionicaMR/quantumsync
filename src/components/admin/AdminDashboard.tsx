@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { useAdminData } from '@/hooks/useAdminData';
 import { useNavigate } from 'react-router-dom';
-import { Users, DollarSign, TrendingUp, LogOut, ShoppingCart, BarChart3 } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, LogOut, ShoppingCart, BarChart3, Image } from 'lucide-react';
 import AffiliatesManagementTab from './AffiliatesManagementTab';
 import AffiliateStatsTab from './AffiliateStatsTab';
 import SalesManagementTab from './SalesManagementTab';
+import ImageGalleryManagement from './ImageGalleryManagement';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -96,10 +97,14 @@ const AdminDashboard = () => {
         transition={{ duration: 0.3, delay: 0.2 }}
       >
         <Tabs defaultValue="sales" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="sales">Gestión de Ventas</TabsTrigger>
             <TabsTrigger value="affiliates">Gestión de Afiliados</TabsTrigger>
             <TabsTrigger value="affiliate-stats">Estadísticas Globales</TabsTrigger>
+            <TabsTrigger value="gallery">
+              <Image className="w-4 h-4 mr-2" />
+              Galería de Imágenes
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="sales">
@@ -120,6 +125,10 @@ const AdminDashboard = () => {
             <AffiliateStatsTab
               onAffiliateUpdate={reloadData}
             />
+          </TabsContent>
+
+          <TabsContent value="gallery">
+            <ImageGalleryManagement />
           </TabsContent>
         </Tabs>
       </motion.div>
