@@ -7,8 +7,29 @@ export const useImageGallery = () => {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<GalleryCategory>('all');
+  const [selectedFolder, setSelectedFolder] = useState<string>('all');
+  const [folders, setFolders] = useState<string[]>([]);
 
-  const fetchGalleryImages = async (category?: GalleryCategory) => {
+  const fetchFolders = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('image_gallery')
+        .select('folder_name')
+        .eq('is_active', true)
+        .not('folder_name', 'is', null);
+      
+      if (error) throw error;
+      
+      if (data) {
+        const uniqueFolders = [...new Set(data.map(item => item.folder_name).filter(Boolean) as string[])];
+        setFolders(uniqueFolders.sort());
+      }
+    } catch (error) {
+      console.error('Error fetching folders:', error);
+    }
+  };
+
+  const fetchGalleryImages = async (category?: GalleryCategory, folderFilter?: string) => {
     setLoading(true);
     try {
       let query = supabase
@@ -18,6 +39,10 @@ export const useImageGallery = () => {
       
       if (category && category !== 'all') {
         query = query.eq('category', category);
+      }
+
+      if (folderFilter && folderFilter !== 'all') {
+        query = query.eq('folder_name', folderFilter);
       }
       
       const { data, error } = await query.order('created_at', { ascending: false });
@@ -42,15 +67,22 @@ export const useImageGallery = () => {
   };
 
   useEffect(() => {
-    fetchGalleryImages(selectedCategory);
-  }, [selectedCategory]);
+    fetchFolders();
+  }, []);
+
+  useEffect(() => {
+    fetchGalleryImages(selectedCategory, selectedFolder);
+  }, [selectedCategory, selectedFolder]);
 
   return {
     images,
     loading,
     selectedCategory,
     setSelectedCategory,
+    selectedFolder,
+    setSelectedFolder,
+    folders,
     fetchGalleryImages,
-    refreshGallery: () => fetchGalleryImages(selectedCategory)
+    refreshGallery: () => fetchGalleryImages(selectedCategory, selectedFolder)
   };
 };
