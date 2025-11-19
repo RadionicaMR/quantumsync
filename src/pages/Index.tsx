@@ -8,6 +8,7 @@ import QuantumFoundationSection from '@/components/home/QuantumFoundationSection
 import NewTestimonialsSection from '@/components/home/NewTestimonialsSection';
 import FAQSection from '@/components/home/FAQSection';
 import PricingSection from '@/components/home/PricingSection';
+import AffiliateSection from '@/components/home/AffiliateSection';
 import FinalClosingSection from '@/components/home/FinalClosingSection';
 import CTAButton from '@/components/home/CTAButton';
 
@@ -50,7 +51,10 @@ const Index = () => {
       {/* 9. Pricing/CTA Section */}
       <PricingSection />
 
-      {/* 10. Final Closing Section */}
+      {/* 10. Affiliate Program Section */}
+      <AffiliateSection />
+
+      {/* 11. Final Closing Section */}
       <FinalClosingSection />
     </Layout>
   );
