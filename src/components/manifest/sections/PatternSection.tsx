@@ -49,6 +49,7 @@ const PatternSection = memo(({
             isMultiple={true}
             label="Imágenes de Patrón"
             maxImages={10}
+            category="pattern"
           />
         </div>
       </div>

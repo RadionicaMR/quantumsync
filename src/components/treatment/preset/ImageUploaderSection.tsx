@@ -43,6 +43,7 @@ const ImageUploaderSection = ({
         images={receptorImages}
         setImages={setReceptorImages}
         isPlaying={disabled}
+        category="receptor"
       />
       
       <ImageUploader
@@ -53,6 +54,7 @@ const ImageUploaderSection = ({
         images={radionicImages}
         setImages={setRadionicImages}
         isPlaying={disabled}
+        category="radionic"
       />
     </div>
   );
