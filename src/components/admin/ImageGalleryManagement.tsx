@@ -124,8 +124,23 @@ const ImageGalleryManagement = () => {
       return true;
     });
     
+    // Extract folder names from file paths
+    const folders = new Set(
+      validFiles
+        .map(file => {
+          const path = (file as any).webkitRelativePath || file.name;
+          const parts = path.split('/');
+          return parts.length > 1 ? parts[0] : null;
+        })
+        .filter(Boolean)
+    );
+    
     setBulkFiles(validFiles);
-    toast.success(`${validFiles.length} imágenes seleccionadas`);
+    if (folders.size > 0) {
+      toast.success(`${validFiles.length} imágenes de ${folders.size} carpeta(s) seleccionadas`);
+    } else {
+      toast.success(`${validFiles.length} imágenes seleccionadas`);
+    }
   };
 
   const handleBulkUpload = async () => {
@@ -140,28 +155,33 @@ const ImageGalleryManagement = () => {
 
     for (const file of bulkFiles) {
       try {
-        // Usar el nombre del archivo (sin extensión) como nombre de la imagen
+        // Extraer el nombre de la carpeta y el nombre del archivo
+        const filePath = (file as any).webkitRelativePath || file.name;
+        const pathParts = filePath.split('/');
+        const folderName = pathParts.length > 1 ? pathParts[0] : null;
         const fileName = file.name.replace(/\.[^/.]+$/, ''); // Remover extensión
+        
         const fileExt = file.name.split('.').pop();
         const storageFileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-        const filePath = `${bulkCategory}/${storageFileName}`;
+        const storagePath = `${bulkCategory}/${storageFileName}`;
 
         // Subir a Storage
         const { error: uploadError } = await supabase.storage
           .from('image-gallery')
-          .upload(filePath, file);
+          .upload(storagePath, file);
 
         if (uploadError) throw uploadError;
 
-        // Insertar metadatos
+        // Insertar metadatos incluyendo nombre de carpeta
         const { error: insertError } = await supabase
           .from('image_gallery')
           .insert({
             name: fileName,
             description: null,
             category: bulkCategory,
-            file_path: filePath,
-            tags: null
+            file_path: storagePath,
+            tags: folderName ? [folderName] : null,
+            folder_name: folderName
           });
 
         if (insertError) throw insertError;
@@ -245,15 +265,15 @@ const ImageGalleryManagement = () => {
           </div>
           
           <div>
-            <Label htmlFor="bulk-upload">Seleccionar múltiples imágenes</Label>
+            <Label htmlFor="bulk-upload">Seleccionar carpeta con imágenes</Label>
             <Input
               id="bulk-upload"
               type="file"
               accept="image/*"
-              multiple
               onChange={handleBulkFileChange}
               disabled={bulkUploading}
               className="cursor-pointer"
+              {...({ webkitdirectory: "", directory: "" } as any)}
             />
             {bulkFiles.length > 0 && (
               <div className="mt-2 p-3 bg-background/50 rounded-md">
@@ -287,8 +307,7 @@ const ImageGalleryManagement = () => {
           </Button>
           
           <p className="text-xs text-muted-foreground">
-            💡 Los nombres de las imágenes se tomarán de los nombres de archivo (sin extensión). 
-            Asegúrate de que los archivos tengan nombres descriptivos antes de subirlos.
+            💡 Selecciona una carpeta completa. Los nombres de las imágenes se tomarán de los archivos y el nombre de la carpeta se guardará para facilitar la búsqueda.
           </p>
         </div>
       </Card>
