@@ -16,6 +16,7 @@ interface ImageUploaderProps {
   images?: string[];
   setImages?: (images: string[]) => void;
   maxImages?: number;
+  category?: 'radionic' | 'pattern' | 'receptor' | 'chakra' | 'all';
 }
 
 const ImageUploader = ({
@@ -27,7 +28,8 @@ const ImageUploader = ({
   isMultiple = false,
   images = [],
   setImages = () => {},
-  maxImages = 3
+  maxImages = 3,
+  category = 'all'
 }: ImageUploaderProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [galleryOpen, setGalleryOpen] = useState(false);
@@ -205,6 +207,7 @@ const ImageUploader = ({
         onSelect={handleGallerySelect}
         maxSelection={isMultiple ? maxImages : 1}
         multiSelect={isMultiple}
+        category={category}
       />
     </>
   );

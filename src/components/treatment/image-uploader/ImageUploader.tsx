@@ -15,6 +15,7 @@ interface ImageUploaderProps {
   setImages: (images: string[]) => void;
   isPlaying: boolean;
   maxImages?: number;
+  category?: 'radionic' | 'pattern' | 'receptor' | 'chakra' | 'all';
 }
 
 const ImageUploader = ({
@@ -25,7 +26,8 @@ const ImageUploader = ({
   images,
   setImages,
   isPlaying,
-  maxImages = 3
+  maxImages = 3,
+  category = 'all'
 }: ImageUploaderProps) => {
   const [activeTab, setActiveTab] = useState<'single' | 'multiple' | 'gallery'>('multiple');
   const multipleFileInputRef = useRef<HTMLInputElement>(null);
@@ -186,6 +188,7 @@ const ImageUploader = ({
         onSelect={handleGallerySelect}
         maxSelection={maxImages}
         multiSelect={true}
+        category={category}
       />
     </Card>
   );

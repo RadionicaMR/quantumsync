@@ -34,6 +34,7 @@ const ImageGrid = ({
         setImages={setRadionicImages}
         isPlaying={isPlaying}
         maxImages={3}
+        category="radionic"
       />
       
       <ImageUploader
@@ -45,6 +46,7 @@ const ImageGrid = ({
         setImages={setReceptorImages}
         isPlaying={isPlaying}
         maxImages={3}
+        category="receptor"
       />
     </div>
   );

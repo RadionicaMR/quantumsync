@@ -48,6 +48,7 @@ const ReceptorSection = memo(({
             isMultiple={true}
             label="Imágenes del Receptor"
             maxImages={10}
+            category="receptor"
           />
         </div>
       </div>
