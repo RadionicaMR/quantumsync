@@ -258,7 +258,7 @@ const AffiliateRegister = () => {
               <li>✓ 50% de comisión en cada venta</li>
               <li>✓ Trackeo de 30 días por cookie</li>
               <li>✓ Dashboard completo con estadísticas</li>
-              <li>✓ Pagos automáticos mensuales</li>
+              <li>✓ Pagos cada lunes de la semana</li>
             </ul>
           </div>
         </Card>
