@@ -9,62 +9,59 @@ export const useAffiliateTracking = () => {
 
   useEffect(() => {
     const trackAffiliateClick = async () => {
-      // Check URL for ref parameter
+      // Check URL for ref parameter first
       const urlParams = new URLSearchParams(window.location.search);
-      const refCode = urlParams.get('ref');
-
-      if (refCode) {
-        // Save to cookie
-        setAffiliateCookie(refCode);
-
-        // Get affiliate by code
-        const { data: affiliate } = await supabase
-          .from('affiliates')
-          .select('id')
-          .eq('affiliate_code', refCode)
-          .eq('status', 'active')
-          .maybeSingle();
-
-        if (affiliate) {
-          // Track the click
-          const clientInfo = getClientInfo();
-          
-          await supabase.from('affiliate_clicks').insert({
-            affiliate_id: affiliate.id,
-            ip_address: undefined, // Will be captured server-side if needed
-            ...clientInfo
-          });
-
-          // Update click count and get affiliate name
-          const { data: currentAffiliate } = await supabase
-            .from('affiliates')
-            .select('total_clicks, name')
-            .eq('id', affiliate.id)
-            .single();
-
-          if (currentAffiliate) {
-            await supabase
-              .from('affiliates')
-              .update({ total_clicks: (currentAffiliate.total_clicks || 0) + 1 })
-              .eq('id', affiliate.id);
-            
-            setAffiliateName(currentAffiliate.name);
-          }
-        }
-      }
+      const urlRefCode = urlParams.get('ref');
       
-      // Check if there's already an affiliate cookie and get the name
-      const existingRefCode = getAffiliateCookie();
-      if (existingRefCode && !affiliateName) {
+      let refCodeToUse = urlRefCode;
+      let shouldTrackClick = false;
+
+      if (urlRefCode) {
+        // Save to cookie if coming from URL
+        setAffiliateCookie(urlRefCode);
+        shouldTrackClick = true;
+      } else {
+        // Check existing cookie
+        refCodeToUse = getAffiliateCookie();
+      }
+
+      // If we have a ref code (from URL or cookie), get affiliate info
+      if (refCodeToUse) {
         const { data: affiliate } = await supabase
           .from('affiliates')
-          .select('name')
-          .eq('affiliate_code', existingRefCode)
+          .select('id, name')
+          .eq('affiliate_code', refCodeToUse)
           .eq('status', 'active')
           .maybeSingle();
-        
+
         if (affiliate) {
+          // Set the affiliate name
           setAffiliateName(affiliate.name);
+
+          // Only track click if this is a new visit from URL
+          if (shouldTrackClick) {
+            const clientInfo = getClientInfo();
+            
+            await supabase.from('affiliate_clicks').insert({
+              affiliate_id: affiliate.id,
+              ip_address: undefined,
+              ...clientInfo
+            });
+
+            // Update click count
+            const { data: currentAffiliate } = await supabase
+              .from('affiliates')
+              .select('total_clicks')
+              .eq('id', affiliate.id)
+              .single();
+
+            if (currentAffiliate) {
+              await supabase
+                .from('affiliates')
+                .update({ total_clicks: (currentAffiliate.total_clicks || 0) + 1 })
+                .eq('id', affiliate.id);
+            }
+          }
         }
       }
     };
