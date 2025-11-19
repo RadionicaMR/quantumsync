@@ -42,40 +42,52 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const updateUserFromSession = async (supabaseUser: SupabaseUser) => {
-    const isAdmin = await fetchUserRole(supabaseUser.id);
-    
-    const userData: User = {
+  const updateUserFromSession = (supabaseUser: SupabaseUser) => {
+    const baseUser: User = {
       email: supabaseUser.email || '',
       name: supabaseUser.user_metadata?.full_name || supabaseUser.email || '',
-      isAdmin,
-      userId: supabaseUser.id
+      isAdmin: false,
+      userId: supabaseUser.id,
     };
-    
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+
+    setUser(baseUser);
+    localStorage.setItem('user', JSON.stringify(baseUser));
+    console.log('[AUTH] Base user stored in context:', baseUser);
+
+    // Fetch role in background without blocking login or auth state updates
+    fetchUserRole(supabaseUser.id)
+      .then((isAdmin) => {
+        setUser((prev) => {
+          if (!prev || prev.userId !== supabaseUser.id) return prev;
+          const updatedUser = { ...prev, isAdmin };
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          console.log('[AUTH] Updated user with role:', updatedUser);
+          return updatedUser;
+        });
+      })
+      .catch((error) => {
+        console.error('[AUTH] Error fetching role in background:', error);
+      });
   };
 
   useEffect(() => {
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Listen for auth changes FIRST
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         updateUserFromSession(session.user);
+      } else {
+        setUser(null);
+        localStorage.removeItem('user');
       }
       setLoading(false);
     });
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      // Update state synchronously first
+    // Then check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
-        // Defer Supabase calls with setTimeout to prevent deadlock
-        setTimeout(() => {
-          updateUserFromSession(session.user);
-        }, 0);
-      } else {
-        setUser(null);
-        localStorage.removeItem('user');
+        updateUserFromSession(session.user);
       }
       setLoading(false);
     });
@@ -109,7 +121,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
 
       console.log('[LOGIN] Authentication successful');
-      await updateUserFromSession(data.user);
+      updateUserFromSession(data.user);
       return true;
     } catch (error) {
       console.error('[LOGIN] Exception during login:', error);
@@ -212,7 +224,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       // Auto-login after registration
       if (data.session) {
-        await updateUserFromSession(data.user);
+        updateUserFromSession(data.user);
       }
       
       return true;
