@@ -66,9 +66,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      // Update state synchronously first
       if (session?.user) {
-        await updateUserFromSession(session.user);
+        // Defer Supabase calls with setTimeout to prevent deadlock
+        setTimeout(() => {
+          updateUserFromSession(session.user);
+        }, 0);
       } else {
         setUser(null);
         localStorage.removeItem('user');

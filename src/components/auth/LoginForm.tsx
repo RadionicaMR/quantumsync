@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AlertCircle, Mail, Lock, LogIn } from 'lucide-react';
@@ -11,8 +12,9 @@ interface LoginFormProps {
 }
 
 const LoginForm = ({ onToggleRecovery }: LoginFormProps) => {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -32,8 +34,12 @@ const LoginForm = ({ onToggleRecovery }: LoginFormProps) => {
           title: "Inicio de sesión exitoso",
           description: "Bienvenido a QuantumSync",
         });
-        // No necesitamos redireccionar aquí porque el componente se volverá a renderizar
-        // y la redirección se hará por el bloque condicional en el componente padre
+        
+        // Redirect explicitly after successful login
+        // Wait a bit for user state to update
+        setTimeout(() => {
+          navigate('/diagnose');
+        }, 100);
       } else {
         setError('Usuario o contraseña incorrectos');
         toast({
