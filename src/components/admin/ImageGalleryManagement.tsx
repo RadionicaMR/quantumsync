@@ -415,7 +415,7 @@ const ImageGalleryManagement = () => {
             <p>No hay imágenes en la galería</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-5 md:grid-cols-10 gap-2">
             {images.map((image) => (
               <div key={image.id} className="relative group">
                 <div className="aspect-square rounded-lg overflow-hidden border">
@@ -428,14 +428,14 @@ const ImageGalleryManagement = () => {
                 <Button
                   variant="destructive"
                   size="icon"
-                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                   onClick={() => setDeleteId(image.id)}
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-3 h-3" />
                 </Button>
                 <div className="mt-1">
-                  <p className="text-sm font-medium truncate">{image.name}</p>
-                  <p className="text-xs text-muted-foreground">{image.category}</p>
+                  <p className="text-xs font-medium truncate">{image.name}</p>
+                  <p className="text-[10px] text-muted-foreground">{image.category}</p>
                 </div>
               </div>
             ))}
