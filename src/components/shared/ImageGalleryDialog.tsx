@@ -58,8 +58,8 @@ const ImageGalleryDialog = ({
 
   const categories: { value: GalleryCategory; label: string }[] = [
     { value: 'all', label: 'Todos' },
-    { value: 'radionic', label: 'Radiónicos' },
-    { value: 'pattern', label: 'Patrones' },
+    { value: 'radionic', label: 'Filtros Radiónicos' },
+    { value: 'pattern', label: 'Gráficos Radiónicos' },
     { value: 'receptor', label: 'Receptores' },
     { value: 'chakra', label: 'Chakras' }
   ];

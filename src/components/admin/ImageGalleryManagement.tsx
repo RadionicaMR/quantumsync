@@ -256,8 +256,8 @@ const ImageGalleryManagement = () => {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="radionic">Gráfico Radiónico</SelectItem>
-                <SelectItem value="pattern">Patrón</SelectItem>
+                <SelectItem value="radionic">Filtros Radiónicos</SelectItem>
+                <SelectItem value="pattern">Gráficos Radiónicos</SelectItem>
                 <SelectItem value="receptor">Receptor</SelectItem>
                 <SelectItem value="chakra">Chakra</SelectItem>
               </SelectContent>
@@ -355,8 +355,8 @@ const ImageGalleryManagement = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="radionic">Gráfico Radiónico</SelectItem>
-                  <SelectItem value="pattern">Patrón</SelectItem>
+                  <SelectItem value="radionic">Filtros Radiónicos</SelectItem>
+                  <SelectItem value="pattern">Gráficos Radiónicos</SelectItem>
                   <SelectItem value="receptor">Receptor</SelectItem>
                   <SelectItem value="chakra">Chakra</SelectItem>
                 </SelectContent>
