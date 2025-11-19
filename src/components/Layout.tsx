@@ -2,6 +2,7 @@
 import { ReactNode, useEffect, useMemo } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import AffiliateReferralBanner from './AffiliateReferralBanner';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LayoutProps {
@@ -80,6 +81,7 @@ const Layout = ({ children }: LayoutProps) => {
            style={{ willChange: 'opacity' }}></div>
       
       <Navbar />
+      <AffiliateReferralBanner />
       <main className={mainClasses}>
         {children}
       </main>
