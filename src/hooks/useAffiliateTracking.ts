@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { setAffiliateCookie, getAffiliateCookie, getClientInfo } from '@/utils/affiliateTracking';
 
 export const useAffiliateTracking = () => {
   const location = useLocation();
+  const [affiliateName, setAffiliateName] = useState<string | null>(null);
 
   useEffect(() => {
     const trackAffiliateClick = async () => {
@@ -34,11 +35,10 @@ export const useAffiliateTracking = () => {
             ...clientInfo
           });
 
-          // Update click count
-          // Update click count
+          // Update click count and get affiliate name
           const { data: currentAffiliate } = await supabase
             .from('affiliates')
-            .select('total_clicks')
+            .select('total_clicks, name')
             .eq('id', affiliate.id)
             .single();
 
@@ -47,7 +47,24 @@ export const useAffiliateTracking = () => {
               .from('affiliates')
               .update({ total_clicks: (currentAffiliate.total_clicks || 0) + 1 })
               .eq('id', affiliate.id);
+            
+            setAffiliateName(currentAffiliate.name);
           }
+        }
+      }
+      
+      // Check if there's already an affiliate cookie and get the name
+      const existingRefCode = getAffiliateCookie();
+      if (existingRefCode && !affiliateName) {
+        const { data: affiliate } = await supabase
+          .from('affiliates')
+          .select('name')
+          .eq('affiliate_code', existingRefCode)
+          .eq('status', 'active')
+          .maybeSingle();
+        
+        if (affiliate) {
+          setAffiliateName(affiliate.name);
         }
       }
     };
@@ -56,6 +73,7 @@ export const useAffiliateTracking = () => {
   }, [location]);
 
   return {
-    getAffiliateCode: getAffiliateCookie
+    getAffiliateCode: getAffiliateCookie,
+    affiliateName
   };
 };
