@@ -1,139 +1,54 @@
-
 import { AdminUser } from "@/types/admin";
 
-// Load users from localStorage
+// User storage utilities
+// Note: This file previously contained hardcoded user credentials which have been removed
+// for security reasons. All authentication now goes through Supabase Auth.
+
+// Load users from localStorage (legacy support for admin panel display only)
 export const loadUsers = (): AdminUser[] => {
   const storedUsersList = localStorage.getItem('usersList');
   
-  let usersList: AdminUser[] = [];
-  
-  // Load users from the main usersList
   if (storedUsersList) {
     try {
       const parsedUsers = JSON.parse(storedUsersList);
-      
-      // Verify that the data is valid and has the expected structure
       if (Array.isArray(parsedUsers)) {
-        usersList = parsedUsers.map((user, index) => {
-          // If the user doesn't have an ID, assign one
-          if (!user.id) {
-            user.id = `main-${index + 1}`;
-          }
-          
-          // If the user doesn't have a creation date, assign the current date
-          if (!user.dateCreated) {
-            user.dateCreated = new Date().toISOString().split('T')[0];
-          }
-          
-          return user;
-        });
-      } else {
-        console.error('The stored users format is invalid (not an array).');
+        return parsedUsers.map((user, index) => ({
+          ...user,
+          id: user.id || `user-${index + 1}`,
+          dateCreated: user.dateCreated || new Date().toISOString().split('T')[0],
+          password: '********' // Never expose passwords
+        }));
       }
     } catch (error) {
       console.error('Error parsing users from localStorage:', error);
     }
   }
   
-  // If no users are found, initialize with default users
-  if (usersList.length === 0) {
-    usersList = initializeDefaultUsers();
-  }
-  
-  // For debugging
-  console.log('Loaded users:', usersList);
-  
-  return usersList;
+  return [];
 };
 
-// Initialize with default users
-export const initializeDefaultUsers = (): AdminUser[] => {
-  const defaultUsers: AdminUser[] = [
-    {
-      id: '1',
-      name: 'Cliente Demo',
-      email: 'cliente@example.com',
-      password: 'password123', // In real production, this would be hashed
-      dateCreated: '2023-04-01'
-    },
-    {
-      id: '2',
-      name: 'Ana García',
-      email: 'ana@example.com',
-      password: 'ana12345',
-      dateCreated: '2023-05-15'
-    },
-    {
-      id: '3',
-      name: 'Damian Gomez',
-      email: 'parapsicologodamiangomez@gmail.com',
-      password: 'damian2025',
-      dateCreated: '2025-04-21'
-    },
-    {
-      id: '4',
-      name: 'Carina Fuenza',
-      email: 'fuenzacari@gmail.com',
-      password: 'carina2025',
-      dateCreated: '2025-05-21'
-    },
-    {
-      id: '5',
-      name: 'Karla Caballero Cedillo',
-      email: 'kcaballerocedillo@gmail.com',
-      password: 'karla2025',
-      dateCreated: '2025-06-16'
-    },
-    {
-      id: '6',
-      name: 'Javier King',
-      email: 'jreyesreal@gmail.com',
-      password: 'javier2025',
-      dateCreated: '2025-08-06'
-    },
-    {
-      id: '7',
-      name: 'Cristina Terapia Integral',
-      email: 'cristina.terapiaintegral@gmail.com',
-      password: 'cristina2025',
-      dateCreated: '2025-09-04'
-    },
-    {
-      id: '8',
-      name: 'Genoveva',
-      email: 'imprentaisi@hotmail.com',
-      password: 'Geno2025',
-      dateCreated: '2025-09-23'
-    }
-  ];
-  localStorage.setItem('usersList', JSON.stringify(defaultUsers));
-  return defaultUsers;
-};
-
-// Save users to localStorage
+// Save users to localStorage (admin panel only - does NOT affect authentication)
 export const saveUsers = (updatedUsers: AdminUser[]): void => {
+  console.warn('[USER_STORAGE] Saving to localStorage does not affect Supabase authentication');
   localStorage.setItem('usersList', JSON.stringify(updatedUsers));
 };
 
-// Add a new user
+// Add a new user (admin panel display only)
 export const addUser = (users: AdminUser[], newUser: { name: string; email: string; password: string }): AdminUser[] => {
-  // Determine the next available ID
   const maxId = users.length > 0 
     ? Math.max(...users.map(user => {
-        // Extract numeric part from ID if it's a number
         const idNum = parseInt(user.id.replace(/\D/g, ''));
         return isNaN(idNum) ? 0 : idNum;
       }))
     : 0;
   const newId = (maxId + 1).toString();
-  
   const currentDate = new Date().toISOString().split('T')[0];
   
   const addedUser: AdminUser = {
     id: newId,
     name: newUser.name,
     email: newUser.email,
-    password: newUser.password,
+    password: '********', // Never store plaintext passwords
     dateCreated: currentDate
   };
   
@@ -142,205 +57,21 @@ export const addUser = (users: AdminUser[], newUser: { name: string; email: stri
   return updatedUsers;
 };
 
-// Delete a user
-export const deleteUser = (users: AdminUser[], id: string): AdminUser[] => {
-  const updatedUsers = users.filter(user => user.id !== id);
+// Delete a user (admin panel display only)
+export const deleteUser = (users: AdminUser[], userId: string): AdminUser[] => {
+  const updatedUsers = users.filter(user => user.id !== userId);
   saveUsers(updatedUsers);
   return updatedUsers;
 };
 
-// Update user password
-export const updateUserPassword = (users: AdminUser[], userId: string, newPassword: string): AdminUser[] => {
-  const updatedUsers = users.map(user => {
-    if (user.id === userId) {
-      return { ...user, password: newPassword };
-    }
-    return user;
-  });
-  saveUsers(updatedUsers);
-  return updatedUsers;
+// Initialize default users - NO-OP for security
+export const initializeDefaultUsers = (): AdminUser[] => {
+  console.log('[USER_STORAGE] Default users initialization disabled - use Supabase Auth to create users');
+  return [];
 };
 
-// Función específica para actualizar el nombre de Genoveva
-export const updateGenovevaName = (): void => {
-  const usersList = loadUsers();
-  
-  const updatedUsers = usersList.map(user => {
-    if (user.email.toLowerCase() === 'imprentaisi@hotmail.com' && user.name !== 'Genoveva') {
-      console.log(`Actualizando nombre de ${user.name} a Genoveva`);
-      return { ...user, name: 'Genoveva' };
-    }
-    return user;
-  });
-  
-  saveUsers(updatedUsers);
-  console.log('Nombre de usuario actualizado a Genoveva');
+// Ensure special users exist - NO-OP for security
+export const ensureSpecialUsersExist = () => {
+  console.log('[USER_STORAGE] All users now managed through Supabase Auth');
+  // No-op: All user management happens through Supabase now
 };
-
-// Función específica para añadir el usuario Karla si no existe
-export const ensureKarlaUserExists = (): void => {
-  const usersList = loadUsers();
-  
-  // Verificar si Karla ya existe
-  const karlaExists = usersList.some(user => 
-    user.email.toLowerCase() === 'kcaballerocedillo@gmail.com'
-  );
-  
-  if (!karlaExists) {
-    console.log('[USER-STORAGE] Añadiendo usuario Karla Caballero Cedillo');
-    addUser(usersList, {
-      name: 'Karla Caballero Cedillo',
-      email: 'kcaballerocedillo@gmail.com',
-      password: 'karla2025'
-    });
-    console.log('[USER-STORAGE] Usuario Karla añadido exitosamente');
-  } else {
-    console.log('[USER-STORAGE] Usuario Karla ya existe');
-  }
-};
-
-// Verifica si un usuario específico existe y crea el usuario Damian si no existe
-export const ensureSpecialUsersExist = (): void => {
-  const usersList = loadUsers();
-  
-  // Verificar si Damian Gomez ya existe
-  const damianExists = usersList.some(user => 
-    user.email.toLowerCase() === 'parapsicologodamiangomez@gmail.com'
-  );
-  
-  // Verificar si Carina Fuenza ya existe
-  const carinaExists = usersList.some(user => 
-    user.email.toLowerCase() === 'fuenzacari@gmail.com'
-  );
-  
-  // Verificar si Karla ya existe
-  const karlaExists = usersList.some(user => 
-    user.email.toLowerCase() === 'kcaballerocedillo@gmail.com'
-  );
-  
-  // Verificar si Javier ya existe
-  const javierExists = usersList.some(user => 
-    user.email.toLowerCase() === 'jreyesreal@gmail.com'
-  );
-  
-  // Verificar si Cristina ya existe
-  const cristinaExists = usersList.some(user => 
-    user.email.toLowerCase() === 'cristina.terapiaintegral@gmail.com'
-  );
-
-  // Verificar si Mariana ya existe
-  const marianaExists = usersList.some(user =>
-    user.email.toLowerCase() === 'marianasalvatore@hotmail.com'
-  );
-  
-  // Verificar si Genoveva ya existe y actualizar el nombre si es necesario
-  const genoveva = usersList.find(user => 
-    user.email.toLowerCase() === 'imprentaisi@hotmail.com'
-  );
-  const imprentaExists = !!genoveva;
-  
-  if (!damianExists) {
-    // Añadir a Damian Gomez si no existe
-    addUser(usersList, {
-      name: 'Damian Gomez',
-      email: 'parapsicologodamiangomez@gmail.com',
-      password: 'damian2025'
-    });
-    console.log('Usuario especial Damian Gomez añadido');
-  }
-  
-  if (!carinaExists) {
-    // Añadir a Carina Fuenza si no existe
-    addUser(usersList, {
-      name: 'Carina Fuenza',
-      email: 'fuenzacari@gmail.com',
-      password: 'carina2025'
-    });
-    console.log('Usuario especial Carina Fuenza añadido');
-  }
-  
-  if (!karlaExists) {
-    // Añadir a Karla si no existe
-    addUser(usersList, {
-      name: 'Karla Caballero Cedillo',
-      email: 'kcaballerocedillo@gmail.com',
-      password: 'karla2025'
-    });
-    console.log('Usuario especial Karla Caballero Cedillo añadido');
-  }
-  
-  if (!javierExists) {
-    // Añadir a Javier King si no existe
-    addUser(usersList, {
-      name: 'Javier King',
-      email: 'jreyesreal@gmail.com',
-      password: 'javier2025'
-    });
-    console.log('Usuario especial Javier King añadido');
-  }
-  
-  if (!cristinaExists) {
-    // Añadir a Cristina Terapia Integral si no existe
-    addUser(usersList, {
-      name: 'Cristina Terapia Integral',
-      email: 'cristina.terapiaintegral@gmail.com',
-      password: 'cristina2025'
-    });
-    console.log('Usuario especial Cristina Terapia Integral añadido');
-  }
-
-  if (!marianaExists) {
-    // Añadir a Mariana si no existe
-    addUser(usersList, {
-      name: 'Mariana',
-      email: 'marianasalvatore@hotmail.com',
-      password: 'mariana2025'
-    });
-    console.log('Usuario especial Mariana añadido');
-  }
-  
-  if (!imprentaExists) {
-    // Añadir a Genoveva si no existe
-    addUser(usersList, {
-      name: 'Genoveva',
-      email: 'imprentaisi@hotmail.com',
-      password: 'Geno2025'
-    });
-    console.log('Usuario especial Genoveva añadido');
-  } else if (genoveva && genoveva.name !== 'Genoveva') {
-    // Actualizar el nombre si ya existe pero con nombre diferente
-    const updatedUsers = usersList.map(user => {
-      if (user.email.toLowerCase() === 'imprentaisi@hotmail.com') {
-        return { ...user, name: 'Genoveva' };
-      }
-      return user;
-    });
-    saveUsers(updatedUsers);
-    console.log('Usuario Genoveva actualizado con nuevo nombre');
-  }
-};
-
-// Synchronize all users - corrección de la función que causaba el error
-export const synchronizeAllUsers = (): AdminUser[] => {
-  // Cargamos los usuarios actuales
-  const currentUsers = loadUsers();
-  
-  // Actualizamos el nombre de Genoveva si es necesario
-  updateGenovevaName();
-  
-  // Nos aseguramos de que existan los usuarios especiales
-  ensureSpecialUsersExist();
-  
-  // Cargamos nuevamente los usuarios después de asegurar que existan los especiales
-  const updatedUsers = loadUsers();
-  
-  // Guardamos explícitamente la lista actualizada en localStorage para asegurar persistencia
-  saveUsers(updatedUsers);
-  
-  console.log('Usuarios sincronizados. Total:', updatedUsers.length);
-  
-  return updatedUsers;
-};
-
-// Ejecutar esto para asegurarse de que los usuarios especiales existen
-ensureSpecialUsersExist();
