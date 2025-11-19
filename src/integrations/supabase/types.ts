@@ -255,6 +255,45 @@ export type Database = {
         }
         Relationships: []
       }
+      image_gallery: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          file_path: string
+          id: string
+          is_active: boolean | null
+          name: string
+          tags: string[] | null
+          thumbnail_url: string | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          file_path: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          file_path?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          uploaded_by?: string | null
+        }
+        Relationships: []
+      }
       patients: {
         Row: {
           created_at: string | null

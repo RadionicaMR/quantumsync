@@ -3,6 +3,8 @@ import React, { useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import SingleImageUploader from './SingleImageUploader';
 import MultipleImagesGrid from './MultipleImagesGrid';
+import ImageGalleryDialog from '@/components/shared/ImageGalleryDialog';
+import { Library } from 'lucide-react';
 
 interface ImageUploaderProps {
   title: string;
@@ -25,8 +27,9 @@ const ImageUploader = ({
   isPlaying,
   maxImages = 3
 }: ImageUploaderProps) => {
-  const [activeTab, setActiveTab] = useState<'single' | 'multiple'>('multiple');
+  const [activeTab, setActiveTab] = useState<'single' | 'multiple' | 'gallery'>('multiple');
   const multipleFileInputRef = useRef<HTMLInputElement>(null);
+  const [galleryOpen, setGalleryOpen] = useState(false);
 
   const handleMultipleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -67,6 +70,14 @@ const ImageUploader = ({
     }
   };
 
+  const handleGallerySelect = (selectedImages: string[]) => {
+    if (activeTab === 'gallery') {
+      const combined = [...images, ...selectedImages];
+      const limitedImages = combined.slice(0, maxImages);
+      setImages(limitedImages);
+    }
+  };
+
   return (
     <Card className="w-full overflow-hidden">
       <div className="p-4 bg-muted/50 border-b">
@@ -88,6 +99,17 @@ const ImageUploader = ({
             disabled={isPlaying}
           >
             Múltiples Imágenes
+          </button>
+          <button
+            className={`px-3 py-1 rounded-full text-sm flex items-center gap-1 ${activeTab === 'gallery' ? 'bg-primary text-white' : 'bg-muted'}`}
+            onClick={() => {
+              setActiveTab('gallery');
+              setGalleryOpen(true);
+            }}
+            disabled={isPlaying}
+          >
+            <Library className="w-4 h-4" />
+            Galería
           </button>
         </div>
         
@@ -128,7 +150,43 @@ const ImageUploader = ({
             />
           </div>
         )}
+
+        {activeTab === 'gallery' && (
+          <div className="text-center py-8 border-2 border-dashed border-border rounded-lg">
+            <Library className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground mb-4">
+              Selecciona imágenes de la galería predefinida
+            </p>
+            <button
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+              onClick={() => setGalleryOpen(true)}
+              disabled={isPlaying}
+            >
+              Abrir Galería
+            </button>
+            {images.length > 0 && (
+              <div className="mt-4">
+                <MultipleImagesGrid 
+                  images={images}
+                  onRemoveImage={removeImage}
+                  onAddImageClick={() => setGalleryOpen(true)}
+                  isDisabled={isPlaying}
+                  maxImages={maxImages}
+                  onImageAdded={handleAddSingleImageToMultiple}
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
+
+      <ImageGalleryDialog
+        isOpen={galleryOpen}
+        onClose={() => setGalleryOpen(false)}
+        onSelect={handleGallerySelect}
+        maxSelection={maxImages}
+        multiSelect={true}
+      />
     </Card>
   );
 };
