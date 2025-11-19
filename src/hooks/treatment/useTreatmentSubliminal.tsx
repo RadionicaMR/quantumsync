@@ -15,65 +15,14 @@ export const useTreatmentSubliminal = () => {
   const audioSourceRef = useRef<string | null>(null);
 
   // Handle document visibility changes for subliminal audio
+  // Audio continues playing in background
   const handleVisibilityChange = () => {
     if (document.hidden && audioSubliminalPlaying) {
-      console.log("App went to background with subliminal audio playing (treatment)");
+      console.log("App went to background - subliminal audio continues playing (treatment)");
       setBackgroundModeActive(true);
-      
-      // Save current audio position
-      if (audioElementRef.current) {
-        const currentTime = audioElementRef.current.currentTime;
-        audioElementRef.current.pause();
-        audioElementRef.current.currentTime = currentTime;
-      }
-    } else if (!document.hidden && backgroundModeActive && audioSourceRef.current) {
-      console.log("App returned to foreground, restoring subliminal audio (treatment)");
-      
-      // If it was playing, restore playback
-      if (audioSubliminalPlaying && audioElementRef.current) {
-        audioElementRef.current.play()
-          .then(() => {
-            console.log("Subliminal audio successfully resumed (treatment)");
-            setBackgroundModeActive(false);
-          })
-          .catch((err) => {
-            console.error("Error resuming subliminal audio (treatment):", err);
-            // Try to recreate audio element
-            if (audioFile) {
-              recreateAudioElement();
-            }
-          });
-      }
-    }
-  };
-
-  const recreateAudioElement = () => {
-    try {
-      if (!audioFile) return;
-      
-      const audioURL = URL.createObjectURL(audioFile);
-      audioSourceRef.current = audioURL;
-      
-      const newAudio = new Audio(audioURL);
-      newAudio.loop = audioLoop;
-      newAudio.volume = audioVolume / 20;
-      
-      // Assign new reference
-      audioElementRef.current = newAudio;
-      
-      // Try to play
-      newAudio.play()
-        .then(() => {
-          console.log("Subliminal audio recreated and playing (treatment)");
-          setAudioSubliminalPlaying(true);
-          setBackgroundModeActive(false);
-        })
-        .catch((err) => {
-          console.error("Error playing recreated subliminal audio (treatment):", err);
-          setAudioSubliminalPlaying(false);
-        });
-    } catch (error) {
-      console.error("Error recreating audio element (treatment):", error);
+    } else if (!document.hidden && backgroundModeActive) {
+      console.log("App returned to foreground");
+      setBackgroundModeActive(false);
     }
   };
 

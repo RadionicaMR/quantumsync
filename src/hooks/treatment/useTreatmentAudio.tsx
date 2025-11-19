@@ -133,14 +133,8 @@ export const useTreatmentAudio = () => {
   // Background mode handling
   const { 
     backgroundModeActive, 
-    setBackgroundModeActive, 
-    pausedTimeRemainingRef 
-  } = useBackgroundMode(
-    isPlaying, 
-    cleanupAudioResources,
-    restartAudio,
-    setTimeRemaining
-  );
+    setBackgroundModeActive
+  } = useBackgroundMode(isPlaying);
 
   // Start the audio treatment
   const startAudio = () => {
@@ -276,7 +270,6 @@ export const useTreatmentAudio = () => {
     setTimeout(() => {
       setIsPlaying(false);
       setBackgroundModeActive(false);
-      pausedTimeRemainingRef.current = null;
       isStoppingRef.current = false;
       console.log("Treatment stopped completely");
     }, 300);

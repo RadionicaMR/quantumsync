@@ -75,27 +75,10 @@ export const useManifestAudio = (): ManifestAudio & {
 
   const handleVisibilityChange = () => {
     if (document.hidden && oscillatorRef.current !== null) {
-      console.log("App pasó a segundo plano durante manifestación, guardando estado");
+      console.log("App pasó a segundo plano - manifestación continúa reproduciéndose");
       setBackgroundModeActive(true);
-      
-      // El oscilador debe detenerse porque el AudioContext se suspende
-      if (oscillatorRef.current) {
-        console.log("Deteniendo oscilador actual para segundo plano");
-        oscillatorRef.current.stop();
-        oscillatorRef.current = null;
-      }
-      
-      if (harmonicOscillatorRef.current) {
-        console.log("Deteniendo oscilador armónico para segundo plano");
-        harmonicOscillatorRef.current.stop();
-        harmonicOscillatorRef.current = null;
-      }
-      
-    } else if (!document.hidden && backgroundModeActive && currentFrequencyRef.current !== null) {
-      console.log("App volvió al primer plano, restaurando manifestación con frecuencia:", currentFrequencyRef.current);
-      
-      // Reiniciar osciladores con la frecuencia guardada
-      startAudio(currentFrequencyRef.current);
+    } else if (!document.hidden && backgroundModeActive) {
+      console.log("App volvió al primer plano");
       setBackgroundModeActive(false);
     }
   };

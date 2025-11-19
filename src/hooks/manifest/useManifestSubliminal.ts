@@ -13,70 +13,14 @@ export const useManifestSubliminal = () => {
   const audioSourceRef = useRef<string | null>(null);
 
   // Manejar cambios de visibilidad del documento
+  // Audio continúa reproduciéndose en segundo plano
   const handleVisibilityChange = () => {
     if (document.hidden && audioSubliminalPlaying) {
-      console.log("App pasó a segundo plano con audio subliminal en reproducción");
+      console.log("App pasó a segundo plano - audio subliminal continúa reproduciéndose");
       setBackgroundModeActive(true);
-      
-      // Guardar la posición actual del audio
-      if (audioElementRef.current) {
-        const currentTime = audioElementRef.current.currentTime;
-        audioElementRef.current.pause();
-        audioElementRef.current.currentTime = currentTime;
-      }
-    } else if (!document.hidden && backgroundModeActive && audioSourceRef.current) {
-      console.log("App volvió al primer plano, restaurando audio subliminal");
-      
-      // Si estaba reproduciendo, restaurar la reproducción
-      if (audioSubliminalPlaying) {
-        if (audioElementRef.current) {
-          const currentTime = audioElementRef.current.currentTime;
-          
-          // Intentar reanudar la reproducción desde donde se quedó
-          audioElementRef.current.play()
-            .then(() => {
-              console.log("Audio subliminal reanudado con éxito");
-              setBackgroundModeActive(false);
-            })
-            .catch((err) => {
-              console.error("Error al reanudar audio subliminal:", err);
-              // Intentar crear un nuevo elemento de audio
-              if (audioFile) {
-                recreateAudioElement();
-              }
-            });
-        } else if (audioFile) {
-          // Si el elemento de audio se perdió, recrearlo
-          recreateAudioElement();
-        }
-      }
-    }
-  };
-
-  const recreateAudioElement = () => {
-    try {
-      if (!audioFile) return;
-      
-      const newAudio = new Audio(URL.createObjectURL(audioFile));
-      newAudio.loop = audioLoop;
-      newAudio.volume = audioVolume / 20;
-      
-      // Asignar la nueva referencia
-      audioElementRef.current = newAudio;
-      
-      // Intentar reproducir
-      newAudio.play()
-        .then(() => {
-          console.log("Audio subliminal recreado y reproduciendo");
-          setAudioSubliminalPlaying(true);
-          setBackgroundModeActive(false);
-        })
-        .catch((err) => {
-          console.error("Error al reproducir audio subliminal recreado:", err);
-          setAudioSubliminalPlaying(false);
-        });
-    } catch (error) {
-      console.error("Error al recrear el elemento de audio:", error);
+    } else if (!document.hidden && backgroundModeActive) {
+      console.log("App volvió al primer plano");
+      setBackgroundModeActive(false);
     }
   };
 
