@@ -4,11 +4,12 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { useAdminData } from '@/hooks/useAdminData';
 import { useNavigate } from 'react-router-dom';
-import { Users, DollarSign, TrendingUp, LogOut, ShoppingCart, BarChart3, Image } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, LogOut, ShoppingCart, BarChart3, Image, UserCog } from 'lucide-react';
 import AffiliatesManagementTab from './AffiliatesManagementTab';
 import AffiliateStatsTab from './AffiliateStatsTab';
 import SalesManagementTab from './SalesManagementTab';
 import ImageGalleryManagement from './ImageGalleryManagement';
+import UsersManagementSection from './UsersManagementSection';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -97,13 +98,17 @@ const AdminDashboard = () => {
         transition={{ duration: 0.3, delay: 0.2 }}
       >
         <Tabs defaultValue="sales" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8">
-            <TabsTrigger value="sales">Gestión de Ventas</TabsTrigger>
-            <TabsTrigger value="affiliates">Gestión de Afiliados</TabsTrigger>
-            <TabsTrigger value="affiliate-stats">Estadísticas Globales</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-5 mb-8">
+            <TabsTrigger value="sales">Ventas</TabsTrigger>
+            <TabsTrigger value="affiliates">Afiliados</TabsTrigger>
+            <TabsTrigger value="users">
+              <UserCog className="w-4 h-4 mr-2" />
+              Usuarios
+            </TabsTrigger>
+            <TabsTrigger value="affiliate-stats">Estadísticas</TabsTrigger>
             <TabsTrigger value="gallery">
               <Image className="w-4 h-4 mr-2" />
-              Galería de Imágenes
+              Galería
             </TabsTrigger>
           </TabsList>
           
@@ -119,6 +124,10 @@ const AdminDashboard = () => {
               affiliates={affiliates}
               onAffiliateUpdate={reloadData}
             />
+          </TabsContent>
+
+          <TabsContent value="users">
+            <UsersManagementSection />
           </TabsContent>
           
           <TabsContent value="affiliate-stats">
