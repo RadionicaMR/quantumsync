@@ -23,9 +23,10 @@ import { Badge } from '@/components/ui/badge';
 import { Trash2, KeyRound, Loader2 } from 'lucide-react';
 import { useUsersManagement } from '@/hooks/useUsersManagement';
 import { toast } from '@/hooks/use-toast';
+import CreateUserDialog from './CreateUserDialog';
 
 const UsersManagementSection = () => {
-  const { users, loading, resetPassword, deleteUser } = useUsersManagement();
+  const { users, loading, reloadUsers, resetPassword, deleteUser } = useUsersManagement();
   const [passwordDialog, setPasswordDialog] = useState<{ open: boolean; userId: string; userEmail: string }>({
     open: false,
     userId: '',
@@ -73,11 +74,14 @@ const UsersManagementSection = () => {
   return (
     <>
       <Card className="p-6">
-        <div className="mb-6">
-          <h2 className="text-xl font-bold">Gestión de Usuarios</h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Total de usuarios registrados: {users.length}
-          </p>
+        <div className="mb-6 flex justify-between items-center">
+          <div>
+            <h2 className="text-xl font-bold">Gestión de Usuarios</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Total de usuarios registrados: {users.length}
+            </p>
+          </div>
+          <CreateUserDialog onUserCreated={reloadUsers} />
         </div>
 
         <div className="rounded-md border">
