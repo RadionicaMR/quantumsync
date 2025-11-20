@@ -18,27 +18,33 @@ export const useUsersManagement = () => {
     try {
       setLoading(true);
 
-      // Get all profiles with their roles using a single query with JOIN
-      const { data: usersData, error: usersError } = await supabase
+      // Get all profiles
+      const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
-        .select(`
-          id,
-          email,
-          full_name,
-          created_at,
-          user_roles!inner (role)
-        `)
+        .select('id, email, full_name, created_at')
         .order('created_at', { ascending: false });
 
-      if (usersError) throw usersError;
+      if (profilesError) throw profilesError;
 
-      // Transform the data to match our AppUser interface
-      const formattedUsers = (usersData || []).map(user => ({
-        id: user.id,
-        email: user.email,
-        full_name: user.full_name || '',
-        created_at: user.created_at,
-        role: (user.user_roles as any)?.[0]?.role || 'user'
+      // Get all user roles
+      const { data: rolesData, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('user_id, role');
+
+      if (rolesError) throw rolesError;
+
+      // Create a map of user_id to role
+      const rolesMap = new Map(
+        (rolesData || []).map(r => [r.user_id, r.role])
+      );
+
+      // Combine the data
+      const formattedUsers = (profilesData || []).map(profile => ({
+        id: profile.id,
+        email: profile.email || '',
+        full_name: profile.full_name || '',
+        created_at: profile.created_at,
+        role: rolesMap.get(profile.id) || 'user'
       })) as AppUser[];
 
       setUsers(formattedUsers);
