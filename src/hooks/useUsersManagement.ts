@@ -18,31 +18,30 @@ export const useUsersManagement = () => {
     try {
       setLoading(true);
 
-      // Get all profiles with their roles
-      const { data: profilesData, error: profilesError } = await supabase
+      // Get all profiles with their roles using a single query with JOIN
+      const { data: usersData, error: usersError } = await supabase
         .from('profiles')
-        .select('id, email, full_name, created_at')
+        .select(`
+          id,
+          email,
+          full_name,
+          created_at,
+          user_roles!inner (role)
+        `)
         .order('created_at', { ascending: false });
 
-      if (profilesError) throw profilesError;
+      if (usersError) throw usersError;
 
-      // Get roles for each user
-      const usersWithRoles = await Promise.all(
-        (profilesData || []).map(async (profile) => {
-          const { data: roleData } = await supabase
-            .from('user_roles')
-            .select('role')
-            .eq('user_id', profile.id)
-            .single();
+      // Transform the data to match our AppUser interface
+      const formattedUsers = (usersData || []).map(user => ({
+        id: user.id,
+        email: user.email,
+        full_name: user.full_name || '',
+        created_at: user.created_at,
+        role: (user.user_roles as any)?.[0]?.role || 'user'
+      })) as AppUser[];
 
-          return {
-            ...profile,
-            role: roleData?.role || 'user'
-          } as AppUser;
-        })
-      );
-
-      setUsers(usersWithRoles);
+      setUsers(formattedUsers);
     } catch (error) {
       console.error('Error loading users:', error);
       toast({
