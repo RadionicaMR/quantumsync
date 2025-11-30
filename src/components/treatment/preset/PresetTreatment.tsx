@@ -52,6 +52,9 @@ interface PresetTreatmentProps {
   stopSubliminalAudio: () => void;
   backgroundModeActive?: boolean;
   intention?: string; // Add intention prop
+  audioLoop?: boolean;
+  setAudioLoop?: (loop: boolean) => void;
+  clearAudio?: () => void;
 }
 
 const PresetTreatment: React.FC<PresetTreatmentProps> = ({
@@ -101,7 +104,10 @@ const PresetTreatment: React.FC<PresetTreatmentProps> = ({
   playSubliminalAudio,
   stopSubliminalAudio,
   backgroundModeActive = false,
-  intention = "" // Default to empty string
+  intention = "", // Default to empty string
+  audioLoop = true,
+  setAudioLoop = () => {},
+  clearAudio = () => {},
 }) => {
   return (
     <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg">

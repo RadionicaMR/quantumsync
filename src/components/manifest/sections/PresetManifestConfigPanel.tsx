@@ -31,6 +31,9 @@ interface PresetManifestConfigPanelProps {
   audioSubliminalPlaying: boolean;
   playSubliminalAudio: () => void;
   stopSubliminalAudio: () => void;
+  audioLoop?: boolean;
+  setAudioLoop?: (value: boolean) => void;
+  clearAudio?: () => void;
   receptorName: string;
   setReceptorName: (value: string) => void;
   selectPattern: (pattern: ManifestPattern) => void;
@@ -68,6 +71,9 @@ const PresetManifestConfigPanel: React.FC<PresetManifestConfigPanelProps> = ({
   audioSubliminalPlaying,
   playSubliminalAudio,
   stopSubliminalAudio,
+  audioLoop,
+  setAudioLoop,
+  clearAudio,
   receptorName,
   setReceptorName,
   selectPattern,
@@ -131,6 +137,10 @@ const PresetManifestConfigPanel: React.FC<PresetManifestConfigPanelProps> = ({
           audioSubliminalPlaying={audioSubliminalPlaying}
           playSubliminalAudio={playSubliminalAudio}
           stopSubliminalAudio={stopSubliminalAudio}
+          audioLoop={audioLoop}
+          setAudioLoop={setAudioLoop}
+          clearAudio={clearAudio}
+          isManifestActive={isManifestActive}
         />
 
         <FrequencyControls

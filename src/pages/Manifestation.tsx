@@ -173,7 +173,10 @@ const Manifestation = () => {
                 playSubliminalAudio={treatment.playSubliminalAudio}
                 stopSubliminalAudio={treatment.stopSubliminalAudio}
                 backgroundModeActive={treatment.backgroundModeActive}
-                intention={treatment.intention} // Make sure intention is passed
+                intention={treatment.intention}
+                audioLoop={treatment.audioLoop}
+                setAudioLoop={treatment.setAudioLoop}
+                clearAudio={treatment.clearAudio}
               />
             </TabsContent>
             

@@ -55,6 +55,9 @@ interface PresetTreatmentLayoutProps {
   stopSubliminalAudio: () => void;
   backgroundModeActive?: boolean;
   intention?: string; // Add intention prop
+  audioLoop?: boolean;
+  setAudioLoop?: (loop: boolean) => void;
+  clearAudio?: () => void;
 }
 
 const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
@@ -104,7 +107,10 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
   playSubliminalAudio,
   stopSubliminalAudio,
   backgroundModeActive = false,
-  intention = "" // Default to empty string
+  intention = "", // Default to empty string
+  audioLoop = true,
+  setAudioLoop = () => {},
+  clearAudio = () => {},
 }) => {
   // Find the selected preset
   const preset = presets.find(p => p.id === selectedPreset);
@@ -206,6 +212,9 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
           playSubliminalAudio={playSubliminalAudio}
           stopSubliminalAudio={stopSubliminalAudio}
           isPlaying={isPlaying}
+          audioLoop={audioLoop}
+          setAudioLoop={setAudioLoop}
+          clearAudio={clearAudio}
         />
       </div>
     </div>

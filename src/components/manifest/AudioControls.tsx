@@ -15,6 +15,10 @@ interface AudioControlsProps {
   audioSubliminalPlaying: boolean;
   playSubliminalAudio: () => void;
   stopSubliminalAudio: () => void;
+  audioLoop?: boolean;
+  setAudioLoop?: (value: boolean) => void;
+  clearAudio?: () => void;
+  isManifestActive?: boolean;
 }
 
 const AudioControls: React.FC<AudioControlsProps> = ({
@@ -27,7 +31,13 @@ const AudioControls: React.FC<AudioControlsProps> = ({
   audioSubliminalPlaying,
   playSubliminalAudio,
   stopSubliminalAudio,
+  audioLoop = true,
+  setAudioLoop = () => {},
+  clearAudio = () => {},
+  isManifestActive = false,
 }) => {
+  const disabled = isManifestActive;
+
   return (
     <div className="space-y-4 mb-6">
       <div className="flex items-center justify-between">
@@ -49,6 +59,10 @@ const AudioControls: React.FC<AudioControlsProps> = ({
           isPlaying={audioSubliminalPlaying}
           playAudio={playSubliminalAudio}
           stopAudio={stopSubliminalAudio}
+          isDisabled={disabled}
+          audioLoop={audioLoop}
+          setAudioLoop={setAudioLoop}
+          clearAudio={clearAudio}
         />
       </div>
     </div>
