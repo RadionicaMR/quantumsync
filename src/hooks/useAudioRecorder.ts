@@ -10,7 +10,7 @@ type AudioRecorderHook = {
   clearRecording: () => void;
 };
 
-export function useAudioRecorder(maxDurationSeconds = 60): AudioRecorderHook {
+export function useAudioRecorder(maxDurationSeconds = 180): AudioRecorderHook {
   const [isRecording, setIsRecording] = useState(false);
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);

@@ -42,7 +42,6 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
   const previewAudioRef = useRef<HTMLAudioElement | null>(null);
   const previewAudioSourceRef = useRef<string | null>(null);
 
-  // Grabadora
   const {
     isRecording,
     audioURL,
@@ -50,7 +49,7 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
     startRecording,
     stopRecording,
     clearRecording,
-  } = useAudioRecorder(60);
+  } = useAudioRecorder(180); // 3 minutos máximo para grabación
 
   // Si audio grabado listo, convertir a archivo para usar el mismo flujo de audioFile
   useEffect(() => {
@@ -79,16 +78,60 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [audioBlob]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) {
-      const file = e.target.files[0];
-      console.log("Archivo de audio seleccionado:", {
-        name: file.name,
-        type: file.type,
-        size: file.size
-      });
-      setAudioFile(file);
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    console.log("Archivo de audio seleccionado:", {
+      name: file.name,
+      type: file.type,
+      size: file.size
+    });
+
+    // Validar tipo de archivo
+    const validTypes = ['audio/mp3', 'audio/mpeg', 'audio/wav', 'audio/webm', 'audio/ogg', 'audio/m4a', 'audio/aac'];
+    const hasValidType = validTypes.includes(file.type) || file.name.match(/\.(mp3|wav|webm|ogg|m4a|aac)$/i);
+    
+    if (!hasValidType) {
+      console.error("Tipo de archivo no válido:", file.type);
+      return;
     }
+
+    // Validar tamaño (máximo 50MB para permitir audios largos)
+    const maxSize = 50 * 1024 * 1024;
+    if (file.size > maxSize) {
+      console.error("Archivo demasiado grande:", file.size);
+      return;
+    }
+
+    // Validar duración del audio
+    const audio = document.createElement('audio');
+    audio.preload = 'metadata';
+    
+    audio.onloadedmetadata = () => {
+      URL.revokeObjectURL(audio.src);
+      const duration = audio.duration;
+      
+      console.log("Duración del audio:", duration, "segundos");
+      
+      // Máximo 10 minutos (600 segundos)
+      if (duration > 600) {
+        console.error("Audio demasiado largo:", duration);
+        return;
+      }
+
+      setAudioFile(file);
+      console.log("Audio cargado correctamente");
+    };
+
+    audio.onerror = () => {
+      URL.revokeObjectURL(audio.src);
+      console.error("Error al leer archivo de audio");
+      // Intentar cargar de todas formas
+      setAudioFile(file);
+    };
+
+    audio.src = URL.createObjectURL(file);
   };
 
   // Función para reproducir audio de prueba
@@ -225,7 +268,7 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
       />
 
       <p className="text-xs text-muted-foreground">
-        Puedes seleccionar o grabar un audio de hasta 1 minuto. Deja el volumen en 0 para que funcione como audio subliminal.
+        Puedes seleccionar un audio de hasta 10 minutos o grabar hasta 3 minutos. Deja el volumen en 0 para que funcione como audio subliminal.
       </p>
     </div>
   );
