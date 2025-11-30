@@ -158,7 +158,10 @@ const PresetTreatment: React.FC<PresetTreatmentProps> = ({
         playSubliminalAudio={playSubliminalAudio}
         stopSubliminalAudio={stopSubliminalAudio}
         backgroundModeActive={backgroundModeActive}
-        intention={intention} // Pass intention to layout
+        intention={intention}
+        audioLoop={audioLoop}
+        setAudioLoop={setAudioLoop}
+        clearAudio={clearAudio}
       />
     </Card>
   );
