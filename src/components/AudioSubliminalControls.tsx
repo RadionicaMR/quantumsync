@@ -50,7 +50,25 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
   // Si audio grabado listo, convertir a archivo para usar el mismo flujo de audioFile
   useEffect(() => {
     if (audioBlob) {
-      const file = new File([audioBlob], "grabacion-subliminal.webm", { type: "audio/webm" });
+      // Determinar el nombre y extensión correcta según el tipo MIME
+      let fileName = "grabacion-subliminal.webm";
+      let fileType = "audio/webm";
+      
+      if (audioBlob.type) {
+        fileType = audioBlob.type;
+        if (audioBlob.type.includes('mp4')) {
+          fileName = "grabacion-subliminal.mp4";
+        } else if (audioBlob.type.includes('ogg')) {
+          fileName = "grabacion-subliminal.ogg";
+        }
+      }
+      
+      const file = new File([audioBlob], fileName, { type: fileType });
+      console.log("Audio convertido a archivo:", {
+        name: file.name,
+        type: file.type,
+        size: file.size
+      });
       setAudioFile(file);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -58,7 +76,13 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
-      setAudioFile(e.target.files[0]);
+      const file = e.target.files[0];
+      console.log("Archivo de audio seleccionado:", {
+        name: file.name,
+        type: file.type,
+        size: file.size
+      });
+      setAudioFile(file);
     }
   };
 

@@ -70,7 +70,13 @@ export function useAudioRecorder(maxDurationSeconds = 60): AudioRecorderHook {
         const mimeType = options.mimeType || 'audio/webm';
         const blob = new Blob(chunksRef.current, { type: mimeType });
         setAudioBlob(blob);
-        setAudioURL(URL.createObjectURL(blob));
+        const url = URL.createObjectURL(blob);
+        setAudioURL(url);
+        console.log("Audio grabado correctamente:", {
+          size: blob.size,
+          type: blob.type,
+          duration: `${maxDurationSeconds}s max`
+        });
         
         // Detener y limpiar el stream
         if (streamRef.current) {

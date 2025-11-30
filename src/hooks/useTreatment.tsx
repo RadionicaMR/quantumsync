@@ -18,15 +18,26 @@ export const useTreatment = () => {
   
   // Augment startTreatment to handle subliminal audio
   const startTreatment = () => {
+    console.log("=== INICIANDO TRATAMIENTO ===");
+    console.log("Audio subliminal configurado:", subliminal.audioFile ? "Sí" : "No");
+    
     // Use the core start treatment functionality
     core.startTreatment();
     
     // Only after starting the audio, we start the subliminal if it exists
     if (subliminal.audioFile) {
-      console.log("Starting subliminal audio associated with treatment");
+      console.log("Iniciando audio subliminal asociado con el tratamiento");
+      console.log("Archivo:", {
+        name: subliminal.audioFile.name,
+        type: subliminal.audioFile.type,
+        size: subliminal.audioFile.size
+      });
+      
       setTimeout(() => {
         subliminal.playSubliminalAudio();
-      }, 300); // Small delay to ensure main audio starts first
+      }, 500); // Small delay to ensure main audio starts first
+    } else {
+      console.log("No hay audio subliminal configurado para este tratamiento");
     }
   };
   

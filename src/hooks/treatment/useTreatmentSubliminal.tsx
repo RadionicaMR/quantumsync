@@ -29,10 +29,24 @@ export const useTreatmentSubliminal = () => {
   // Function to play subliminal audio
   const playSubliminalAudio = () => {
     if (audioFile && !audioSubliminalPlaying) {
+      console.log("Iniciando reproducción de audio subliminal (tratamiento):", {
+        name: audioFile.name,
+        type: audioFile.type,
+        size: audioFile.size,
+        volume: audioVolume / 20,
+        loop: audioLoop
+      });
+      
       try {
         // If there's a previous audio element, stop it first
         if (audioElementRef.current) {
           audioElementRef.current.pause();
+          audioElementRef.current = null;
+        }
+        
+        // Clean up previous object URL
+        if (audioSourceRef.current) {
+          URL.revokeObjectURL(audioSourceRef.current);
         }
         
         const audioURL = URL.createObjectURL(audioFile);
@@ -42,6 +56,20 @@ export const useTreatmentSubliminal = () => {
         newAudio.loop = audioLoop;
         newAudio.volume = audioVolume / 20;
         
+        // Add error handler
+        newAudio.onerror = (e) => {
+          console.error("Error en elemento de audio:", e);
+          setAudioSubliminalPlaying(false);
+        };
+        
+        // Add ended handler (for non-loop scenarios)
+        newAudio.onended = () => {
+          if (!newAudio.loop) {
+            console.log("Audio subliminal terminó");
+            setAudioSubliminalPlaying(false);
+          }
+        };
+        
         // Assign reference first for immediate access
         audioElementRef.current = newAudio;
         
@@ -49,18 +77,30 @@ export const useTreatmentSubliminal = () => {
         newAudio.play()
           .then(() => {
             setAudioSubliminalPlaying(true);
-            console.log("Subliminal audio playing correctly");
+            console.log("✅ Audio subliminal reproduciendo correctamente (tratamiento)");
           })
           .catch((err) => {
-            console.error("Error playing subliminal audio:", err);
+            console.error("❌ Error al reproducir audio subliminal:", err);
             setAudioSubliminalPlaying(false);
+            toast({
+              title: "Error al reproducir audio",
+              description: "No se pudo reproducir el audio. Verifica el formato del archivo.",
+              variant: "destructive"
+            });
           });
       } catch (error) {
-        console.error("Error creating audio object:", error);
+        console.error("❌ Error al crear objeto de audio:", error);
         setAudioSubliminalPlaying(false);
+        toast({
+          title: "Error",
+          description: "No se pudo cargar el archivo de audio",
+          variant: "destructive"
+        });
       }
+    } else if (audioSubliminalPlaying) {
+      console.log("Audio subliminal ya está reproduciendo");
     } else {
-      console.log("No audio file to play or already playing");
+      console.log("No hay archivo de audio para reproducir");
     }
   };
 
