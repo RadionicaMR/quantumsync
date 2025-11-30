@@ -27,7 +27,7 @@ const AudioFileSelector: React.FC<AudioFileSelectorProps> = ({
     <>
       <input
         type="file"
-        accept="audio/*"
+        accept="audio/mp3,audio/mpeg,audio/wav,audio/webm,audio/ogg,audio/m4a,audio/*"
         onChange={handleFileChange}
         disabled={isDisabled || isPlaying || isRecording}
         ref={fileInputRef}
