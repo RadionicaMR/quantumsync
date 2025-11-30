@@ -41,6 +41,9 @@ interface PresetManifestProps {
   audioSubliminalPlaying: boolean;
   playSubliminalAudio: () => void;
   stopSubliminalAudio: () => void;
+  audioLoop?: boolean;
+  setAudioLoop?: (value: boolean) => void;
+  clearAudio?: () => void;
   backgroundModeActive?: boolean;
   rate1: string;
   rate2: string;
@@ -89,6 +92,9 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
   audioSubliminalPlaying,
   playSubliminalAudio,
   stopSubliminalAudio,
+  audioLoop = true,
+  setAudioLoop = () => {},
+  clearAudio = () => {},
   backgroundModeActive = false,
   rate1,
   rate2,

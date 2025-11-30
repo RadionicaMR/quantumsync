@@ -89,26 +89,29 @@ const Manifest = () => {
                 selectPattern={(pattern) => manifest.selectPattern(pattern.id)}
                 startManifestation={manifest.startManifestation}
                 stopManifestation={manifest.stopManifestation}
-                formatTimeRemaining={manifest.formatTimeRemaining}
-                audioFile={manifest.audioFile}
-                setAudioFile={manifest.setAudioFile}
-                audioVolume={manifest.audioVolume}
-                setAudioVolume={manifest.setAudioVolume}
-                audioSubliminalPlaying={manifest.audioSubliminalPlaying}
-                playSubliminalAudio={manifest.playSubliminalAudio}
-                stopSubliminalAudio={manifest.stopSubliminalAudio}
-                backgroundModeActive={manifest.backgroundModeActive}
-                rate1={manifest.rate1}
-                rate2={manifest.rate2}
-                rate3={manifest.rate3}
-                setRate1={manifest.setRate1}
-                setRate2={manifest.setRate2}
-                setRate3={manifest.setRate3}
-                receptorName={manifest.receptorName}
-                setReceptorName={manifest.setReceptorName}
-                indefiniteTime={manifest.indefiniteTime}
-                setIndefiniteTime={manifest.setIndefiniteTime}
-              />
+                 formatTimeRemaining={manifest.formatTimeRemaining}
+                 audioFile={manifest.audioFile}
+                 setAudioFile={manifest.setAudioFile}
+                 audioVolume={manifest.audioVolume}
+                 setAudioVolume={manifest.setAudioVolume}
+                 audioSubliminalPlaying={manifest.audioSubliminalPlaying}
+                 playSubliminalAudio={manifest.playSubliminalAudio}
+                 stopSubliminalAudio={manifest.stopSubliminalAudio}
+                 audioLoop={manifest.audioLoop}
+                 setAudioLoop={manifest.setAudioLoop}
+                 clearAudio={manifest.clearAudio}
+                 backgroundModeActive={manifest.backgroundModeActive}
+                 rate1={manifest.rate1}
+                 rate2={manifest.rate2}
+                 rate3={manifest.rate3}
+                 setRate1={manifest.setRate1}
+                 setRate2={manifest.setRate2}
+                 setRate3={manifest.setRate3}
+                 receptorName={manifest.receptorName}
+                 setReceptorName={manifest.setReceptorName}
+                 indefiniteTime={manifest.indefiniteTime}
+                 setIndefiniteTime={manifest.setIndefiniteTime}
+               />
             </Tabs>
           </ManifestTabSync>
         </div>

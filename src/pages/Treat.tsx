@@ -190,6 +190,9 @@ const Treat = () => {
                 playSubliminalAudio={treatment.playSubliminalAudio}
                 stopSubliminalAudio={treatment.stopSubliminalAudio}
                 backgroundModeActive={treatment.backgroundModeActive}
+                audioLoop={treatment.audioLoop}
+                setAudioLoop={treatment.setAudioLoop}
+                clearAudio={treatment.clearAudio}
               />
             </TabsContent>
             
