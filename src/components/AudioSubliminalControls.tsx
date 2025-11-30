@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import AudioFileSelector from "./audio/AudioFileSelector";
@@ -37,6 +37,11 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
   setAudioLoop = () => {},
   clearAudio = () => {},
 }) => {
+  // Estado local para reproducción de prueba
+  const [isPreviewPlaying, setIsPreviewPlaying] = useState(false);
+  const previewAudioRef = useRef<HTMLAudioElement | null>(null);
+  const previewAudioSourceRef = useRef<string | null>(null);
+
   // Grabadora
   const {
     isRecording,
@@ -86,7 +91,65 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
     }
   };
 
+  // Función para reproducir audio de prueba
+  const playPreviewAudio = () => {
+    if (!audioFile || isPreviewPlaying) return;
+
+    try {
+      // Detener audio previo si existe
+      if (previewAudioRef.current) {
+        previewAudioRef.current.pause();
+        previewAudioRef.current = null;
+      }
+
+      // Limpiar URL previa
+      if (previewAudioSourceRef.current) {
+        URL.revokeObjectURL(previewAudioSourceRef.current);
+      }
+
+      const audioURL = URL.createObjectURL(audioFile);
+      previewAudioSourceRef.current = audioURL;
+
+      const audio = new Audio(audioURL);
+      audio.volume = audioVolume / maxVolume;
+      audio.loop = false; // No hacer loop en preview
+
+      audio.onended = () => {
+        setIsPreviewPlaying(false);
+      };
+
+      audio.onerror = () => {
+        console.error("Error al reproducir preview de audio");
+        setIsPreviewPlaying(false);
+      };
+
+      previewAudioRef.current = audio;
+
+      audio.play()
+        .then(() => {
+          setIsPreviewPlaying(true);
+          console.log("Preview de audio reproduciendo");
+        })
+        .catch((err) => {
+          console.error("Error al iniciar preview:", err);
+          setIsPreviewPlaying(false);
+        });
+    } catch (error) {
+      console.error("Error al crear preview de audio:", error);
+      setIsPreviewPlaying(false);
+    }
+  };
+
+  // Función para detener audio de prueba
+  const stopPreviewAudio = () => {
+    if (previewAudioRef.current) {
+      previewAudioRef.current.pause();
+      setIsPreviewPlaying(false);
+    }
+  };
+
   const handleRemove = () => {
+    stopPreviewAudio(); // Detener preview si está reproduciendo
     clearAudio();
     clearRecording();
     if (fileInputRef.current) {
@@ -95,6 +158,27 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
   };
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Actualizar volumen del preview cuando cambia
+  useEffect(() => {
+    if (previewAudioRef.current) {
+      previewAudioRef.current.volume = audioVolume / maxVolume;
+    }
+  }, [audioVolume, maxVolume]);
+
+  // Cleanup al desmontar
+  useEffect(() => {
+    return () => {
+      if (previewAudioRef.current) {
+        previewAudioRef.current.pause();
+        previewAudioRef.current = null;
+      }
+      if (previewAudioSourceRef.current) {
+        URL.revokeObjectURL(previewAudioSourceRef.current);
+        previewAudioSourceRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <div className="space-y-2 border border-zinc-200 p-3 rounded-xl mt-2 bg-muted/20">
@@ -131,12 +215,12 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
 
       <AudioPlaybackControls
         audioFile={audioFile}
-        isPlaying={isPlaying}
-        isDisabled={isDisabled}
+        isPlaying={isPreviewPlaying}
+        isDisabled={isDisabled || isPlaying}
         audioVolume={audioVolume}
         maxVolume={maxVolume}
-        playAudio={playAudio}
-        stopAudio={stopAudio}
+        playAudio={playPreviewAudio}
+        stopAudio={stopPreviewAudio}
         setAudioVolume={setAudioVolume}
       />
 
