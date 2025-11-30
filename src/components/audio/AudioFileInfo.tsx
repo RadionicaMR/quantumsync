@@ -27,8 +27,8 @@ const AudioFileInfo: React.FC<AudioFileInfoProps> = ({
     <>
       <button
         onClick={handleRemove}
-        disabled={isDisabled || isPlaying || isRecording}
-        className="flex items-center gap-1 px-2 py-1 rounded text-red-500 hover:bg-red-100"
+        disabled={isDisabled || isRecording}
+        className="flex items-center gap-1 px-2 py-1 rounded text-red-500 hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
         type="button"
       >
         <Trash2 className="w-4 h-4" />
