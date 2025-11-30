@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
@@ -7,7 +6,7 @@ import AudioRecorderButton from "./audio/AudioRecorderButton";
 import AudioFileInfo from "./audio/AudioFileInfo";
 import AudioPlaybackControls from "./audio/AudioPlaybackControls";
 import AudioPreview from "./audio/AudioPreview";
-
+import { toast } from "sonner";
 interface AudioSubliminalControlsProps {
   audioFile: File | null;
   setAudioFile: (file: File | null) => void;
@@ -78,59 +77,35 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [audioBlob]);
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    console.log("Archivo de audio seleccionado:", {
-      name: file.name,
-      type: file.type,
-      size: file.size
-    });
-
-    // Validar tipo de archivo
-    const validTypes = ['audio/mp3', 'audio/mpeg', 'audio/wav', 'audio/webm', 'audio/ogg', 'audio/m4a', 'audio/aac'];
-    const hasValidType = validTypes.includes(file.type) || file.name.match(/\.(mp3|wav|webm|ogg|m4a|aac)$/i);
-    
-    if (!hasValidType) {
-      console.error("Tipo de archivo no válido:", file.type);
+    // Validar extensión del archivo (más confiable que MIME type)
+    const validExtensions = /\.(mp3|wav|webm|ogg|m4a|aac|mp4|flac)$/i;
+    if (!validExtensions.test(file.name)) {
+      toast.error("Formato de audio no válido");
       return;
     }
 
-    // Validar tamaño (máximo 50MB para permitir audios largos)
-    const maxSize = 50 * 1024 * 1024;
-    if (file.size > maxSize) {
-      console.error("Archivo demasiado grande:", file.size);
+    // Validar tamaño (máximo 50MB)
+    if (file.size > 50 * 1024 * 1024) {
+      toast.error("Archivo demasiado grande (máximo 50MB)");
       return;
     }
 
-    // Validar duración del audio
+    // Cargar inmediatamente - validación de duración es opcional
+    setAudioFile(file);
+    toast.success("Audio cargado correctamente");
+
+    // Validación de duración en segundo plano (no bloqueante)
     const audio = document.createElement('audio');
-    audio.preload = 'metadata';
-    
     audio.onloadedmetadata = () => {
-      URL.revokeObjectURL(audio.src);
-      const duration = audio.duration;
-      
-      console.log("Duración del audio:", duration, "segundos");
-      
-      // Máximo 10 minutos (600 segundos)
-      if (duration > 600) {
-        console.error("Audio demasiado largo:", duration);
-        return;
+      if (audio.duration > 600) {
+        console.warn("Audio largo detectado:", audio.duration, "segundos");
       }
-
-      setAudioFile(file);
-      console.log("Audio cargado correctamente");
-    };
-
-    audio.onerror = () => {
       URL.revokeObjectURL(audio.src);
-      console.error("Error al leer archivo de audio");
-      // Intentar cargar de todas formas
-      setAudioFile(file);
     };
-
     audio.src = URL.createObjectURL(file);
   };
 
@@ -195,12 +170,7 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
     stopPreviewAudio(); // Detener preview si está reproduciendo
     clearAudio();
     clearRecording();
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
   };
-
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Actualizar volumen del preview cuando cambia
   useEffect(() => {
