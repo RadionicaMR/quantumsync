@@ -1,6 +1,6 @@
-
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useLanguage } from '@/context/LanguageContext';
 
 export type BalanceOption = 'all' | 'blocked';
 
@@ -11,10 +11,12 @@ interface BalanceOptionsProps {
 }
 
 const BalanceOptions = ({ balanceOption, setBalanceOption, isPlaying }: BalanceOptionsProps) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="mb-6">
       <Label className="block mb-2">
-        Opción de equilibrado
+        {t('chakras.selectOption')}
       </Label>
       <RadioGroup 
         value={balanceOption} 
@@ -25,13 +27,13 @@ const BalanceOptions = ({ balanceOption, setBalanceOption, isPlaying }: BalanceO
         <div className="flex items-center space-x-2">
           <RadioGroupItem value="all" id="option-all" />
           <Label htmlFor="option-all" className="cursor-pointer">
-            Equilibrar todos los chakras
+            {t('chakras.balanceAll')}
           </Label>
         </div>
         <div className="flex items-center space-x-2">
           <RadioGroupItem value="blocked" id="option-blocked" />
           <Label htmlFor="option-blocked" className="cursor-pointer">
-            Equilibrar solo chakras cerrados o bloqueados
+            {t('chakras.balanceBlocked')}
           </Label>
         </div>
       </RadioGroup>

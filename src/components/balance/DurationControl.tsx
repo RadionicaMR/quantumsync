@@ -1,6 +1,6 @@
-
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface DurationControlProps {
   duration: number[];
@@ -9,10 +9,12 @@ interface DurationControlProps {
 }
 
 const DurationControl = ({ duration, setDuration, isPlaying }: DurationControlProps) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="mb-8">
       <Label className="block mb-2">
-        Tiempo por chakra: {duration[0]} {duration[0] === 1 ? 'minuto' : 'minutos'}
+        {t('chakras.durationLabel')}: {duration[0]} {duration[0] === 1 ? t('chakras.minute') : t('chakras.minutes')}
       </Label>
       <Slider
         value={duration}
