@@ -1,8 +1,8 @@
-
 import { Check, Play, Square } from 'lucide-react';
 import { motion } from 'framer-motion';
 import QuantumButton from '@/components/QuantumButton';
 import { addChakraBalanceSession } from '@/utils/chakraBalanceStorage';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface BalanceControlsProps {
   isPlaying: boolean;
@@ -21,7 +21,8 @@ const BalanceControls = ({
   onStop, 
   onNavigate 
 }: BalanceControlsProps) => {
-  // Record completion in storage
+  const { t } = useLanguage();
+  
   if (completed && personName) {
     addChakraBalanceSession(personName);
   }
@@ -35,7 +36,7 @@ const BalanceControls = ({
           className="bg-quantum-primary text-white hover:bg-quantum-primary/80"
         >
           <Play size={16} />
-          Iniciar Armonización
+          {t('chakras.startBalance')}
         </QuantumButton>
       ) : isPlaying ? (
         <QuantumButton 
@@ -43,7 +44,7 @@ const BalanceControls = ({
           className="bg-red-500 text-white hover:bg-red-600"
         >
           <Square size={16} />
-          Finalizar
+          {t('chakras.stopBalance')}
         </QuantumButton>
       ) : (
         <QuantumButton 
@@ -51,7 +52,7 @@ const BalanceControls = ({
           className="bg-quantum-primary text-white hover:bg-quantum-primary/80"
         >
           <Play size={16} />
-          Iniciar Nuevamente
+          {t('chakras.startAgain')}
         </QuantumButton>
       )}
       
@@ -61,7 +62,7 @@ const BalanceControls = ({
           variant="outline"
           className="border-quantum-primary/30 hover:bg-quantum-primary/10"
         >
-          Volver a Diagnóstico
+          {t('chakras.goToDiagnose')}
         </QuantumButton>
       )}
     </div>

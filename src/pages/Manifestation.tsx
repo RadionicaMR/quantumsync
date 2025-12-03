@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -16,6 +15,7 @@ import ManifestationBoxAdapter from '@/components/manifest/ManifestationBoxAdapt
 import { SessionRecordDialog } from '@/components/session/SessionRecordDialog';
 import { useSessionRecording } from '@/hooks/useSessionRecording';
 import { useSession } from '@/context/SessionContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 const Manifestation = () => {
   const treatment = useTreatment();
@@ -26,6 +26,7 @@ const Manifestation = () => {
   const { currentPatientId, setCurrentPatientId } = useSession();
   const [showSessionDialog, setShowSessionDialog] = useState(false);
   const [pendingStart, setPendingStart] = useState(false);
+  const { t } = useLanguage();
   
   // Check if we're coming from diagnosis page
   useEffect(() => {
@@ -36,10 +37,9 @@ const Manifestation = () => {
       if (personName) {
         treatment.setReceptorName(personName);
         
-        // Show toast notification only once when first loading the page
         toast({
-          title: "Diagnóstico importado",
-          description: `Importando datos del diagnóstico de ${diagnosisArea} para ${personName}`,
+          title: t('treat.diagnosisImported'),
+          description: `${t('treat.importingFrom')} ${diagnosisArea} ${t('common.for')} ${personName}`,
         });
         
         // Mark as imported to prevent showing the toast again
@@ -91,8 +91,8 @@ const Manifestation = () => {
   return (
     <Layout>
       <HeroSection
-        title="Quantum Manifestation"
-        subtitle="Crea y dirige tu propia realidad a través de patrones cuánticos y radiónicos"
+        title={t('manifest.title')}
+        subtitle={t('manifest.subtitle')}
       />
 
       {/* Main section with manifestation box prominently displayed */}
@@ -116,12 +116,12 @@ const Manifestation = () => {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
               <TabsTrigger value="presets" className="flex flex-col">
-                <span>Preajustes</span>
-                <span>de Frecuencia</span>
+                <span>{t('manifest.presetsTab')}</span>
+                <span>{t('manifest.presetsTabSub')}</span>
               </TabsTrigger>
               <TabsTrigger value="custom" className="flex flex-col">
-                <span>Manifestación</span>
-                <span>Personalizada</span>
+                <span>{t('manifest.customTab')}</span>
+                <span>{t('manifest.customTabSub')}</span>
               </TabsTrigger>
             </TabsList>
             
@@ -183,9 +183,9 @@ const Manifestation = () => {
             <TabsContent value="custom" className="w-full">
               <Card className="quantum-card p-6">
                 <div className="">
-                  <h3 className="text-xl font-semibold mb-4">Diseñador de Manifestaciones Personalizadas</h3>
+                  <h3 className="text-xl font-semibold mb-4">{t('manifest.customTitle')}</h3>
                   <p className="text-muted-foreground mb-8">
-                    Crea tus propias combinaciones de frecuencias para protocolos de manifestación personalizados.
+                    {t('manifest.customDesc')}
                   </p>
                   
                   <CustomTreatment

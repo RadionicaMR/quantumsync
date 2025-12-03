@@ -1,7 +1,7 @@
-
 import { Button } from '@/components/ui/button';
 import { LogOut, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface AdminHeaderProps {
   userName: string;
@@ -11,6 +11,8 @@ interface AdminHeaderProps {
 }
 
 const AdminHeader = ({ userName, userCount, onLogout, onSync }: AdminHeaderProps) => {
+  const { t } = useLanguage();
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -19,9 +21,9 @@ const AdminHeader = ({ userName, userCount, onLogout, onSync }: AdminHeaderProps
       className="mb-8 flex justify-between items-center"
     >
       <div>
-        <h1 className="text-3xl font-bold mb-2">Panel de Administración</h1>
-        <p className="text-muted-foreground">Bienvenido, {userName}</p>
-        <p className="text-sm text-green-600 mt-1">Usuarios registrados: {userCount}</p>
+        <h1 className="text-3xl font-bold mb-2">{t('admin.title')}</h1>
+        <p className="text-muted-foreground">{t('admin.welcome')}, {userName}</p>
+        <p className="text-sm text-green-600 mt-1">{t('admin.registeredUsers')}: {userCount}</p>
       </div>
       <div className="flex gap-3">
         <Button 
@@ -29,7 +31,7 @@ const AdminHeader = ({ userName, userCount, onLogout, onSync }: AdminHeaderProps
           className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
         >
           <RefreshCw size={16} />
-          Actualizar Lista
+          {t('admin.updateList')}
         </Button>
         <Button 
           variant="outline" 
@@ -37,7 +39,7 @@ const AdminHeader = ({ userName, userCount, onLogout, onSync }: AdminHeaderProps
           onClick={onLogout}
         >
           <LogOut size={16} />
-          Cerrar sesión
+          {t('nav.logout')}
         </Button>
       </div>
     </motion.div>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -17,6 +16,7 @@ import { useBalanceChakras } from '@/hooks/useBalanceChakras';
 import { SessionRecordDialog } from '@/components/session/SessionRecordDialog';
 import { useSessionRecording } from '@/hooks/useSessionRecording';
 import { useSession } from '@/context/SessionContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface LocationState {
   personName?: string;

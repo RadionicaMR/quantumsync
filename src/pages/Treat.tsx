@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -16,6 +15,7 @@ import AudioUploader from '@/components/AudioUploader';
 import { SessionRecordDialog } from '@/components/session/SessionRecordDialog';
 import { useSessionRecording } from '@/hooks/useSessionRecording';
 import { useSession } from '@/context/SessionContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 const Treat = () => {
   const treatment = useTreatment();
@@ -26,6 +26,7 @@ const Treat = () => {
   const { currentPatientId, setCurrentPatientId } = useSession();
   const [showSessionDialog, setShowSessionDialog] = useState(false);
   const [pendingStart, setPendingStart] = useState(false);
+  const { t } = useLanguage();
   
   // Check if we're coming from diagnosis page or repeating a session
   useEffect(() => {
@@ -37,10 +38,9 @@ const Treat = () => {
       if (personName) {
         treatment.setReceptorName(personName);
         
-        // Show toast notification only once when first loading the page
         toast({
-          title: "Diagnóstico importado",
-          description: `Importando datos del diagnóstico de ${diagnosisArea} para ${personName}`,
+          title: t('treat.diagnosisImported'),
+          description: `${t('treat.importingFrom')} ${diagnosisArea} ${t('common.for')} ${personName}`,
         });
         
         // Mark as imported to prevent showing the toast again
@@ -120,11 +120,10 @@ const Treat = () => {
   return (
     <Layout>
       <HeroSection
-        title="Tratamiento Vibracional"
-        subtitle="Aplica patrones de frecuencia dirigidos para restaurar el equilibrio y mejorar tu bienestar."
+        title={t('treat.title')}
+        subtitle={t('treat.subtitle')}
       />
 
-      {/* Sección de Cómo Funciona movida justo debajo del título */}
       <HowItWorks />
 
       <section className="py-12 px-4">
@@ -132,12 +131,12 @@ const Treat = () => {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
               <TabsTrigger value="presets" className="flex flex-col">
-                <span>Preajustes</span>
-                <span>de Frecuencia</span>
+                <span>{t('treat.presetsTab')}</span>
+                <span>{t('treat.presetsTabSub')}</span>
               </TabsTrigger>
               <TabsTrigger value="custom" className="flex flex-col">
-                <span>Tratamiento</span>
-                <span>Personalizado</span>
+                <span>{t('treat.customTab')}</span>
+                <span>{t('treat.customTabSub')}</span>
               </TabsTrigger>
             </TabsList>
             
@@ -198,11 +197,10 @@ const Treat = () => {
             
             <TabsContent value="custom" className="w-full">
               <Card className="quantum-card p-6">
-                {/* REMOVIDO EL ANTIGUO AudioUploader de aquí */}
                 <div className="">
-                  <h3 className="text-xl font-semibold mb-4">Diseñador de Frecuencias Personalizadas</h3>
+                  <h3 className="text-xl font-semibold mb-4">{t('treat.customTitle')}</h3>
                   <p className="text-muted-foreground mb-8">
-                    Crea tus propias combinaciones de frecuencias para protocolos de tratamiento personalizados.
+                    {t('treat.customDesc')}
                   </p>
                   
                   <CustomTreatment
