@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import ReceptorNameInput from '@/components/treatment/ReceptorNameInput';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface ReceptorSectionProps {
   receptorName: string;
@@ -20,9 +20,11 @@ const ReceptorSection: React.FC<ReceptorSectionProps> = ({
   receptorImages,
   isDisabled = false,
 }) => {
+  const { t } = useLanguage();
+  
   return (
     <Card className="p-6 quantum-card">
-      <h3 className="text-xl font-semibold mb-4">Datos del Receptor</h3>
+      <h3 className="text-xl font-semibold mb-4">{t('receptor.title')}</h3>
       <ReceptorNameInput
         receptorName={receptorName}
         setReceptorName={setReceptorName}

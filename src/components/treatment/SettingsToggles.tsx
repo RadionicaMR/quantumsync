@@ -1,6 +1,6 @@
-
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface SettingsTogglesProps {
   useHeadphones: boolean;
@@ -17,6 +17,8 @@ const SettingsToggles = ({
   setVisualFeedback,
   isPlaying = false,
 }: SettingsTogglesProps) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="flex flex-col sm:flex-row gap-6 justify-between w-full">
       <div className="flex items-center gap-2">
@@ -26,7 +28,7 @@ const SettingsToggles = ({
           onCheckedChange={setUseHeadphones}
           disabled={isPlaying}
         />
-        <Label htmlFor="custom-headphones">Usar auriculares</Label>
+        <Label htmlFor="custom-headphones">{t('settings.useHeadphones')}</Label>
       </div>
       
       <div className="flex items-center gap-2">
@@ -36,7 +38,7 @@ const SettingsToggles = ({
           onCheckedChange={setVisualFeedback}
           disabled={isPlaying}
         />
-        <Label htmlFor="custom-visual">Mostrar entrenamiento visual</Label>
+        <Label htmlFor="custom-visual">{t('settings.visualFeedback')}</Label>
       </div>
     </div>
   );

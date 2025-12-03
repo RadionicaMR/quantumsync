@@ -1,14 +1,16 @@
-
 import { Card } from '@/components/ui/card';
+import { useLanguage } from '@/context/LanguageContext';
 
 const HowItWorks = () => {
+  const { t } = useLanguage();
+  
   return (
     <section className="py-12 px-4 bg-quantum-gradient-soft">
       <div className="container mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Cómo Funciona el Tratamiento con Frecuencias</h2>
+          <h2 className="text-3xl font-bold mb-4">{t('howItWorks.title')}</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            QuantumSync utiliza principios de resonancia y entrenamiento para ayudar a equilibrar tu campo energético.
+            {t('howItWorks.subtitle')}
           </p>
         </div>
         
@@ -17,9 +19,9 @@ const HowItWorks = () => {
             <div className="w-12 h-12 rounded-full bg-quantum-gradient-soft text-quantum-primary flex items-center justify-center mb-4 mx-auto">
               1
             </div>
-            <h3 className="text-xl font-semibold mb-2 text-center">Emisión de Frecuencia</h3>
+            <h3 className="text-xl font-semibold mb-2 text-center">{t('howItWorks.step1Title')}</h3>
             <p className="text-muted-foreground text-center">
-              Tu dispositivo emite frecuencias vibracionales precisas calibradas para resultados específicos de bienestar.
+              {t('howItWorks.step1Desc')}
             </p>
           </Card>
           
@@ -27,9 +29,9 @@ const HowItWorks = () => {
             <div className="w-12 h-12 rounded-full bg-quantum-gradient-soft text-quantum-primary flex items-center justify-center mb-4 mx-auto">
               2
             </div>
-            <h3 className="text-xl font-semibold mb-2 text-center">Resonancia Energética</h3>
+            <h3 className="text-xl font-semibold mb-2 text-center">{t('howItWorks.step2Title')}</h3>
             <p className="text-muted-foreground text-center">
-              Estas frecuencias resuenan con el campo energético de tu cuerpo, fomentando la armonización y el equilibrio.
+              {t('howItWorks.step2Desc')}
             </p>
           </Card>
           
@@ -37,9 +39,9 @@ const HowItWorks = () => {
             <div className="w-12 h-12 rounded-full bg-quantum-gradient-soft text-quantum-primary flex items-center justify-center mb-4 mx-auto">
               3
             </div>
-            <h3 className="text-xl font-semibold mb-2 text-center">Equilibrio del Campo Energético</h3>
+            <h3 className="text-xl font-semibold mb-2 text-center">{t('howItWorks.step3Title')}</h3>
             <p className="text-muted-foreground text-center">
-              Con el uso regular, tus sistemas energéticos se ajustan a un funcionamiento óptimo, mejorando el bienestar general.
+              {t('howItWorks.step3Desc')}
             </p>
           </Card>
         </div>

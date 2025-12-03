@@ -1,12 +1,12 @@
-
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLanguage } from '@/context/LanguageContext';
 
 interface ReceptorNameInputProps {
   receptorName: string;
   setReceptorName: (name: string) => void;
   isPlaying: boolean;
-  isActive?: boolean; // Add optional isActive prop for backward compatibility
+  isActive?: boolean;
 }
 
 const ReceptorNameInput = ({
@@ -15,17 +15,17 @@ const ReceptorNameInput = ({
   isPlaying,
   isActive,
 }: ReceptorNameInputProps) => {
-  // Use isActive if provided, otherwise fall back to isPlaying
+  const { t, language } = useLanguage();
   const isDisabled = isActive !== undefined ? isActive : isPlaying;
   
   return (
     <div className="space-y-2">
       <Label htmlFor="receptorName" className="text-sm font-medium">
-        Nombre del Receptor
+        {t('receptor.nameLabel')}
       </Label>
       <Input
         id="receptorName"
-        placeholder="Ingrese el nombre del receptor"
+        placeholder={t('receptor.namePlaceholder')}
         value={receptorName}
         onChange={(e) => setReceptorName(e.target.value)}
         maxLength={50}
@@ -33,7 +33,7 @@ const ReceptorNameInput = ({
         disabled={isDisabled}
       />
       <p className="text-xs text-muted-foreground">
-        {receptorName.length}/50 caracteres
+        {receptorName.length}/50 {language === 'en' ? 'characters' : 'caracteres'}
       </p>
     </div>
   );

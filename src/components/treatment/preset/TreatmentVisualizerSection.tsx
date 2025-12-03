@@ -1,8 +1,8 @@
-
 import { Card } from "@/components/ui/card";
 import TreatmentVisualizer from "../TreatmentVisualizer";
 import TreatmentActions from "../TreatmentActions";
 import SettingsToggles from "../SettingsToggles";
+import { useLanguage } from '@/context/LanguageContext';
 
 interface TreatmentVisualizerSectionProps {
   isPlaying: boolean;
@@ -57,10 +57,12 @@ const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
   backgroundModeActive = false,
   intention = ""
 }) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="space-y-6">
       <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg">
-        <h3 className="text-xl font-semibold mb-4">Visualización de Tratamiento</h3>
+        <h3 className="text-xl font-semibold mb-4">{t('settings.treatmentVisualization')}</h3>
         
         <TreatmentVisualizer 
           isPlaying={isPlaying}

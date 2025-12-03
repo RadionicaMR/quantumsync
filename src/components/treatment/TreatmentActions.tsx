@@ -1,7 +1,7 @@
-
 import QuantumButton from '@/components/QuantumButton';
 import { Smartphone } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface TreatmentActionsProps {
   isPlaying: boolean;
@@ -11,7 +11,7 @@ interface TreatmentActionsProps {
   stopTreatment: () => void;
   receptorName?: string;
   backgroundModeActive?: boolean;
-  intention?: string; // Add intention prop for manifestation context
+  intention?: string;
 }
 
 const TreatmentActions = ({
@@ -24,14 +24,12 @@ const TreatmentActions = ({
   backgroundModeActive = false,
   intention
 }: TreatmentActionsProps) => {
-  // Treatment can start if at least the receptor name OR intention is filled
+  const { t, language } = useLanguage();
   const canStartTreatment = !!(receptorName?.trim() || intention?.trim());
   
-  // Local state for displaying the remaining time
   const [displayTimeString, setDisplayTimeString] = useState<string>("");
   const startClickedRef = useRef(false);
   
-  // Update the displayed time whenever timeRemaining or isPlaying changes
   useEffect(() => {
     if (isPlaying) {
       const formattedTime = formatTime(Math.max(0, timeRemaining));
@@ -45,11 +43,9 @@ const TreatmentActions = ({
   const handleStartTreatment = () => {
     console.log("Start treatment button clicked");
     if (canStartTreatment && !isPlaying && !startClickedRef.current) {
-      // Set flag to prevent double clicks
       startClickedRef.current = true;
       startTreatment();
       
-      // Reset flag after a short delay
       setTimeout(() => {
         startClickedRef.current = false;
       }, 1000);
@@ -63,16 +59,27 @@ const TreatmentActions = ({
     }
   };
   
-  // Get appropriate message based on context
   const getReadyMessage = () => {
     if (intention?.trim()) {
-      return "Listo para iniciar manifestación";
+      return language === 'en' ? "Ready to start manifestation" : "Listo para iniciar manifestación";
     }
     if (receptorName?.trim()) {
-      return "Listo para iniciar tratamiento personalizado";
+      return language === 'en' ? "Ready to start personalized treatment" : "Listo para iniciar tratamiento personalizado";
     }
-    return "Ingrese el nombre del receptor o intención para iniciar";
+    return t('actions.enterReceptorName');
   };
+
+  const getTreatmentLabel = () => {
+    return intention?.trim() 
+      ? (language === 'en' ? 'MANIFESTATION' : 'MANIFESTACIÓN')
+      : (language === 'en' ? 'TREATMENT' : 'TRATAMIENTO');
+  };
+
+  const getStartLabel = () => language === 'en' ? 'START' : 'INICIAR';
+  const getStopLabel = () => language === 'en' ? 'STOP' : 'DETENER';
+  const getRemainingLabel = () => language === 'en' ? 'remaining' : 'restante';
+  const getInProgressLabel = () => language === 'en' ? 'in progress' : 'en progreso';
+  const getBackgroundLabel = () => language === 'en' ? 'Background treatment' : 'Tratamiento en segundo plano';
   
   return (
     <div className="flex items-center justify-between">
@@ -82,10 +89,10 @@ const TreatmentActions = ({
             {backgroundModeActive ? (
               <>
                 <Smartphone className="w-4 h-4 mr-2 text-orange-500" />
-                <span>Tratamiento en segundo plano: {displayTimeString} restante</span>
+                <span>{getBackgroundLabel()}: {displayTimeString} {getRemainingLabel()}</span>
               </>
             ) : (
-              <span>{intention?.trim() ? 'Manifestación' : 'Tratamiento'} en progreso: {displayTimeString} restante</span>
+              <span>{getTreatmentLabel()} {getInProgressLabel()}: {displayTimeString} {getRemainingLabel()}</span>
             )}
           </div>
           <QuantumButton 
@@ -93,8 +100,8 @@ const TreatmentActions = ({
             onClick={handleStopTreatment}
           >
             <div className="flex flex-col items-center">
-              <span>DETENER</span>
-              <span>{intention?.trim() ? 'MANIFESTACIÓN' : 'TRATAMIENTO'}</span>
+              <span>{getStopLabel()}</span>
+              <span>{getTreatmentLabel()}</span>
             </div>
           </QuantumButton>
         </>
@@ -109,8 +116,8 @@ const TreatmentActions = ({
             disabled={!canStartTreatment || startClickedRef.current}
           >
             <div className="flex flex-col items-center">
-              <span>INICIAR</span>
-              <span>{intention?.trim() ? 'MANIFESTACIÓN' : 'TRATAMIENTO'}</span>
+              <span>{getStartLabel()}</span>
+              <span>{getTreatmentLabel()}</span>
             </div>
           </QuantumButton>
         </>
