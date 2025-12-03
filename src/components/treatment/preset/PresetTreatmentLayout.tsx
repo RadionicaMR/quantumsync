@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { TreatmentPreset } from '@/hooks/treatment/useTreatmentCore';
 import TreatmentVisualizerSection from './TreatmentVisualizerSection';
@@ -6,6 +5,7 @@ import ImageUploaderSection from './ImageUploaderSection';
 import ReceptorSection from './ReceptorSection';
 import AudioSubliminalSection from './AudioSubliminalSection';
 import RateSection from './RateSection';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface PresetTreatmentLayoutProps {
   presets: TreatmentPreset[];
@@ -54,11 +54,21 @@ interface PresetTreatmentLayoutProps {
   playSubliminalAudio: () => void;
   stopSubliminalAudio: () => void;
   backgroundModeActive?: boolean;
-  intention?: string; // Add intention prop
+  intention?: string;
   audioLoop?: boolean;
   setAudioLoop?: (loop: boolean) => void;
   clearAudio?: () => void;
 }
+
+const presetTranslationKeys: Record<string, string> = {
+  'sleep': 'preset.sleep',
+  'stress': 'preset.stress',
+  'focus': 'preset.focus',
+  'energy': 'preset.energy',
+  'harmony': 'preset.harmony',
+  'manifest': 'preset.manifest',
+  'cleaning': 'preset.cleaning',
+};
 
 const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
   presets,
@@ -107,20 +117,24 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
   playSubliminalAudio,
   stopSubliminalAudio,
   backgroundModeActive = false,
-  intention = "", // Default to empty string
+  intention = "",
   audioLoop = true,
   setAudioLoop = () => {},
   clearAudio = () => {},
 }) => {
-  // Find the selected preset
+  const { t } = useLanguage();
   const preset = presets.find(p => p.id === selectedPreset);
+  
+  const getPresetName = (p: TreatmentPreset) => {
+    const key = presetTranslationKeys[p.id];
+    return key ? t(key) : p.name;
+  };
   
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div className="lg:col-span-1 space-y-6">
-        {/* Preset Selection */}
         <div className="bg-card/90 dark:bg-black/40 p-6 rounded-lg">
-          <h3 className="text-xl font-semibold mb-4">Seleccionar Preajuste</h3>
+          <h3 className="text-xl font-semibold mb-4">{t('preset.selectPreset')}</h3>
           <div className="space-y-2">
             {presets.map((p) => (
               <button
@@ -128,21 +142,20 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
                 className={`w-full text-left px-4 py-2 rounded-md hover:bg-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary ${selectedPreset === p.id ? 'bg-secondary text-secondary-foreground' : 'bg-transparent'}`}
                 onClick={() => onSelectPreset(p)}
               >
-                {p.name} ({p.frequency} Hz)
+                {getPresetName(p)} ({p.frequency} Hz)
               </button>
             ))}
           </div>
         </div>
 
-        {/* Frequency Controls */}
         <div className="bg-card/90 dark:bg-black/40 p-6 rounded-lg">
-          <h3 className="text-xl font-semibold mb-4">Ajustes de Frecuencia</h3>
+          <h3 className="text-xl font-semibold mb-4">{t('preset.frequencySettings')}</h3>
           <p className="text-muted-foreground">
-            Frecuencia: {frequency[0]} Hz
+            {t('preset.frequency')}: {frequency[0]} Hz
             <br />
-            Duración: {duration[0]} minutos
+            {t('preset.duration')}: {duration[0]} {t('preset.minutes')}
             <br />
-            Intensidad: {intensity[0]}%
+            {t('preset.intensity')}: {intensity[0]}%
           </p>
         </div>
       </div>
@@ -172,7 +185,7 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
           hypnoticSpeed={hypnoticSpeed}
           receptorName={receptorName}
           backgroundModeActive={backgroundModeActive}
-          intention={intention} // Pass intention to visualizer section
+          intention={intention}
         />
         
         <ImageUploaderSection 

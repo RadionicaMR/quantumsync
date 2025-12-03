@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface RateSectionProps {
   rate1: string;
@@ -25,14 +25,17 @@ const RateSection: React.FC<RateSectionProps> = ({
   isPlaying = false,
   isDisabled = false,
 }) => {
+  const { t, language } = useLanguage();
   const disabled = isDisabled || isPlaying;
 
   return (
     <Card className="p-6 quantum-card">
       <div className="mb-4">
-        <h3 className="text-xl font-semibold">Valores Radiónicos (RATES)</h3>
+        <h3 className="text-xl font-semibold">{t('rate.title')} (RATES)</h3>
         <p className="text-sm text-muted-foreground mt-1">
-          Ingrese valores numéricos o palabras para los RATES
+          {language === 'en' 
+            ? 'Enter numeric values or words for the RATES'
+            : 'Ingrese valores numéricos o palabras para los RATES'}
         </p>
       </div>
       
@@ -43,7 +46,7 @@ const RateSection: React.FC<RateSectionProps> = ({
             id="rate1"
             value={rate1}
             onChange={(e) => setRate1(e.target.value)}
-            placeholder="Ej: 23-45-67"
+            placeholder={language === 'en' ? 'E.g.: 23-45-67' : 'Ej: 23-45-67'}
             className="font-mono"
             disabled={disabled}
           />
@@ -55,7 +58,7 @@ const RateSection: React.FC<RateSectionProps> = ({
             id="rate2"
             value={rate2}
             onChange={(e) => setRate2(e.target.value)}
-            placeholder="Ej: 98-76-54"
+            placeholder={language === 'en' ? 'E.g.: 98-76-54' : 'Ej: 98-76-54'}
             className="font-mono"
             disabled={disabled}
           />
@@ -67,7 +70,7 @@ const RateSection: React.FC<RateSectionProps> = ({
             id="rate3"
             value={rate3}
             onChange={(e) => setRate3(e.target.value)}
-            placeholder="Ej: Energía"
+            placeholder={language === 'en' ? 'E.g.: Energy' : 'Ej: Energía'}
             className="font-mono"
             disabled={disabled}
           />

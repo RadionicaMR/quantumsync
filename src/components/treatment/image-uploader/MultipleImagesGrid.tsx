@@ -1,6 +1,6 @@
-
 import React from 'react';
 import { Plus, Trash2 } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface MultipleImagesGridProps {
   images: string[];
@@ -19,6 +19,7 @@ const MultipleImagesGrid = ({
   maxImages,
   onImageAdded
 }: MultipleImagesGridProps) => {
+  const { t, language } = useLanguage();
   const canAddMoreImages = images.length < maxImages;
   
   return (
@@ -53,9 +54,9 @@ const MultipleImagesGrid = ({
       </div>
       
       <div className="text-center text-xs text-muted-foreground">
-        {images.length} / {maxImages} imágenes
+        {images.length} / {maxImages} {t('image.imagesCount')}
         {images.length === 0 && (
-          <p className="mt-1">Selecciona hasta {maxImages} imágenes para un efecto hipnótico</p>
+          <p className="mt-1">{t('image.selectUpTo')} {maxImages} {t('image.imagesForHypnotic')}</p>
         )}
       </div>
       
@@ -66,7 +67,7 @@ const MultipleImagesGrid = ({
             onClick={onAddImageClick}
             disabled={isDisabled}
           >
-            Subir desde PC
+            {language === 'en' ? 'Upload from PC' : 'Subir desde PC'}
           </button>
         </div>
       )}

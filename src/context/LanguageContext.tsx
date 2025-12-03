@@ -36,6 +36,71 @@ const translations: Record<Language, Record<string, string>> = {
     'treat.customDesc': 'Crea tus propias combinaciones de frecuencias para protocolos de tratamiento personalizados.',
     'treat.diagnosisImported': 'Diagnóstico importado',
     'treat.importingFrom': 'Importando datos del diagnóstico de',
+    
+    // How It Works
+    'howItWorks.title': 'Cómo Funciona el Tratamiento con Frecuencias',
+    'howItWorks.subtitle': 'QuantumSync utiliza principios de resonancia y entrenamiento para ayudar a equilibrar tu campo energético.',
+    'howItWorks.step1Title': 'Emisión de Frecuencia',
+    'howItWorks.step1Desc': 'Tu dispositivo emite frecuencias vibracionales precisas calibradas para resultados específicos de bienestar.',
+    'howItWorks.step2Title': 'Resonancia Energética',
+    'howItWorks.step2Desc': 'Estas frecuencias resuenan con el campo energético de tu cuerpo, fomentando la armonización y el equilibrio.',
+    'howItWorks.step3Title': 'Equilibrio del Campo Energético',
+    'howItWorks.step3Desc': 'Con el uso regular, tus sistemas energéticos se ajustan a un funcionamiento óptimo, mejorando el bienestar general.',
+
+    // Treatment Presets
+    'preset.selectPreset': 'Seleccionar Preajuste',
+    'preset.selectTreatment': 'Seleccionar Tratamiento',
+    'preset.frequencySettings': 'Ajustes de Frecuencia',
+    'preset.frequency': 'Frecuencia',
+    'preset.duration': 'Duración',
+    'preset.intensity': 'Intensidad',
+    'preset.minutes': 'minutos',
+    
+    // Preset Names
+    'preset.sleep': 'Mejorar el Sueño',
+    'preset.stress': 'Reducir el Estrés',
+    'preset.focus': 'Mejorar la Concentración',
+    'preset.energy': 'Aumentar Energía',
+    'preset.harmony': 'Equilibrio Emocional',
+    'preset.manifest': 'Manifestación',
+    'preset.cleaning': 'Limpieza Energética Ambientes',
+
+    // Treatment Settings
+    'settings.useHeadphones': 'Usar auriculares',
+    'settings.visualFeedback': 'Mostrar entrenamiento visual',
+    'settings.treatmentVisualization': 'Visualización de Tratamiento',
+
+    // Treatment Actions
+    'actions.startTreatment': 'INICIAR TRATAMIENTO',
+    'actions.stopTreatment': 'DETENER TRATAMIENTO',
+    'actions.enterReceptorName': 'Ingrese el nombre del receptor o intención para iniciar',
+    'actions.timeRemaining': 'Tiempo restante',
+    'actions.backgroundMode': 'Modo de fondo activo',
+
+    // Image Uploader
+    'image.receptorImage': 'Imagen del RECEPTOR',
+    'image.radionicGraphic': 'Gráfico RADIÓNICO',
+    'image.treatmentSubject': 'Sujeto del tratamiento',
+    'image.treatmentPatterns': 'Patrones de tratamiento',
+    'image.singleImage': 'Imagen Única',
+    'image.multipleImages': 'Múltiples Imágenes',
+    'image.gallery': 'Galería',
+    'image.selectFromGallery': 'Selecciona imágenes de la galería predefinida',
+    'image.openGallery': 'Abrir Galería',
+    'image.imagesCount': 'imágenes',
+    'image.selectUpTo': 'Selecciona hasta',
+    'image.imagesForHypnotic': 'imágenes para un efecto hipnótico',
+
+    // Receptor Section
+    'receptor.title': 'Datos del Receptor',
+    'receptor.namePlaceholder': 'Nombre del receptor',
+    'receptor.nameLabel': 'Nombre del receptor o intención',
+
+    // Rate Section
+    'rate.title': 'Tasas Radiónicas',
+    'rate.rate1': 'Tasa 1',
+    'rate.rate2': 'Tasa 2',
+    'rate.rate3': 'Tasa 3',
 
     // Manifestation Page
     'manifest.title': 'Quantum Manifestation',
@@ -83,8 +148,6 @@ const translations: Record<Language, Record<string, string>> = {
     'common.email': 'Email',
     'common.password': 'Contraseña',
     'common.for': 'para',
-    'common.minutes': 'minutos',
-    'common.seconds': 'segundos',
 
     // Audio
     'audio.title': 'Audio Subliminal',
@@ -128,6 +191,71 @@ const translations: Record<Language, Record<string, string>> = {
     'treat.customDesc': 'Create your own frequency combinations for personalized treatment protocols.',
     'treat.diagnosisImported': 'Diagnosis imported',
     'treat.importingFrom': 'Importing diagnosis data from',
+
+    // How It Works
+    'howItWorks.title': 'How Frequency Treatment Works',
+    'howItWorks.subtitle': 'QuantumSync uses principles of resonance and entrainment to help balance your energy field.',
+    'howItWorks.step1Title': 'Frequency Emission',
+    'howItWorks.step1Desc': 'Your device emits precise vibrational frequencies calibrated for specific wellness outcomes.',
+    'howItWorks.step2Title': 'Energetic Resonance',
+    'howItWorks.step2Desc': 'These frequencies resonate with your body\'s energy field, promoting harmonization and balance.',
+    'howItWorks.step3Title': 'Energy Field Balance',
+    'howItWorks.step3Desc': 'With regular use, your energy systems adjust to optimal functioning, improving overall wellbeing.',
+
+    // Treatment Presets
+    'preset.selectPreset': 'Select Preset',
+    'preset.selectTreatment': 'Select Treatment',
+    'preset.frequencySettings': 'Frequency Settings',
+    'preset.frequency': 'Frequency',
+    'preset.duration': 'Duration',
+    'preset.intensity': 'Intensity',
+    'preset.minutes': 'minutes',
+
+    // Preset Names
+    'preset.sleep': 'Improve Sleep',
+    'preset.stress': 'Reduce Stress',
+    'preset.focus': 'Improve Focus',
+    'preset.energy': 'Increase Energy',
+    'preset.harmony': 'Emotional Balance',
+    'preset.manifest': 'Manifestation',
+    'preset.cleaning': 'Environmental Energy Cleaning',
+
+    // Treatment Settings
+    'settings.useHeadphones': 'Use headphones',
+    'settings.visualFeedback': 'Show visual training',
+    'settings.treatmentVisualization': 'Treatment Visualization',
+
+    // Treatment Actions
+    'actions.startTreatment': 'START TREATMENT',
+    'actions.stopTreatment': 'STOP TREATMENT',
+    'actions.enterReceptorName': 'Enter receptor name or intention to start',
+    'actions.timeRemaining': 'Time remaining',
+    'actions.backgroundMode': 'Background mode active',
+
+    // Image Uploader
+    'image.receptorImage': 'RECEPTOR Image',
+    'image.radionicGraphic': 'RADIONIC Graphic',
+    'image.treatmentSubject': 'Treatment subject',
+    'image.treatmentPatterns': 'Treatment patterns',
+    'image.singleImage': 'Single Image',
+    'image.multipleImages': 'Multiple Images',
+    'image.gallery': 'Gallery',
+    'image.selectFromGallery': 'Select images from predefined gallery',
+    'image.openGallery': 'Open Gallery',
+    'image.imagesCount': 'images',
+    'image.selectUpTo': 'Select up to',
+    'image.imagesForHypnotic': 'images for hypnotic effect',
+
+    // Receptor Section
+    'receptor.title': 'Receptor Data',
+    'receptor.namePlaceholder': 'Receptor name',
+    'receptor.nameLabel': 'Receptor name or intention',
+
+    // Rate Section
+    'rate.title': 'Radionic Rates',
+    'rate.rate1': 'Rate 1',
+    'rate.rate2': 'Rate 2',
+    'rate.rate3': 'Rate 3',
 
     // Manifestation Page
     'manifest.title': 'Quantum Manifestation',
@@ -175,8 +303,6 @@ const translations: Record<Language, Record<string, string>> = {
     'common.email': 'Email',
     'common.password': 'Password',
     'common.for': 'for',
-    'common.minutes': 'minutes',
-    'common.seconds': 'seconds',
 
     // Audio
     'audio.title': 'Subliminal Audio',

@@ -1,10 +1,10 @@
-
 import React, { useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import SingleImageUploader from './SingleImageUploader';
 import MultipleImagesGrid from './MultipleImagesGrid';
 import ImageGalleryDialog from '@/components/shared/ImageGalleryDialog';
 import { Library } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface ImageUploaderProps {
   title: string;
@@ -32,11 +32,11 @@ const ImageUploader = ({
   const [activeTab, setActiveTab] = useState<'single' | 'multiple' | 'gallery'>('multiple');
   const multipleFileInputRef = useRef<HTMLInputElement>(null);
   const [galleryOpen, setGalleryOpen] = useState(false);
+  const { t } = useLanguage();
 
   const handleMultipleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
-      // Limit to maxImages
       const filesToProcess = Array.from(files).slice(0, maxImages);
       
       Promise.all(filesToProcess.map(file => {
@@ -48,9 +48,8 @@ const ImageUploader = ({
           reader.readAsDataURL(file);
         });
       })).then(newImages => {
-        // Create a new array with combined images and pass it directly to setImages
         const combined = [...images, ...newImages];
-        const limitedImages = combined.slice(0, maxImages); // Ensure we don't exceed maxImages
+        const limitedImages = combined.slice(0, maxImages);
         setImages(limitedImages);
       });
     }
@@ -93,14 +92,14 @@ const ImageUploader = ({
             onClick={() => setActiveTab('single')}
             disabled={isPlaying}
           >
-            Imagen Única
+            {t('image.singleImage')}
           </button>
           <button
             className={`px-3 py-1 rounded-full text-sm ${activeTab === 'multiple' ? 'bg-primary text-white' : 'bg-muted'}`}
             onClick={() => setActiveTab('multiple')}
             disabled={isPlaying}
           >
-            Múltiples Imágenes
+            {t('image.multipleImages')}
           </button>
           <button
             className={`px-3 py-1 rounded-full text-sm flex items-center gap-1 ${activeTab === 'gallery' ? 'bg-primary text-white' : 'bg-muted'}`}
@@ -111,7 +110,7 @@ const ImageUploader = ({
             disabled={isPlaying}
           >
             <Library className="w-4 h-4" />
-            Galería
+            {t('image.gallery')}
           </button>
         </div>
         
@@ -157,14 +156,14 @@ const ImageUploader = ({
           <div className="text-center py-8 border-2 border-dashed border-border rounded-lg">
             <Library className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
             <p className="text-sm text-muted-foreground mb-4">
-              Selecciona imágenes de la galería predefinida
+              {t('image.selectFromGallery')}
             </p>
             <button
               className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
               onClick={() => setGalleryOpen(true)}
               disabled={isPlaying}
             >
-              Abrir Galería
+              {t('image.openGallery')}
             </button>
             {images.length > 0 && (
               <div className="mt-4">
@@ -180,6 +179,13 @@ const ImageUploader = ({
             )}
           </div>
         )}
+        
+        <p className="text-xs text-muted-foreground mt-2 text-center">
+          {images.length} / {maxImages} {t('image.imagesCount')}
+        </p>
+        <p className="text-xs text-muted-foreground text-center">
+          {t('image.selectUpTo')} {maxImages} {t('image.imagesForHypnotic')}
+        </p>
       </div>
 
       <ImageGalleryDialog

@@ -1,5 +1,5 @@
-
 import ImageUploader from '../image-uploader/ImageUploader';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface ImageUploaderSectionProps {
   isPlaying: boolean;
@@ -30,14 +30,14 @@ const ImageUploaderSection = ({
   setReceptorName,
   isDisabled = false,
 }: ImageUploaderSectionProps) => {
-  // Combine isPlaying and isDisabled
+  const { t } = useLanguage();
   const disabled = isDisabled || isPlaying;
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <ImageUploader
-        title="Imagen del RECEPTOR"
-        subtitle="Sujeto del tratamiento"
+        title={t('image.receptorImage')}
+        subtitle={t('image.treatmentSubject')}
         image={receptorImage}
         setImage={setReceptorImage}
         images={receptorImages}
@@ -47,8 +47,8 @@ const ImageUploaderSection = ({
       />
       
       <ImageUploader
-        title="Gráfico RADIÓNICO"
-        subtitle="Patrones de tratamiento"
+        title={t('image.radionicGraphic')}
+        subtitle={t('image.treatmentPatterns')}
         image={radionicImage}
         setImage={setRadionicImage}
         images={radionicImages}
