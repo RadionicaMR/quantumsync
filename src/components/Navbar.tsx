@@ -1,10 +1,11 @@
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, LogIn, User, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
+import LanguageToggle from '@/components/LanguageToggle';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,10 +20,10 @@ const Navbar = () => {
   const { isMobile } = useIsMobile();
   const navigate = useNavigate();
   const { user, logout, isAuthenticated } = useAuth();
+  const { t } = useLanguage();
 
   const handleLogout = () => {
     logout();
-    // Redirigir al Home después de cerrar sesión
     navigate('/');
   };
 
@@ -40,20 +41,21 @@ const Navbar = () => {
           {isAuthenticated ? (
             <>
               <Link to="/diagnose" className="neon-text hover:text-primary transition-colors text-sm md:text-base">
-                Diagnóstico
+                {t('nav.diagnosis')}
               </Link>
               <Link to="/balance-chakras" className="neon-text hover:text-primary transition-colors text-sm md:text-base">
-                Equilibrar Chakras
+                {t('nav.balanceChakras')}
               </Link>
               <Link to="/treat" className="neon-text hover:text-primary transition-colors text-sm md:text-base">
-                Tratamiento
+                {t('nav.treatment')}
               </Link>
               <Link to="/manifestation" className="neon-text hover:text-primary transition-colors text-sm md:text-base">
-                Manifestar
+                {t('nav.manifest')}
               </Link>
               <Link to="/affiliate" className="neon-text hover:text-primary transition-colors text-sm md:text-base">
-                Afiliados
+                {t('nav.affiliates')}
               </Link>
+              <LanguageToggle />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="rounded-full flex items-center gap-2 bg-gradient-to-r from-purple-600/10 to-blue-500/10">
@@ -61,35 +63,36 @@ const Navbar = () => {
                     {user?.name.split(' ')[0]}
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Mi Cuenta</DropdownMenuLabel>
+                <DropdownMenuContent align="end" className="bg-background border border-border">
+                  <DropdownMenuLabel>{t('nav.myAccount')}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => navigate('/session-history')}>
-                    Historial de Sesiones
+                    {t('nav.sessionHistory')}
                   </DropdownMenuItem>
                   {user?.isAdmin && (
                     <DropdownMenuItem onClick={() => navigate('/admin')}>
-                      Panel de Administración
+                      {t('nav.adminPanel')}
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem onClick={handleLogout} className="text-red-500">
                     <LogOut className="mr-2 h-4 w-4" />
-                    Cerrar Sesión
+                    {t('nav.logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </>
           ) : (
             <>
+              <LanguageToggle />
               <Link to="/login">
                 <Button variant="outline" className="rounded-full flex items-center gap-2">
                   <LogIn size={18} />
-                  Iniciar Sesión
+                  {t('nav.login')}
                 </Button>
               </Link>
               <Link to="/purchase">
                 <Button className="rounded-full bg-gradient-to-r from-purple-600/70 to-blue-500/70 backdrop-blur-md border border-white/20 text-white font-medium px-4 py-1 shadow-[0_0_15px_rgba(138,43,226,0.5)] hover:shadow-[0_0_25px_rgba(138,43,226,0.7)] transition-all duration-300 text-sm">
-                  Comenzar
+                  {t('nav.start')}
                 </Button>
               </Link>
             </>
@@ -97,12 +100,15 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Menu Button */}
-        <button 
-          className="md:hidden neon-text" 
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
+        <div className="md:hidden flex items-center gap-2">
+          <LanguageToggle />
+          <button 
+            className="neon-text" 
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -134,42 +140,42 @@ const Navbar = () => {
                 className="neon-text hover:text-primary transition-colors py-1"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Diagnóstico
+                {t('nav.diagnosis')}
               </Link>
               <Link 
                 to="/balance-chakras" 
                 className="neon-text hover:text-primary transition-colors py-1"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Equilibrar Chakras
+                {t('nav.balanceChakras')}
               </Link>
               <Link 
                 to="/treat" 
                 className="neon-text hover:text-primary transition-colors py-1"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Tratamiento
+                {t('nav.treatment')}
               </Link>
               <Link 
                 to="/manifestation" 
                 className="neon-text hover:text-primary transition-colors py-1"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Manifestar
+                {t('nav.manifest')}
               </Link>
               <Link 
                 to="/affiliate" 
                 className="neon-text hover:text-primary transition-colors py-1"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Afiliados
+                {t('nav.affiliates')}
               </Link>
               <Link 
                 to="/session-history" 
                 className="neon-text hover:text-primary transition-colors py-1"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Historial de Sesiones
+                {t('nav.sessionHistory')}
               </Link>
               {user?.isAdmin && (
                 <Link 
@@ -177,7 +183,7 @@ const Navbar = () => {
                   className="neon-text hover:text-primary transition-colors py-1"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Panel de Administración
+                  {t('nav.adminPanel')}
                 </Link>
               )}
             </>
@@ -189,7 +195,7 @@ const Navbar = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 <LogIn size={18} />
-                Iniciar Sesión
+                {t('nav.login')}
               </Link>
               <Link 
                 to="/purchase"
@@ -198,7 +204,7 @@ const Navbar = () => {
                 <Button 
                   className="rounded-full bg-gradient-to-r from-purple-600/70 to-blue-500/70 backdrop-blur-md border border-white/20 text-white font-medium px-3 py-1 shadow-[0_0_15px_rgba(138,43,226,0.5)] hover:shadow-[0_0_25px_rgba(138,43,226,0.7)] w-full transition-all duration-300 text-xs"
                 >
-                  Comenzar
+                  {t('nav.start')}
                 </Button>
               </Link>
             </>
