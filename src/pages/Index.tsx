@@ -4,6 +4,7 @@ import ProblemSection from '@/components/home/ProblemSection';
 import SolutionSection from '@/components/home/SolutionSection';
 import NewBenefitsSection from '@/components/home/NewBenefitsSection';
 import AppShowcaseSection from '@/components/home/AppShowcaseSection';
+import VideoShowcaseSection from '@/components/home/VideoShowcaseSection';
 import QuantumFoundationSection from '@/components/home/QuantumFoundationSection';
 import NewTestimonialsSection from '@/components/home/NewTestimonialsSection';
 import FAQSection from '@/components/home/FAQSection';
@@ -36,25 +37,28 @@ const Index = () => {
       {/* 5. App Showcase Section */}
       <AppShowcaseSection />
 
-      {/* 6. Quantum Foundation Section */}
+      {/* 6. Video Showcase Section */}
+      <VideoShowcaseSection />
+
+      {/* 7. Quantum Foundation Section */}
       <QuantumFoundationSection />
 
-      {/* CTA Button 3 */}
+      {/* 8. CTA Button 3 */}
       <CTAButton />
 
-      {/* 7. Testimonials Section */}
+      {/* 9. Testimonials Section */}
       <NewTestimonialsSection />
 
-      {/* 8. FAQ Section */}
+      {/* 10. FAQ Section */}
       <FAQSection />
 
-      {/* 9. Pricing/CTA Section */}
+      {/* 11. Pricing/CTA Section */}
       <PricingSection />
 
-      {/* 10. Affiliate Program Section */}
+      {/* 12. Affiliate Program Section */}
       <AffiliateSection />
 
-      {/* 11. Final Closing Section */}
+      {/* 13. Final Closing Section */}
       <FinalClosingSection />
     </Layout>
   );
