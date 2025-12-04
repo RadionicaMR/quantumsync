@@ -5,28 +5,31 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useLanguage } from '@/context/LanguageContext';
 
 const FAQSection = () => {
+  const { t } = useLanguage();
+
   const faqs = [
     {
-      question: "¿Necesito conocimientos técnicos para usar Quantumsync?",
-      answer: "No. La interfaz está diseñada para terapeutas, no para técnicos. Si sabes usar un smartphone, puedes usar Quantumsync. Incluye guías paso a paso y soporte personalizado."
+      questionKey: 'home.faq1Question',
+      answerKey: 'home.faq1Answer'
     },
     {
-      question: "¿Requiere equipos o aparatos físicos?",
-      answer: "No necesitas ningún aparato radiónico físico. Todo funciona desde tu dispositivo móvil, tablet o computadora. La tecnología está integrada en la aplicación."
+      questionKey: 'home.faq2Question',
+      answerKey: 'home.faq2Answer'
     },
     {
-      question: "¿Cómo funciona la terapia a distancia?",
-      answer: "Basado en principios de Radiónica Cuántica, la aplicación emite frecuencias específicas dirigidas a tu paciente mediante tu intención y sus datos. La física cuántica demuestra que la distancia no es una barrera para la información energética."
+      questionKey: 'home.faq3Question',
+      answerKey: 'home.faq3Answer'
     },
     {
-      question: "¿Cuándo se puede cancelar?",
-      answer: "Puedes cancelar en cualquier momento, cuando quieras."
+      questionKey: 'home.faq4Question',
+      answerKey: 'home.faq4Answer'
     },
     {
-      question: "¿Es compatible con otras terapias?",
-      answer: "Absolutamente. Quantumsync complementa Reiki, Biodescodificación, terapias florales, y cualquier otra práctica energética. No reemplaza tu método, lo amplifica."
+      questionKey: 'home.faq5Question',
+      answerKey: 'home.faq5Answer'
     }
   ];
 
@@ -41,9 +44,9 @@ const FAQSection = () => {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            <span className="text-white">Preguntas que seguro</span>
+            <span className="text-white">{t('home.faqTitle1')}</span>
             <br />
-            <span className="gradient-text-quantum">te hiciste...</span>
+            <span className="gradient-text-quantum">{t('home.faqTitle2')}</span>
           </h2>
         </motion.div>
 
@@ -61,10 +64,10 @@ const FAQSection = () => {
                 className="bg-gradient-to-br from-purple-900/20 to-blue-900/20 backdrop-blur-sm rounded-2xl border border-purple-500/20 px-6 data-[state=open]:border-purple-500/40 transition-all duration-300"
               >
                 <AccordionTrigger className="text-left text-lg font-semibold text-white hover:text-purple-300 py-6">
-                  {faq.question}
+                  {t(faq.questionKey)}
                 </AccordionTrigger>
                 <AccordionContent className="text-purple-200/80 leading-relaxed pb-6">
-                  {faq.answer}
+                  {t(faq.answerKey)}
                 </AccordionContent>
               </AccordionItem>
             ))}

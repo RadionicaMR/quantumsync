@@ -1,9 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/context/LanguageContext';
 
 const CTAButton = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   
   return (
     <section className="py-12 px-4">
@@ -20,7 +22,7 @@ const CTAButton = () => {
             onClick={() => navigate('/purchase')}
             className="bg-gradient-to-r from-purple-600 via-purple-500 to-blue-500 hover:from-purple-700 hover:via-purple-600 hover:to-blue-600 text-white text-lg px-12 py-6 h-auto rounded-full shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_50px_rgba(168,85,247,0.6)] transition-all duration-300 font-semibold"
           >
-            INICIA AHORA
+            {t('home.startNow')}
           </Button>
         </motion.div>
       </div>

@@ -1,10 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import mockupChakraBalance from '@/assets/mockup-chakra-balance.png';
+import { useLanguage } from '@/context/LanguageContext';
 
 const NewHeroSection = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#0a0118] via-[#1a0b2e] to-[#0f0520]">
@@ -36,11 +37,11 @@ const NewHeroSection = () => {
           >
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 leading-tight">
               <span className="gradient-text-quantum">
-                Transformá la energía de tus pacientes
+                {t('home.heroTitle1')}
               </span>
               <br />
               <span className="text-white">
-                a distancia con precisión cuántica
+                {t('home.heroTitle2')}
               </span>
             </h1>
           </motion.div>
@@ -51,7 +52,7 @@ const NewHeroSection = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-lg md:text-xl text-purple-200/90 max-w-3xl mx-auto leading-relaxed"
           >
-            Quantumsync es una tecnología de <span className="text-purple-300 font-semibold">Radiónica Cuántica</span> que amplifica el poder de tus terapias energéticas mediante frecuencias en Hertz, conectando <span className="text-blue-300 font-semibold">ciencia y conciencia</span>.
+            {t('home.heroDesc')} <span className="text-purple-300 font-semibold">{t('home.heroQuantumRadionics')}</span> {t('home.heroDescMiddle')} <span className="text-blue-300 font-semibold">{t('home.heroScienceConsciousness')}</span>.
           </motion.p>
 
           <motion.div
@@ -65,7 +66,7 @@ const NewHeroSection = () => {
               onClick={() => navigate('/purchase')}
               className="bg-gradient-to-r from-purple-600 via-purple-500 to-blue-500 hover:from-purple-700 hover:via-purple-600 hover:to-blue-600 text-white text-lg px-12 py-6 h-auto rounded-full shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_50px_rgba(168,85,247,0.6)] transition-all duration-300 font-semibold"
             >
-              INICIA AHORA
+              {t('home.startNow')}
             </Button>
           </motion.div>
 

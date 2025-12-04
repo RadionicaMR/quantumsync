@@ -1,19 +1,22 @@
 import { motion } from 'framer-motion';
 import { Heart, Users, TrendingUp } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 const ProblemSection = () => {
+  const { t } = useLanguage();
+
   const problems = [
     {
       icon: Heart,
-      text: "Limitaciones del trabajo presencial"
+      textKey: 'home.problem1'
     },
     {
       icon: Users,
-      text: "Dificultad para medir resultados tangibles"
+      textKey: 'home.problem2'
     },
     {
       icon: TrendingUp,
-      text: "Necesidad de evolucionar tu práctica"
+      textKey: 'home.problem3'
     }
   ];
 
@@ -28,9 +31,9 @@ const ProblemSection = () => {
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            <span className="text-white">Tu energía sana.</span>
+            <span className="text-white">{t('home.problemTitle1')}</span>
             <br />
-            <span className="gradient-text-quantum">Pero sentís que podrías llegar más lejos.</span>
+            <span className="gradient-text-quantum">{t('home.problemTitle2')}</span>
           </h2>
         </motion.div>
 
@@ -47,7 +50,7 @@ const ProblemSection = () => {
               <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-br from-purple-600/30 to-blue-600/30 flex items-center justify-center">
                 <problem.icon className="w-8 h-8 text-purple-300" />
               </div>
-              <p className="text-purple-100 text-lg">{problem.text}</p>
+              <p className="text-purple-100 text-lg">{t(problem.textKey)}</p>
             </motion.div>
           ))}
         </div>
@@ -78,7 +81,7 @@ const ProblemSection = () => {
               
               <div className="relative z-10">
                 <p className="font-cormorant text-2xl md:text-4xl text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-200 via-white to-purple-200 italic leading-relaxed tracking-wide">
-                  Visualiza tu energía expandiéndose más allá de las limitaciones físicas...
+                  {t('home.problemQuote')}
                 </p>
                 
                 {/* Subtle decorative line */}

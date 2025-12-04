@@ -2,9 +2,11 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Sparkles } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 const PricingSection = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   return (
     <section className="py-20 px-4 bg-gradient-to-br from-[#1a0b2e] via-[#0f0520] to-[#0a0118] relative overflow-hidden">
@@ -22,11 +24,11 @@ const PricingSection = () => {
           className="text-center space-y-8"
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            <span className="gradient-text-quantum">Tu energía merece evolucionar</span>
+            <span className="gradient-text-quantum">{t('home.pricingTitle')}</span>
           </h2>
 
           <p className="text-xl text-purple-200/90 max-w-2xl mx-auto leading-relaxed">
-            Cada día que pasa sin amplificar tu potencial terapéutico es una oportunidad perdida de transformar más vidas.
+            {t('home.pricingDesc')}
           </p>
 
           <motion.div
@@ -40,14 +42,14 @@ const PricingSection = () => {
             <div className="relative bg-gradient-to-br from-purple-900/40 to-blue-900/40 backdrop-blur-sm p-12 rounded-3xl border border-purple-500/30">
               <Sparkles className="w-12 h-12 text-purple-300 mx-auto mb-6" />
               <p className="text-lg text-purple-100 mb-8 leading-relaxed">
-                No es solo una herramienta. Es el puente entre tu intención y el campo cuántico. Es la evolución que tu práctica necesita.
+                {t('home.pricingBoxDesc')}
               </p>
               <Button
                 size="lg"
                 onClick={() => navigate('/purchase')}
                 className="w-full md:w-auto bg-gradient-to-r from-purple-600 via-purple-500 to-blue-500 hover:from-purple-700 hover:via-purple-600 hover:to-blue-600 text-white text-lg px-12 py-6 h-auto rounded-full shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_50px_rgba(168,85,247,0.6)] transition-all duration-300 font-semibold"
               >
-                INICIA AHORA
+                {t('home.startNow')}
               </Button>
             </div>
           </motion.div>
@@ -78,7 +80,7 @@ const PricingSection = () => {
                 
                 <div className="relative z-10">
                   <p className="font-cormorant text-2xl md:text-4xl text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-200 via-white to-purple-200 italic leading-relaxed tracking-wide">
-                    Un terapeuta frente a una interfaz de energía expandiéndose hacia infinitas posibilidades...
+                    {t('home.pricingQuote')}
                   </p>
                   
                   {/* Subtle decorative line */}

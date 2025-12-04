@@ -1,7 +1,10 @@
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 const FinalClosingSection = () => {
+  const { t } = useLanguage();
+
   return (
     <section className="py-24 px-4 bg-gradient-to-b from-[#0a0118] to-black relative overflow-hidden">
       {/* Subtle animated stars */}
@@ -43,7 +46,7 @@ const FinalClosingSection = () => {
               transition={{ duration: 1, delay: 0.2 }}
               className="text-2xl md:text-3xl font-light text-purple-200 leading-relaxed"
             >
-              La intención crea la vibración.
+              {t('home.closingLine1')}
             </motion.p>
 
             <motion.p
@@ -53,7 +56,7 @@ const FinalClosingSection = () => {
               transition={{ duration: 1, delay: 0.4 }}
               className="text-2xl md:text-3xl font-light text-blue-200 leading-relaxed"
             >
-              La vibración crea la realidad.
+              {t('home.closingLine2')}
             </motion.p>
 
             <motion.p
@@ -63,7 +66,7 @@ const FinalClosingSection = () => {
               transition={{ duration: 1, delay: 0.6 }}
               className="text-2xl md:text-3xl font-light text-purple-100 leading-relaxed"
             >
-              Con Quantumsync, cada pensamiento se convierte en frecuencia,
+              {t('home.closingLine3')}
             </motion.p>
 
             <motion.p
@@ -73,7 +76,7 @@ const FinalClosingSection = () => {
               transition={{ duration: 1, delay: 0.8 }}
               className="text-2xl md:text-3xl font-light text-white leading-relaxed"
             >
-              y cada frecuencia, en transformación.
+              {t('home.closingLine4')}
             </motion.p>
           </div>
 
@@ -85,10 +88,10 @@ const FinalClosingSection = () => {
             className="pt-12"
           >
             <p className="text-3xl md:text-4xl font-semibold bg-gradient-to-r from-purple-300 via-blue-300 to-purple-200 bg-clip-text text-transparent">
-              💫 Ciencia para el alma.
+              {t('home.closingTagline1')}
             </p>
             <p className="text-3xl md:text-4xl font-semibold bg-gradient-to-r from-blue-200 via-purple-300 to-purple-400 bg-clip-text text-transparent mt-2">
-              Frecuencia para la vida.
+              {t('home.closingTagline2')}
             </p>
           </motion.div>
 

@@ -3,8 +3,17 @@ import { Smartphone, Sliders, Play } from 'lucide-react';
 import mockupChakraBalance from '@/assets/mockup-chakra-balance.png';
 import mockupFrequencySelector from '@/assets/mockup-frequency-selector.png';
 import mockupActiveSession from '@/assets/mockup-active-session.png';
+import { useLanguage } from '@/context/LanguageContext';
 
 const AppShowcaseSection = () => {
+  const { t } = useLanguage();
+
+  const showcaseItems = [
+    { icon: Smartphone, titleKey: 'home.showcase1Title', descKey: 'home.showcase1Desc' },
+    { icon: Sliders, titleKey: 'home.showcase2Title', descKey: 'home.showcase2Desc' },
+    { icon: Play, titleKey: 'home.showcase3Title', descKey: 'home.showcase3Desc' }
+  ];
+
   return (
     <section className="py-20 px-4 bg-gradient-to-br from-[#1a0b2e] to-[#0f0520]">
       <div className="container mx-auto max-w-6xl">
@@ -16,21 +25,17 @@ const AppShowcaseSection = () => {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            <span className="text-white">Tecnología simple.</span>
+            <span className="text-white">{t('home.showcaseTitle1')}</span>
             <br />
-            <span className="gradient-text-quantum">Energía avanzada.</span>
+            <span className="gradient-text-quantum">{t('home.showcaseTitle2')}</span>
           </h2>
           <p className="text-lg text-purple-200/80 max-w-2xl mx-auto">
-            Diseñada para terapeutas, no técnicos. Interfaz intuitiva y soporte humano.
+            {t('home.showcaseSubtitle')}
           </p>
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8 mb-12">
-          {[
-            { icon: Smartphone, title: "Equilibrio de Chakras", desc: "Armoniza tu energía vital" },
-            { icon: Sliders, title: "Selector de Frecuencia", desc: "Ajusta las vibraciones con precisión" },
-            { icon: Play, title: "Sesión Activa", desc: "Monitoreo en tiempo real del tratamiento" }
-          ].map((item, index) => (
+          {showcaseItems.map((item, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
@@ -42,8 +47,8 @@ const AppShowcaseSection = () => {
               <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-purple-600/30 to-blue-600/30 flex items-center justify-center">
                 <item.icon className="w-8 h-8 text-purple-300" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">{item.title}</h3>
-              <p className="text-purple-200/70">{item.desc}</p>
+              <h3 className="text-xl font-semibold text-white mb-2">{t(item.titleKey)}</h3>
+              <p className="text-purple-200/70">{t(item.descKey)}</p>
             </motion.div>
           ))}
         </div>
@@ -61,21 +66,21 @@ const AppShowcaseSection = () => {
               <div className="aspect-[9/16] bg-black/40 rounded-2xl border border-purple-400/20 overflow-hidden">
                 <img 
                   src={mockupChakraBalance} 
-                  alt="Equilibrio de Chakras - Quantumsync"
+                  alt={t('home.showcase1Title') + " - Quantumsync"}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="aspect-[9/16] bg-black/40 rounded-2xl border border-purple-400/20 overflow-hidden">
                 <img 
                   src={mockupFrequencySelector} 
-                  alt="Selector de Frecuencia Cuántica - Quantumsync"
+                  alt={t('home.showcase2Title') + " - Quantumsync"}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="aspect-[9/16] bg-black/40 rounded-2xl border border-purple-400/20 overflow-hidden">
                 <img 
                   src={mockupActiveSession} 
-                  alt="Sesión Activa de Tratamiento - Quantumsync"
+                  alt={t('home.showcase3Title') + " - Quantumsync"}
                   className="w-full h-full object-cover"
                 />
               </div>
