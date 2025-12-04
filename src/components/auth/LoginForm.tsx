@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { AlertCircle, Mail, Lock, LogIn } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface LoginFormProps {
   onToggleRecovery: () => void;
@@ -15,6 +16,7 @@ const LoginForm = ({ onToggleRecovery }: LoginFormProps) => {
   const { login, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -31,8 +33,8 @@ const LoginForm = ({ onToggleRecovery }: LoginFormProps) => {
       
       if (success) {
         toast({
-          title: "Inicio de sesión exitoso",
-          description: "Bienvenido a QuantumSync",
+          title: t('auth.loginSuccess'),
+          description: t('auth.welcomeBack'),
         });
         
         // Redirect explicitly after successful login
@@ -41,16 +43,16 @@ const LoginForm = ({ onToggleRecovery }: LoginFormProps) => {
           navigate('/diagnose');
         }, 100);
       } else {
-        setError('Usuario o contraseña incorrectos');
+        setError(t('auth.invalidCredentials'));
         toast({
           variant: "destructive",
-          title: "Error de inicio de sesión",
-          description: "Usuario o contraseña incorrectos. Revisa tus credenciales.",
+          title: t('auth.loginError'),
+          description: t('auth.loginErrorDesc'),
         });
       }
     } catch (err) {
       console.error("Error durante el inicio de sesión:", err);
-      setError('Ocurrió un error al iniciar sesión');
+      setError(t('auth.registrationError'));
     } finally {
       setLoading(false);
     }
@@ -63,7 +65,7 @@ const LoginForm = ({ onToggleRecovery }: LoginFormProps) => {
           <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
           <Input
             type="email"
-            placeholder="Correo electrónico"
+            placeholder={t('auth.email')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="pl-10"
@@ -77,7 +79,7 @@ const LoginForm = ({ onToggleRecovery }: LoginFormProps) => {
           <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
           <Input
             type="password"
-            placeholder="Contraseña"
+            placeholder={t('auth.password')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="pl-10"
@@ -92,7 +94,7 @@ const LoginForm = ({ onToggleRecovery }: LoginFormProps) => {
           onClick={onToggleRecovery}
           className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
         >
-          ¿Olvidaste tu contraseña?
+          {t('auth.forgotPassword')}
         </button>
       </div>
       
@@ -114,18 +116,18 @@ const LoginForm = ({ onToggleRecovery }: LoginFormProps) => {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            Cargando...
+            {t('auth.loggingIn')}
           </span>
         ) : (
           <span className="flex items-center">
             <LogIn className="mr-2 h-5 w-5" />
-            Iniciar Sesión
+            {t('auth.login')}
           </span>
         )}
       </Button>
       
       <div className="text-center text-sm text-muted-foreground mt-4">
-        <p>¿No tienes una cuenta? Contacta con el administrador después de realizar tu pago.</p>
+        <p>{t('auth.noAccount')}</p>
       </div>
     </form>
   );
