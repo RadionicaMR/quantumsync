@@ -9,11 +9,13 @@ import { AlertCircle, Mail, Lock, User, UserPlus, CheckCircle } from 'lucide-rea
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
+import { useLanguage } from '@/context/LanguageContext';
 
 const Register = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -31,19 +33,19 @@ const Register = () => {
 
     // Validaciones básicas
     if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
+      setError(t('auth.passwordMismatch'));
       setLoading(false);
       return;
     }
 
     if (password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres');
+      setError(t('auth.passwordMinLength'));
       setLoading(false);
       return;
     }
 
     if (!name.trim() || !email.trim() || !password.trim()) {
-      setError('Todos los campos son obligatorios');
+      setError(t('auth.requiredFields'));
       setLoading(false);
       return;
     }
@@ -59,21 +61,21 @@ const Register = () => {
         console.log(`[FORM] Registro exitoso, mostrando mensaje de éxito`);
         setRegistered(true);
         toast({
-          title: "Registro exitoso",
-          description: "Tu cuenta ha sido creada correctamente.",
+          title: t('auth.registrationSuccess'),
+          description: t('auth.accountCreated'),
         });
       } else {
         console.log(`[FORM] Registro falló, mostrando error`);
-        setError('El correo electrónico ya está registrado o hubo un problema con el registro.');
+        setError(t('auth.emailInUse'));
         toast({
           variant: "destructive",
-          title: "Error de registro",
-          description: "No se pudo completar el registro. El correo ya puede estar en uso.",
+          title: t('auth.registrationError'),
+          description: t('auth.emailInUse'),
         });
       }
     } catch (error) {
       console.error('[FORM] Error durante el registro:', error);
-      setError('Ocurrió un error al registrar la cuenta.');
+      setError(t('auth.registrationError'));
     } finally {
       setLoading(false);
     }
@@ -95,15 +97,15 @@ const Register = () => {
                   <CheckCircle className="h-12 w-12 text-green-600" />
                 </div>
               </div>
-              <h2 className="text-2xl font-bold mb-2">¡Registro exitoso!</h2>
+              <h2 className="text-2xl font-bold mb-2">{t('auth.registrationSuccess')}</h2>
               <p className="text-muted-foreground mb-6">
-                Tu cuenta ha sido creada correctamente. Ahora puedes acceder a todas las funcionalidades de QuantumSync.
+                {t('auth.accountCreated')}
               </p>
               <Button 
                 className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600"
                 onClick={() => navigate('/diagnose')}
               >
-                Comenzar a usar QuantumSync
+                {t('auth.startUsing')}
               </Button>
             </Card>
           </motion.div>
@@ -123,9 +125,9 @@ const Register = () => {
         >
           <Card className="p-6 shadow-xl">
             <div className="text-center mb-6">
-              <h1 className="text-2xl font-bold">Crear tu cuenta</h1>
+              <h1 className="text-2xl font-bold">{t('auth.createAccount')}</h1>
               <p className="text-muted-foreground">
-                Completa el formulario para acceder a todas las funcionalidades
+                {t('auth.completeForm')}
               </p>
             </div>
             
@@ -135,7 +137,7 @@ const Register = () => {
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                   <Input
                     type="text"
-                    placeholder="Nombre completo"
+                    placeholder={t('auth.fullName')}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="pl-10"
@@ -149,7 +151,7 @@ const Register = () => {
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                   <Input
                     type="email"
-                    placeholder="Correo electrónico"
+                    placeholder={t('auth.email')}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-10"
@@ -163,7 +165,7 @@ const Register = () => {
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                   <Input
                     type="password"
-                    placeholder="Contraseña"
+                    placeholder={t('auth.password')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10"
@@ -177,7 +179,7 @@ const Register = () => {
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                   <Input
                     type="password"
-                    placeholder="Confirmar contraseña"
+                    placeholder={t('auth.confirmPassword')}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="pl-10"
@@ -205,18 +207,18 @@ const Register = () => {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Registrando...
+                    {t('auth.registering')}
                   </span>
                 ) : (
                   <span className="flex items-center">
                     <UserPlus className="mr-2 h-5 w-5" />
-                    Crear cuenta
+                    {t('auth.createAccountBtn')}
                   </span>
                 )}
               </Button>
               
               <div className="text-center text-sm text-muted-foreground mt-4">
-                <p>¿Ya tienes una cuenta? <Link to="/login" className="text-primary hover:underline">Iniciar sesión</Link></p>
+                <p>{t('auth.alreadyHaveAccount')} <Link to="/login" className="text-primary hover:underline">{t('auth.login')}</Link></p>
               </div>
             </form>
           </Card>

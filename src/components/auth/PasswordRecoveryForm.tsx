@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AlertCircle, Mail, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface PasswordRecoveryFormProps {
   onBack: () => void;
@@ -11,6 +12,7 @@ interface PasswordRecoveryFormProps {
 
 const PasswordRecoveryForm = ({ onBack }: PasswordRecoveryFormProps) => {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [recoveryEmail, setRecoveryEmail] = useState('');
   const [recoveryMessage, setRecoveryMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -21,7 +23,7 @@ const PasswordRecoveryForm = ({ onBack }: PasswordRecoveryFormProps) => {
     setRecoveryMessage('');
     
     if (!recoveryEmail) {
-      setRecoveryMessage('Por favor ingresa tu correo electrónico');
+      setRecoveryMessage(t('auth.enterEmail'));
       setLoading(false);
       return;
     }
@@ -35,21 +37,21 @@ const PasswordRecoveryForm = ({ onBack }: PasswordRecoveryFormProps) => {
       if (user) {
         // En un caso real, aquí enviaríamos un correo con un enlace de recuperación
         // Como es una simulación, mostraremos la contraseña directamente
-        setRecoveryMessage(`Tu contraseña es: ${user.password}`);
+        setRecoveryMessage(`${t('auth.yourPassword')}: ${user.password}`);
         toast({
-          title: "Recuperación exitosa",
-          description: `Se ha encontrado una cuenta con el correo ${recoveryEmail}. La contraseña se muestra a continuación.`,
+          title: t('auth.recoverySuccess'),
+          description: `${t('auth.recoverySuccessDesc')} ${recoveryEmail}.`,
         });
       } else {
-        setRecoveryMessage('No se encontró ninguna cuenta con este correo electrónico');
+        setRecoveryMessage(t('auth.noUserFound'));
         toast({
           variant: "destructive",
-          title: "Error de recuperación",
-          description: "No se encontró ninguna cuenta con este correo electrónico",
+          title: t('auth.recoveryError'),
+          description: t('auth.noUserFound'),
         });
       }
     } else {
-      setRecoveryMessage('No hay usuarios registrados en el sistema');
+      setRecoveryMessage(t('auth.noUsersRegistered'));
     }
     
     setLoading(false);
@@ -66,7 +68,7 @@ const PasswordRecoveryForm = ({ onBack }: PasswordRecoveryFormProps) => {
         >
           <ArrowLeft size={16} />
         </Button>
-        <h2 className="text-xl font-bold">Recuperar Contraseña</h2>
+        <h2 className="text-xl font-bold">{t('auth.recoverPassword')}</h2>
       </div>
       
       <form onSubmit={handleRecoveryRequest} className="space-y-4">
@@ -75,7 +77,7 @@ const PasswordRecoveryForm = ({ onBack }: PasswordRecoveryFormProps) => {
             <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
             <Input
               type="email"
-              placeholder="Correo electrónico"
+              placeholder={t('auth.email')}
               value={recoveryEmail}
               onChange={(e) => setRecoveryEmail(e.target.value)}
               className="pl-10"
@@ -86,7 +88,7 @@ const PasswordRecoveryForm = ({ onBack }: PasswordRecoveryFormProps) => {
         
         {recoveryMessage && (
           <div className={`p-3 rounded-lg flex items-start ${
-            recoveryMessage.includes('Tu contraseña es') 
+            recoveryMessage.includes(t('auth.yourPassword')) 
               ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400' 
               : 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'
           }`}>
@@ -106,11 +108,11 @@ const PasswordRecoveryForm = ({ onBack }: PasswordRecoveryFormProps) => {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Cargando...
+              {t('common.loading')}
             </span>
           ) : (
             <span className="flex items-center">
-              Recuperar Contraseña
+              {t('auth.recoverPassword')}
             </span>
           )}
         </Button>
