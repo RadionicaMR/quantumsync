@@ -45,10 +45,11 @@ const VideoShowcaseSection = () => {
                     </div>
                   </div>
                 </div>
-                <div className="aspect-[9/19.5] bg-black">
+                <div className="aspect-[9/19.5] bg-black flex items-center justify-center overflow-hidden">
                   <iframe
                     src="https://drive.google.com/file/d/12U0y17fKGbnKQQo74wu5pPTOkFBx6hQc/preview"
-                    className="w-full h-full"
+                    className="w-full h-full object-cover"
+                    style={{ margin: '0 auto', display: 'block' }}
                     allow="autoplay; encrypted-media"
                     allowFullScreen
                     title="QuantumSync App Preview 1"
