@@ -1,7 +1,16 @@
 import { motion } from 'framer-motion';
 import { Waves, Atom, Cpu } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 const QuantumFoundationSection = () => {
+  const { t } = useLanguage();
+
+  const features = [
+    { icon: Waves, titleKey: 'home.quantumFeature1Title', descKey: 'home.quantumFeature1Desc' },
+    { icon: Atom, titleKey: 'home.quantumFeature2Title', descKey: 'home.quantumFeature2Desc' },
+    { icon: Cpu, titleKey: 'home.quantumFeature3Title', descKey: 'home.quantumFeature3Desc' }
+  ];
+
   return (
     <section className="py-20 px-4 bg-gradient-to-br from-[#0f0520] via-[#1a0b2e] to-[#0a0118] relative overflow-hidden">
       {/* Animated background elements */}
@@ -19,9 +28,9 @@ const QuantumFoundationSection = () => {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            <span className="gradient-text-quantum">La energía es información.</span>
+            <span className="gradient-text-quantum">{t('home.quantumTitle1')}</span>
             <br />
-            <span className="text-white">La frecuencia es el lenguaje del cambio.</span>
+            <span className="text-white">{t('home.quantumTitle2')}</span>
           </h2>
         </motion.div>
 
@@ -34,13 +43,13 @@ const QuantumFoundationSection = () => {
             className="space-y-6"
           >
             <p className="text-lg text-purple-100/90 leading-relaxed">
-              La física cuántica ha demostrado que todo en el universo vibra a una frecuencia específica. Desde las partículas subatómicas hasta las células de tu cuerpo, todo es <span className="text-purple-300 font-semibold">energía en movimiento</span>.
+              {t('home.quantumDesc1')} <span className="text-purple-300 font-semibold">{t('home.quantumEnergyMotion')}</span>.
             </p>
             <p className="text-lg text-purple-100/90 leading-relaxed">
-              La <span className="text-blue-300 font-semibold">Radiónica Cuántica</span> se basa en el principio de que cuando emitimos frecuencias específicas con una intención clara, podemos influir en el campo energético de una persona, independientemente de la distancia física.
+              {t('home.quantumDesc2')} <span className="text-blue-300 font-semibold">{t('home.quantumRadionicsName')}</span> {t('home.quantumDesc2End')}
             </p>
             <p className="text-lg text-purple-100/90 leading-relaxed">
-              Quantumsync traduce tu intención terapéutica en <span className="text-purple-300 font-semibold">frecuencias medidas en Hertz</span>, creando un puente entre la conciencia y la materia.
+              {t('home.quantumDesc3')} <span className="text-purple-300 font-semibold">{t('home.quantumFrequenciesHz')}</span>{t('home.quantumDesc3End')}
             </p>
           </motion.div>
 
@@ -51,11 +60,7 @@ const QuantumFoundationSection = () => {
             transition={{ duration: 0.6 }}
             className="space-y-6"
           >
-            {[
-              { icon: Waves, title: "Coherencia Vibracional", desc: "Las ondas se sincronizan creando resonancia" },
-              { icon: Atom, title: "Campo Cuántico", desc: "Conexión más allá del espacio-tiempo" },
-              { icon: Cpu, title: "Tecnología Consciente", desc: "Hardware que responde a la intención" }
-            ].map((item, index) => (
+            {features.map((item, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, x: 20 }}
@@ -69,8 +74,8 @@ const QuantumFoundationSection = () => {
                     <item.icon className="w-6 h-6 text-purple-300" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-white mb-2">{item.title}</h3>
-                    <p className="text-purple-200/70">{item.desc}</p>
+                    <h3 className="text-lg font-semibold text-white mb-2">{t(item.titleKey)}</h3>
+                    <p className="text-purple-200/70">{t(item.descKey)}</p>
                   </div>
                 </div>
               </motion.div>
@@ -89,7 +94,7 @@ const QuantumFoundationSection = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 via-blue-500/10 to-purple-600/10 blur-2xl" />
             <div className="relative bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-sm p-8 rounded-2xl border border-purple-500/30">
               <p className="text-xl text-purple-100 italic leading-relaxed">
-                "La intención enfocada + Frecuencia precisa = Transformación energética real"
+                {t('home.quantumQuote')}
               </p>
             </div>
           </div>

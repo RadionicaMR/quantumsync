@@ -1,24 +1,27 @@
 import { motion } from 'framer-motion';
 import { Quote } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 const NewTestimonialsSection = () => {
+  const { t } = useLanguage();
+
   const testimonials = [
     {
-      name: "María González",
-      role: "Terapeuta Holística",
-      content: "Desde que uso Quantumsync, mis sesiones a distancia tienen resultados medibles. Mis pacientes sienten la energía como si estuviera presente.",
+      nameKey: 'home.testimonial1Name',
+      roleKey: 'home.testimonial1Role',
+      contentKey: 'home.testimonial1Content',
       image: "https://randomuser.me/api/portraits/women/44.jpg"
     },
     {
-      name: "Carlos Mendoza",
-      role: "Biodescodificador",
-      content: "La precisión de las frecuencias me permite trabajar con varios pacientes al día sin agotarme. Es la evolución que necesitaba mi práctica.",
+      nameKey: 'home.testimonial2Name',
+      roleKey: 'home.testimonial2Role',
+      contentKey: 'home.testimonial2Content',
       image: "https://randomuser.me/api/portraits/men/32.jpg"
     },
     {
-      name: "Ana Fernández",
-      role: "Reikista Certificada",
-      content: "Quantumsync complementa perfectamente mi Reiki. Ahora puedo llegar a personas en otros países y mantener la efectividad de las sesiones.",
+      nameKey: 'home.testimonial3Name',
+      roleKey: 'home.testimonial3Role',
+      contentKey: 'home.testimonial3Content',
       image: "https://randomuser.me/api/portraits/women/68.jpg"
     }
   ];
@@ -34,9 +37,9 @@ const NewTestimonialsSection = () => {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            <span className="text-white">Lo invisible ahora tiene</span>
+            <span className="text-white">{t('home.testimonialsTitle1')}</span>
             <br />
-            <span className="gradient-text-quantum">resultados visibles</span>
+            <span className="gradient-text-quantum">{t('home.testimonialsTitle2')}</span>
           </h2>
         </motion.div>
 
@@ -54,17 +57,17 @@ const NewTestimonialsSection = () => {
               <div className="relative bg-gradient-to-br from-purple-900/20 to-blue-900/20 backdrop-blur-sm p-8 rounded-2xl border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300 h-full flex flex-col">
                 <Quote className="w-10 h-10 text-purple-400/50 mb-4" />
                 <p className="text-purple-100/90 leading-relaxed mb-6 flex-grow italic">
-                  "{testimonial.content}"
+                  "{t(testimonial.contentKey)}"
                 </p>
                 <div className="flex items-center gap-4">
                   <img
                     src={testimonial.image}
-                    alt={testimonial.name}
+                    alt={t(testimonial.nameKey)}
                     className="w-14 h-14 rounded-full border-2 border-purple-500/30"
                   />
                   <div>
-                    <p className="text-white font-semibold">{testimonial.name}</p>
-                    <p className="text-purple-300/70 text-sm">{testimonial.role}</p>
+                    <p className="text-white font-semibold">{t(testimonial.nameKey)}</p>
+                    <p className="text-purple-300/70 text-sm">{t(testimonial.roleKey)}</p>
                   </div>
                 </div>
               </div>

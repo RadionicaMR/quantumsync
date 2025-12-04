@@ -1,37 +1,40 @@
 import { motion } from 'framer-motion';
 import { Sparkles, Globe, FileText, TrendingUp, Battery, Shield } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 const NewBenefitsSection = () => {
+  const { t } = useLanguage();
+
   const benefits = [
     {
       icon: Sparkles,
-      title: "Potenciá tus terapias",
-      description: "Amplifica tu don natural con frecuencias cuánticas precisas"
+      titleKey: 'home.benefit1Title',
+      descKey: 'home.benefit1Desc'
     },
     {
       icon: Globe,
-      title: "Sesiones a distancia",
-      description: "Trabaja con pacientes en cualquier parte del mundo"
+      titleKey: 'home.benefit2Title',
+      descKey: 'home.benefit2Desc'
     },
     {
       icon: FileText,
-      title: "Registro de resultados",
-      description: "Seguimiento personalizado y medible de cada tratamiento"
+      titleKey: 'home.benefit3Title',
+      descKey: 'home.benefit3Desc'
     },
     {
       icon: TrendingUp,
-      title: "Profesionalización",
-      description: "Eleva tu práctica con tecnología de vanguardia"
+      titleKey: 'home.benefit4Title',
+      descKey: 'home.benefit4Desc'
     },
     {
       icon: Battery,
-      title: "Sin desgaste energético",
-      description: "Mayor alcance sin agotar tu propia energía"
+      titleKey: 'home.benefit5Title',
+      descKey: 'home.benefit5Desc'
     },
     {
       icon: Shield,
-      title: "Desde cualquier dispositivo",
-      description: "Móvil, tablet o computadora - siempre disponible"
+      titleKey: 'home.benefit6Title',
+      descKey: 'home.benefit6Desc'
     }
   ];
 
@@ -46,9 +49,9 @@ const NewBenefitsSection = () => {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            <span className="text-white">No reemplaza tu don.</span>
+            <span className="text-white">{t('home.benefitsTitle1')}</span>
             <br />
-            <span className="gradient-text-quantum">Lo amplifica.</span>
+            <span className="gradient-text-quantum">{t('home.benefitsTitle2')}</span>
           </h2>
         </motion.div>
 
@@ -67,8 +70,8 @@ const NewBenefitsSection = () => {
                 <div className="w-14 h-14 mb-6 rounded-xl bg-gradient-to-br from-purple-600/30 to-blue-600/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                   <benefit.icon className="w-7 h-7 text-purple-300" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3 text-white">{benefit.title}</h3>
-                <p className="text-purple-200/80 leading-relaxed">{benefit.description}</p>
+                <h3 className="text-xl font-semibold mb-3 text-white">{t(benefit.titleKey)}</h3>
+                <p className="text-purple-200/80 leading-relaxed">{t(benefit.descKey)}</p>
               </div>
             </motion.div>
           ))}
