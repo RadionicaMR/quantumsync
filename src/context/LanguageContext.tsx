@@ -204,6 +204,9 @@ const translations: Record<Language, Record<string, string>> = {
     'auth.recoveryError': 'Error de recuperación',
     'auth.back': 'Volver',
 
+    // Home Page - Video Showcase
+    'home.videoShowcaseTitle': 'Una mirada al interior de QuantumSync',
+
     // Home Page - Hero
     'home.heroTitle1': 'Transformá la energía de tus pacientes',
     'home.heroTitle2': 'a distancia con precisión cuántica',
@@ -531,6 +534,9 @@ const translations: Record<Language, Record<string, string>> = {
     'auth.noUsersRegistered': 'No users registered in the system',
     'auth.recoveryError': 'Recovery error',
     'auth.back': 'Back',
+
+    // Home Page - Video Showcase
+    'home.videoShowcaseTitle': 'A look inside QuantumSync',
 
     // Home Page - Hero
     'home.heroTitle1': 'Transform your patients\' energy',
