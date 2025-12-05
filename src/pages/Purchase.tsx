@@ -1,17 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import { ArrowRight, CreditCard, Map } from 'lucide-react';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const Purchase = () => {
   const navigate = useNavigate();
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const { trackPurchasePageVisit, trackPaymentClick } = useAnalytics();
+
+  useEffect(() => {
+    trackPurchasePageVisit();
+  }, [trackPurchasePageVisit]);
 
   const handlePaymentClick = (option: string) => {
+    trackPaymentClick(option === 'argentina' ? 'mercadopago' : 'paypal');
     setSelectedOption(option);
     setShowConfirm(true);
   };

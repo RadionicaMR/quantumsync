@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import Layout from '@/components/Layout';
 import NewHeroSection from '@/components/home/NewHeroSection';
 import ProblemSection from '@/components/home/ProblemSection';
@@ -12,8 +13,15 @@ import PricingSection from '@/components/home/PricingSection';
 import AffiliateSection from '@/components/home/AffiliateSection';
 import FinalClosingSection from '@/components/home/FinalClosingSection';
 import CTAButton from '@/components/home/CTAButton';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const Index = () => {
+  const { trackPageVisit } = useAnalytics();
+
+  useEffect(() => {
+    trackPageVisit();
+  }, [trackPageVisit]);
+
   return (
     <Layout>
       {/* 1. Hero Section */}
