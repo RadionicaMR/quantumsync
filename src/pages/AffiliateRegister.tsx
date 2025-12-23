@@ -61,20 +61,78 @@ const AffiliateRegister = () => {
     setLoading(true);
 
     try {
-      // 1. Create auth user
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      // 1. Check if user already exists in auth but not in affiliates (orphan user)
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/affiliate-dashboard`,
-          data: {
-            full_name: formData.name
-          }
-        }
       });
 
-      if (authError) throw authError;
-      if (!authData.user) throw new Error('No se pudo crear el usuario');
+      let userId: string;
+      let isExistingOrphanUser = false;
+
+      if (signInData?.user) {
+        // User exists and password is correct - check if affiliate record exists
+        const { data: existingAffiliate } = await supabase
+          .from('affiliates')
+          .select('id')
+          .eq('user_id', signInData.user.id)
+          .maybeSingle();
+
+        if (existingAffiliate) {
+          // User already has affiliate record - redirect to dashboard
+          toast({
+            title: 'Ya tienes cuenta',
+            description: 'Redirigiendo a tu dashboard de afiliado...'
+          });
+          navigate('/affiliate-dashboard');
+          return;
+        }
+
+        // User exists but no affiliate record - this is an orphan user
+        userId = signInData.user.id;
+        isExistingOrphanUser = true;
+      } else if (signInError?.message?.includes('Invalid login credentials')) {
+        // Check if user exists with wrong password or doesn't exist at all
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/affiliate-dashboard`,
+            data: {
+              full_name: formData.name
+            }
+          }
+        });
+
+        if (authError) {
+          // If user already exists with different password
+          if (authError.message.includes('already registered') || authError.message.includes('User already registered')) {
+            throw new Error('El email ya está registrado. Si olvidaste tu contraseña, contacta soporte.');
+          }
+          throw authError;
+        }
+
+        if (!authData.user) throw new Error('No se pudo crear el usuario');
+        userId = authData.user.id;
+
+        // Sign in the new user to establish session
+        const { error: newSignInError } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (newSignInError) {
+          // If auto-confirm is disabled, user needs to confirm email first
+          toast({
+            title: '¡Casi listo!',
+            description: 'Por favor confirma tu email y luego inicia sesión para completar el registro.'
+          });
+          navigate('/affiliate-login');
+          return;
+        }
+      } else {
+        throw signInError || new Error('Error al verificar credenciales');
+      }
 
       // 2. Generate affiliate code
       const affiliateCode = generateAffiliateCode(formData.name, formData.email);
@@ -82,11 +140,11 @@ const AffiliateRegister = () => {
       // 3. Determine primary payment method (prefer PayPal if provided)
       const primaryPaymentMethod: PaymentMethod = formData.paypal_email ? 'paypal' : 'mercadopago';
 
-      // 4. Create affiliate record
+      // 4. Create affiliate record (now user should be authenticated)
       const { error: affiliateError } = await supabase
         .from('affiliates')
         .insert({
-          user_id: authData.user.id,
+          user_id: userId,
           name: formData.name,
           email: formData.email,
           country: formData.country,
@@ -98,17 +156,20 @@ const AffiliateRegister = () => {
           status: 'active'
         });
 
-      if (affiliateError) throw affiliateError;
+      if (affiliateError) {
+        console.error('Affiliate insert error:', affiliateError);
+        throw new Error('No se pudo crear el registro de afiliado. Por favor contacta soporte.');
+      }
 
       toast({
         title: '¡Registro exitoso!',
-        description: 'Tu cuenta de afiliado ha sido creada. Revisa tu email para confirmar.'
+        description: isExistingOrphanUser 
+          ? 'Tu cuenta de afiliado ha sido completada.' 
+          : 'Tu cuenta de afiliado ha sido creada.'
       });
 
       // Redirect to dashboard
-      setTimeout(() => {
-        navigate('/affiliate-dashboard');
-      }, 2000);
+      navigate('/affiliate-dashboard');
 
     } catch (error: any) {
       console.error('Error:', error);
