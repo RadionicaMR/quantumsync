@@ -1,9 +1,9 @@
-
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { Affiliate } from '@/types/affiliate';
 import AffiliatesTable from './AffiliatesTable';
+import CreateAffiliateDialog from './CreateAffiliateDialog';
 
 interface AffiliatesManagementTabProps {
   affiliates: Affiliate[];
@@ -23,13 +23,17 @@ const AffiliatesManagementTab = ({
             Total de afiliados: {affiliates.length} | Pendientes: {affiliates.filter(a => a.status === 'pending').length}
           </p>
         </div>
-        <Button 
-          className="bg-gradient-to-r from-green-600 to-emerald-500 flex items-center gap-2"
-          onClick={onAffiliateUpdate}
-        >
-          <Users size={16} />
-          Actualizar Lista
-        </Button>
+        <div className="flex gap-2">
+          <CreateAffiliateDialog onSuccess={onAffiliateUpdate} />
+          <Button 
+            variant="outline"
+            className="flex items-center gap-2"
+            onClick={onAffiliateUpdate}
+          >
+            <RefreshCw size={16} />
+            Actualizar
+          </Button>
+        </div>
       </div>
       
       <AffiliatesTable 
