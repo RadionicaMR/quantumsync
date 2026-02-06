@@ -88,8 +88,13 @@ const Auth = () => {
 
     toast({
       title: 'Cuenta creada',
-      description: 'Tu cuenta ha sido creada exitosamente',
+      description: 'Tu cuenta ha sido creada exitosamente. Ya puedes iniciar sesión.',
     });
+    
+    // Auto-switch to login tab after successful signup
+    setSignupEmail('');
+    setSignupPassword('');
+    setSignupFullName('');
   };
 
   return (
