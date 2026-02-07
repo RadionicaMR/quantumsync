@@ -119,27 +119,66 @@ const SessionHistory = () => {
   };
 
   const handleRepeatSession = (session: Session) => {
-    // Only treatment sessions can be repeated for now
-    if (session.session_type === 'treatment') {
-      const sessionData = session.session_data;
-      // Navigate to treatment page with session data
-      navigate('/treat', { 
-        state: { 
-          repeatSession: true,
-          sessionData: {
-            frequency: sessionData.frequency,
-            duration: sessionData.duration,
-            rates: sessionData.rates || [],
-            receptorName: sessionData.receptorName,
-            preset: sessionData.preset
+    const sessionData = session.session_data;
+    const patientName = session.patient?.name || '';
+
+    switch (session.session_type) {
+      case 'treatment':
+        navigate('/treat', { 
+          state: { 
+            repeatSession: true,
+            sessionData: {
+              frequency: sessionData.frequency,
+              duration: sessionData.duration,
+              rates: sessionData.rates || [],
+              receptorName: sessionData.receptorName || patientName,
+              preset: sessionData.preset
+            }
+          } 
+        });
+        break;
+
+      case 'diagnosis':
+        navigate('/diagnose', {
+          state: {
+            repeatSession: true,
+            personName: patientName,
+            area: sessionData.area,
           }
-        } 
-      });
-      toast({
-        title: 'Tratamiento cargado',
-        description: 'Los datos del tratamiento han sido cargados',
-      });
+        });
+        break;
+
+      case 'manifestation':
+        navigate('/manifest', {
+          state: {
+            repeatSession: true,
+            sessionData: {
+              intention: sessionData.intention,
+              indefiniteMode: sessionData.indefiniteMode,
+            }
+          }
+        });
+        break;
+
+      case 'balance_chakras':
+        navigate('/balance-chakras', {
+          state: {
+            repeatSession: true,
+            personName: patientName,
+            chakraStates: sessionData.chakraStates || [],
+            sessionData: {
+              balanceOption: sessionData.balanceOption,
+              duration: sessionData.duration,
+            }
+          }
+        });
+        break;
     }
+
+    toast({
+      title: 'Sesión cargada',
+      description: `Los datos de la sesión han sido cargados. Presiona Inicio para comenzar.`,
+    });
   };
 
   const confirmDelete = (sessionId: string) => {
@@ -229,16 +268,14 @@ const SessionHistory = () => {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
-                        {session.session_type === 'treatment' && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleRepeatSession(session)}
-                            title="Repetir tratamiento"
-                          >
-                            <Repeat className="h-4 w-4" />
-                          </Button>
-                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleRepeatSession(session)}
+                          title="Repetir sesión"
+                        >
+                          <Repeat className="h-4 w-4" />
+                        </Button>
                         <Button
                           variant="outline"
                           size="sm"

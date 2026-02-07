@@ -1,5 +1,6 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Tabs } from '@/components/ui/tabs';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
@@ -10,6 +11,7 @@ import ManifestTabsContent from '@/components/manifest/ManifestTabsContent';
 import ManifestTabSync from '@/components/manifest/ManifestTabSync';
 
 const Manifest = () => {
+  const location = useLocation();
   // Local state for active tab
   const [activeTab, setActiveTab] = useState("presets");
   
@@ -19,6 +21,19 @@ const Manifest = () => {
   // Use visualSpeed from core if available, or create new state
   const visualSpeed = manifest.visualSpeed || manifest.exposureTime; 
   const setVisualSpeed = manifest.setVisualSpeed || manifest.setExposureTime;
+
+  // Handle repeat session from history
+  useEffect(() => {
+    if (location.state?.repeatSession && location.state?.sessionData) {
+      const sessionData = location.state.sessionData;
+      if (sessionData.intention) {
+        manifest.setIntention(sessionData.intention);
+      }
+      if (sessionData.indefiniteMode !== undefined) {
+        manifest.setIndefiniteTime(sessionData.indefiniteMode);
+      }
+    }
+  }, []);
   
   // Handle tab changes
   const handleTabChange = (value: string) => {

@@ -34,6 +34,10 @@ const BalanceChakras = () => {
   const [showSessionDialog, setShowSessionDialog] = useState(false);
   const [pendingStart, setPendingStart] = useState(false);
   
+  // Merge repeat session data with location state
+  const personNameFromState = state.personName || '';
+  const chakraStatesFromState = state.chakraStates || (location.state as any)?.sessionData?.chakraStates;
+
   const {
     personName,
     setPersonName,
@@ -49,9 +53,22 @@ const BalanceChakras = () => {
     stopBalancing,
     navigateToDiagnose,
     currentFrequency
-  } = useBalanceChakras(state.personName || '', state.chakraStates);
+  } = useBalanceChakras(personNameFromState, chakraStatesFromState);
   
-  const hasChakraStates = state.chakraStates && state.chakraStates.some(c => c.state);
+  const hasChakraStates = chakraStatesFromState && chakraStatesFromState.some((c: any) => c.state);
+
+  // Handle repeat session data
+  useEffect(() => {
+    if ((location.state as any)?.repeatSession && (location.state as any)?.sessionData) {
+      const sessionData = (location.state as any).sessionData;
+      if (sessionData.balanceOption) {
+        setBalanceOption(sessionData.balanceOption);
+      }
+      if (sessionData.duration) {
+        setDuration([sessionData.duration]);
+      }
+    }
+  }, []);
 
   // Handle session recording when completing
   useEffect(() => {
