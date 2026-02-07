@@ -75,19 +75,9 @@
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         
         if (isSafari || isIOS) {
-          // Prevenir scrolling elástico en Safari
+          // Prevenir zoom por pinch en Safari (solo zoom, no bloquear scroll)
           document.addEventListener('touchmove', function(e) {
-            if (e.scale !== 1) {
-              e.preventDefault();
-            }
-          }, { passive: false });
-          
-          // Fix para problemas de enfoque de inputs en iOS
-          document.addEventListener('touchend', function(e) {
-            const target = e.target;
-            if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT')) {
-              // No hacer nada, dejar que el navegador maneje el enfoque
-            } else {
+            if (e.scale !== undefined && e.scale !== 1) {
               e.preventDefault();
             }
           }, { passive: false });
