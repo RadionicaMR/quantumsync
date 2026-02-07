@@ -1,5 +1,6 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AreaSelection from '@/components/quantum/AreaSelection';
@@ -13,6 +14,7 @@ interface DiagnosisTabsProps {
 }
 
 const DiagnosisTabs: React.FC<DiagnosisTabsProps> = ({ isMobile }) => {
+  const location = useLocation();
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const [sensitivity, setSensitivity] = useState([50]);
   const [useCameraMode, setUseCameraMode] = useState(false);
@@ -21,6 +23,18 @@ const DiagnosisTabs: React.FC<DiagnosisTabsProps> = ({ isMobile }) => {
   const [pendulumSound, setPendulumSound] = useState(true);
   const [mentalQuestionMode, setMentalQuestionMode] = useState(false);
   const [personName, setPersonName] = useState('');
+
+  // Handle repeat session from history
+  useEffect(() => {
+    if (location.state?.repeatSession) {
+      if (location.state.personName) {
+        setPersonName(location.state.personName);
+      }
+      if (location.state.area) {
+        setSelectedArea(location.state.area);
+      }
+    }
+  }, [location.state]);
   
   const handleSelectArea = (area: string) => {
     setSelectedArea(area);
