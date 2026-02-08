@@ -486,6 +486,7 @@ export type Database = {
         Args: { _code: string }
         Returns: {
           affiliate_code: string
+          id: string
           name: string
         }[]
       }
