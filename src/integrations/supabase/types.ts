@@ -482,6 +482,13 @@ export type Database = {
     }
     Functions: {
       auth_email: { Args: never; Returns: string }
+      get_affiliate_name_by_code: {
+        Args: { _code: string }
+        Returns: {
+          affiliate_code: string
+          name: string
+        }[]
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]

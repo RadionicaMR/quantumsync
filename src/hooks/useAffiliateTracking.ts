@@ -33,17 +33,15 @@ export const useAffiliateTracking = () => {
       // If we have a ref code (from URL or cookie), get affiliate info
       if (refCodeToUse) {
         console.log('[AFFILIATE TRACKING] Looking up affiliate with code:', refCodeToUse);
-        const { data: affiliate, error } = await supabase
-          .from('affiliates')
-          .select('id, name')
-          .eq('affiliate_code', refCodeToUse)
-          .eq('status', 'active')
-          .maybeSingle();
+        // Use secure RPC that only exposes name and code
+        const { data: affiliateResult, error } = await supabase
+          .rpc('get_affiliate_name_by_code', { _code: refCodeToUse });
 
-        console.log('[AFFILIATE TRACKING] Affiliate lookup result:', { affiliate, error });
+        console.log('[AFFILIATE TRACKING] Affiliate lookup result:', { affiliateResult, error });
+
+        const affiliate = affiliateResult?.[0];
 
         if (affiliate) {
-          // Set the affiliate name
           console.log('[AFFILIATE TRACKING] Setting affiliate name:', affiliate.name);
           setAffiliateName(affiliate.name);
 
