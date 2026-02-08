@@ -181,51 +181,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       console.log('[REGISTER] Registration successful');
       
-      // Check for affiliate referral
+      // Track affiliate referral via secure edge function
       const affiliateRefCode = localStorage.getItem('referralCode');
       if (affiliateRefCode) {
         try {
-          const { data: affiliate } = await supabase
-            .from('affiliates')
-            .select('*')
-            .eq('affiliate_code', affiliateRefCode)
-            .eq('status', 'active')
-            .maybeSingle();
-
-          if (affiliate) {
-            const { data: defaultProduct } = await supabase
-              .from('products')
-              .select('*')
-              .eq('active', true)
-              .limit(1)
-              .maybeSingle();
-
-            if (defaultProduct) {
-              const commissionAmount = (defaultProduct.price_usd || 0) * (affiliate.commission_rate / 100);
-              
-              await supabase.from('affiliate_sales').insert({
-                affiliate_id: affiliate.id,
-                product_id: defaultProduct.id,
-                customer_email: email,
-                customer_name: name,
-                sale_amount: defaultProduct.price_usd || 0,
-                currency: 'USD',
-                commission_amount: commissionAmount,
-                commission_status: 'pending',
-                payment_method: 'paypal'
-              });
-
-              await supabase
-                .from('affiliates')
-                .update({
-                  total_sales: affiliate.total_sales + 1,
-                  total_commissions: affiliate.total_commissions + commissionAmount,
-                  pending_commissions: affiliate.pending_commissions + commissionAmount
-                })
-                .eq('id', affiliate.id);
-
-              console.log('[REGISTER] Affiliate sale tracked');
-            }
+          const { data: sessionData } = await supabase.auth.getSession();
+          const token = sessionData?.session?.access_token;
+          if (token) {
+            await supabase.functions.invoke('track-affiliate-sale', {
+              body: {
+                referralCode: affiliateRefCode,
+                customerEmail: email,
+                customerName: name
+              }
+            });
+            console.log('[REGISTER] Affiliate sale tracking requested');
           }
         } catch (error) {
           console.error('[REGISTER] Error tracking affiliate sale:', error);
