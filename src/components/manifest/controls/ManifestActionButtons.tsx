@@ -78,10 +78,8 @@ const ManifestActionButtons = memo(({
           onClick={stopManifestation}
           className="bg-red-500 hover:bg-red-600 text-white font-bold"
         >
-          <div className="flex items-center justify-center">
-            <StopCircle className="mr-2 h-4 w-4" />
-            <span>DETENER MANIFESTACIÓN</span>
-          </div>
+          <StopCircle className="mr-2 h-4 w-4" />
+          <span>DETENER MANIFESTACIÓN</span>
         </QuantumButton>
       </div>
     );
@@ -100,10 +98,8 @@ const ManifestActionButtons = memo(({
         onClick={handleStartClick}
         disabled={!isButtonEnabled}
       >
-        <div className="flex items-center justify-center">
           <Rocket className="mr-2 h-5 w-5" />
           <span>INICIAR MANIFESTACIÓN</span>
-        </div>
       </QuantumButton>
     </div>
   );
