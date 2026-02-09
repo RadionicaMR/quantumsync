@@ -99,10 +99,10 @@ const TreatmentActions = ({
             variant="outline"
             onClick={handleStopTreatment}
           >
-            <div className="flex flex-col items-center">
+            <span className="flex flex-col items-center">
               <span>{getStopLabel()}</span>
               <span>{getTreatmentLabel()}</span>
-            </div>
+            </span>
           </QuantumButton>
         </>
       ) : (
@@ -115,10 +115,10 @@ const TreatmentActions = ({
             onClick={handleStartTreatment}
             disabled={!canStartTreatment || startClickedRef.current}
           >
-            <div className="flex flex-col items-center">
+            <span className="flex flex-col items-center">
               <span>{getStartLabel()}</span>
               <span>{getTreatmentLabel()}</span>
-            </div>
+            </span>
           </QuantumButton>
         </>
       )}
