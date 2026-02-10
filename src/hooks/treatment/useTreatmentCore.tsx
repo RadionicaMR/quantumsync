@@ -116,11 +116,15 @@ export const useTreatmentCore = () => {
           duration,
           preset: selectedPreset,
           intention,
-          rates: {
-            rate1: rates.rate1[0],
-            rate2: rates.rate2[0],
-            rate3: rates.rate3[0]
-          },
+          rate1: rates.rate1,
+          rate2: rates.rate2,
+          rate3: rates.rate3,
+          radionicImage: images.radionicImage,
+          receptorImage: images.receptorImage,
+          radionicImages: images.radionicImages,
+          receptorImages: images.receptorImages,
+          visualFeedback,
+          hypnoticSpeed: hypnoticSpeed[0],
           completedAt: new Date().toISOString()
         }
       );

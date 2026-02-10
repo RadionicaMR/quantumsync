@@ -128,11 +128,8 @@ const SessionHistory = () => {
           state: { 
             repeatSession: true,
             sessionData: {
-              frequency: sessionData.frequency,
-              duration: sessionData.duration,
-              rates: sessionData.rates || [],
+              ...sessionData,
               receptorName: sessionData.receptorName || patientName,
-              preset: sessionData.preset
             }
           } 
         });
@@ -153,8 +150,7 @@ const SessionHistory = () => {
           state: {
             repeatSession: true,
             sessionData: {
-              intention: sessionData.intention,
-              indefiniteMode: sessionData.indefiniteMode,
+              ...sessionData,
             }
           }
         });

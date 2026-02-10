@@ -32,6 +32,43 @@ const Manifest = () => {
       if (sessionData.indefiniteMode !== undefined) {
         manifest.setIndefiniteTime(sessionData.indefiniteMode);
       }
+      if (sessionData.frequency !== undefined) {
+        manifest.setManifestFrequency([sessionData.frequency]);
+      }
+      if (sessionData.exposureTime !== undefined) {
+        manifest.setExposureTime([sessionData.exposureTime]);
+      }
+      if (sessionData.visualSpeed !== undefined) {
+        manifest.setVisualSpeed([sessionData.visualSpeed]);
+      }
+      if (sessionData.selectedPattern) {
+        manifest.selectPattern(sessionData.selectedPattern);
+      }
+      if (sessionData.receptorName) {
+        manifest.setReceptorName(sessionData.receptorName);
+      }
+      if (sessionData.rate1 !== undefined) manifest.setRate1(sessionData.rate1);
+      if (sessionData.rate2 !== undefined) manifest.setRate2(sessionData.rate2);
+      if (sessionData.rate3 !== undefined) manifest.setRate3(sessionData.rate3);
+      if (sessionData.patternImage) {
+        manifest.setPatternImage(sessionData.patternImage);
+      }
+      if (sessionData.receptorImage) {
+        manifest.setReceptorImage(sessionData.receptorImage);
+      }
+      if (sessionData.patternImages?.length) {
+        manifest.setPatternImages(sessionData.patternImages);
+      }
+      if (sessionData.receptorImages?.length) {
+        manifest.setReceptorImages(sessionData.receptorImages);
+      }
+      if (sessionData.manifestSound !== undefined) {
+        manifest.setManifestSound(sessionData.manifestSound);
+      }
+      if (sessionData.activeTab) {
+        setActiveTab(sessionData.activeTab);
+        manifest.setActiveTab(sessionData.activeTab);
+      }
     }
   }, []);
   
