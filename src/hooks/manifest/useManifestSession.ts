@@ -1,12 +1,11 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
-import { useSessionRecording } from '@/hooks/useSessionRecording';
 
 export const useManifestSession = (
   startImageAlternationFn: () => (currentImage: 'pattern' | 'receptor' | 'mix' | 'radionic', setCurrentImage: (value: any) => void) => void,
   stopImageAlternationFn: () => (setCurrentImage?: (value: 'pattern' | 'receptor' | 'mix' | 'radionic') => void) => void
 ) => {
-  const { recordSession: recordToDatabase } = useSessionRecording();
+  // Session recording is now handled by useManifestCore
   const [isManifestActive, setIsManifestActive] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -107,33 +106,12 @@ export const useManifestSession = (
     });
   }, [isManifestActive, indefiniteTime, clearTimer]);
 
-  // Stop manifestation function
+  // Stop manifestation function (no longer records to DB - that's handled by useManifestCore)
   const stopManifestation = useCallback(async () => {
     console.log("Stopping manifestation");
     
-    // Calculate duration if we have a start time
-    const duration = startTimeRef.current 
-      ? Math.floor((new Date().getTime() - startTimeRef.current.getTime()) / 1000 / 60)
-      : 0;
-    
-    // Save session to database if we have an intention
-    if (currentIntention) {
-      await recordToDatabase(
-        currentIntention,
-        'manifestation',
-        {
-          intention: currentIntention,
-          duration,
-          indefiniteMode: indefiniteTime,
-          completedAt: new Date().toISOString()
-        }
-      );
-    }
-    
     // Clean up timer
     clearTimer();
-    
-    // The actual stopImageAlternation will be called by components that have access to setCurrentImage
     
     // Reset state
     setIsManifestActive(false);
@@ -145,7 +123,7 @@ export const useManifestSession = (
       title: "Manifestación detenida",
       description: "La sesión de manifestación ha sido detenida."
     });
-  }, [clearTimer, currentIntention, indefiniteTime, recordToDatabase]);
+  }, [clearTimer]);
 
   // Helper function to format time
   const formatTimeRemaining = useCallback((time: number): string => {

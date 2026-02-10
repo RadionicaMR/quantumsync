@@ -52,25 +52,57 @@ const Treat = () => {
     if (location.state?.repeatSession && location.state?.sessionData) {
       const { sessionData } = location.state;
       
-      // Load session data into treatment
       if (sessionData.receptorName) {
         treatment.setReceptorName(sessionData.receptorName);
       }
-      if (sessionData.frequency) {
-        treatment.setFrequency(sessionData.frequency);
+      if (sessionData.frequency !== undefined) {
+        const freq = Array.isArray(sessionData.frequency) ? sessionData.frequency : [sessionData.frequency];
+        treatment.setFrequency(freq);
       }
-      if (sessionData.duration) {
-        treatment.setDuration(sessionData.duration);
+      if (sessionData.duration !== undefined) {
+        const dur = Array.isArray(sessionData.duration) ? sessionData.duration : [sessionData.duration];
+        treatment.setDuration(dur);
       }
-      if (sessionData.rates && sessionData.rates.length >= 3) {
-        treatment.setRate1(sessionData.rates[0] || '');
-        treatment.setRate2(sessionData.rates[1] || '');
-        treatment.setRate3(sessionData.rates[2] || '');
+      // Handle rates (saved as individual fields or as array)
+      if (sessionData.rate1 !== undefined || sessionData.rate2 !== undefined || sessionData.rate3 !== undefined) {
+        treatment.setRate1(sessionData.rate1 || '');
+        treatment.setRate2(sessionData.rate2 || '');
+        treatment.setRate3(sessionData.rate3 || '');
+      } else if (sessionData.rates) {
+        // Legacy format: rates as array or object
+        if (Array.isArray(sessionData.rates)) {
+          treatment.setRate1(sessionData.rates[0] || '');
+          treatment.setRate2(sessionData.rates[1] || '');
+          treatment.setRate3(sessionData.rates[2] || '');
+        } else {
+          treatment.setRate1(sessionData.rates.rate1 || '');
+          treatment.setRate2(sessionData.rates.rate2 || '');
+          treatment.setRate3(sessionData.rates.rate3 || '');
+        }
+      }
+      // Restore images
+      if (sessionData.radionicImage) {
+        treatment.setRadionicImage(sessionData.radionicImage);
+      }
+      if (sessionData.receptorImage) {
+        treatment.setReceptorImage(sessionData.receptorImage);
+      }
+      if (sessionData.radionicImages?.length) {
+        treatment.setRadionicImages(sessionData.radionicImages);
+      }
+      if (sessionData.receptorImages?.length) {
+        treatment.setReceptorImages(sessionData.receptorImages);
+      }
+      if (sessionData.intention) {
+        treatment.setIntention(sessionData.intention);
+      }
+      if (sessionData.hypnoticSpeed !== undefined) {
+        treatment.setHypnoticSpeed([sessionData.hypnoticSpeed]);
       }
       
       // Select preset if available
       if (sessionData.preset) {
-        const preset = treatmentPresets.find(p => p.name === sessionData.preset);
+        const preset = treatmentPresets.find(p => p.id === sessionData.preset || p.name === sessionData.preset);
         if (preset) {
           treatment.selectPreset(preset);
         }
@@ -91,8 +123,17 @@ const Treat = () => {
         preset: presetName,
         frequency: treatment.frequency,
         duration: treatment.duration,
-        rates: [treatment.rate1, treatment.rate2, treatment.rate3],
+        rate1: treatment.rate1,
+        rate2: treatment.rate2,
+        rate3: treatment.rate3,
         receptorName: treatment.receptorName,
+        intention: treatment.intention,
+        radionicImage: treatment.radionicImage,
+        receptorImage: treatment.receptorImage,
+        radionicImages: treatment.radionicImages,
+        receptorImages: treatment.receptorImages,
+        visualFeedback: treatment.visualFeedback,
+        hypnoticSpeed: treatment.hypnoticSpeed,
       };
       recordSession(currentPatientId, 'treatment', sessionData);
       setCurrentPatientId(null);
