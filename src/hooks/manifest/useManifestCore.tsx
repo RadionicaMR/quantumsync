@@ -1,5 +1,5 @@
 
-import { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { ManifestPattern } from '@/data/manifestPatterns';
 import { useManifestState } from './useManifestState';
 import { useManifestAudio } from './useManifestAudio';
@@ -13,10 +13,23 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
   const state = useManifestState();
   const audio = useManifestAudio();
   const subliminal = useManifestSubliminal();
-  const imageControl = useManifestImageControl(state.isManifestActive, state.visualSpeed);
+  // Track session's isManifestActive to sync with imageControl
+  const [sessionActive, setSessionActive] = React.useState(false);
+  const imageControl = useManifestImageControl(sessionActive, state.visualSpeed);
   const utils = useManifestUtils();
   const session = useManifestSession(imageControl.startImageAlternation, imageControl.stopImageAlternation);
   const { recordSession: recordToDatabase } = useSessionRecording();
+
+  // Sync sessionActive with session's isManifestActive
+  useEffect(() => {
+    setSessionActive(session.isManifestActive);
+  }, [session.isManifestActive]);
+
+  // Enhanced startManifestation that syncs state
+  const startManifestationSynced = useCallback((intention?: string) => {
+    setSessionActive(true);
+    session.startManifestation(intention);
+  }, [session]);
 
   // Enhanced stopManifestation that saves all state data
   const stopManifestationWithFullData = useCallback(async () => {
@@ -47,7 +60,7 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
       await recordToDatabase(patientId, 'manifestation', fullSessionData);
     }
 
-    // Call original stop without its internal recording
+    setSessionActive(false);
     session.stopManifestation();
   }, [state, session, recordToDatabase]);
 
@@ -57,7 +70,7 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
     ...imageControl,
     ...audio,
     
-    startManifestation: session.startManifestation,
+    startManifestation: startManifestationSynced,
     stopManifestation: stopManifestationWithFullData,
     
     ...subliminal,

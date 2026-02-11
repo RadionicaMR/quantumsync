@@ -151,42 +151,47 @@ export const useTreatmentAudio = () => {
     treatmentActiveRef.current = true;
     
     try {
-      // First ensure any previous audio resources are cleaned up
-      cleanupAudioResources();
+      // Clean up previous resources synchronously (no setTimeout - Safari needs user gesture)
+      if (oscillatorRef.current) {
+        try { oscillatorRef.current.stop(); oscillatorRef.current.disconnect(); } catch(e) {}
+        oscillatorRef.current = null;
+      }
+      if (harmonicOscillatorRef.current) {
+        try { harmonicOscillatorRef.current.stop(); harmonicOscillatorRef.current.disconnect(); } catch(e) {}
+        harmonicOscillatorRef.current = null;
+      }
       
-      // Force a small delay to ensure cleanup completes
-      setTimeout(() => {
-        try {
-          // Create new audio context
-          const audioContext = createAudioContext();
-          
-          if (!audioContext) {
-            console.error("Failed to create AudioContext");
-            handleStartFailure();
-            return;
-          }
-          
-          console.log("AudioContext created, state:", audioContext.state);
-          
-          // Make sure the audio context is running
-          if (audioContext.state !== "running") {
-            audioContext.resume()
-              .then(() => {
-                console.log("AudioContext resumed successfully");
-                completeAudioStart();
-              })
-              .catch(error => {
-                console.error("Failed to resume AudioContext:", error);
-                handleStartFailure();
-              });
-          } else {
-            completeAudioStart();
-          }
-        } catch (error) {
-          console.error("Error during audio start:", error);
-          handleStartFailure();
-        }
-      }, 300);
+      // CRITICAL: Create AudioContext synchronously within user gesture for Safari
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) {
+        console.error("AudioContext not supported");
+        handleStartFailure();
+        return;
+      }
+      
+      // Close old context if exists
+      if (audioContextRef.current) {
+        try { audioContextRef.current.close(); } catch(e) {}
+      }
+      
+      const audioContext = new AudioContextClass();
+      audioContextRef.current = audioContext;
+      isAudioInitializedRef.current = true;
+      
+      console.log("AudioContext created synchronously, state:", audioContext.state);
+      
+      // Resume must also happen synchronously in user gesture
+      if (audioContext.state === 'suspended') {
+        audioContext.resume().then(() => {
+          console.log("AudioContext resumed successfully");
+        }).catch(err => {
+          console.error("Failed to resume AudioContext:", err);
+        });
+      }
+      
+      // Complete start synchronously - don't defer with setTimeout
+      completeAudioStart();
+      
     } catch (error) {
       console.error("Critical error starting treatment:", error);
       handleStartFailure();
