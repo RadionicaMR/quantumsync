@@ -20,13 +20,13 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, KeyRound, Loader2 } from 'lucide-react';
+import { Trash2, KeyRound, Loader2, Pencil, Save, X } from 'lucide-react';
 import { useUsersManagement } from '@/hooks/useUsersManagement';
 import { toast } from '@/hooks/use-toast';
 import CreateUserDialog from './CreateUserDialog';
 
 const UsersManagementSection = () => {
-  const { users, loading, reloadUsers, resetPassword, deleteUser } = useUsersManagement();
+  const { users, loading, reloadUsers, resetPassword, deleteUser, updateUserName } = useUsersManagement();
   const [passwordDialog, setPasswordDialog] = useState<{ open: boolean; userId: string; userEmail: string }>({
     open: false,
     userId: '',
@@ -34,6 +34,8 @@ const UsersManagementSection = () => {
   });
   const [newPassword, setNewPassword] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [editingNameId, setEditingNameId] = useState<string | null>(null);
+  const [editNameValue, setEditNameValue] = useState('');
 
   const handleResetPassword = async () => {
     if (!newPassword || newPassword.length < 6) {
@@ -59,8 +61,31 @@ const UsersManagementSection = () => {
     if (!confirm(`¿Estás seguro de que deseas eliminar al usuario ${userEmail}?`)) {
       return;
     }
-
     await deleteUser(userId);
+  };
+
+  const startEditName = (userId: string, currentName: string) => {
+    setEditingNameId(userId);
+    setEditNameValue(currentName);
+  };
+
+  const cancelEditName = () => {
+    setEditingNameId(null);
+    setEditNameValue('');
+  };
+
+  const saveEditName = async (userId: string) => {
+    if (!editNameValue.trim()) {
+      toast({ title: "Error", description: "El nombre no puede estar vacío", variant: "destructive" });
+      return;
+    }
+    setIsUpdating(true);
+    const result = await updateUserName(userId, editNameValue.trim());
+    setIsUpdating(false);
+    if (result.success) {
+      setEditingNameId(null);
+      setEditNameValue('');
+    }
   };
 
   if (loading) {
@@ -106,7 +131,35 @@ const UsersManagementSection = () => {
                 users.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell className="font-medium">{user.email}</TableCell>
-                    <TableCell>{user.full_name || '-'}</TableCell>
+                    <TableCell>
+                      {editingNameId === user.id ? (
+                        <div className="flex items-center gap-2">
+                          <Input
+                            value={editNameValue}
+                            onChange={(e) => setEditNameValue(e.target.value)}
+                            className="h-8 max-w-[180px]"
+                            disabled={isUpdating}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') saveEditName(user.id);
+                              if (e.key === 'Escape') cancelEditName();
+                            }}
+                          />
+                          <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-green-500" onClick={() => saveEditName(user.id)} disabled={isUpdating}>
+                            <Save className="h-4 w-4" />
+                          </Button>
+                          <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-red-500" onClick={cancelEditName} disabled={isUpdating}>
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <span>{user.full_name || '-'}</span>
+                          <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground" onClick={() => startEditName(user.id, user.full_name || '')}>
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
                         {user.role === 'admin' ? 'Administrador' : 'Usuario'}
@@ -127,7 +180,7 @@ const UsersManagementSection = () => {
                           })}
                         >
                           <KeyRound className="h-4 w-4 mr-1" />
-                          Resetear Contraseña
+                          Contraseña
                         </Button>
                         <Button
                           variant="destructive"
@@ -144,6 +197,10 @@ const UsersManagementSection = () => {
             </TableBody>
           </Table>
         </div>
+
+        <p className="text-xs text-muted-foreground mt-4">
+          ⚠️ Las contraseñas están protegidas con hash de seguridad y no pueden visualizarse. Solo es posible resetearlas.
+        </p>
       </Card>
 
       <Dialog open={passwordDialog.open} onOpenChange={(open) => {
@@ -156,7 +213,7 @@ const UsersManagementSection = () => {
           <DialogHeader>
             <DialogTitle>Resetear Contraseña</DialogTitle>
             <DialogDescription>
-              Usuario: {passwordDialog.userEmail}
+              Ingresa la nueva contraseña para: {passwordDialog.userEmail}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -164,12 +221,15 @@ const UsersManagementSection = () => {
               <Label htmlFor="new-password">Nueva Contraseña</Label>
               <Input
                 id="new-password"
-                type="password"
+                type="text"
                 placeholder="Mínimo 6 caracteres"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 disabled={isUpdating}
               />
+              <p className="text-xs text-muted-foreground">
+                La contraseña será visible aquí antes de guardarla. Una vez guardada, no podrá recuperarse.
+              </p>
             </div>
           </div>
           <DialogFooter>
@@ -190,7 +250,7 @@ const UsersManagementSection = () => {
                   Actualizando...
                 </>
               ) : (
-                'Actualizar Contraseña'
+                'Guardar Contraseña'
               )}
             </Button>
           </DialogFooter>
