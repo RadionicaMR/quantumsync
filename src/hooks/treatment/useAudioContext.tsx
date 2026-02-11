@@ -85,19 +85,15 @@ export const useAudioContext = () => {
       harmonicOscillatorRef.current = null;
     }
     
-    // We'll close the audio context after a delay to prevent issues with rapid stop/start cycles
+    // Close audio context synchronously - NO setTimeout (Safari requires synchronous cleanup)
     if (audioContextRef.current) {
-      setTimeout(() => {
-        if (audioContextRef.current) {
-          try {
-            audioContextRef.current.close();
-            console.log("Audio context closed");
-          } catch (e) {
-            console.error("Error closing audio context:", e);
-          }
-          audioContextRef.current = null;
-        }
-      }, 500);
+      try {
+        audioContextRef.current.close();
+        console.log("Audio context closed");
+      } catch (e) {
+        console.error("Error closing audio context:", e);
+      }
+      audioContextRef.current = null;
     }
   }, []);
 

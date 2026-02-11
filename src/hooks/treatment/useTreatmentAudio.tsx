@@ -180,14 +180,13 @@ export const useTreatmentAudio = () => {
       
       console.log("AudioContext created synchronously, state:", audioContext.state);
       
-      // Resume must also happen synchronously in user gesture
-      if (audioContext.state === 'suspended') {
-        audioContext.resume().then(() => {
-          console.log("AudioContext resumed successfully");
-        }).catch(err => {
-          console.error("Failed to resume AudioContext:", err);
-        });
-      }
+      // Resume synchronously within user gesture - Safari requires this
+      // Call resume() but don't await - it must be initiated in the gesture handler
+      audioContext.resume().catch(err => {
+        console.error("Failed to resume AudioContext:", err);
+      });
+      
+      console.log("AudioContext state after resume call:", audioContext.state);
       
       // Complete start synchronously - don't defer with setTimeout
       completeAudioStart();
@@ -254,7 +253,7 @@ export const useTreatmentAudio = () => {
     }
   };
 
-  // Stop the audio treatment
+  // Stop the audio treatment - FULLY SYNCHRONOUS for Safari compatibility
   const stopAudio = () => {
     console.log("=== STOPPING TREATMENT ===");
     
@@ -271,13 +270,11 @@ export const useTreatmentAudio = () => {
     // Then clean up audio resources
     cleanupAudioResources();
     
-    // Update state after a delay to ensure proper sequencing
-    setTimeout(() => {
-      setIsPlaying(false);
-      setBackgroundModeActive(false);
-      isStoppingRef.current = false;
-      console.log("Treatment stopped completely");
-    }, 300);
+    // Update state synchronously - NO setTimeout (Safari needs synchronous flow)
+    setIsPlaying(false);
+    setBackgroundModeActive(false);
+    isStoppingRef.current = false;
+    console.log("Treatment stopped completely");
   };
 
   // Cleanup on unmount

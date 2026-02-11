@@ -98,19 +98,36 @@ export const useManifestAudio = (): ManifestAudio & {
     try {
       console.log("Iniciando audio de manifestación con frecuencia:", frequency);
       
-      // Detener audio anterior si existe
-      if (oscillatorRef.current || audioContextRef.current) {
-        console.log("Limpiando audio previo antes de crear uno nuevo");
-        stopAudio();
-      }
-      
       // Save current frequency for restoration if needed
       currentFrequencyRef.current = frequency;
       isPlayingRef.current = true;
       
-      // Initialize audio context
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-      audioContextRef.current = new AudioContext();
+      // Clean up previous audio resources synchronously (Safari needs this in user gesture)
+      if (oscillatorRef.current) {
+        try { oscillatorRef.current.stop(); } catch(e) {}
+        oscillatorRef.current = null;
+      }
+      if (harmonicOscillatorRef.current) {
+        try { harmonicOscillatorRef.current.stop(); } catch(e) {}
+        harmonicOscillatorRef.current = null;
+      }
+      if (audioContextRef.current) {
+        try { audioContextRef.current.close(); } catch(e) {}
+        audioContextRef.current = null;
+      }
+      
+      // CRITICAL: Create AudioContext synchronously within user gesture for Safari
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) {
+        console.error("AudioContext not supported");
+        return;
+      }
+      audioContextRef.current = new AudioContextClass();
+      
+      // Resume synchronously - Safari requires this in user gesture handler
+      audioContextRef.current.resume().catch(err => {
+        console.error("Failed to resume manifest AudioContext:", err);
+      });
       
       console.log("Contexto de audio creado:", audioContextRef.current);
       
