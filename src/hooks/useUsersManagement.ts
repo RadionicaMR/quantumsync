@@ -86,9 +86,35 @@ export const useUsersManagement = () => {
     }
   };
 
+  const updateUserName = async (userId: string, newName: string) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ full_name: newName })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Nombre actualizado",
+        description: "El nombre del usuario ha sido actualizado correctamente"
+      });
+
+      await loadUsers();
+      return { success: true };
+    } catch (error: any) {
+      console.error('Error updating user name:', error);
+      toast({
+        title: "Error",
+        description: error.message || "No se pudo actualizar el nombre",
+        variant: "destructive"
+      });
+      return { success: false, error };
+    }
+  };
+
   const deleteUser = async (userId: string) => {
     try {
-      // Call edge function to delete user
       const { data, error } = await supabase.functions.invoke('admin-delete-user', {
         body: { userId }
       });
@@ -122,6 +148,7 @@ export const useUsersManagement = () => {
     loading,
     reloadUsers: loadUsers,
     resetPassword,
-    deleteUser
+    deleteUser,
+    updateUserName
   };
 };
