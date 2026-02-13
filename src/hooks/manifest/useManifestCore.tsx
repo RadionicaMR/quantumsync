@@ -25,11 +25,18 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
     setSessionActive(session.isManifestActive);
   }, [session.isManifestActive]);
 
-  // Enhanced startManifestation that syncs state
+  // Enhanced startManifestation that syncs state and starts audio
   const startManifestationSynced = useCallback((intention?: string) => {
     setSessionActive(true);
+    
+    // CRITICAL: Start audio synchronously within user gesture for Safari compatibility
+    if (state.manifestSound) {
+      console.log("Starting manifestation audio at frequency:", state.manifestFrequency[0]);
+      audio.startAudio(state.manifestFrequency[0]);
+    }
+    
     session.startManifestation(intention);
-  }, [session]);
+  }, [session, state.manifestSound, state.manifestFrequency, audio]);
 
   // Enhanced stopManifestation that saves all state data
   const stopManifestationWithFullData = useCallback(async () => {
@@ -60,9 +67,12 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
       await recordToDatabase(patientId, 'manifestation', fullSessionData);
     }
 
+    // Stop audio
+    audio.stopAudio();
+
     setSessionActive(false);
     session.stopManifestation();
-  }, [state, session, recordToDatabase]);
+  }, [state, session, recordToDatabase, audio]);
 
   return {
     ...state,
