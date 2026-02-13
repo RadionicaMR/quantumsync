@@ -1,6 +1,5 @@
 
 import { motion } from 'framer-motion';
-import QuantumButton from '@/components/QuantumButton';
 
 interface DiagnosisResultProps {
   diagnosisResult: string | null;
@@ -90,13 +89,21 @@ const DiagnosisResult: React.FC<DiagnosisResultProps> = ({
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 1.5 }}
       >
-        <QuantumButton onClick={onDiagnoseAgain} variant="outline">
+        <button 
+          onClick={onDiagnoseAgain}
+          className="px-6 py-3 rounded-xl border-2 border-quantum-primary text-quantum-primary hover:bg-quantum-primary/10 font-medium transition-colors"
+          style={{ WebkitAppearance: 'none', touchAction: 'manipulation' }}
+        >
           Diagnosticar de Nuevo
-        </QuantumButton>
+        </button>
         
-        <QuantumButton onClick={onStartTreatment} className="mt-2 md:mt-0">
+        <button 
+          onClick={onStartTreatment}
+          className="px-6 py-3 rounded-xl bg-quantum-primary text-white hover:bg-quantum-primary/90 font-medium transition-colors mt-2 md:mt-0"
+          style={{ WebkitAppearance: 'none', touchAction: 'manipulation' }}
+        >
           Iniciar Tratamiento
-        </QuantumButton>
+        </button>
       </motion.div>
     </motion.div>
   );

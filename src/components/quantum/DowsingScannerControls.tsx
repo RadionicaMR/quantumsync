@@ -1,7 +1,6 @@
 
 import { Play, Square, Wand2 } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
-import QuantumButton from '@/components/QuantumButton';
 
 interface DowsingScannerControlsProps {
   scanning: boolean;
@@ -33,33 +32,36 @@ const DowsingScannerControls: React.FC<DowsingScannerControlsProps> = ({
       
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         {!scanning && !scanComplete && (
-          <QuantumButton 
+          <button 
             onClick={startScan}
-            className="bg-quantum-primary text-white hover:bg-quantum-primary/80"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-quantum-primary text-white hover:bg-quantum-primary/80 font-medium transition-colors duration-300"
+            style={{ WebkitAppearance: 'none', touchAction: 'manipulation' }}
           >
             <Play size={16} />
-            Iniciar Escaneo
-          </QuantumButton>
+            <span>Iniciar Escaneo</span>
+          </button>
         )}
         
         {scanning && (
-          <QuantumButton 
+          <button 
             onClick={stopScan}
-            className="bg-red-500 text-white hover:bg-red-600"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-red-500 text-white hover:bg-red-600 font-medium transition-colors duration-300"
+            style={{ WebkitAppearance: 'none', touchAction: 'manipulation' }}
           >
             <Square size={16} />
-            Detener Escaneo
-          </QuantumButton>
+            <span>Detener Escaneo</span>
+          </button>
         )}
         
         {scanComplete && (
-          <QuantumButton 
-            onClick={navigateToBalance} 
-            className="bg-gradient-to-r from-quantum-primary to-purple-500 text-white hover:from-quantum-primary/90 hover:to-purple-500/90"
+          <button 
+            onClick={navigateToBalance}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-quantum-primary to-purple-500 text-white hover:from-quantum-primary/90 hover:to-purple-500/90 font-medium transition-colors duration-300"
+            style={{ WebkitAppearance: 'none', touchAction: 'manipulation' }}
           >
             <Wand2 size={16} />
-            Equilibrar Chakras
-          </QuantumButton>
+            <span>Equilibrar Chakras</span>
+          </button>
         )}
       </div>
     </>
