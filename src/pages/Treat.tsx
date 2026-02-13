@@ -25,7 +25,7 @@ const Treat = () => {
   const { recordSession } = useSessionRecording();
   const { currentPatientId, setCurrentPatientId } = useSession();
   const [showSessionDialog, setShowSessionDialog] = useState(false);
-  const [pendingStart, setPendingStart] = useState(false);
+  
   const { t } = useLanguage();
   
   // Check if we're coming from diagnosis page or repeating a session
@@ -140,17 +140,17 @@ const Treat = () => {
     }
   }, [treatment.isPlaying, treatment.timeRemaining, currentPatientId]);
 
+  // CRITICAL: Start treatment FIRST (synchronously in user gesture for Safari AudioContext),
+  // then optionally show session recording dialog
   const handleStartClick = () => {
+    // Start treatment immediately - AudioContext must be created in user gesture for Safari
+    treatment.startTreatment();
+    // Then show session recording dialog (non-blocking)
     setShowSessionDialog(true);
-    setPendingStart(true);
   };
 
   const handleSessionConfirm = (patientId: string | null) => {
     setCurrentPatientId(patientId);
-    if (pendingStart) {
-      treatment.startTreatment();
-      setPendingStart(false);
-    }
   };
   
   // Normalize currentImage value to ensure compatibility
