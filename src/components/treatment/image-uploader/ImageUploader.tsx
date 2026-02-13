@@ -88,18 +88,20 @@ const ImageUploader = ({
       <div className="p-4">
         <div className="flex space-x-2 mb-4">
           <button
-            className={`px-3 py-1 rounded-full text-sm ${activeTab === 'single' ? 'bg-primary text-white' : 'bg-muted'}`}
+            className={`px-3 py-1 rounded-full text-sm ${activeTab === 'single' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
             onClick={() => setActiveTab('single')}
             disabled={isPlaying}
+            style={{ WebkitAppearance: 'none', touchAction: 'manipulation' }}
           >
-            {t('image.singleImage')}
+            <span>{t('image.singleImage')}</span>
           </button>
           <button
-            className={`px-3 py-1 rounded-full text-sm ${activeTab === 'multiple' ? 'bg-primary text-white' : 'bg-muted'}`}
+            className={`px-3 py-1 rounded-full text-sm ${activeTab === 'multiple' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
             onClick={() => setActiveTab('multiple')}
             disabled={isPlaying}
+            style={{ WebkitAppearance: 'none', touchAction: 'manipulation' }}
           >
-            {t('image.multipleImages')}
+            <span>{t('image.multipleImages')}</span>
           </button>
           <button
             className={`px-3 py-1 rounded-full text-sm flex items-center gap-1 ${activeTab === 'gallery' ? 'bg-primary text-white' : 'bg-muted'}`}
@@ -107,10 +109,18 @@ const ImageUploader = ({
               setActiveTab('gallery');
               setGalleryOpen(true);
             }}
+            onTouchEnd={(e) => {
+              e.stopPropagation();
+              setActiveTab('gallery');
+              setGalleryOpen(true);
+            }}
             disabled={isPlaying}
+            style={{ WebkitAppearance: 'none', touchAction: 'manipulation' }}
           >
-            <Library className="w-4 h-4" />
-            {t('image.gallery')}
+            <span className="flex items-center gap-1">
+              <Library className="w-4 h-4" />
+              <span>{t('image.gallery')}</span>
+            </span>
           </button>
         </div>
         
@@ -161,9 +171,11 @@ const ImageUploader = ({
             <button
               className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
               onClick={() => setGalleryOpen(true)}
+              onTouchEnd={(e) => { e.stopPropagation(); setGalleryOpen(true); }}
               disabled={isPlaying}
+              style={{ WebkitAppearance: 'none', touchAction: 'manipulation' }}
             >
-              {t('image.openGallery')}
+              <span>{t('image.openGallery')}</span>
             </button>
             {images.length > 0 && (
               <div className="mt-4">

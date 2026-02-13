@@ -105,11 +105,15 @@ const ImageUploader = ({
         <Label>{label}</Label>
         <button
           onClick={() => setGalleryOpen(true)}
+          onTouchEnd={(e) => { e.stopPropagation(); setGalleryOpen(true); }}
           disabled={isDisabled}
           className="flex items-center gap-1 px-2 py-1 text-xs bg-primary/10 hover:bg-primary/20 text-primary rounded-md transition-colors disabled:opacity-50"
+          style={{ WebkitAppearance: 'none', touchAction: 'manipulation' }}
         >
-          <Library className="w-3 h-3" />
-          Galería
+          <span className="flex items-center gap-1">
+            <Library className="w-3 h-3" />
+            <span>Galería</span>
+          </span>
         </button>
       </div>
       {isMultiple ? (
