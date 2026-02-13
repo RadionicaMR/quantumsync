@@ -62,8 +62,13 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
     
     console.log("Iniciando pregunta mental, activando sensores...");
     
+    // CRITICAL: Start audio SYNCHRONOUSLY within user gesture for Safari
+    if (pendulumSound) {
+      startPendulumSound(0.3);
+    }
+    
     try {
-      // Solicitar permiso para sensor de movimiento
+      // Request permission after audio (async is OK here, audio already started)
       const hasPermission = await requestPermission();
       
       if (!hasPermission) {
@@ -72,14 +77,10 @@ export const useMentalQuestion = (pendulumSound: boolean) => {
           description: "Necesitamos acceso al sensor de movimiento para esta funcionalidad.",
           variant: "destructive"
         });
+        stopPendulumSound();
         setProcessingCamera(false);
         setAskingMental(false);
         return null;
-      }
-      
-      // Activar sonido si está habilitado
-      if (pendulumSound) {
-        startPendulumSound(0.3);
       }
 
       // Calibrar el dispositivo

@@ -53,13 +53,14 @@ const DiagnosisStandby: React.FC<DiagnosisStandbyProps> = ({
     return (
       <div className="mt-6">
         <button
-          className={`px-6 py-2 rounded-md transition-colors ${
+          className={`px-6 py-3 rounded-xl font-medium transition-colors ${
             canStartDiagnosis 
               ? "bg-quantum-primary text-white hover:bg-quantum-primary/90" 
               : "bg-muted text-muted-foreground cursor-not-allowed"
           }`}
           onClick={canStartDiagnosis ? onStartDiagnosis : undefined}
           disabled={!canStartDiagnosis}
+          style={{ WebkitAppearance: 'none', touchAction: 'manipulation' }}
         >
           Iniciar Diagnóstico
         </button>

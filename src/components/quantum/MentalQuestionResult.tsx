@@ -1,6 +1,6 @@
 
 import { motion } from 'framer-motion';
-import QuantumButton from '@/components/QuantumButton';
+
 
 interface MentalQuestionResultProps {
   cameraResult: 'SI' | 'NO' | null;
@@ -52,9 +52,13 @@ const MentalQuestionResult: React.FC<MentalQuestionResultProps> = ({
         </div>
         
         <div className="mt-8">
-          <QuantumButton onClick={onAskAgain} className="px-8">
+          <button 
+            onClick={onAskAgain} 
+            className="px-8 py-3 rounded-xl bg-quantum-primary text-white hover:bg-quantum-primary/90 font-medium transition-colors"
+            style={{ WebkitAppearance: 'none', touchAction: 'manipulation' }}
+          >
             Volver a preguntar
-          </QuantumButton>
+          </button>
         </div>
       </motion.div>
     );
@@ -63,9 +67,14 @@ const MentalQuestionResult: React.FC<MentalQuestionResultProps> = ({
   return (
     <div className="text-center">
       <p className="text-lg mb-6">Piensa en una pregunta que pueda responderse con SÍ o NO</p>
-      <QuantumButton onClick={onStartQuestion} disabled={askingMental}>
+      <button 
+        onClick={onStartQuestion} 
+        disabled={askingMental}
+        className="px-6 py-3 rounded-xl bg-quantum-primary text-white hover:bg-quantum-primary/90 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        style={{ WebkitAppearance: 'none', touchAction: 'manipulation' }}
+      >
         Iniciar Pregunta Mental
-      </QuantumButton>
+      </button>
     </div>
   );
 };

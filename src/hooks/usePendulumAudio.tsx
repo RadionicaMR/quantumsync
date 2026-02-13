@@ -31,50 +31,47 @@ export function usePendulumAudio() {
 
   const startPendulumSound = useCallback((customVolume?: number) => {
     try {
-      // If already playing, stop first
-      if (isPlaying) {
-        stopPendulumSound();
+      // CRITICAL: Clean up previous audio synchronously (no setTimeout for Safari)
+      if (oscillatorRef.current) {
+        try { oscillatorRef.current.stop(); } catch (e) { /* ignore */ }
+        oscillatorRef.current = null;
+      }
+      if (harmonicOscillatorRef.current) {
+        try { harmonicOscillatorRef.current.stop(); } catch (e) { /* ignore */ }
+        harmonicOscillatorRef.current = null;
+      }
+      if (audioContextRef.current) {
+        try { audioContextRef.current.close(); } catch (e) { /* ignore */ }
+        audioContextRef.current = null;
       }
 
-      // Inicializar contexto de audio
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-      audioContextRef.current = new AudioContext();
+      // CRITICAL: Create AudioContext synchronously within user gesture for Safari
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      const ctx = new AudioContextClass();
+      audioContextRef.current = ctx;
+      
+      // CRITICAL: Resume synchronously for Safari - must be in user gesture stack
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
       
       // Crear oscilador
-      const oscillator = audioContextRef.current.createOscillator();
-      const gainNode = audioContextRef.current.createGain();
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
       
       oscillator.type = 'sine';
-      const frequency = 174; // Frecuencia relacionada con el péndulo
+      const frequency = 174;
       oscillator.frequency.value = frequency;
       
-      // Configurar volumen
       const actualVolume = customVolume !== undefined ? customVolume : volume;
-      gainNode.gain.value = actualVolume; // volumen bajo
+      gainNode.gain.value = actualVolume;
       
       oscillator.connect(gainNode);
-      gainNode.connect(audioContextRef.current.destination);
+      gainNode.connect(ctx.destination);
       
       oscillator.start();
       oscillatorRef.current = oscillator;
       gainNodeRef.current = gainNode;
-      
-      // Si la frecuencia es baja, añadir armónico para mejorar la audibilidad
-      if (frequency < 100) {
-        const harmonicOscillator = audioContextRef.current.createOscillator();
-        const harmonicGainNode = audioContextRef.current.createGain();
-        
-        // Crear armónico a 2x la frecuencia con menor volumen
-        harmonicOscillator.type = 'sine';
-        harmonicOscillator.frequency.value = frequency * 2;
-        harmonicGainNode.gain.value = actualVolume * 0.75; // volumen ligeramente menor para el armónico
-        
-        harmonicOscillator.connect(harmonicGainNode);
-        harmonicGainNode.connect(audioContextRef.current.destination);
-        
-        harmonicOscillator.start();
-        harmonicOscillatorRef.current = harmonicOscillator;
-      }
       
       setIsPlaying(true);
       
@@ -83,7 +80,7 @@ export function usePendulumAudio() {
       console.error("Error al iniciar el audio del péndulo:", error);
       return false;
     }
-  }, [volume, isPlaying]);
+  }, [volume]);
 
   const stopPendulumSound = useCallback(() => {
     if (oscillatorRef.current) {

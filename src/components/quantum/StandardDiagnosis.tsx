@@ -40,7 +40,7 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
   const { recordSession } = useSessionRecording();
   const { currentPatientId, setCurrentPatientId } = useSession();
   const [showSessionDialog, setShowSessionDialog] = useState(false);
-  const [pendingDiagnosis, setPendingDiagnosis] = useState<string | null>(null);
+  
   
   const {
     isPendulumSwinging,
@@ -71,19 +71,19 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
     }
   }, [diagnosisResult, currentPatientId, selectedArea]);
 
+  // CRITICAL: Start diagnosis IMMEDIATELY on click to preserve user gesture chain
+  // for Safari AudioContext. Show session dialog non-blocking afterward.
   const handleStartDiagnosis = () => {
     if (selectedArea) {
+      // Start diagnosis immediately within user gesture for Safari compatibility
+      startMotionDiagnosis(selectedArea);
+      // Then show session recording dialog (non-blocking)
       setShowSessionDialog(true);
-      setPendingDiagnosis(selectedArea);
     }
   };
 
   const handleSessionConfirm = (patientId: string | null) => {
     setCurrentPatientId(patientId);
-    if (pendingDiagnosis) {
-      startMotionDiagnosis(pendingDiagnosis);
-      setPendingDiagnosis(null);
-    }
   };
 
   const navigateToTreatment = () => {
