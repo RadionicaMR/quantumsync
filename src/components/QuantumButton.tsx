@@ -47,6 +47,7 @@ const QuantumButton = ({
       variant={variant === 'default' ? 'default' : variant}
       size={size}
       disabled={disabled}
+      style={{ WebkitAppearance: 'none', touchAction: 'manipulation' } as React.CSSProperties}
     >
       {children}
     </Button>

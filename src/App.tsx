@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -27,7 +28,31 @@ import { SessionProvider } from "./context/SessionContext";
 import { LanguageProvider } from "./context/LanguageContext";
 const queryClient = new QueryClient();
 
-const App = () => (
+// Global safety net for unhandled promise rejections (prevents Safari white screen crashes)
+const useGlobalErrorHandler = () => {
+  useEffect(() => {
+    const handleRejection = (event: PromiseRejectionEvent) => {
+      console.error("Unhandled promise rejection:", event.reason);
+      event.preventDefault(); // Prevent default console error / crash
+    };
+
+    const handleError = (event: ErrorEvent) => {
+      console.error("Unhandled error:", event.error);
+    };
+
+    window.addEventListener("unhandledrejection", handleRejection);
+    window.addEventListener("error", handleError);
+    return () => {
+      window.removeEventListener("unhandledrejection", handleRejection);
+      window.removeEventListener("error", handleError);
+    };
+  }, []);
+};
+
+const App = () => {
+  useGlobalErrorHandler();
+  
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <LanguageProvider>
@@ -96,6 +121,7 @@ const App = () => (
       </LanguageProvider>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;

@@ -32,7 +32,6 @@ const BalanceChakras = () => {
   const { recordSession } = useSessionRecording();
   const { currentPatientId, setCurrentPatientId } = useSession();
   const [showSessionDialog, setShowSessionDialog] = useState(false);
-  const [pendingStart, setPendingStart] = useState(false);
   
   // Merge repeat session data with location state
   const personNameFromState = state.personName || '';
@@ -83,17 +82,15 @@ const BalanceChakras = () => {
     }
   }, [completed, currentPatientId]);
 
+  // CRITICAL: Start balancing IMMEDIATELY on click to preserve user gesture chain
+  // for Safari AudioContext. Show session dialog non-blocking afterward.
   const handleStartClick = () => {
+    startBalancing();
     setShowSessionDialog(true);
-    setPendingStart(true);
   };
 
   const handleSessionConfirm = (patientId: string | null) => {
     setCurrentPatientId(patientId);
-    if (pendingStart) {
-      startBalancing();
-      setPendingStart(false);
-    }
   };
   
   return (

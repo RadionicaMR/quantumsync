@@ -101,51 +101,55 @@ export const useTreatmentCore = () => {
   const stopTreatment = async () => {
     console.log("Stopping treatment");
     
-    // Calculate duration if we have a start time
-    const duration = startTimeRef.current 
-      ? Math.floor((new Date().getTime() - startTimeRef.current.getTime()) / 1000 / 60)
-      : 0;
-    
-    // Save session to database if we have a receptor name
-    if (receptorName) {
-      await recordToDatabase(
-        receptorName,
-        'treatment',
-        {
-          frequency: audio.frequency[0],
-          duration,
-          preset: selectedPreset,
-          intention,
-          rate1: rates.rate1,
-          rate2: rates.rate2,
-          rate3: rates.rate3,
-          radionicImage: images.radionicImage,
-          receptorImage: images.receptorImage,
-          radionicImages: images.radionicImages,
-          receptorImages: images.receptorImages,
-          visualFeedback,
-          hypnoticSpeed: hypnoticSpeed[0],
-          completedAt: new Date().toISOString()
+    try {
+      // Calculate duration if we have a start time
+      const duration = startTimeRef.current 
+        ? Math.floor((new Date().getTime() - startTimeRef.current.getTime()) / 1000 / 60)
+        : 0;
+      
+      // Save session to database if we have a receptor name (wrapped in try-catch)
+      if (receptorName) {
+        try {
+          await recordToDatabase(
+            receptorName,
+            'treatment',
+            {
+              frequency: audio.frequency[0],
+              duration,
+              preset: selectedPreset,
+              intention,
+              rate1: rates.rate1,
+              rate2: rates.rate2,
+              rate3: rates.rate3,
+              radionicImage: images.radionicImage,
+              receptorImage: images.receptorImage,
+              radionicImages: images.radionicImages,
+              receptorImages: images.receptorImages,
+              visualFeedback,
+              hypnoticSpeed: hypnoticSpeed[0],
+              completedAt: new Date().toISOString()
+            }
+          );
+        } catch (dbError) {
+          console.error("Error recording treatment session:", dbError);
         }
-      );
-    }
-    
-    // Stop main audio
-    audio.stopAudio();
-    
-    // Stop visual effects
-    setHypnoticEffect(false);
-    images.stopHypnoticEffect();
-    
-    // Reset start time
-    startTimeRef.current = null;
+      }
+    } catch (error) {
+      console.error("Error in stopTreatment:", error);
+    } finally {
+      // Always stop audio and effects, even if recording fails
+      audio.stopAudio();
+      setHypnoticEffect(false);
+      images.stopHypnoticEffect();
+      startTimeRef.current = null;
 
-    toast({
-      title: "Tratamiento detenido",
-      description: "El tratamiento de frecuencia ha sido detenido.",
-    });
-    
-    console.log("Treatment completely stopped");
+      toast({
+        title: "Tratamiento detenido",
+        description: "El tratamiento de frecuencia ha sido detenido.",
+      });
+      
+      console.log("Treatment completely stopped");
+    }
   };
 
   return {
