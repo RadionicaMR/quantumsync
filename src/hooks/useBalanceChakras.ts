@@ -36,6 +36,7 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     handleChakraTransition,
     cleanupTimers,
     stopSound,
+    initAudio,
     isPlayingRef,
     currentChakraRef
   } = useChakraSessionManager(initialPersonName, initialChakraStates);
@@ -114,9 +115,11 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
 
   // Create a startBalancing callback for this specific instance
   const startBalancing = useCallback(() => {
+    // CRITICAL: Initialize AudioContext within user gesture for Safari
+    initAudio();
+    
     // Update the isPlayingRef directly when starting
     isPlayingRef.current = true;
-    
     startBalancingBase(
       personName,
       getChakrasToBalance,
@@ -159,7 +162,8 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     isPlayingRef,
     balanceOption,
     initialChakraStates,
-    notifyNoBlockedChakras
+    notifyNoBlockedChakras,
+    initAudio
   ]);
 
   // Create a stopBalancing callback for this specific instance
