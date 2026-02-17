@@ -12,7 +12,6 @@ export const useChakraAudio = () => {
   const currentChakraRef = useRef<ChakraName | null>(null);
 
   const startAudioMonitor = useCallback(() => {
-    // Clear any existing monitor
     if (audioMonitorIntervalRef.current) {
       window.clearInterval(audioMonitorIntervalRef.current);
     }
@@ -30,7 +29,6 @@ export const useChakraAudio = () => {
         return;
       }
 
-      // Check if audio context is suspended and resume it
       if (context.state === 'suspended') {
         console.warn("Chakra audio context suspended - resuming...");
         context.resume()
@@ -42,14 +40,13 @@ export const useChakraAudio = () => {
           });
       }
 
-      // Verify oscillator is still active
       const osc = oscillator.current;
       
       if (!osc && currentChakraRef.current) {
         console.warn("Chakra oscillator lost - attempting restart");
         playChakraSound(currentChakraRef.current);
       }
-    }, 2000); // Check every 2 seconds
+    }, 2000);
   }, []);
 
   const stopAudioMonitor = useCallback(() => {
@@ -60,12 +57,45 @@ export const useChakraAudio = () => {
     }
   }, []);
 
-  const playChakraSound = useCallback((chakraName: ChakraName) => {
+  // CRITICAL: Pre-initialize AudioContext within user gesture for Safari compatibility
+  const initAudio = useCallback(() => {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) {
+      console.error("AudioContext not supported");
+      return;
+    }
+    
     if (!audioContext.current || audioContext.current.state === 'closed') {
-      audioContext.current = new AudioContext();
+      audioContext.current = new AudioContextClass();
       gainNode.current = audioContext.current.createGain();
       gainNode.current.gain.value = 0.3;
       gainNode.current.connect(audioContext.current.destination);
+      console.log("Chakra AudioContext pre-initialized in user gesture");
+    }
+    
+    // Resume within user gesture - critical for Safari
+    audioContext.current.resume().catch(err => {
+      console.error("Failed to resume chakra AudioContext:", err);
+    });
+    
+    console.log("Chakra AudioContext state:", audioContext.current.state);
+  }, []);
+
+  const playChakraSound = useCallback((chakraName: ChakraName) => {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) {
+      console.error("AudioContext not supported");
+      return;
+    }
+    
+    if (!audioContext.current || audioContext.current.state === 'closed') {
+      audioContext.current = new AudioContextClass();
+      audioContext.current.resume().catch(err => console.error("Resume failed:", err));
+      gainNode.current = audioContext.current.createGain();
+      gainNode.current.gain.value = 0.3;
+      gainNode.current.connect(audioContext.current.destination);
+    } else if (audioContext.current.state === 'suspended') {
+      audioContext.current.resume().catch(err => console.error("Resume failed:", err));
     }
     
     // Stop any current sound
@@ -89,7 +119,6 @@ export const useChakraAudio = () => {
       
       console.log(`Playing frequency ${CHAKRA_FREQUENCIES[chakraName]} Hz for chakra ${chakraName}`);
       
-      // Start audio monitoring to prevent cuts
       startAudioMonitor();
     }
   }, [startAudioMonitor]);
@@ -108,5 +137,5 @@ export const useChakraAudio = () => {
     }
   }, [stopAudioMonitor]);
 
-  return { playChakraSound, stopSound };
+  return { playChakraSound, stopSound, initAudio };
 };

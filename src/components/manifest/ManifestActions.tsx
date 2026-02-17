@@ -84,20 +84,34 @@ const ManifestActions = ({
         {!isManifestActive ? (
           <Button 
             onClick={startManifestation}
+            onTouchEnd={(e) => {
+              e.stopPropagation();
+              if (canStart) startManifestation();
+            }}
             disabled={!canStart}
             className="bg-gradient-to-r from-quantum-primary/80 to-green-500/80 hover:from-quantum-primary hover:to-green-500 shadow-lg w-32"
+            style={{ WebkitAppearance: 'none', touchAction: 'manipulation' } as React.CSSProperties}
           >
-            <Play size={16} className="mr-2" />
-            Iniciar
+            <span className="flex items-center">
+              <Play size={16} className="mr-2" />
+              <span>Iniciar</span>
+            </span>
           </Button>
         ) : (
           <Button 
             onClick={stopManifestation}
+            onTouchEnd={(e) => {
+              e.stopPropagation();
+              stopManifestation();
+            }}
             variant="destructive"
             className="w-32"
+            style={{ WebkitAppearance: 'none', touchAction: 'manipulation' } as React.CSSProperties}
           >
-            <StopCircle size={16} className="mr-2" />
-            Detener
+            <span className="flex items-center">
+              <StopCircle size={16} className="mr-2" />
+              <span>Detener</span>
+            </span>
           </Button>
         )}
       </div>

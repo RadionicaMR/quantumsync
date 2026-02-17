@@ -12,7 +12,7 @@ export const useChakraTransition = () => {
   const isPlayingRef = useRef<boolean>(false); // Add reference to track playing state
   const currentChakraRef = useRef<ChakraName | ''>('');
   
-  const { playChakraSound, stopSound } = useChakraAudio();
+  const { playChakraSound, stopSound, initAudio } = useChakraAudio();
   const { cleanupTimers, startProgressTimer } = useChakraTimers();
   const { notifyChakraChange } = useChakraNotifications();
   
@@ -113,8 +113,9 @@ export const useChakraTransition = () => {
     handleChakraTransition,
     cleanupTimers,
     stopSound,
+    initAudio,
     lastTransitionTime,
-    isPlayingRef, // Export the ref so it can be accessed by other hooks
-    currentChakraRef // Export current chakra ref for debugging
+    isPlayingRef,
+    currentChakraRef
   };
 };

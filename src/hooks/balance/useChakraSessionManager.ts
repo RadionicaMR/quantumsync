@@ -53,9 +53,10 @@ export const useChakraSessionManager = (
     handleChakraTransition,
     cleanupTimers,
     stopSound,
+    initAudio,
     lastTransitionTime,
-    isPlayingRef, // Add isPlayingRef from useChakraTransition
-    currentChakraRef // Add currentChakraRef for debugging
+    isPlayingRef,
+    currentChakraRef
   } = useChakraTransition();
 
   return {
@@ -97,8 +98,9 @@ export const useChakraSessionManager = (
     handleChakraTransition,
     cleanupTimers,
     stopSound,
+    initAudio,
     lastTransitionTime,
-    isPlayingRef, // Export isPlayingRef
-    currentChakraRef // Export currentChakraRef for debugging
+    isPlayingRef,
+    currentChakraRef
   };
 };
