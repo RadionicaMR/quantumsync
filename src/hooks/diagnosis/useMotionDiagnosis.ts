@@ -5,6 +5,7 @@ import { usePendulumAudio } from '@/hooks/usePendulumAudio';
 import { useDeviceMotion } from '@/hooks/useDeviceMotion';
 import { usePendulumAnimation } from './usePendulumAnimation';
 import { useDiagnosisResults } from './useDiagnosisResults';
+import { useUsageTracking } from '@/hooks/useUsageTracking';
 
 interface UseMotionDiagnosisProps {
   useCameraMode: boolean;
@@ -27,6 +28,7 @@ export const useMotionDiagnosis = ({
   const { startPendulumSound, stopPendulumSound } = usePendulumAudio();
   const { startPendulumSwing, stopPendulumSwing } = usePendulumAnimation();
   const { generateResult } = useDiagnosisResults();
+  const { trackDiagnosis } = useUsageTracking();
 
   const handleMotionDiagnosis = useCallback(async (area: string) => {
     setCameraResult(null);
@@ -80,7 +82,13 @@ export const useMotionDiagnosis = ({
 
     addResultToCache(result);
     stopPendulumSound();
-  }, [setCameraResult, updateDiagnosisState, addResultToCache, stopPendulumSound]);
+
+    // Track diagnosis usage
+    trackDiagnosis({
+      area,
+      result: { diagnosis: result.result, percentage: result.percentage, motionBased: true },
+    });
+  }, [setCameraResult, updateDiagnosisState, addResultToCache, stopPendulumSound, trackDiagnosis]);
 
   const handleDiagnosisError = useCallback((area: string) => {
     console.error("Error durante el diagnóstico con movimiento");

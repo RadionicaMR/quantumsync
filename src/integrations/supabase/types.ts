@@ -255,6 +255,42 @@ export type Database = {
         }
         Relationships: []
       }
+      aggregated_metrics: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          metric_key: string
+          metric_period: string
+          module: string | null
+          period_end: string
+          period_start: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          id?: string
+          metric_key: string
+          metric_period: string
+          module?: string | null
+          period_end: string
+          period_start: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          metric_key?: string
+          metric_period?: string
+          module?: string | null
+          period_end?: string
+          period_start?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       analytics_events: {
         Row: {
           created_at: string
@@ -454,6 +490,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      usage_events: {
+        Row: {
+          actual_duration: number | null
+          configured_duration: number | null
+          configured_intensity: number | null
+          created_at: string
+          diagnosis_area: string | null
+          diagnosis_result: Json | null
+          event_type: string
+          frequency: number | null
+          id: string
+          is_preset: boolean | null
+          metadata: Json | null
+          module: string
+          protocol_name: string | null
+          user_hash: string
+        }
+        Insert: {
+          actual_duration?: number | null
+          configured_duration?: number | null
+          configured_intensity?: number | null
+          created_at?: string
+          diagnosis_area?: string | null
+          diagnosis_result?: Json | null
+          event_type: string
+          frequency?: number | null
+          id?: string
+          is_preset?: boolean | null
+          metadata?: Json | null
+          module: string
+          protocol_name?: string | null
+          user_hash: string
+        }
+        Update: {
+          actual_duration?: number | null
+          configured_duration?: number | null
+          configured_intensity?: number | null
+          created_at?: string
+          diagnosis_area?: string | null
+          diagnosis_result?: Json | null
+          event_type?: string
+          frequency?: number | null
+          id?: string
+          is_preset?: boolean | null
+          metadata?: Json | null
+          module?: string
+          protocol_name?: string | null
+          user_hash?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {

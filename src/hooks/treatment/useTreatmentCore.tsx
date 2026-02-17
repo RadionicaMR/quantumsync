@@ -4,6 +4,7 @@ import { useTreatmentAudio } from './useTreatmentAudio';
 import { useTreatmentImages } from '../useTreatmentImages';
 import { useTreatmentRates } from '../useTreatmentRates';
 import { useSessionRecording } from '@/hooks/useSessionRecording';
+import { useUsageTracking } from '@/hooks/useUsageTracking';
 import { toast } from '@/components/ui/use-toast';
 
 // Define and export the TreatmentPreset type
@@ -29,6 +30,7 @@ export const useTreatmentCore = () => {
   const images = useTreatmentImages();
   const rates = useTreatmentRates();
   const { recordSession: recordToDatabase } = useSessionRecording();
+  const { trackSessionStart, trackSessionEnd } = useUsageTracking();
   
   // Flag to prevent multiple rapid start attempts
   const isStartingTreatment = useRef<boolean>(false);
@@ -79,6 +81,16 @@ export const useTreatmentCore = () => {
     
     // Make sure the audio starts correctly
     audio.startAudio();
+
+    // Track usage event (fire-and-forget)
+    trackSessionStart({
+      module: 'treatment',
+      protocolName: selectedPreset || 'custom',
+      isPreset: !!selectedPreset,
+      configuredDuration: audio.duration[0],
+      frequency: audio.frequency[0],
+      metadata: { intention, receptorName, visualFeedback },
+    });
 
     // Show toast notification
     const target = receptorName ? ` para ${receptorName}` : '';
@@ -138,6 +150,16 @@ export const useTreatmentCore = () => {
       console.error("Error in stopTreatment:", error);
     } finally {
       // Always stop audio and effects, even if recording fails
+      const actualDuration = startTimeRef.current 
+        ? Math.floor((new Date().getTime() - startTimeRef.current.getTime()) / 1000)
+        : 0;
+      
+      trackSessionEnd({
+        module: 'treatment',
+        actualDuration,
+        protocolName: selectedPreset || 'custom',
+      });
+
       audio.stopAudio();
       setHypnoticEffect(false);
       images.stopHypnoticEffect();

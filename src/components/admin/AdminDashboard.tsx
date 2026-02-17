@@ -4,13 +4,14 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { useAdminData } from '@/hooks/useAdminData';
 import { useNavigate } from 'react-router-dom';
-import { Users, DollarSign, TrendingUp, LogOut, ShoppingCart, BarChart3, Image, UserCog, Eye } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, LogOut, ShoppingCart, BarChart3, Image, UserCog, Eye, Activity } from 'lucide-react';
 import AffiliatesManagementTab from './AffiliatesManagementTab';
 import AffiliateStatsTab from './AffiliateStatsTab';
 import SalesManagementTab from './SalesManagementTab';
 import ImageGalleryManagement from './ImageGalleryManagement';
 import UsersManagementSection from './UsersManagementSection';
 import VisitorAnalyticsTab from './VisitorAnalyticsTab';
+import UsageAnalyticsTab from './UsageAnalyticsTab';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -99,7 +100,7 @@ const AdminDashboard = () => {
         transition={{ duration: 0.3, delay: 0.2 }}
       >
         <Tabs defaultValue="sales" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 mb-8">
+          <TabsList className="grid w-full grid-cols-7 mb-8">
             <TabsTrigger value="sales">Ventas</TabsTrigger>
             <TabsTrigger value="affiliates">Afiliados</TabsTrigger>
             <TabsTrigger value="users">
@@ -110,6 +111,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="analytics">
               <Eye className="w-4 h-4 mr-2" />
               Visitantes
+            </TabsTrigger>
+            <TabsTrigger value="usage">
+              <Activity className="w-4 h-4 mr-2" />
+              Inteligencia
             </TabsTrigger>
             <TabsTrigger value="gallery">
               <Image className="w-4 h-4 mr-2" />
@@ -143,6 +148,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="analytics">
             <VisitorAnalyticsTab />
+          </TabsContent>
+
+          <TabsContent value="usage">
+            <UsageAnalyticsTab />
           </TabsContent>
 
           <TabsContent value="gallery">

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Layout from '@/components/Layout';
@@ -17,6 +17,7 @@ import { SessionRecordDialog } from '@/components/session/SessionRecordDialog';
 import { useSessionRecording } from '@/hooks/useSessionRecording';
 import { useSession } from '@/context/SessionContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { useUsageTracking } from '@/hooks/useUsageTracking';
 
 interface LocationState {
   personName?: string;
@@ -32,6 +33,8 @@ const BalanceChakras = () => {
   const { recordSession } = useSessionRecording();
   const { currentPatientId, setCurrentPatientId } = useSession();
   const [showSessionDialog, setShowSessionDialog] = useState(false);
+  const { trackSessionStart, trackSessionEnd } = useUsageTracking();
+  const chakraStartTimeRef = useRef<Date | null>(null);
   
   // Merge repeat session data with location state
   const personNameFromState = state.personName || '';
@@ -80,12 +83,25 @@ const BalanceChakras = () => {
       recordSession(currentPatientId, 'balance_chakras', sessionData);
       setCurrentPatientId(null);
     }
+    if (completed && chakraStartTimeRef.current) {
+      const actualDuration = Math.floor((new Date().getTime() - chakraStartTimeRef.current.getTime()) / 1000);
+      trackSessionEnd({ module: 'balance_chakras', actualDuration, protocolName: balanceOption });
+      chakraStartTimeRef.current = null;
+    }
   }, [completed, currentPatientId]);
 
   // CRITICAL: Start balancing IMMEDIATELY on click to preserve user gesture chain
   // for Safari AudioContext. Show session dialog non-blocking afterward.
   const handleStartClick = () => {
     startBalancing();
+    chakraStartTimeRef.current = new Date();
+    trackSessionStart({
+      module: 'balance_chakras',
+      protocolName: balanceOption,
+      isPreset: true,
+      configuredDuration: duration[0],
+      metadata: { personName },
+    });
     setShowSessionDialog(true);
   };
 
