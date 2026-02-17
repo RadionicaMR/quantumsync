@@ -40,38 +40,45 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
 
   // Enhanced stopManifestation that saves all state data
   const stopManifestationWithFullData = useCallback(async () => {
-    // Capture state before stopping
-    const fullSessionData = {
-      intention: state.intention,
-      indefiniteMode: state.indefiniteTime,
-      frequency: state.manifestFrequency[0],
-      exposureTime: state.exposureTime[0],
-      visualSpeed: state.visualSpeed[0],
-      selectedPattern: state.selectedPattern,
-      receptorName: state.receptorName,
-      rate1: state.rate1,
-      rate2: state.rate2,
-      rate3: state.rate3,
-      patternImage: state.patternImage,
-      receptorImage: state.receptorImage,
-      patternImages: state.patternImages,
-      receptorImages: state.receptorImages,
-      manifestSound: state.manifestSound,
-      activeTab: state.activeTab,
-      completedAt: new Date().toISOString()
-    };
+    try {
+      // Capture state before stopping
+      const fullSessionData = {
+        intention: state.intention,
+        indefiniteMode: state.indefiniteTime,
+        frequency: state.manifestFrequency[0],
+        exposureTime: state.exposureTime[0],
+        visualSpeed: state.visualSpeed[0],
+        selectedPattern: state.selectedPattern,
+        receptorName: state.receptorName,
+        rate1: state.rate1,
+        rate2: state.rate2,
+        rate3: state.rate3,
+        patternImage: state.patternImage,
+        receptorImage: state.receptorImage,
+        patternImages: state.patternImages,
+        receptorImages: state.receptorImages,
+        manifestSound: state.manifestSound,
+        activeTab: state.activeTab,
+        completedAt: new Date().toISOString()
+      };
 
-    // Record to database
-    const patientId = state.receptorName || state.intention;
-    if (patientId) {
-      await recordToDatabase(patientId, 'manifestation', fullSessionData);
+      // Record to database (wrapped in try-catch to prevent crashes)
+      const patientId = state.receptorName || state.intention;
+      if (patientId) {
+        try {
+          await recordToDatabase(patientId, 'manifestation', fullSessionData);
+        } catch (dbError) {
+          console.error("Error recording manifestation session:", dbError);
+        }
+      }
+    } catch (error) {
+      console.error("Error in stopManifestationWithFullData:", error);
+    } finally {
+      // Always stop audio and session, even if recording fails
+      audio.stopAudio();
+      setSessionActive(false);
+      session.stopManifestation();
     }
-
-    // Stop audio
-    audio.stopAudio();
-
-    setSessionActive(false);
-    session.stopManifestation();
   }, [state, session, recordToDatabase, audio]);
 
   return {
