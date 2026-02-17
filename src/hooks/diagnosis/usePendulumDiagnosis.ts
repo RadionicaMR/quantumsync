@@ -4,6 +4,7 @@ import { toast } from "@/components/ui/use-toast";
 import { usePendulumAudio } from '@/hooks/usePendulumAudio';
 import { usePendulumAnimation } from './usePendulumAnimation';
 import { useDiagnosisResults } from './useDiagnosisResults';
+import { useUsageTracking } from '@/hooks/useUsageTracking';
 
 interface UsePendulumDiagnosisProps {
   pendulumSound: boolean;
@@ -21,6 +22,7 @@ export const usePendulumDiagnosis = ({
   const { startPendulumSound, stopPendulumSound } = usePendulumAudio();
   const { startPendulumSwing, stopPendulumSwing } = usePendulumAnimation();
   const { generateResult } = useDiagnosisResults();
+  const { trackDiagnosis } = useUsageTracking();
 
   const startPendulum = useCallback(async (area: string) => {
     console.log(`Iniciando diagnóstico para: ${area}`);
@@ -57,6 +59,12 @@ export const usePendulumDiagnosis = ({
 
       addResultToCache(result);
       stopPendulumSound();
+
+      // Track diagnosis usage
+      trackDiagnosis({
+        area,
+        result: { diagnosis: result.result, percentage: result.percentage },
+      });
     }, duration);
   }, [
     updateDiagnosisState, 

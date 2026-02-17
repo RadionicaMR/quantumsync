@@ -1,5 +1,5 @@
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { ManifestPattern } from '@/data/manifestPatterns';
 import { useManifestState } from './useManifestState';
 import { useManifestAudio } from './useManifestAudio';
@@ -8,6 +8,7 @@ import { useManifestSession } from './useManifestSession';
 import { useManifestUtils } from './useManifestUtils';
 import { useManifestImageControl } from './useManifestImageControl';
 import { useSessionRecording } from '@/hooks/useSessionRecording';
+import { useUsageTracking } from '@/hooks/useUsageTracking';
 
 export const useManifestCore = (patterns: ManifestPattern[]) => {
   const state = useManifestState();
@@ -19,6 +20,8 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
   const utils = useManifestUtils();
   const session = useManifestSession(imageControl.startImageAlternation, imageControl.stopImageAlternation);
   const { recordSession: recordToDatabase } = useSessionRecording();
+  const { trackSessionStart, trackSessionEnd } = useUsageTracking();
+  const manifestStartTimeRef = useRef<Date | null>(null);
 
   // Sync sessionActive with session's isManifestActive
   useEffect(() => {
@@ -28,6 +31,7 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
   // Enhanced startManifestation that syncs state and starts audio
   const startManifestationSynced = useCallback((intention?: string) => {
     setSessionActive(true);
+    manifestStartTimeRef.current = new Date();
     
     // CRITICAL: Start audio synchronously within user gesture for Safari compatibility
     if (state.manifestSound) {
@@ -35,8 +39,18 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
       audio.startAudio(state.manifestFrequency[0]);
     }
     
+    // Track usage (fire-and-forget)
+    trackSessionStart({
+      module: 'manifestation',
+      protocolName: state.selectedPattern || 'custom',
+      isPreset: state.activeTab === 'preset',
+      configuredDuration: state.exposureTime[0],
+      frequency: state.manifestFrequency[0],
+      metadata: { intention: intention || state.intention, receptorName: state.receptorName },
+    });
+    
     session.startManifestation(intention);
-  }, [session, state.manifestSound, state.manifestFrequency, audio]);
+  }, [session, state.manifestSound, state.manifestFrequency, audio, state.selectedPattern, state.activeTab, state.exposureTime, state.intention, state.receptorName, trackSessionStart]);
 
   // Enhanced stopManifestation that saves all state data
   const stopManifestationWithFullData = useCallback(async () => {
@@ -74,12 +88,23 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
     } catch (error) {
       console.error("Error in stopManifestationWithFullData:", error);
     } finally {
+      // Track usage end
+      const actualDuration = manifestStartTimeRef.current
+        ? Math.floor((new Date().getTime() - manifestStartTimeRef.current.getTime()) / 1000)
+        : 0;
+      trackSessionEnd({
+        module: 'manifestation',
+        actualDuration,
+        protocolName: state.selectedPattern || 'custom',
+      });
+      manifestStartTimeRef.current = null;
+
       // Always stop audio and session, even if recording fails
       audio.stopAudio();
       setSessionActive(false);
       session.stopManifestation();
     }
-  }, [state, session, recordToDatabase, audio]);
+  }, [state, session, recordToDatabase, audio, trackSessionEnd]);
 
   return {
     ...state,
