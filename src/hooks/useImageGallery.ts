@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { GalleryImage, GalleryCategory } from '@/types/gallery';
 import { toast } from 'sonner';
+
+const FETCH_TIMEOUT_MS = 15000; // 15 second timeout
+const MAX_RETRIES = 2;
 
 export const useImageGallery = () => {
   const [images, setImages] = useState<GalleryImage[]>([]);
@@ -9,8 +12,10 @@ export const useImageGallery = () => {
   const [selectedCategory, setSelectedCategory] = useState<GalleryCategory>('all');
   const [selectedFolder, setSelectedFolder] = useState<string>('all');
   const [folders, setFolders] = useState<string[]>([]);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const isMountedRef = useRef(true);
 
-  const fetchFolders = async () => {
+  const fetchFolders = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('image_gallery')
@@ -20,17 +25,31 @@ export const useImageGallery = () => {
       
       if (error) throw error;
       
-      if (data) {
+      if (data && isMountedRef.current) {
         const uniqueFolders = [...new Set(data.map(item => item.folder_name).filter(Boolean) as string[])];
         setFolders(uniqueFolders.sort());
       }
     } catch (error) {
       console.error('Error fetching folders:', error);
     }
-  };
+  }, []);
 
-  const fetchGalleryImages = async (category?: GalleryCategory, folderFilter?: string) => {
+  const fetchGalleryImages = useCallback(async (category?: GalleryCategory, folderFilter?: string, retryCount = 0) => {
+    // Cancel any in-flight request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    
     setLoading(true);
+    
+    // Set a timeout to prevent Safari from hanging indefinitely
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, FETCH_TIMEOUT_MS);
+    
     try {
       let query = supabase
         .from('image_gallery')
@@ -47,10 +66,14 @@ export const useImageGallery = () => {
       
       const { data, error } = await query.order('created_at', { ascending: false });
       
+      clearTimeout(timeoutId);
+      
+      // Check if this request was aborted or component unmounted
+      if (controller.signal.aborted || !isMountedRef.current) return;
+      
       if (error) throw error;
       
       if (data) {
-        // Agregar URLs públicas de Storage y asegurar tipos correctos
         const imagesWithUrls: GalleryImage[] = data.map(img => ({
           ...img,
           category: img.category as 'radionic' | 'pattern' | 'receptor' | 'chakra',
@@ -58,21 +81,47 @@ export const useImageGallery = () => {
         }));
         setImages(imagesWithUrls);
       }
-    } catch (error) {
+    } catch (error: any) {
+      clearTimeout(timeoutId);
+      
+      if (!isMountedRef.current) return;
+      
+      // Retry on timeout or network error (Safari specific)
+      if (retryCount < MAX_RETRIES && (error?.name === 'AbortError' || error?.message?.includes('network'))) {
+        console.warn(`Gallery fetch attempt ${retryCount + 1} failed, retrying...`);
+        // Small delay before retry
+        await new Promise(r => setTimeout(r, 500 * (retryCount + 1)));
+        if (isMountedRef.current) {
+          return fetchGalleryImages(category, folderFilter, retryCount + 1);
+        }
+        return;
+      }
+      
       console.error('Error fetching gallery images:', error);
-      toast.error('Error al cargar las imágenes de la galería');
+      if (error?.name !== 'AbortError') {
+        toast.error('Error al cargar las imágenes. Intenta de nuevo.');
+      }
     } finally {
-      setLoading(false);
+      if (isMountedRef.current) {
+        setLoading(false);
+      }
     }
-  };
-
-  useEffect(() => {
-    fetchFolders();
   }, []);
 
   useEffect(() => {
+    isMountedRef.current = true;
+    fetchFolders();
+    return () => {
+      isMountedRef.current = false;
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [fetchFolders]);
+
+  useEffect(() => {
     fetchGalleryImages(selectedCategory, selectedFolder);
-  }, [selectedCategory, selectedFolder]);
+  }, [selectedCategory, selectedFolder, fetchGalleryImages]);
 
   return {
     images,

@@ -46,12 +46,20 @@ const ImageGalleryGrid = ({
               isSelected ? 'border-primary shadow-lg' : 'border-border'
             }`}
             onClick={() => image.url && onImageSelect(image.url)}
+            onTouchEnd={(e) => {
+              e.stopPropagation();
+              if (image.url) onImageSelect(image.url);
+            }}
+            style={{ WebkitAppearance: 'none' as any, touchAction: 'manipulation' }}
           >
             <img
               src={image.url}
               alt={image.name}
               className="w-full h-full object-cover"
-              loading="lazy"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+              }}
             />
             {isSelected && (
               <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
