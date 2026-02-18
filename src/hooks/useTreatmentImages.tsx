@@ -1,5 +1,5 @@
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export const useTreatmentImages = () => {
@@ -9,125 +9,97 @@ export const useTreatmentImages = () => {
   const [radionicImages, setRadionicImages] = useState<string[]>([]);
   const [receptorImages, setReceptorImages] = useState<string[]>([]);
   const [hypnoticEffect, setHypnoticEffect] = useState(false);
-  const [hypnoticSpeed, setHypnoticSpeed] = useState([10]); // Velocidad de oscilación (1-20)
+  const [hypnoticSpeed, setHypnoticSpeed] = useState([10]);
   const [currentImage, setCurrentImage] = useState<'radionic' | 'receptor' | 'mix' | 'pattern'>('mix');
   const [receptorName, setReceptorName] = useState<string>('');
   
   const hypnoticTimerRef = useRef<number | NodeJS.Timeout | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+  // CRITICAL FIX: Use a ref to track active state for animation callbacks
+  // This prevents stale closure issues in Safari where the state value
+  // captured at callback creation time doesn't reflect the current state
+  const hypnoticActiveRef = useRef<boolean>(false);
   const { isIOS, isSafari } = useIsMobile();
 
-  // Función mejorada para el efecto hipnótico - optimizada para Safari
-  const startHypnoticEffect = () => {
-    // Only start the effect if it's not already running
-    if (hypnoticEffect) {
-      console.log("Hypnotic effect already running, stopping before restart");
-      stopHypnoticEffect();
-    }
-    
-    // Consideramos ya sea imágenes cargadas o un nombre de receptor
-    const hasRadionicImagesOrName = radionicImages.length > 0 || radionicImage;
-    const hasReceptorImagesOrName = receptorImages.length > 0 || receptorImage || receptorName.trim().length > 0;
-    
-    if (hasRadionicImagesOrName || hasReceptorImagesOrName) {
-      console.log("Starting hypnotic effect in useTreatmentImages with images or receptor name");
-      setHypnoticEffect(true);
-      
-      // Limpieza de temporizadores previos para evitar conflictos
-      stopHypnoticEffect();
-      
-      // Configuramos la velocidad basada en el valor del deslizador
-      // Faster speed (higher value) = shorter interval time
-      const switchInterval = 2000 / Math.max(1, hypnoticSpeed[0]);
-      
-      console.log("Starting hypnotic effect with speed:", hypnoticSpeed[0], "interval:", switchInterval);
-      
-      // Iniciamos con radionic para asegurar la secuencia completa
-      setCurrentImage('radionic');
-      
-      // Usamos requestAnimationFrame para dispositivos iOS y Safari para mejor rendimiento
-      if (isIOS || isSafari) {
-        let lastTime = performance.now();
-        
-        const animate = (currentTime: number) => {
-          if (!hypnoticEffect) return; // Stop animation if effect is turned off
-          
-          const elapsed = currentTime - lastTime;
-          
-          if (elapsed > switchInterval) {
-            setCurrentImage(prev => {
-              if (prev === 'radionic' || prev === 'pattern') return 'receptor';
-              if (prev === 'receptor') return 'radionic';
-              return 'radionic';
-            });
-            lastTime = currentTime;
-          }
-          
-          animationFrameRef.current = requestAnimationFrame(animate);
-        };
-        
-        animationFrameRef.current = requestAnimationFrame(animate);
-      } else {
-        // Standard interval for non-iOS devices
-        hypnoticTimerRef.current = setInterval(() => {
-          setCurrentImage(prev => {
-            if (prev === 'radionic' || prev === 'pattern') return 'receptor';
-            if (prev === 'receptor') return 'radionic';
-            return 'radionic';
-          });
-        }, switchInterval);
-      }
-    } else {
-      console.log("Cannot start hypnotic effect: missing images or receptor name", {
-        hasRadionicImagesOrName,
-        hasReceptorImagesOrName,
-        radionicImage,
-        receptorImage,
-        receptorName
-      });
-    }
-  };
-
-  const stopHypnoticEffect = () => {
-    console.log("Stopping hypnotic effect in useTreatmentImages");
-    
-    // Limpieza optimizada para todos los navegadores
+  const cleanupTimers = useCallback(() => {
     if (hypnoticTimerRef.current) {
       clearInterval(hypnoticTimerRef.current as NodeJS.Timeout);
       hypnoticTimerRef.current = null;
     }
-    
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
       animationFrameRef.current = null;
     }
-    
-    setHypnoticEffect(false);
-    setCurrentImage('mix'); // Reset to mix view when stopped
-  };
-
-  // Cleanup function mejorada para Safari
-  useEffect(() => {
-    return () => {
-      console.log("Cleaning up hypnotic effect timers in useTreatmentImages");
-      
-      if (hypnoticTimerRef.current) {
-        clearInterval(hypnoticTimerRef.current as NodeJS.Timeout);
-      }
-      
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
   }, []);
 
-  // Reinicia el efecto hipnótico si cambia la velocidad mientras está activo
+  const stopHypnoticEffect = useCallback(() => {
+    hypnoticActiveRef.current = false;
+    cleanupTimers();
+    setHypnoticEffect(false);
+    setCurrentImage('mix');
+  }, [cleanupTimers]);
+
+  const startHypnoticEffect = useCallback(() => {
+    // Always clean up first
+    cleanupTimers();
+    
+    const hasRadionicContent = radionicImages.length > 0 || !!radionicImage;
+    const hasReceptorContent = receptorImages.length > 0 || !!receptorImage || receptorName.trim().length > 0;
+    
+    if (!hasRadionicContent && !hasReceptorContent) {
+      console.log("Cannot start hypnotic effect: no images or receptor");
+      return;
+    }
+    
+    // Set ref BEFORE starting animation - this is the source of truth for callbacks
+    hypnoticActiveRef.current = true;
+    setHypnoticEffect(true);
+    setCurrentImage('radionic');
+    
+    const switchInterval = 2000 / Math.max(1, hypnoticSpeed[0]);
+    
+    if (isIOS || isSafari) {
+      let lastTime = performance.now();
+      
+      const animate = (currentTime: number) => {
+        // CRITICAL: Check ref, not state - prevents stale closure freeze
+        if (!hypnoticActiveRef.current) return;
+        
+        const elapsed = currentTime - lastTime;
+        if (elapsed > switchInterval) {
+          setCurrentImage(prev => prev === 'radionic' || prev === 'pattern' ? 'receptor' : 'radionic');
+          lastTime = currentTime;
+        }
+        
+        animationFrameRef.current = requestAnimationFrame(animate);
+      };
+      
+      animationFrameRef.current = requestAnimationFrame(animate);
+    } else {
+      hypnoticTimerRef.current = setInterval(() => {
+        if (!hypnoticActiveRef.current) {
+          cleanupTimers();
+          return;
+        }
+        setCurrentImage(prev => prev === 'radionic' || prev === 'pattern' ? 'receptor' : 'radionic');
+      }, switchInterval);
+    }
+  }, [radionicImages, radionicImage, receptorImages, receptorImage, receptorName, hypnoticSpeed, isIOS, isSafari, cleanupTimers]);
+
+  // Cleanup on unmount
   useEffect(() => {
-    if (hypnoticEffect) {
-      console.log("Hypnotic speed changed, restarting effect with speed:", hypnoticSpeed[0]);
+    return () => {
+      hypnoticActiveRef.current = false;
+      cleanupTimers();
+    };
+  }, [cleanupTimers]);
+
+  // Restart effect if speed changes while active
+  useEffect(() => {
+    if (hypnoticActiveRef.current) {
       startHypnoticEffect();
     }
-  }, [hypnoticSpeed]);
+  }, [hypnoticSpeed]); // intentionally not including startHypnoticEffect to avoid infinite loop
 
   return {
     visualFeedback,
@@ -141,7 +113,7 @@ export const useTreatmentImages = () => {
     receptorImages,
     setReceptorImages,
     hypnoticEffect,
-    setHypnoticEffect, // Expose this so we can control it from outside
+    setHypnoticEffect,
     hypnoticSpeed,
     setHypnoticSpeed,
     currentImage,
