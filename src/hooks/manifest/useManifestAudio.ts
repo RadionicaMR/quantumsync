@@ -1,5 +1,5 @@
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { ManifestAudio } from './types';
 
 export const useManifestAudio = (): ManifestAudio & {
@@ -12,93 +12,71 @@ export const useManifestAudio = (): ManifestAudio & {
   const currentFrequencyRef = useRef<number | null>(null);
   const audioMonitorIntervalRef = useRef<number | null>(null);
   const isPlayingRef = useRef<boolean>(false);
+  // CRITICAL FIX: Use ref for backgroundModeActive to prevent stale closure in visibility handler
+  const bgActiveRef = useRef(false);
+
+  // Keep ref in sync
+  useEffect(() => { bgActiveRef.current = backgroundModeActive; }, [backgroundModeActive]);
 
   // Function to monitor and maintain audio playback
   const startAudioMonitor = () => {
-    // Clear any existing monitor
     if (audioMonitorIntervalRef.current) {
       window.clearInterval(audioMonitorIntervalRef.current);
     }
 
-    console.log("Starting manifestation audio monitor to prevent audio cuts");
-    
     audioMonitorIntervalRef.current = window.setInterval(() => {
-      if (!isPlayingRef.current) {
-        return;
-      }
+      if (!isPlayingRef.current) return;
 
       const context = audioContextRef.current;
-      if (!context) {
-        console.warn("Manifestation audio context lost");
-        return;
-      }
+      if (!context) return;
 
-      // Check if audio context is suspended and resume it
       if (context.state === 'suspended') {
-        console.warn("Manifestation audio context suspended - resuming...");
-        context.resume()
-          .then(() => {
-            console.log("Manifestation audio context resumed successfully");
-          })
-          .catch(err => {
-            console.error("Failed to resume manifestation audio context:", err);
-          });
+        context.resume().catch(err => {
+          console.error("Failed to resume manifestation audio context:", err);
+        });
       }
 
-      // Verify oscillators are still active
       const mainOsc = oscillatorRef.current;
-      
       if (!mainOsc && currentFrequencyRef.current !== null) {
-        console.warn("Manifestation oscillators lost - attempting restart");
         startAudio(currentFrequencyRef.current);
       }
-    }, 2000); // Check every 2 seconds
+    }, 2000);
   };
 
   const stopAudioMonitor = () => {
     if (audioMonitorIntervalRef.current) {
       window.clearInterval(audioMonitorIntervalRef.current);
       audioMonitorIntervalRef.current = null;
-      console.log("Manifestation audio monitor stopped");
     }
   };
 
-  // Logs para depuración
+  // Cleanup on unmount
   useEffect(() => {
-    console.log("useManifestAudio - Montado");
     return () => {
-      console.log("useManifestAudio - Desmontado, limpiando recursos");
       stopAudioMonitor();
       stopAudio();
     }
   }, []);
 
-  const handleVisibilityChange = () => {
-    if (document.hidden && oscillatorRef.current !== null) {
-      console.log("App pasó a segundo plano - manifestación continúa reproduciéndose");
+  // CRITICAL FIX: Stable visibility handler using refs - no stale closures, never re-created
+  const handleVisibilityChange = useCallback(() => {
+    if (document.hidden && isPlayingRef.current) {
       setBackgroundModeActive(true);
-    } else if (!document.hidden && backgroundModeActive) {
-      console.log("App volvió al primer plano");
+    } else if (!document.hidden && bgActiveRef.current) {
       setBackgroundModeActive(false);
     }
-  };
+  }, []);
 
-  // Add event listener for visibilitychange
+  // Single stable listener - never re-registered
   useEffect(() => {
-    console.log("Registrando event listener para visibilitychange");
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    
     return () => {
-      console.log("Removiendo event listener para visibilitychange");
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [backgroundModeActive]);
+  }, [handleVisibilityChange]);
 
   const startAudio = (frequency: number) => {
     try {
-      console.log("Iniciando audio de manifestación con frecuencia:", frequency);
-      
-      // Save current frequency for restoration if needed
       currentFrequencyRef.current = frequency;
       isPlayingRef.current = true;
       
@@ -129,97 +107,64 @@ export const useManifestAudio = (): ManifestAudio & {
         console.error("Failed to resume manifest AudioContext:", err);
       });
       
-      console.log("Contexto de audio creado:", audioContextRef.current);
-      
       // Create oscillator for base frequency
       const oscillator = audioContextRef.current.createOscillator();
       const gainNode = audioContextRef.current.createGain();
       
       oscillator.type = 'sine';
       oscillator.frequency.value = frequency;
-      
-      // Set volume
-      gainNode.gain.value = 0.3; // Incrementamos levemente el volumen
+      gainNode.gain.value = 0.3;
       
       oscillator.connect(gainNode);
       gainNode.connect(audioContextRef.current.destination);
       
-      console.log("Oscilador configurado y conectado");
-      
       oscillator.start();
       oscillatorRef.current = oscillator;
       
-      console.log("Oscilador principal iniciado");
-      
       // For low frequencies, add a harmonic to make it more audible on small speakers
       if (frequency < 100) {
-        console.log("Añadiendo armónico para frecuencia baja");
         const harmonicOscillator = audioContextRef.current.createOscillator();
         const harmonicGainNode = audioContextRef.current.createGain();
         
-        // Create harmonic at 2x the frequency with lower volume
         harmonicOscillator.type = 'sine';
         harmonicOscillator.frequency.value = frequency * 2;
-        harmonicGainNode.gain.value = 0.2; // Incrementamos levemente el volumen armónico
+        harmonicGainNode.gain.value = 0.2;
         
         harmonicOscillator.connect(harmonicGainNode);
         harmonicGainNode.connect(audioContextRef.current.destination);
         
         harmonicOscillator.start();
         harmonicOscillatorRef.current = harmonicOscillator;
-        console.log("Oscilador armónico iniciado");
       }
       
       // Start audio monitoring to prevent cuts
       startAudioMonitor();
-      
-      console.log("Audio de manifestación iniciado correctamente con frecuencia:", frequency);
     } catch (error) {
       console.error("Error starting manifestation audio:", error);
     }
   };
 
   const stopAudio = () => {
-    console.log("Deteniendo audio de manifestación");
-    
     isPlayingRef.current = false;
-    
-    // Stop audio monitoring
     stopAudioMonitor();
     
     if (oscillatorRef.current) {
-      try {
-        oscillatorRef.current.stop();
-        console.log("Oscilador principal detenido");
-      } catch (e) {
-        console.error("Error al detener oscilador principal:", e);
-      }
+      try { oscillatorRef.current.stop(); } catch (e) {}
       oscillatorRef.current = null;
     }
     
     if (harmonicOscillatorRef.current) {
-      try {
-        harmonicOscillatorRef.current.stop();
-        console.log("Oscilador armónico detenido");
-      } catch (e) {
-        console.error("Error al detener oscilador armónico:", e);
-      }
+      try { harmonicOscillatorRef.current.stop(); } catch (e) {}
       harmonicOscillatorRef.current = null;
     }
     
     if (audioContextRef.current) {
-      try {
-        audioContextRef.current.close();
-        console.log("Contexto de audio cerrado");
-      } catch (e) {
-        console.error("Error al cerrar contexto de audio:", e);
-      }
+      try { audioContextRef.current.close(); } catch (e) {}
       audioContextRef.current = null;
     }
     
     currentFrequencyRef.current = null;
     setBackgroundModeActive(false);
-    console.log("Audio de manifestación detenido completamente");
   };
 
   return {

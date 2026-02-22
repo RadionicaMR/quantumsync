@@ -26,14 +26,6 @@ const ManifestActions = ({
   indefiniteTime = false,
   intention = ""
 }: ManifestActionsProps) => {
-  // Debugging logs
-  console.log("ManifestActions render:", {
-    isManifestActive,
-    canStart,
-    timeRemaining,
-    hasIntention: !!intention
-  });
-
   return (
     <div className="flex flex-col sm:flex-row items-center gap-4 justify-between mt-2">
       <div className="flex-1 w-full">
