@@ -8,10 +8,10 @@ export const useManifestSession = (
   // Session recording is now handled by useManifestCore
   const [isManifestActive, setIsManifestActive] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const timerIdRef = useRef<number | null>(null);
+  const timerRef = useRef<number | null>(null);
   const [currentIntention, setCurrentIntention] = useState<string>("");
   const startTimeRef = useRef<Date | null>(null);
+  const manifestStartTimeRef = useRef<number | null>(null);
   
   // Store references to the image alternation functions
   const startImageAlternation = useRef(startImageAlternationFn());
@@ -26,12 +26,8 @@ export const useManifestSession = (
   // Clean up function to clear timer
   const clearTimer = useCallback(() => {
     if (timerRef.current) {
-      clearInterval(timerRef.current);
+      window.clearInterval(timerRef.current);
       timerRef.current = null;
-    }
-    if (timerIdRef.current) {
-      window.clearInterval(timerIdRef.current);
-      timerIdRef.current = null;
     }
   }, []);
   
@@ -65,23 +61,30 @@ export const useManifestSession = (
     if (!isIndefinite) {
       const exposureDuration = (exposureTimeMinutes || 5) * 60;
       setTimeRemaining(exposureDuration);
+      manifestStartTimeRef.current = Date.now();
+      const totalMs = exposureDuration * 1000;
       
-      const timer = setInterval(() => {
-        setTimeRemaining(prev => {
-          if (prev === null || prev <= 1) {
-            clearTimer();
-            setIsManifestActive(false);
-            toast({
-              title: "Manifestación completada",
-              description: "La sesión de manifestación ha finalizado."
-            });
-            return null;
-          }
-          return prev - 1;
-        });
+      // CRITICAL FIX: Use elapsed-time approach (no stale closures) and keep
+      // side effects OUT of the state updater to avoid React 18 double-fires.
+      timerRef.current = window.setInterval(() => {
+        if (!manifestStartTimeRef.current) return;
+        const elapsed = Date.now() - manifestStartTimeRef.current;
+        const remaining = Math.max(0, Math.ceil((totalMs - elapsed) / 1000));
+        
+        if (remaining <= 0) {
+          // Side effects OUTSIDE state updater
+          clearTimer();
+          manifestStartTimeRef.current = null;
+          setTimeRemaining(null);
+          setIsManifestActive(false);
+          toast({
+            title: "Manifestación completada",
+            description: "La sesión de manifestación ha finalizado."
+          });
+        } else {
+          setTimeRemaining(remaining);
+        }
       }, 1000);
-      
-      timerRef.current = timer;
     }
     
     toast({
