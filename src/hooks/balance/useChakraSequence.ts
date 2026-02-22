@@ -18,7 +18,7 @@ export const useChakraSequence = () => {
     recordSession: () => void,
     isTransitioning: React.MutableRefObject<boolean>
   ) => {
-    console.log("All chakras have been balanced");
+    // All chakras balanced
     
     // Update states
     setIsPlaying(false);

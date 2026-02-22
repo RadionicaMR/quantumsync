@@ -13,7 +13,7 @@ export const useTreatmentImages = () => {
   const [currentImage, setCurrentImage] = useState<'radionic' | 'receptor' | 'mix' | 'pattern'>('mix');
   const [receptorName, setReceptorName] = useState<string>('');
   
-  const hypnoticTimerRef = useRef<number | NodeJS.Timeout | null>(null);
+  const hypnoticTimerRef = useRef<number | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   // CRITICAL FIX: Use a ref to track active state for animation callbacks
   // This prevents stale closure issues in Safari where the state value
@@ -23,7 +23,7 @@ export const useTreatmentImages = () => {
 
   const cleanupTimers = useCallback(() => {
     if (hypnoticTimerRef.current) {
-      clearInterval(hypnoticTimerRef.current as NodeJS.Timeout);
+      window.clearInterval(hypnoticTimerRef.current!);
       hypnoticTimerRef.current = null;
     }
     if (animationFrameRef.current) {
@@ -76,7 +76,7 @@ export const useTreatmentImages = () => {
       
       animationFrameRef.current = requestAnimationFrame(animate);
     } else {
-      hypnoticTimerRef.current = setInterval(() => {
+      hypnoticTimerRef.current = window.setInterval(() => {
         if (!hypnoticActiveRef.current) {
           cleanupTimers();
           return;

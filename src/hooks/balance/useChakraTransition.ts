@@ -26,7 +26,6 @@ export const useChakraTransition = () => {
   ) => {
     // CRITICAL CHECK: Ensure we can transition
     if (!isPlaying) {
-      console.log("Not playing, skipping transition");
       return;
     }
     
