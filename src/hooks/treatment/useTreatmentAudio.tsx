@@ -50,7 +50,7 @@ export const useTreatmentAudio = () => {
       window.clearInterval(audioMonitorIntervalRef.current);
     }
 
-    console.log("Starting audio monitor to prevent audio cuts");
+    
     
     audioMonitorIntervalRef.current = window.setInterval(() => {
       if (!treatmentActiveRef.current || isStoppingRef.current) {
@@ -75,12 +75,11 @@ export const useTreatmentAudio = () => {
           });
       }
 
-      // Verify oscillators are still active
+      // Verify main oscillator is still active (harmonic is only created for freq < 100Hz)
       const mainOsc = oscillatorRef.current;
-      const harmOsc = harmonicOscillatorRef.current;
       
-      if (!mainOsc || !harmOsc) {
-        console.warn("Oscillators lost - attempting restart");
+      if (!mainOsc) {
+        console.warn("Main oscillator lost - attempting restart");
         restartAudio();
       }
     }, 2000); // Check every 2 seconds
@@ -90,7 +89,7 @@ export const useTreatmentAudio = () => {
     if (audioMonitorIntervalRef.current) {
       window.clearInterval(audioMonitorIntervalRef.current);
       audioMonitorIntervalRef.current = null;
-      console.log("Audio monitor stopped");
+      
     }
   };
 

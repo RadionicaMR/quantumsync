@@ -80,11 +80,11 @@ export const useBalanceActions = () => {
     // Notify start with the personName
     notifyStart(personName);
     
-    // CRITICAL FIX: Use a small timeout to ensure state updates are processed
+    // Start first chakra with minimal delay (reduced from 500ms to improve responsiveness)
+    // Refs are already set, so moveToNextChakra can use isPlayingRef immediately
     setTimeout(() => {
-      // Start first chakra immediately
       moveToNextChakra();
-    }, 500);
+    }, 50);
   }, []);
 
   // Stop balancing chakras

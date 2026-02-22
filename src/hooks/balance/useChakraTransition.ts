@@ -40,7 +40,7 @@ export const useChakraTransition = () => {
     const now = Date.now();
     lastTransitionTime.current = now;
     
-    console.log(`useChakraTransition: Transition from ${currentChakra} to ${nextChakra}, explicitly resetting progress to 0`);
+    
     setProgress(0);
     
     // CRITICAL FIX: Ensure clean state for new chakra - always stop previous sounds
@@ -59,22 +59,22 @@ export const useChakraTransition = () => {
     
     // CRITICAL FIX: Create a completely independent and reliable completion handler
     const safeOnComplete = () => {
-      console.log(`Safe onComplete executing for chakra ${nextChakra}`);
+      
       
       // Reset transition state
       isTransitioning.current = false;
       
       // Call original callback with error handling
       if (onComplete && typeof onComplete === 'function') {
-        console.log(`Calling onComplete callback for ${nextChakra}`);
+        
         try {
           // Verify we're still on the same chakra
           if (currentChakraRef.current === nextChakra) {
             // Use the previously stored playing state
-            console.log(`Using stored playing state: ${isPlayingRef.current}`);
+            
             onComplete();
           } else {
-            console.log(`Chakra changed during completion from ${nextChakra} to ${currentChakraRef.current}, skipping callback`);
+            
           }
         } catch (error) {
           console.error(`Error in onComplete callback for ${nextChakra}:`, error);
@@ -82,7 +82,7 @@ export const useChakraTransition = () => {
           isTransitioning.current = false;
         }
       } else {
-        console.warn(`No valid onComplete function provided for ${nextChakra}`);
+        
       }
     };
     
@@ -90,13 +90,13 @@ export const useChakraTransition = () => {
     setTimeout(() => {
       // Check our stored playing state
       if (!isPlayingRef.current) {
-        console.log(`Aborting transition to ${nextChakra} because we're no longer playing`);
+        
         isTransitioning.current = false;
         return;
       }
       
       // Start new timer for this chakra
-      console.log(`Starting timer for chakra ${nextChakra} with duration ${duration[0]} minutes`);
+      
       startProgressTimer(
         nextChakra, 
         duration, 
