@@ -34,14 +34,12 @@ const TreatmentActions = ({
     if (isPlaying) {
       const formattedTime = formatTime(Math.max(0, timeRemaining));
       setDisplayTimeString(formattedTime);
-      console.log(`Updated displayed time: ${formattedTime} (${timeRemaining.toFixed(2)} min) - Playing: ${isPlaying}`);
     } else if (timeRemaining === 0) {
       setDisplayTimeString("");
     }
   }, [timeRemaining, isPlaying, formatTime]);
   
   const handleStartTreatment = () => {
-    console.log("Start treatment button clicked");
     if (canStartTreatment && !isPlaying && !startClickedRef.current) {
       startClickedRef.current = true;
       startTreatment();
@@ -53,7 +51,6 @@ const TreatmentActions = ({
   };
   
   const handleStopTreatment = () => {
-    console.log("Stop treatment button clicked");
     if (isPlaying) {
       stopTreatment();
     }

@@ -47,20 +47,7 @@ const ManifestVisualizer: React.FC<ManifestVisualizerProps> = ({
   rate3 = "",
   receptorName = ""
 }) => {
-  // Debug log for visualization
-  useEffect(() => {
-    console.log("ManifestVisualizer render:", {
-      currentImage,
-      isActive,
-      patternImage,
-      receptorImage,
-      patternImagesCount: patternImages.length,
-      receptorImagesCount: receptorImages.length,
-      selectedPattern,
-      intention,
-      visualSpeed
-    });
-  }, [currentImage, isActive, patternImage, receptorImage, patternImages, receptorImages, selectedPattern, intention, visualSpeed]);
+  // Debug log removed - was causing performance issues on Safari due to high-frequency rerenders
 
   // Get the current pattern image
   const getPatternImageSrc = () => {
