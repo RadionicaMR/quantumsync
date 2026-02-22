@@ -194,7 +194,6 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
 
   // Update isPlayingRef whenever isPlaying changes
   useEffect(() => {
-    console.log(`Updating isPlayingRef to ${isPlaying}`);
     isPlayingRef.current = isPlaying;
   }, [isPlaying, isPlayingRef]);
 
@@ -206,12 +205,12 @@ export const useBalanceChakras = (initialPersonName = '', initialChakraStates = 
     };
   }, [cleanupTimers, stopSound]);
 
-  // Add debugging hook to log chakra changes
+  // Log chakra changes (NOT progress - it updates at 60fps and saturates Safari's main thread)
   useEffect(() => {
     if (currentChakra) {
-      console.log(`Current chakra changed to: ${currentChakra}, progress: ${progress}`);
+      console.log(`Current chakra changed to: ${currentChakra}`);
     }
-  }, [currentChakra, progress]);
+  }, [currentChakra]);
 
   return {
     personName,
