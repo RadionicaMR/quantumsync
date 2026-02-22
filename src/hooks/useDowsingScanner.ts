@@ -150,7 +150,7 @@ export const useDowsingScanner = () => {
     }, interval);
     
     return () => clearInterval(timer);
-  }, [scanning, personName, chakras]);
+  }, [scanning, personName]); // CRITICAL: removed 'chakras' from deps - it caused infinite re-render loop on Safari
 
   const scanBarPosition = scanning ? 
     `${Math.min(82, (progress / 100) * 72 + 10)}%` : '10%';

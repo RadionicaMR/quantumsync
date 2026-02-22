@@ -45,12 +45,11 @@ const ImageGalleryGrid = ({
             className={`relative aspect-square rounded-lg overflow-hidden cursor-pointer border-2 transition-all hover:scale-105 ${
               isSelected ? 'border-primary shadow-lg' : 'border-border'
             }`}
-            onClick={() => image.url && onImageSelect(image.url)}
-            onTouchEnd={(e) => {
-              e.stopPropagation();
+            onClick={(e) => {
+              e.preventDefault();
               if (image.url) onImageSelect(image.url);
             }}
-            style={{ WebkitAppearance: 'none' as any, touchAction: 'manipulation' }}
+            style={{ WebkitAppearance: 'none' as any, touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' } as React.CSSProperties}
           >
             <img
               src={image.url}

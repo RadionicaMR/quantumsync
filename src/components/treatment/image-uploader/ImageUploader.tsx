@@ -105,17 +105,13 @@ const ImageUploader = ({
           </button>
           <button
             className={`px-3 py-1 rounded-full text-sm flex items-center gap-1 ${activeTab === 'gallery' ? 'bg-primary text-white' : 'bg-muted'}`}
-            onClick={() => {
-              setActiveTab('gallery');
-              setGalleryOpen(true);
-            }}
-            onTouchEnd={(e) => {
-              e.stopPropagation();
+            onClick={(e) => {
+              e.preventDefault();
               setActiveTab('gallery');
               setGalleryOpen(true);
             }}
             disabled={isPlaying}
-            style={{ WebkitAppearance: 'none', touchAction: 'manipulation' }}
+            style={{ WebkitAppearance: 'none', touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' } as React.CSSProperties}
           >
             <span className="flex items-center gap-1">
               <Library className="w-4 h-4" />
@@ -170,10 +166,9 @@ const ImageUploader = ({
             </p>
             <button
               className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-              onClick={() => setGalleryOpen(true)}
-              onTouchEnd={(e) => { e.stopPropagation(); setGalleryOpen(true); }}
+              onClick={(e) => { e.preventDefault(); setGalleryOpen(true); }}
               disabled={isPlaying}
-              style={{ WebkitAppearance: 'none', touchAction: 'manipulation' }}
+              style={{ WebkitAppearance: 'none', touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' } as React.CSSProperties}
             >
               <span>{t('image.openGallery')}</span>
             </button>

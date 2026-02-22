@@ -68,6 +68,7 @@ const SingleImageUploader = ({
                 document.getElementById(inputId)?.click();
               }}
               disabled={isDisabled}
+              style={{ WebkitAppearance: 'none', touchAction: 'manipulation' } as React.CSSProperties}
             >
               Subir desde PC
             </button>
