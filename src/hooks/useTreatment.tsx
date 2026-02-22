@@ -18,35 +18,19 @@ export const useTreatment = () => {
   
   // Augment startTreatment to handle subliminal audio
   const startTreatment = () => {
-    console.log("=== INICIANDO TRATAMIENTO ===");
-    console.log("Audio subliminal configurado:", subliminal.audioFile ? "Sí" : "No");
-    
-    // Use the core start treatment functionality
-    core.startTreatment();
-    
-    // Only after starting the audio, we start the subliminal if it exists
+    // CRITICAL: Start subliminal audio FIRST, synchronously within user gesture for Safari
+    // Safari requires Audio.play() to be called in the user gesture call stack
     if (subliminal.audioFile) {
-      console.log("Iniciando audio subliminal asociado con el tratamiento");
-      console.log("Archivo:", {
-        name: subliminal.audioFile.name,
-        type: subliminal.audioFile.type,
-        size: subliminal.audioFile.size
-      });
-      
-      setTimeout(() => {
-        subliminal.playSubliminalAudio();
-      }, 500); // Small delay to ensure main audio starts first
-    } else {
-      console.log("No hay audio subliminal configurado para este tratamiento");
+      subliminal.playSubliminalAudio();
     }
+    
+    // Then start the core treatment (also needs user gesture for AudioContext)
+    core.startTreatment();
   };
   
   // Augment stopTreatment to handle subliminal audio
   const stopTreatment = () => {
-    // Use the core stop treatment functionality
     core.stopTreatment();
-    
-    // Stop subliminal audio if playing
     subliminal.stopSubliminalAudio();
   };
 

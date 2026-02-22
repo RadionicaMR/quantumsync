@@ -1,5 +1,5 @@
 
-import React, { memo, useCallback, useEffect } from 'react';
+import React, { memo, useCallback } from 'react';
 import QuantumButton from '@/components/QuantumButton';
 import { Rocket, StopCircle } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
@@ -24,16 +24,6 @@ const ManifestActionButtons = memo(({
   intention
 }: ManifestActionButtonsProps) => {
   
-  // Debugging log to check initial render and props
-  useEffect(() => {
-    console.log("ManifestActionButtons mounted/updated:", {
-      isManifestActive,
-      timeRemaining,
-      intention,
-      canStart,
-      intentionValid: Boolean(intention && intention.trim() !== "")
-    });
-  }, [isManifestActive, timeRemaining, intention, canStart]);
   
   // Use useCallback to memorize the function and avoid unnecessary renders
   const handleStartClick = useCallback(() => {
@@ -53,14 +43,6 @@ const ManifestActionButtons = memo(({
   // Always calculate button enabled state locally based on intention
   const isButtonEnabled = Boolean(intention && intention.trim() !== "");
   
-  console.log("ManifestActionButtons render state:", {
-    isManifestActive,
-    isButtonEnabled,
-    intentionExists: Boolean(intention),
-    intentionLength: intention?.length,
-    timeRemaining
-  });
-
   // Make sure we show the stop UI when active
   if (isManifestActive) {
     return (

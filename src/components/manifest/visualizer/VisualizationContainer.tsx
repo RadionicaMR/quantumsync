@@ -26,13 +26,6 @@ const VisualizationContainer: React.FC<VisualizationContainerProps> = ({
   receptorName = "",
   visualSpeed = 10
 }) => {
-  console.log("VisualizationContainer render with:", { 
-    isActive, 
-    visualSpeed, 
-    showPattern: showPatternImage, 
-    showReceptor: showReceptorImage,
-    intention
-  });
   
   const showEmptyState = !isActive && !patternImageSrc && !receptorImageSrc && !receptorName;
   
