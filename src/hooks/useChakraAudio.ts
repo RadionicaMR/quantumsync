@@ -1,5 +1,5 @@
 
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import { CHAKRA_FREQUENCIES } from '@/constants/chakraData';
 import type { ChakraName } from '@/constants/chakraData';
 
@@ -133,6 +133,26 @@ export const useChakraAudio = () => {
       oscillator.current = null;
     }
   }, [stopAudioMonitor]);
+
+  // CRITICAL: Cleanup on unmount - close AudioContext and stop oscillator
+  useEffect(() => {
+    return () => {
+      isPlayingRef.current = false;
+      currentChakraRef.current = null;
+      if (audioMonitorIntervalRef.current) {
+        window.clearInterval(audioMonitorIntervalRef.current);
+        audioMonitorIntervalRef.current = null;
+      }
+      if (oscillator.current) {
+        try { oscillator.current.stop(); oscillator.current.disconnect(); } catch(e) {}
+        oscillator.current = null;
+      }
+      if (audioContext.current) {
+        try { audioContext.current.close(); } catch(e) {}
+        audioContext.current = null;
+      }
+    };
+  }, []);
 
   return { playChakraSound, stopSound, initAudio };
 };
