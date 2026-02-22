@@ -4,21 +4,19 @@ import type { ChakraName } from '@/constants/chakraData';
 
 export const useChakraTimers = () => {
   const progressIntervalRef = useRef<number | null>(null);
-  const chakraTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const chakraTimerRef = useRef<number | null>(null);
   const animationFrameId = useRef<number | null>(null);
   const isCompletingTimerRef = useRef<boolean>(false);
-  const completionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const completionTimeoutRef = useRef<number | null>(null);
 
   const cleanupTimers = useCallback(() => {
-    
-    
     if (progressIntervalRef.current) {
-      clearInterval(progressIntervalRef.current);
+      window.clearInterval(progressIntervalRef.current);
       progressIntervalRef.current = null;
     }
     
     if (chakraTimerRef.current) {
-      clearTimeout(chakraTimerRef.current);
+      window.clearTimeout(chakraTimerRef.current);
       chakraTimerRef.current = null;
     }
     
@@ -28,11 +26,10 @@ export const useChakraTimers = () => {
     }
     
     if (completionTimeoutRef.current) {
-      clearTimeout(completionTimeoutRef.current);
+      window.clearTimeout(completionTimeoutRef.current);
       completionTimeoutRef.current = null;
     }
     
-    // Reset completion flag
     isCompletingTimerRef.current = false;
   }, []);
 
@@ -43,88 +40,62 @@ export const useChakraTimers = () => {
     setProgress: (progress: number) => void,
     onComplete: () => void
   ) => {
-    // Clear any existing interval
     cleanupTimers();
     
     if (!isPlaying) {
-      console.log("Not playing, not starting timer");
       return;
     }
     
-    // Always set progress to 0 at the beginning of a new timer
-    
     setProgress(0);
     
-    // Get total duration in milliseconds
-    const debugMode = false; // Set to false in production
+    const debugMode = false;
     const totalDuration = debugMode ? 3000 : duration[0] * 60 * 1000;
-    
-    
     
     const startTime = Date.now();
     const endTime = startTime + totalDuration;
     
-    // CRITICAL FIX: Make sure the chakra timer completes reliably
-    chakraTimerRef.current = setTimeout(() => {
-      
-      
-      // Flag that we're in completion process
+    chakraTimerRef.current = window.setTimeout(() => {
       isCompletingTimerRef.current = true;
       
-      // Cancel any animation frames to avoid conflicts
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
         animationFrameId.current = null;
       }
       
-      // Ensure we reach 100% before moving on - GUARANTEED
       setProgress(100);
       
-      // CRITICAL FIX: Use a new, dedicated timeout for completion
-      // that won't be cleared by other operations
-      completionTimeoutRef.current = setTimeout(() => {
-        
-        
+      completionTimeoutRef.current = window.setTimeout(() => {
         try {
-          // Call completion callback
           onComplete();
         } catch (error) {
           console.error(`Error in onComplete for ${chakraName}:`, error);
         } finally {
-          // Reset completion flag after callback execution
           isCompletingTimerRef.current = false;
           completionTimeoutRef.current = null;
         }
-      }, 500); // Increased delay to ensure UI updates and state is stable
+      }, 500);
       
-    }, totalDuration - 50); // Subtract a small amount to ensure it completes before the animation
+    }, totalDuration - 50);
     
-    // Use requestAnimationFrame for smoother progress updates
     const updateProgress = () => {
       if (!isPlaying || isCompletingTimerRef.current) {
-        // Don't continue animation if we're completing or not playing
         return;
       }
       
       const currentTime = Date.now();
       const elapsed = currentTime - startTime;
-      
-      // Allow progress to reach 99.5% at most (not 100% yet - that's for the timer)
       const timeRatio = elapsed / totalDuration;
       const newProgress = Math.min(timeRatio * 100, 99.5);
       
       setProgress(newProgress);
       
-      // Continue animation if not complete and not already in completion process
       if (currentTime < endTime && isPlaying && !isCompletingTimerRef.current) {
         animationFrameId.current = requestAnimationFrame(updateProgress);
       }
     };
     
-    // Start the animation frame loop
     if (isPlaying) {
       animationFrameId.current = requestAnimationFrame(updateProgress);
-      
     }
   }, [cleanupTimers]);
 
