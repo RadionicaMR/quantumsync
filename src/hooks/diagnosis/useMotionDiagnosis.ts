@@ -40,16 +40,19 @@ export const useMotionDiagnosis = ({
     const { interval, angle } = startPendulumSwing();
     updateDiagnosisState({ swingIntervalId: interval, pendulumAngle: angle });
 
+    // CRITICAL FIX: Start pendulum sound BEFORE any await calls.
+    // Safari requires Audio/AudioContext creation to be synchronous within the user gesture.
+    // Moving this before `await requestPermission()` preserves the gesture chain.
+    if (pendulumSound) startPendulumSound();
+
     const hasPermission = await requestPermission();
     if (!hasPermission) {
       throw new Error("Permission denied");
     }
 
     calibrateDevice();
-    if (pendulumSound) startPendulumSound();
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    // Removed the unnecessary 1-second delay that broke gesture chain
     toast({
       title: "Análisis en curso",
       description: "Mantenga el dispositivo mientras se realiza el análisis...",
