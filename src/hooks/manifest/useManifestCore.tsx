@@ -14,7 +14,6 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
   const state = useManifestState();
   const audio = useManifestAudio();
   const subliminal = useManifestSubliminal();
-  // Track session's isManifestActive to sync with imageControl
   const [sessionActive, setSessionActive] = React.useState(false);
   const imageControl = useManifestImageControl(sessionActive, state.visualSpeed);
   const utils = useManifestUtils();
@@ -22,10 +21,33 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
   const { recordSession: recordToDatabase } = useSessionRecording();
   const { trackSessionStart, trackSessionEnd } = useUsageTracking();
   const manifestStartTimeRef = useRef<Date | null>(null);
+  const prevSessionActiveRef = useRef(false);
 
   // Sync sessionActive with session's isManifestActive
   useEffect(() => {
     setSessionActive(session.isManifestActive);
+  }, [session.isManifestActive]);
+
+  // CRITICAL FIX: Detect auto-completion (timer ended) and stop audio/record session
+  useEffect(() => {
+    if (prevSessionActiveRef.current && !session.isManifestActive) {
+      // Session auto-completed via timer - clean up audio
+      audio.stopAudio();
+      subliminal.stopSubliminalAudio();
+      setSessionActive(false);
+
+      // Track usage end
+      const actualDuration = manifestStartTimeRef.current
+        ? Math.floor((new Date().getTime() - manifestStartTimeRef.current.getTime()) / 1000)
+        : 0;
+      trackSessionEnd({
+        module: 'manifestation',
+        actualDuration,
+        protocolName: state.selectedPattern || 'custom',
+      });
+      manifestStartTimeRef.current = null;
+    }
+    prevSessionActiveRef.current = session.isManifestActive;
   }, [session.isManifestActive]);
 
   // Enhanced startManifestation that syncs state and starts audio
@@ -35,7 +57,6 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
     
     // CRITICAL: Start audio synchronously within user gesture for Safari compatibility
     if (state.manifestSound) {
-      console.log("Starting manifestation audio at frequency:", state.manifestFrequency[0]);
       audio.startAudio(state.manifestFrequency[0]);
     }
     
@@ -49,8 +70,9 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
       metadata: { intention: intention || state.intention, receptorName: state.receptorName },
     });
     
-    session.startManifestation(intention);
-  }, [session, state.manifestSound, state.manifestFrequency, audio, state.selectedPattern, state.activeTab, state.exposureTime, state.intention, state.receptorName, trackSessionStart]);
+    // CRITICAL FIX: Pass exposureTime and indefiniteTime from state to session
+    session.startManifestation(intention, state.exposureTime[0], state.indefiniteTime);
+  }, [session, state.manifestSound, state.manifestFrequency, audio, state.selectedPattern, state.activeTab, state.exposureTime, state.intention, state.receptorName, state.indefiniteTime, trackSessionStart]);
 
   // Enhanced stopManifestation that saves all state data
   const stopManifestationWithFullData = useCallback(async () => {
@@ -117,13 +139,19 @@ export const useManifestCore = (patterns: ManifestPattern[]) => {
     
     ...subliminal,
     
+    // CRITICAL FIX: Override with session's active state (state.isManifestActive is never updated)
+    isManifestActive: session.isManifestActive,
+    // CRITICAL FIX: Override with session's timeRemaining (state.timeRemaining is never updated by timer)
+    timeRemaining: session.timeRemaining,
+    // CRITICAL FIX: Return formatTimeRemaining from session
+    formatTimeRemaining: session.formatTimeRemaining,
+    
     backgroundModeActive: audio.backgroundModeActive || subliminal.backgroundModeActive,
     
     handleTabChange: (tab: string) => {
-      console.log("Handling tab change to", tab);
       state.setActiveTab(tab);
       
-      if (state.isManifestActive) {
+      if (session.isManifestActive) {
         session.stopManifestation();
       }
     },

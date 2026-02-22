@@ -11,7 +11,6 @@ export const useManifestSession = (
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const timerIdRef = useRef<number | null>(null);
   const [currentIntention, setCurrentIntention] = useState<string>("");
-  const [indefiniteTime, setIndefiniteTime] = useState<boolean>(false);
   const startTimeRef = useRef<Date | null>(null);
   
   // Store references to the image alternation functions
@@ -45,42 +44,32 @@ export const useManifestSession = (
     };
   }, [clearTimer]);
 
-  // Start manifestation function with explicit intention parameter
-  const startManifestation = useCallback((intention?: string) => {
-    console.log("Starting manifestation with intention:", intention);
-    
+  // Start manifestation function - accepts exposureTime and indefinite params from caller
+  const startManifestation = useCallback((
+    intention?: string,
+    exposureTimeMinutes?: number,
+    isIndefinite?: boolean
+  ) => {
     if (isManifestActive) {
-      console.log("Manifestation already active, stopping first");
-      // We'll handle this in the component that uses this hook
       clearTimer();
     }
     
-    // Store the provided intention
     if (intention) {
       setCurrentIntention(intention);
     }
     
-    // Record start time
     startTimeRef.current = new Date();
-    
-    // Set active state first to trigger visualizer
     setIsManifestActive(true);
     
-    // The actual startImageAlternation will be called by components that have access to currentImage and setCurrentImage
-    
-    // Only set up timer if not in indefinite mode
-    if (!indefiniteTime) {
-      // Default exposure time (5 minutes)
-      const exposureDuration = 5 * 60; 
+    // Use provided exposureTime, not hardcoded value
+    if (!isIndefinite) {
+      const exposureDuration = (exposureTimeMinutes || 5) * 60;
       setTimeRemaining(exposureDuration);
       
-      // Set up interval to count down
       const timer = setInterval(() => {
         setTimeRemaining(prev => {
           if (prev === null || prev <= 1) {
-            // Time's up - clean up and return null
             clearTimer();
-            // We'll handle stopping the image alternation in the component
             setIsManifestActive(false);
             toast({
               title: "Manifestación completada",
@@ -88,23 +77,20 @@ export const useManifestSession = (
             });
             return null;
           }
-          // Otherwise just decrement
           return prev - 1;
         });
       }, 1000);
       
-      // Store the timer reference
       timerRef.current = timer;
     }
     
-    // Notification
     toast({
       title: "Manifestación iniciada",
-      description: indefiniteTime 
+      description: isIndefinite 
         ? "Manifestación en modo indefinido. Puedes detenerla cuando desees."
         : "La manifestación está en curso. Se detendrá automáticamente al finalizar.",
     });
-  }, [isManifestActive, indefiniteTime, clearTimer]);
+  }, [isManifestActive, clearTimer]);
 
   // Stop manifestation function (no longer records to DB - that's handled by useManifestCore)
   const stopManifestation = useCallback(async () => {
@@ -139,8 +125,6 @@ export const useManifestSession = (
     stopManifestation,
     formatTimeRemaining,
     currentIntention,
-    indefiniteTime,
-    setIndefiniteTime,
     // Pass the image alternation functions
     getStartImageAlternation: () => startImageAlternation.current,
     getStopImageAlternation: () => stopImageAlternation.current

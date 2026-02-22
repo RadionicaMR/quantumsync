@@ -276,14 +276,14 @@ export const useTreatmentAudio = () => {
     console.log("Treatment stopped completely");
   };
 
-  // Cleanup on unmount
+  // Cleanup on unmount - always stop everything regardless of state
   useEffect(() => {
     return () => {
       stopAudioMonitor();
-      if (isPlaying) {
-        stopAudio();
-      }
-      console.log("useTreatmentAudio hook unmounted and cleaned up");
+      // CRITICAL FIX: Always cleanup on unmount - don't check isPlaying (stale closure)
+      treatmentActiveRef.current = false;
+      cleanupAudioResources();
+      clearTimer();
     };
   }, []);
 
