@@ -108,7 +108,7 @@ const Treat = () => {
         }
       }
     }
-  }, [location.state, treatment]);
+  }, [location.state]);
 
   // Handle session recording when treatment stops
   useEffect(() => {

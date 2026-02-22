@@ -10,7 +10,7 @@ export const useChakraTimers = () => {
   const completionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const cleanupTimers = useCallback(() => {
-    console.log("Cleaning up all timers and animations");
+    
     
     if (progressIntervalRef.current) {
       clearInterval(progressIntervalRef.current);
@@ -52,21 +52,21 @@ export const useChakraTimers = () => {
     }
     
     // Always set progress to 0 at the beginning of a new timer
-    console.log(`useChakraTimers: Resetting progress to 0 for chakra ${chakraName} before starting timer`);
+    
     setProgress(0);
     
     // Get total duration in milliseconds
     const debugMode = false; // Set to false in production
     const totalDuration = debugMode ? 3000 : duration[0] * 60 * 1000;
     
-    console.log(`Starting timer for ${chakraName} with duration: ${totalDuration}ms`);
+    
     
     const startTime = Date.now();
     const endTime = startTime + totalDuration;
     
     // CRITICAL FIX: Make sure the chakra timer completes reliably
     chakraTimerRef.current = setTimeout(() => {
-      console.log(`Timer completed for chakra ${chakraName}, duration: ${totalDuration}ms`);
+      
       
       // Flag that we're in completion process
       isCompletingTimerRef.current = true;
@@ -83,7 +83,7 @@ export const useChakraTimers = () => {
       // CRITICAL FIX: Use a new, dedicated timeout for completion
       // that won't be cleared by other operations
       completionTimeoutRef.current = setTimeout(() => {
-        console.log(`Executing completion callback for ${chakraName}, ensuring transition to next chakra`);
+        
         
         try {
           // Call completion callback
@@ -124,7 +124,7 @@ export const useChakraTimers = () => {
     // Start the animation frame loop
     if (isPlaying) {
       animationFrameId.current = requestAnimationFrame(updateProgress);
-      console.log(`Started timer for chakra ${chakraName} with duration ${totalDuration}ms, progress reset to 0`);
+      
     }
   }, [cleanupTimers]);
 
