@@ -15,11 +15,8 @@ const Layout = ({ children }: LayoutProps) => {
   // Aplicar optimizaciones específicas para Safari/iOS
   useEffect(() => {
     if (isIOS || isSafari) {
-      // Viewport fixes para iOS
-      const viewportMeta = document.querySelector('meta[name="viewport"]');
-      if (viewportMeta) {
-        viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
-      }
+      // Viewport fixes para iOS - DO NOT set maximum-scale=1.0 or user-scalable=no
+      // as iOS 19+ breaks touch event handling with those restrictions
       
       // Optimizaciones para scroll
       document.documentElement.style.height = '100%';
@@ -73,12 +70,10 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <div className={layoutClasses}>
       {/* Usar will-change sparingly para mejorar rendimiento en Safari */}
-      <div className="absolute inset-0 z-0 bg-[url('/img/quantum-bg.webp')] bg-cover bg-center bg-no-repeat opacity-20 mix-blend-screen" 
-           style={{ willChange: 'opacity' }}></div>
+      <div className="absolute inset-0 z-0 pointer-events-none bg-[url('/img/quantum-bg.webp')] bg-cover bg-center bg-no-repeat opacity-20 mix-blend-screen"></div>
       
       {/* Nebulosa central optimizada para Safari */}
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/40 via-transparent to-transparent opacity-70"
-           style={{ willChange: 'opacity' }}></div>
+      <div className="absolute inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/40 via-transparent to-transparent opacity-70"></div>
       
       <Navbar />
       <AffiliateReferralBanner />

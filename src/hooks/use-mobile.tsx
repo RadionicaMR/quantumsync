@@ -31,8 +31,7 @@ export function useIsMobile() {
       
       // Safari en iOS tiene problemas con ciertas APIs, aplicar optimizaciones
       if (isIOSDevice || isSafariBrowser) {
-        // Aplicar optimizaciones específicas para Safari
-        document.documentElement.classList.add('is-safari')
+        // Only add detection classes - do NOT add CSS transform hacks
         if (isIOSDevice) document.documentElement.classList.add('is-ios')
       }
     }
