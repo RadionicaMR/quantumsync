@@ -111,7 +111,7 @@ const Treat = () => {
   }, [location.state]);
 
   // Handle session recording when treatment stops (manually or by timer)
-  const prevPlayingRef = React.useRef(false);
+  const prevPlayingRef = useRef(false);
   useEffect(() => {
     // Detect transition from playing to not playing
     if (prevPlayingRef.current && !treatment.isPlaying && currentPatientId) {
@@ -140,7 +140,8 @@ const Treat = () => {
       recordSession(currentPatientId, 'treatment', sessionData);
       setCurrentPatientId(null);
     }
-  }, [treatment.isPlaying, treatment.timeRemaining, currentPatientId]);
+    prevPlayingRef.current = treatment.isPlaying;
+  }, [treatment.isPlaying, currentPatientId]);
 
   // CRITICAL: Start treatment FIRST (synchronously in user gesture for Safari AudioContext),
   // then optionally show session recording dialog
