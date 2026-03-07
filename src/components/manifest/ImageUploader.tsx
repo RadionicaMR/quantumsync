@@ -28,7 +28,7 @@ const ImageUploader = ({
   isMultiple = false,
   images = [],
   setImages = () => {},
-  maxImages = 3,
+  maxImages = 7,
   category = 'all'
 }: ImageUploaderProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
