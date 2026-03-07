@@ -141,7 +141,7 @@ const TreatmentRightPanel = ({
         
         <div className="mb-6">
           <ImageUploader
-            title="Gráfico RADIÓNICO"
+            title="Imagen del EMISOR"
             subtitle="Patrones de tratamiento"
             image={radionicImage}
             setImage={setRadionicImage}
