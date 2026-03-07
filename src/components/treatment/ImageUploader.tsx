@@ -23,7 +23,7 @@ const ImageUploader = ({
   images,
   setImages,
   isPlaying,
-  maxImages = 3
+  maxImages = 7
 }: ImageUploaderProps) => {
   const [activeTab, setActiveTab] = useState<'single' | 'multiple'>('single');
   const fileInputRef = useRef<HTMLInputElement>(null);
