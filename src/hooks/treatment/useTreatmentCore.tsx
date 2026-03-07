@@ -3,7 +3,7 @@ import { useState, useRef } from 'react';
 import { useTreatmentAudio } from './useTreatmentAudio';
 import { useTreatmentImages } from '../useTreatmentImages';
 import { useTreatmentRates } from '../useTreatmentRates';
-import { useSessionRecording } from '@/hooks/useSessionRecording';
+
 import { useUsageTracking } from '@/hooks/useUsageTracking';
 import { toast } from '@/components/ui/use-toast';
 
