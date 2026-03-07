@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
