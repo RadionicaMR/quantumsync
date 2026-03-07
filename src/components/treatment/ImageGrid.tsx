@@ -33,7 +33,7 @@ const ImageGrid = ({
         images={radionicImages}
         setImages={setRadionicImages}
         isPlaying={isPlaying}
-        maxImages={3}
+        maxImages={7}
         category="radionic"
       />
       
