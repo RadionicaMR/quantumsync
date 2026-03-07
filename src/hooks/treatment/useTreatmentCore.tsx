@@ -29,7 +29,7 @@ export const useTreatmentCore = () => {
   const audio = useTreatmentAudio();
   const images = useTreatmentImages();
   const rates = useTreatmentRates();
-  const { recordSession: recordToDatabase } = useSessionRecording();
+  
   const { trackSessionStart, trackSessionEnd } = useUsageTracking();
   
   // Flag to prevent multiple rapid start attempts
