@@ -410,7 +410,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Image Uploader
     'image.receptorImage': 'RECEPTOR Image',
-    'image.radionicGraphic': 'RADIONIC Graphic',
+    'image.radionicGraphic': 'EMITTER Image',
     'image.treatmentSubject': 'Treatment subject',
     'image.treatmentPatterns': 'Treatment patterns',
     'image.singleImage': 'Single Image',

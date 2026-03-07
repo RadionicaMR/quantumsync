@@ -26,8 +26,8 @@ const ImageGrid = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
       <ImageUploader
-        title="GRÁFICO RADIÓNICO"
-        subtitle="Subir Gráfico Radiónico"
+        title="Imagen del EMISOR"
+        subtitle="Subir Imagen del Emisor"
         image={radionicImage}
         setImage={setRadionicImage}
         images={radionicImages}
