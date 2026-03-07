@@ -110,9 +110,11 @@ const Treat = () => {
     }
   }, [location.state]);
 
-  // Handle session recording when treatment stops
+  // Handle session recording when treatment stops (manually or by timer)
+  const prevPlayingRef = React.useRef(false);
   useEffect(() => {
-    if (!treatment.isPlaying && treatment.timeRemaining === 0 && currentPatientId) {
+    // Detect transition from playing to not playing
+    if (prevPlayingRef.current && !treatment.isPlaying && currentPatientId) {
       let presetName = '';
       if (treatment.selectedPreset) {
         presetName = typeof treatment.selectedPreset === 'object' 

@@ -114,38 +114,8 @@ export const useTreatmentCore = () => {
     console.log("Stopping treatment");
     
     try {
-      // Calculate duration if we have a start time
-      const duration = startTimeRef.current 
-        ? Math.floor((new Date().getTime() - startTimeRef.current.getTime()) / 1000 / 60)
-        : 0;
-      
-      // Save session to database if we have a receptor name (wrapped in try-catch)
-      if (receptorName) {
-        try {
-          await recordToDatabase(
-            receptorName,
-            'treatment',
-            {
-              frequency: audio.frequency[0],
-              duration,
-              preset: selectedPreset,
-              intention,
-              rate1: rates.rate1,
-              rate2: rates.rate2,
-              rate3: rates.rate3,
-              radionicImage: images.radionicImage,
-              receptorImage: images.receptorImage,
-              radionicImages: images.radionicImages,
-              receptorImages: images.receptorImages,
-              visualFeedback,
-              hypnoticSpeed: hypnoticSpeed[0],
-              completedAt: new Date().toISOString()
-            }
-          );
-        } catch (dbError) {
-          console.error("Error recording treatment session:", dbError);
-        }
-      }
+      // Session recording is handled by the page component (Treat.tsx)
+      // via SessionContext, not here — receptorName is not a patient UUID.
     } catch (error) {
       console.error("Error in stopTreatment:", error);
     } finally {
