@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
@@ -52,6 +52,15 @@ const Treat = () => {
     if (location.state?.repeatSession && location.state?.sessionData) {
       const { sessionData } = location.state;
       
+      // IMPORTANT: Select preset FIRST because selectPreset overwrites frequency/duration
+      if (sessionData.preset) {
+        const preset = treatmentPresets.find(p => p.id === sessionData.preset || p.name === sessionData.preset);
+        if (preset) {
+          treatment.selectPreset(preset);
+        }
+      }
+
+      // Then override with the saved values (after preset defaults)
       if (sessionData.receptorName) {
         treatment.setReceptorName(sessionData.receptorName);
       }
@@ -63,13 +72,12 @@ const Treat = () => {
         const dur = Array.isArray(sessionData.duration) ? sessionData.duration : [sessionData.duration];
         treatment.setDuration(dur);
       }
-      // Handle rates (saved as individual fields or as array)
+      // Handle rates
       if (sessionData.rate1 !== undefined || sessionData.rate2 !== undefined || sessionData.rate3 !== undefined) {
         treatment.setRate1(sessionData.rate1 || '');
         treatment.setRate2(sessionData.rate2 || '');
         treatment.setRate3(sessionData.rate3 || '');
       } else if (sessionData.rates) {
-        // Legacy format: rates as array or object
         if (Array.isArray(sessionData.rates)) {
           treatment.setRate1(sessionData.rates[0] || '');
           treatment.setRate2(sessionData.rates[1] || '');
@@ -99,20 +107,14 @@ const Treat = () => {
       if (sessionData.hypnoticSpeed !== undefined) {
         treatment.setHypnoticSpeed([sessionData.hypnoticSpeed]);
       }
-      
-      // Select preset if available
-      if (sessionData.preset) {
-        const preset = treatmentPresets.find(p => p.id === sessionData.preset || p.name === sessionData.preset);
-        if (preset) {
-          treatment.selectPreset(preset);
-        }
-      }
     }
   }, [location.state]);
 
-  // Handle session recording when treatment stops
+  // Handle session recording when treatment stops (manually or by timer)
+  const prevPlayingRef = useRef(false);
   useEffect(() => {
-    if (!treatment.isPlaying && treatment.timeRemaining === 0 && currentPatientId) {
+    // Detect transition from playing to not playing
+    if (prevPlayingRef.current && !treatment.isPlaying && currentPatientId) {
       let presetName = '';
       if (treatment.selectedPreset) {
         presetName = typeof treatment.selectedPreset === 'object' 
@@ -138,7 +140,8 @@ const Treat = () => {
       recordSession(currentPatientId, 'treatment', sessionData);
       setCurrentPatientId(null);
     }
-  }, [treatment.isPlaying, treatment.timeRemaining, currentPatientId]);
+    prevPlayingRef.current = treatment.isPlaying;
+  }, [treatment.isPlaying, currentPatientId]);
 
   // CRITICAL: Start treatment FIRST (synchronously in user gesture for Safari AudioContext),
   // then optionally show session recording dialog
