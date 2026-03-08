@@ -115,16 +115,12 @@ const Manifestation = () => {
   }, [treatment.isPlaying, currentPatientId]);
 
   const handleStartClick = () => {
+    treatment.startTreatment();
     setShowSessionDialog(true);
-    setPendingStart(true);
   };
 
   const handleSessionConfirm = (patientId: string | null) => {
     setCurrentPatientId(patientId);
-    if (pendingStart) {
-      treatment.startTreatment();
-      setPendingStart(false);
-    }
   };
   
   // Normalize currentImage value to ensure compatibility
