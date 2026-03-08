@@ -146,7 +146,7 @@ const SessionHistory = () => {
         break;
 
       case 'manifestation':
-        navigate('/manifest', {
+        navigate('/manifestation', {
           state: {
             repeatSession: true,
             sessionData: {
