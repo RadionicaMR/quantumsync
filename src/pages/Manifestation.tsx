@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import HeroSection from '@/components/HeroSection';
@@ -28,12 +28,11 @@ const Manifestation = () => {
   const [pendingStart, setPendingStart] = useState(false);
   const { t } = useLanguage();
   
-  // Check if we're coming from diagnosis page
+  // Check if we're coming from diagnosis page or repeating a session
   useEffect(() => {
     if (location.state?.fromDiagnosis && !diagnosisImported) {
       const { personName, diagnosisArea, diagnosisResult } = location.state;
       
-      // Set the receptor name from the diagnosis
       if (personName) {
         treatment.setReceptorName(personName);
         
@@ -42,15 +41,51 @@ const Manifestation = () => {
           description: `${t('treat.importingFrom')} ${diagnosisArea} ${t('common.for')} ${personName}`,
         });
         
-        // Mark as imported to prevent showing the toast again
         setDiagnosisImported(true);
       }
     }
-  }, [location.state, treatment]);
+
+    // Handle session repeat
+    if (location.state?.repeatSession && location.state?.sessionData) {
+      const { sessionData } = location.state;
+      
+      if (sessionData.preset) {
+        const preset = treatmentPresets.find(p => p.id === sessionData.preset || p.name === sessionData.preset);
+        if (preset) {
+          treatment.selectPreset(preset);
+        }
+      }
+      if (sessionData.receptorName) {
+        treatment.setReceptorName(sessionData.receptorName);
+      }
+      if (sessionData.frequency !== undefined) {
+        const freq = Array.isArray(sessionData.frequency) ? sessionData.frequency : [sessionData.frequency];
+        treatment.setFrequency(freq);
+      }
+      if (sessionData.duration !== undefined) {
+        const dur = Array.isArray(sessionData.duration) ? sessionData.duration : [sessionData.duration];
+        treatment.setDuration(dur);
+      }
+      if (sessionData.rate1 !== undefined) treatment.setRate1(sessionData.rate1);
+      if (sessionData.rate2 !== undefined) treatment.setRate2(sessionData.rate2);
+      if (sessionData.rate3 !== undefined) treatment.setRate3(sessionData.rate3);
+      if (sessionData.radionicImage) treatment.setRadionicImage(sessionData.radionicImage);
+      if (sessionData.receptorImage) treatment.setReceptorImage(sessionData.receptorImage);
+      if (sessionData.radionicImages?.length) treatment.setRadionicImages(sessionData.radionicImages);
+      if (sessionData.receptorImages?.length) treatment.setReceptorImages(sessionData.receptorImages);
+      if (sessionData.intention) {
+        treatment.setIntention(sessionData.intention);
+      }
+      if (sessionData.hypnoticSpeed !== undefined) {
+        treatment.setHypnoticSpeed([sessionData.hypnoticSpeed]);
+      }
+    }
+  }, [location.state]);
 
   // Handle session recording when manifestation stops
+  const prevPlayingRef = React.useRef(false);
   useEffect(() => {
-    if (!treatment.isPlaying && treatment.timeRemaining === 0 && currentPatientId) {
+    if (prevPlayingRef.current && !treatment.isPlaying && currentPatientId) {
       let presetName = '';
       if (treatment.selectedPreset) {
         presetName = typeof treatment.selectedPreset === 'object' 
@@ -62,23 +97,30 @@ const Manifestation = () => {
         intention: treatment.intention,
         duration: treatment.duration,
         frequency: treatment.frequency,
+        rate1: treatment.rate1,
+        rate2: treatment.rate2,
+        rate3: treatment.rate3,
+        receptorName: treatment.receptorName,
+        radionicImage: treatment.radionicImage,
+        receptorImage: treatment.receptorImage,
+        radionicImages: treatment.radionicImages,
+        receptorImages: treatment.receptorImages,
+        visualFeedback: treatment.visualFeedback,
+        hypnoticSpeed: treatment.hypnoticSpeed,
       };
       recordSession(currentPatientId, 'manifestation', sessionData);
       setCurrentPatientId(null);
     }
-  }, [treatment.isPlaying, treatment.timeRemaining, currentPatientId]);
+    prevPlayingRef.current = treatment.isPlaying;
+  }, [treatment.isPlaying, currentPatientId]);
 
   const handleStartClick = () => {
+    treatment.startTreatment();
     setShowSessionDialog(true);
-    setPendingStart(true);
   };
 
   const handleSessionConfirm = (patientId: string | null) => {
     setCurrentPatientId(patientId);
-    if (pendingStart) {
-      treatment.startTreatment();
-      setPendingStart(false);
-    }
   };
   
   // Normalize currentImage value to ensure compatibility
