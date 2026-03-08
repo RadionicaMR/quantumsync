@@ -151,6 +151,7 @@ const SessionHistory = () => {
             repeatSession: true,
             sessionData: {
               ...sessionData,
+              receptorName: sessionData.receptorName || patientName,
             }
           }
         });
