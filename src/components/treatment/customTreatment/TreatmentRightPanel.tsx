@@ -89,29 +89,6 @@ const TreatmentRightPanel = ({
 }: TreatmentRightPanelProps) => {
   return (
     <div className="lg:col-span-2 space-y-6">
-      <Card className={`bg-card/90 dark:bg-black/40 p-6 rounded-lg ${isPlaying ? 'border-2 border-quantum-primary/60 bg-quantum-primary/5' : ''}`}>
-        <TreatmentActions 
-          isPlaying={isPlaying}
-          timeRemaining={timeRemaining}
-          formatTime={formatTime}
-          startTreatment={startTreatment}
-          stopTreatment={stopTreatment}
-          backgroundModeActive={backgroundModeActive}
-          receptorName={receptorName}
-          intention={intention}
-        />
-        
-        <div className="mt-4">
-          <SettingsToggles 
-            useHeadphones={useHeadphones}
-            setUseHeadphones={setUseHeadphones}
-            visualFeedback={visualFeedback}
-            setVisualFeedback={setVisualFeedback}
-            isPlaying={isPlaying}
-          />
-        </div>
-      </Card>
-      
       {/* Image uploads section */}
       <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg">
         <h3 className="text-xl font-semibold mb-4">Imágenes Terapéuticas</h3>
@@ -164,7 +141,7 @@ const TreatmentRightPanel = ({
         />
       </Card>
 
-      {/* Visualizer - moved to end */}
+      {/* Visualizer */}
       <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg">
         <h3 className="text-xl font-semibold mb-4">Visualización de Tratamiento</h3>
         
@@ -186,6 +163,30 @@ const TreatmentRightPanel = ({
           receptorName={receptorName}
           intention={intention}
         />
+      </Card>
+
+      {/* Actions + Settings - at the end, after visualizer */}
+      <Card className={`bg-card/90 dark:bg-black/40 p-6 rounded-lg ${isPlaying ? 'border-2 border-quantum-primary/60 bg-quantum-primary/5' : ''}`}>
+        <TreatmentActions 
+          isPlaying={isPlaying}
+          timeRemaining={timeRemaining}
+          formatTime={formatTime}
+          startTreatment={startTreatment}
+          stopTreatment={stopTreatment}
+          backgroundModeActive={backgroundModeActive}
+          receptorName={receptorName}
+          intention={intention}
+        />
+        
+        <div className="mt-4">
+          <SettingsToggles 
+            useHeadphones={useHeadphones}
+            setUseHeadphones={setUseHeadphones}
+            visualFeedback={visualFeedback}
+            setVisualFeedback={setVisualFeedback}
+            isPlaying={isPlaying}
+          />
+        </div>
       </Card>
     </div>
   );
