@@ -120,11 +120,13 @@ const PresetManifestConfigPanel: React.FC<PresetManifestConfigPanelProps> = ({
         />
 
         <div className="mt-6">
-          <ReceptorNameInput 
-            receptorName={receptorName}
-            setReceptorName={setReceptorName}
-            isActive={isManifestActive}
-          />
+          <div className="p-4 rounded-lg border-2 border-primary/40 bg-primary/5">
+            <ReceptorNameInput 
+              receptorName={receptorName}
+              setReceptorName={setReceptorName}
+              isActive={isManifestActive}
+            />
+          </div>
         </div>
 
         <AudioControls
