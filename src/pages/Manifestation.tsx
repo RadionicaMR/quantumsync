@@ -82,33 +82,38 @@ const Manifestation = () => {
     }
   }, [location.state]);
 
+  // Keep a ref with the latest session data to avoid stale closures
+  const sessionDataRef = React.useRef<any>(null);
+  useEffect(() => {
+    let presetName = '';
+    if (treatment.selectedPreset) {
+      presetName = typeof treatment.selectedPreset === 'object' 
+        ? (treatment.selectedPreset as any).name || ''
+        : String(treatment.selectedPreset);
+    }
+    sessionDataRef.current = {
+      preset: presetName,
+      intention: treatment.intention,
+      duration: treatment.duration,
+      frequency: treatment.frequency,
+      rate1: treatment.rate1,
+      rate2: treatment.rate2,
+      rate3: treatment.rate3,
+      receptorName: treatment.receptorName,
+      radionicImage: treatment.radionicImage,
+      receptorImage: treatment.receptorImage,
+      radionicImages: treatment.radionicImages,
+      receptorImages: treatment.receptorImages,
+      visualFeedback: treatment.visualFeedback,
+      hypnoticSpeed: treatment.hypnoticSpeed,
+    };
+  });
+
   // Handle session recording when manifestation stops
   const prevPlayingRef = React.useRef(false);
   useEffect(() => {
     if (prevPlayingRef.current && !treatment.isPlaying && currentPatientId) {
-      let presetName = '';
-      if (treatment.selectedPreset) {
-        presetName = typeof treatment.selectedPreset === 'object' 
-          ? (treatment.selectedPreset as any).name || ''
-          : String(treatment.selectedPreset);
-      }
-      const sessionData = {
-        preset: presetName,
-        intention: treatment.intention,
-        duration: treatment.duration,
-        frequency: treatment.frequency,
-        rate1: treatment.rate1,
-        rate2: treatment.rate2,
-        rate3: treatment.rate3,
-        receptorName: treatment.receptorName,
-        radionicImage: treatment.radionicImage,
-        receptorImage: treatment.receptorImage,
-        radionicImages: treatment.radionicImages,
-        receptorImages: treatment.receptorImages,
-        visualFeedback: treatment.visualFeedback,
-        hypnoticSpeed: treatment.hypnoticSpeed,
-      };
-      recordSession(currentPatientId, 'manifestation', sessionData);
+      recordSession(currentPatientId, 'manifestation', sessionDataRef.current);
       setCurrentPatientId(null);
     }
     prevPlayingRef.current = treatment.isPlaying;
