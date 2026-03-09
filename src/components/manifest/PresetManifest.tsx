@@ -156,10 +156,10 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
         setReceptorImages={setReceptorImages}
       />
 
-      {/* Right Panel - Interface with Image Uploaders above Visualizer */}
-      <div className="lg:col-span-2">
-        {/* Image Uploader Section - Now above the visualizer */}
-        <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-md mb-6">
+      {/* Right Panel */}
+      <div className="lg:col-span-2 space-y-6">
+        {/* Image Uploader Section */}
+        <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-4">Imágenes de Manifestación</h3>
           <ImageUploaderSection 
             isPlaying={isManifestActive}
@@ -176,7 +176,7 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
           />
         </Card>
         
-        {/* Visualizer and Controls */}
+        {/* Visualizer and Controls - at the end */}
         <PresetManifestInterface
           currentImage={currentImage}
           isManifestActive={isManifestActive}

@@ -161,33 +161,6 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
       </div>
       
       <div className="lg:col-span-2 space-y-6">
-        <TreatmentVisualizerSection 
-          isPlaying={isPlaying}
-          timeRemaining={timeRemaining}
-          formatTime={formatTime}
-          startTreatment={startTreatment}
-          stopTreatment={stopTreatment}
-          visualFeedback={visualFeedback}
-          setVisualFeedback={setVisualFeedback}
-          useHeadphones={useHeadphones}
-          setUseHeadphones={setUseHeadphones}
-          radionicImage={radionicImage}
-          receptorImage={receptorImage}
-          radionicImages={radionicImages}
-          receptorImages={receptorImages}
-          currentImage={currentImage}
-          hypnoticEffect={hypnoticEffect}
-          frequency={frequency}
-          intensity={intensity}
-          rate1={rate1}
-          rate2={rate2}
-          rate3={rate3}
-          hypnoticSpeed={hypnoticSpeed}
-          receptorName={receptorName}
-          backgroundModeActive={backgroundModeActive}
-          intention={intention}
-        />
-        
         <ImageUploaderSection 
           isPlaying={isPlaying}
           radionicImage={radionicImage}
@@ -228,6 +201,33 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
           audioLoop={audioLoop}
           setAudioLoop={setAudioLoop}
           clearAudio={clearAudio}
+        />
+
+        <TreatmentVisualizerSection 
+          isPlaying={isPlaying}
+          timeRemaining={timeRemaining}
+          formatTime={formatTime}
+          startTreatment={startTreatment}
+          stopTreatment={stopTreatment}
+          visualFeedback={visualFeedback}
+          setVisualFeedback={setVisualFeedback}
+          useHeadphones={useHeadphones}
+          setUseHeadphones={setUseHeadphones}
+          radionicImage={radionicImage}
+          receptorImage={receptorImage}
+          radionicImages={radionicImages}
+          receptorImages={receptorImages}
+          currentImage={currentImage}
+          hypnoticEffect={hypnoticEffect}
+          frequency={frequency}
+          intensity={intensity}
+          rate1={rate1}
+          rate2={rate2}
+          rate3={rate3}
+          hypnoticSpeed={hypnoticSpeed}
+          receptorName={receptorName}
+          backgroundModeActive={backgroundModeActive}
+          intention={intention}
         />
       </div>
     </div>

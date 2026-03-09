@@ -19,8 +19,8 @@ const ReceptorNameInput = ({
   const isDisabled = isActive !== undefined ? isActive : isPlaying;
   
   return (
-    <div className="space-y-2">
-      <Label htmlFor="receptorName" className="text-sm font-medium">
+    <div className="space-y-2 p-4 rounded-lg border-2 border-primary/40 bg-primary/5">
+      <Label htmlFor="receptorName" className="text-sm font-semibold text-primary">
         {t('receptor.nameLabel')}
       </Label>
       <Input
@@ -28,12 +28,12 @@ const ReceptorNameInput = ({
         placeholder={t('receptor.namePlaceholder')}
         value={receptorName}
         onChange={(e) => setReceptorName(e.target.value)}
-        maxLength={50}
-        className="focus:ring-primary"
+        maxLength={100}
+        className="focus:ring-primary border-primary/30"
         disabled={isDisabled}
       />
       <p className="text-xs text-muted-foreground">
-        {receptorName.length}/50 {language === 'en' ? 'characters' : 'caracteres'}
+        {receptorName.length}/100 {language === 'en' ? 'characters' : 'caracteres'}
       </p>
     </div>
   );

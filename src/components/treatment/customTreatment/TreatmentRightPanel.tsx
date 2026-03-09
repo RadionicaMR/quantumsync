@@ -89,29 +89,6 @@ const TreatmentRightPanel = ({
 }: TreatmentRightPanelProps) => {
   return (
     <div className="lg:col-span-2 space-y-6">
-      <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg">
-        <h3 className="text-xl font-semibold mb-4">Visualización de Tratamiento</h3>
-        
-        <TreatmentVisualizer 
-          isPlaying={isPlaying}
-          visualFeedback={visualFeedback}
-          radionicImage={radionicImage}
-          receptorImage={receptorImage}
-          radionicImages={radionicImages}
-          receptorImages={receptorImages}
-          currentImage={currentImage}
-          hypnoticEffect={hypnoticEffect}
-          frequency={frequency}
-          intensity={intensity}
-          rate1={rate1}
-          rate2={rate2}
-          rate3={rate3}
-          hypnoticSpeed={hypnoticSpeed}
-          receptorName={receptorName}
-          intention={intention}
-        />
-      </Card>
-      
       <Card className={`bg-card/90 dark:bg-black/40 p-6 rounded-lg ${isPlaying ? 'border-2 border-quantum-primary/60 bg-quantum-primary/5' : ''}`}>
         <TreatmentActions 
           isPlaying={isPlaying}
@@ -184,6 +161,30 @@ const TreatmentRightPanel = ({
           audioLoop={audioLoop}
           setAudioLoop={setAudioLoop}
           clearAudio={clearAudio}
+        />
+      </Card>
+
+      {/* Visualizer - moved to end */}
+      <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg">
+        <h3 className="text-xl font-semibold mb-4">Visualización de Tratamiento</h3>
+        
+        <TreatmentVisualizer 
+          isPlaying={isPlaying}
+          visualFeedback={visualFeedback}
+          radionicImage={radionicImage}
+          receptorImage={receptorImage}
+          radionicImages={radionicImages}
+          receptorImages={receptorImages}
+          currentImage={currentImage}
+          hypnoticEffect={hypnoticEffect}
+          frequency={frequency}
+          intensity={intensity}
+          rate1={rate1}
+          rate2={rate2}
+          rate3={rate3}
+          hypnoticSpeed={hypnoticSpeed}
+          receptorName={receptorName}
+          intention={intention}
         />
       </Card>
     </div>
