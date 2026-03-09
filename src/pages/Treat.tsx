@@ -110,34 +110,38 @@ const Treat = () => {
     }
   }, [location.state]);
 
+  // Keep a ref with the latest session data to avoid stale closures
+  const sessionDataRef = useRef<any>(null);
+  useEffect(() => {
+    let presetName = '';
+    if (treatment.selectedPreset) {
+      presetName = typeof treatment.selectedPreset === 'object' 
+        ? (treatment.selectedPreset as any).name || ''
+        : String(treatment.selectedPreset);
+    }
+    sessionDataRef.current = {
+      preset: presetName,
+      frequency: treatment.frequency,
+      duration: treatment.duration,
+      rate1: treatment.rate1,
+      rate2: treatment.rate2,
+      rate3: treatment.rate3,
+      receptorName: treatment.receptorName,
+      intention: treatment.intention,
+      radionicImage: treatment.radionicImage,
+      receptorImage: treatment.receptorImage,
+      radionicImages: treatment.radionicImages,
+      receptorImages: treatment.receptorImages,
+      visualFeedback: treatment.visualFeedback,
+      hypnoticSpeed: treatment.hypnoticSpeed,
+    };
+  });
+
   // Handle session recording when treatment stops (manually or by timer)
   const prevPlayingRef = useRef(false);
   useEffect(() => {
-    // Detect transition from playing to not playing
     if (prevPlayingRef.current && !treatment.isPlaying && currentPatientId) {
-      let presetName = '';
-      if (treatment.selectedPreset) {
-        presetName = typeof treatment.selectedPreset === 'object' 
-          ? (treatment.selectedPreset as any).name || ''
-          : String(treatment.selectedPreset);
-      }
-      const sessionData = {
-        preset: presetName,
-        frequency: treatment.frequency,
-        duration: treatment.duration,
-        rate1: treatment.rate1,
-        rate2: treatment.rate2,
-        rate3: treatment.rate3,
-        receptorName: treatment.receptorName,
-        intention: treatment.intention,
-        radionicImage: treatment.radionicImage,
-        receptorImage: treatment.receptorImage,
-        radionicImages: treatment.radionicImages,
-        receptorImages: treatment.receptorImages,
-        visualFeedback: treatment.visualFeedback,
-        hypnoticSpeed: treatment.hypnoticSpeed,
-      };
-      recordSession(currentPatientId, 'treatment', sessionData);
+      recordSession(currentPatientId, 'treatment', sessionDataRef.current);
       setCurrentPatientId(null);
     }
     prevPlayingRef.current = treatment.isPlaying;
