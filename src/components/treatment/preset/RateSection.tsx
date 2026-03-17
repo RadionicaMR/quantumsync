@@ -92,9 +92,12 @@ const RateSection: React.FC<RateSectionProps> = ({
                 maxLength={3}
                 disabled={disabled}
               />
-              <Button variant="outline" size="icon" disabled={disabled} onClick={() => openDial(rate.id)} className="min-w-8 h-9">
-                <Disc className="h-3 w-3" />
-              </Button>
+              <div className="flex flex-col">
+                <Label className="text-xs">DIAL</Label>
+                <Button variant="outline" size="icon" disabled={disabled} onClick={() => openDial(rate.id)} className="min-w-8 h-9">
+                  <Disc className="h-3 w-3" />
+                </Button>
+              </div>
             </div>
           </div>
         ))}
