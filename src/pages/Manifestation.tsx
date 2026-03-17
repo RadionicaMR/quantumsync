@@ -143,7 +143,7 @@ const Manifestation = () => {
       />
 
       {/* Main section with manifestation box prominently displayed */}
-      <section className="py-4 px-4">
+      <section className="py-4 px-1 sm:px-4">
         <div className="container mx-auto">
           <ManifestationBoxAdapter 
             intention={treatment.intention || ""}
