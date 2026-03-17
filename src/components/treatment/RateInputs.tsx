@@ -91,7 +91,7 @@ const RateInputs = ({
 
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         {rates.map((rate, idx) => (
           <div key={rate.id} className="flex flex-col">
             <Label htmlFor={`rate${rate.id}`} className="mb-1 text-xs">RATE {rate.id}</Label>
