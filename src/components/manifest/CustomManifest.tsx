@@ -263,6 +263,9 @@ const CustomManifest = memo(({
             rate1={rate1}
             rate2={rate2}
             rate3={rate3}
+            rate4={rate4}
+            rate5={rate5}
+            rate6={rate6}
             hypnoticSpeed={visualSpeed}
             receptorName={receptorName}
           />
