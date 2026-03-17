@@ -15,7 +15,7 @@ export const useManifestImageControl = (
 
   const cleanupAnimations = useCallback(() => {
     if (manifestIntervalRef.current) {
-      clearInterval(manifestIntervalRef.current as NodeJS.Timeout);
+      clearInterval(manifestIntervalRef.current as number);
       manifestIntervalRef.current = null;
     }
     if (animationFrameRef.current) {

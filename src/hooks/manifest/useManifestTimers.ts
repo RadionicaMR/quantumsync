@@ -28,7 +28,7 @@ export const useManifestTimers = (): ManifestTimers & {
     exposureTimerRef.current = timer;
   };
 
-  const setCountdownTimer = (timer: NodeJS.Timeout) => {
+  const setCountdownTimer = (timer: TimerHandle) => {
     if (countdownTimerRef.current) {
       clearInterval(countdownTimerRef.current);
     }

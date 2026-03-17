@@ -13,7 +13,7 @@ const StaticOverlayCircles: React.FC<StaticOverlayCirclesProps> = ({
   const [isAlternate, setIsAlternate] = useState(false);
   
   useEffect(() => {
-    let intervalId: NodeJS.Timeout | null = null;
+    let intervalId: ReturnType<typeof setInterval> | null = null;
     
     if (isVisible) {
       // Calculate interval based on visualSpeed (using more aggressive formula)

@@ -56,7 +56,7 @@ const TreatmentVisualizer = ({
 
   // Effect to handle image alternation when active
   useEffect(() => {
-    let intervalId: NodeJS.Timeout | null = null;
+    let intervalId: ReturnType<typeof setInterval> | null = null;
     
     if (isPlaying) {
       const speed = hypnoticSpeed[0] || 10;
