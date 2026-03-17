@@ -158,7 +158,7 @@ const Manifestation = () => {
         </div>
       </section>
 
-      <section className="py-6 px-4">
+      <section className="py-6 px-1 sm:px-4">
         <div className="container mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
