@@ -21,7 +21,7 @@ export const useManifestTimers = (): ManifestTimers & {
     hypnoticTimerRef.current = timer;
   };
 
-  const setExposureTimer = (timer: NodeJS.Timeout) => {
+  const setExposureTimer = (timer: TimerHandle) => {
     if (exposureTimerRef.current) {
       clearTimeout(exposureTimerRef.current);
     }
