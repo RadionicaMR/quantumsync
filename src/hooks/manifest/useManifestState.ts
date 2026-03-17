@@ -19,6 +19,9 @@ export const useManifestState = (): ManifestState & {
   setRate1: (value: string) => void;
   setRate2: (value: string) => void;
   setRate3: (value: string) => void;
+  setRate4: (value: string) => void;
+  setRate5: (value: string) => void;
+  setRate6: (value: string) => void;
   setIsManifestActive: (value: boolean) => void;
   setSelectedPattern: (value: string) => void;
   setIndefiniteTime: (value: boolean) => void;
@@ -29,7 +32,6 @@ export const useManifestState = (): ManifestState & {
   const [visualSpeed, setVisualSpeed] = useState([10]);
   const [patternImage, setPatternImage] = useState<string | null>(null);
   const [receptorImage, setReceptorImage] = useState<string | null>(null);
-  // State for multiple images
   const [patternImages, setPatternImages] = useState<string[]>([]);
   const [receptorImages, setReceptorImages] = useState<string[]>([]);
   const [selectedPattern, setSelectedPattern] = useState('');
@@ -43,56 +45,28 @@ export const useManifestState = (): ManifestState & {
   const [rate1, setRate1] = useState('');
   const [rate2, setRate2] = useState('');
   const [rate3, setRate3] = useState('');
+  const [rate4, setRate4] = useState('');
+  const [rate5, setRate5] = useState('');
+  const [rate6, setRate6] = useState('');
   const [indefiniteTime, setIndefiniteTime] = useState(false);
-  // Add manifestSpeed state with default value
   const [manifestSpeed, setManifestSpeed] = useState([10]);
 
-  // Simple intention setter
   const setIntentionWithLogging = (value: string) => {
     setIntention(value);
   };
 
   return {
-    intention,
-    isManifestActive,
-    visualSpeed,
-    patternImage,
-    receptorImage,
-    patternImages,
-    receptorImages,
-    selectedPattern,
-    activeTab,
-    manifestSound,
-    manifestFrequency,
-    currentImage,
-    exposureTime,
-    timeRemaining,
-    receptorName,
-    rate1,
-    rate2,
-    rate3,
-    indefiniteTime,
-    manifestSpeed,
+    intention, isManifestActive, visualSpeed, patternImage, receptorImage,
+    patternImages, receptorImages, selectedPattern, activeTab, manifestSound,
+    manifestFrequency, currentImage, exposureTime, timeRemaining, receptorName,
+    rate1, rate2, rate3, rate4, rate5, rate6,
+    indefiniteTime, manifestSpeed,
     // Setters
-    setIntention: setIntentionWithLogging,
-    setIsManifestActive,
-    setVisualSpeed,
-    setPatternImage,
-    setReceptorImage,
-    setPatternImages,
-    setReceptorImages,
-    setSelectedPattern,
-    setActiveTab,
-    setManifestSound,
-    setManifestFrequency,
-    setCurrentImage,
-    setExposureTime,
-    setTimeRemaining,
-    setReceptorName,
-    setRate1,
-    setRate2,
-    setRate3,
-    setIndefiniteTime,
-    setManifestSpeed
+    setIntention: setIntentionWithLogging, setIsManifestActive, setVisualSpeed,
+    setPatternImage, setReceptorImage, setPatternImages, setReceptorImages,
+    setSelectedPattern, setActiveTab, setManifestSound, setManifestFrequency,
+    setCurrentImage, setExposureTime, setTimeRemaining, setReceptorName,
+    setRate1, setRate2, setRate3, setRate4, setRate5, setRate6,
+    setIndefiniteTime, setManifestSpeed
   };
 };
