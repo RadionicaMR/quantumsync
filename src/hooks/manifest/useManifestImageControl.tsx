@@ -6,7 +6,7 @@ export const useManifestImageControl = (
   isManifestActive: boolean,
   visualSpeed: number[]
 ) => {
-  const manifestIntervalRef = useRef<NodeJS.Timeout | number | null>(null);
+  const manifestIntervalRef = useRef<ReturnType<typeof setInterval> | number | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(performance.now());
   const isActiveRef = useRef<boolean>(false);
