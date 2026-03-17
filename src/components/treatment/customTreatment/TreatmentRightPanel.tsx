@@ -26,11 +26,17 @@ interface TreatmentRightPanelProps {
   hypnoticEffect: boolean;
   frequency: number[];
   rate1: string;
+  setRate1: (value: string) => void;
   rate2: string;
+  setRate2: (value: string) => void;
   rate3: string;
+  setRate3: (value: string) => void;
   rate4?: string;
+  setRate4?: (value: string) => void;
   rate5?: string;
+  setRate5?: (value: string) => void;
   rate6?: string;
+  setRate6?: (value: string) => void;
   hypnoticSpeed?: number[];
   receptorName?: string;
   audioFile: File | null;
