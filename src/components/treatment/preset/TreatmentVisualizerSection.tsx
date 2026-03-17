@@ -107,10 +107,8 @@ const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
         
         <div className="mt-4">
           <SettingsToggles 
-            useHeadphones={useHeadphones}
-            setUseHeadphones={setUseHeadphones}
-            visualFeedback={visualFeedback}
-            setVisualFeedback={setVisualFeedback}
+            intensity={intensity}
+            setIntensity={(val) => {}}
             isPlaying={isPlaying}
           />
         </div>

@@ -107,10 +107,8 @@ const TreatmentControls = ({
             />
             
             <SettingsToggles
-              useHeadphones={useHeadphones}
-              setUseHeadphones={setUseHeadphones}
-              visualFeedback={visualFeedback}
-              setVisualFeedback={setVisualFeedback}
+              intensity={intensity}
+              setIntensity={setIntensity}
               isPlaying={isPlaying}
             />
           </div>
