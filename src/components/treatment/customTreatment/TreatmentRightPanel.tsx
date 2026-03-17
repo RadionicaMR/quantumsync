@@ -12,10 +12,8 @@ interface TreatmentRightPanelProps {
   formatTime: (time: number | null) => string;
   startTreatment: () => void;
   stopTreatment: () => void;
-  visualFeedback: boolean;
-  setVisualFeedback: (value: boolean) => void;
-  useHeadphones: boolean;
-  setUseHeadphones: (value: boolean) => void;
+  intensity: number[];
+  setIntensity: (value: number[]) => void;
   radionicImage: string | null;
   setRadionicImage: (image: string | null) => void;
   radionicImages: string[];
