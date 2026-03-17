@@ -135,6 +135,20 @@ const TreatmentRightPanel = ({
         </div>
       </Card>
       
+      {/* Rates section */}
+      <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg">
+        <h3 className="text-xl font-semibold mb-4">RATES</h3>
+        <RateInputs
+          rate1={rate1} setRate1={setRate1}
+          rate2={rate2} setRate2={setRate2}
+          rate3={rate3} setRate3={setRate3}
+          rate4={rate4} setRate4={setRate4}
+          rate5={rate5} setRate5={setRate5}
+          rate6={rate6} setRate6={setRate6}
+          isPlaying={isPlaying}
+        />
+      </Card>
+
       {/* Audio subliminal section */}
       <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg">
         <h3 className="text-xl font-semibold mb-4">Audio Subliminal (opcional)</h3>
