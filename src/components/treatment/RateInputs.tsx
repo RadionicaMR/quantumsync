@@ -3,8 +3,9 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Square } from 'lucide-react';
+import { Square, Disc } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import RateDial from '@/components/shared/RateDial';
 
 interface RateInputsProps {
   rate1: string;
@@ -28,134 +29,113 @@ const RateInputs = ({
   const [isGenerating1, setIsGenerating1] = useState(false);
   const [isGenerating2, setIsGenerating2] = useState(false);
   const [isGenerating3, setIsGenerating3] = useState(false);
-  const { isIOS } = useIsMobile();
+  const [dialOpen, setDialOpen] = useState(false);
+  const [activeRate, setActiveRate] = useState<1 | 2 | 3>(1);
   
-  // Function to generate a random 9-digit number
   const generateRandomNumber = () => {
     return Math.floor(100000000 + Math.random() * 900000000).toString();
   };
   
-  // Handle both mouse and touch events for button interactions
   const handleInteractionStart = (setIsGenerating: (val: boolean) => void, setRate: (val: string) => void) => {
     if (isPlaying) return;
-    
     setIsGenerating(true);
-    setRate(generateRandomNumber()); // Generate initial number immediately
-    
+    setRate(generateRandomNumber());
     const intervalId = setInterval(() => {
       setRate(generateRandomNumber());
-    }, 150); // Slower update (was 50ms before, now 150ms for a slower visual effect)
-    
-    // Cleanup function that runs when interaction ends
+    }, 150);
     const handleInteractionEnd = () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
+      clearInterval(intervalId);
       setIsGenerating(false);
-      
-      // Remove all event listeners
       document.removeEventListener('mouseup', handleInteractionEnd);
       document.removeEventListener('touchend', handleInteractionEnd);
       document.removeEventListener('touchcancel', handleInteractionEnd);
     };
-    
-    // Add all event listeners for both mouse and touch
     document.addEventListener('mouseup', handleInteractionEnd);
     document.addEventListener('touchend', handleInteractionEnd);
     document.addEventListener('touchcancel', handleInteractionEnd);
   };
+
+  const openDial = (rateNum: 1 | 2 | 3) => {
+    if (isPlaying) return;
+    setActiveRate(rateNum);
+    setDialOpen(true);
+  };
+
+  const handleDialClose = (value: number | null) => {
+    setDialOpen(false);
+    if (value === null) return;
+    const setter = activeRate === 1 ? setRate1 : activeRate === 2 ? setRate2 : setRate3;
+    setter(value.toString());
+  };
+
+  const getCurrentRateAsNumber = (): number => {
+    const raw = activeRate === 1 ? rate1 : activeRate === 2 ? rate2 : rate3;
+    const n = parseInt(raw, 10);
+    return isNaN(n) ? 0 : Math.min(Math.round(n / 10), 100);
+  };
+
+  const renderRateField = (
+    id: string,
+    label: string,
+    value: string,
+    setValue: (v: string) => void,
+    rateNum: 1 | 2 | 3,
+    isGenerating: boolean,
+    setIsGenerating: (v: boolean) => void,
+    pulseClass: string
+  ) => (
+    <div className="flex flex-col">
+      <Label htmlFor={id} className="mb-1">{label}</Label>
+      <div className="flex gap-2">
+        <Input
+          id={id}
+          type="text"
+          maxLength={30}
+          placeholder={`Ingrese ${label}`}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          disabled={isPlaying}
+          className={isPlaying ? `${pulseClass} bg-quantum-primary/10 flex-1` : "flex-1"}
+        />
+        <Button
+          variant="outline"
+          size="icon"
+          disabled={isPlaying}
+          onClick={() => openDial(rateNum)}
+          className="min-w-10 h-10 touch-manipulation"
+          aria-label={`Abrir dial para ${label}`}
+        >
+          <Disc className="h-5 w-5" />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          disabled={isPlaying}
+          onMouseDown={() => handleInteractionStart(setIsGenerating, setValue)}
+          onTouchStart={(e) => {
+            e.preventDefault();
+            handleInteractionStart(setIsGenerating, setValue);
+          }}
+          className={`min-w-10 h-10 ${isGenerating ? 'bg-quantum-primary/20' : ''} touch-manipulation`}
+          aria-label={`Generar ${label} aleatorio`}
+        >
+          <Square className="h-5 w-5" />
+        </Button>
+      </div>
+    </div>
+  );
   
   return (
     <div className="space-y-4">
-      <div className="flex flex-col">
-        <Label htmlFor="rate1" className="mb-1">RATE 1</Label>
-        <div className="flex gap-2">
-          <Input
-            id="rate1"
-            type="text"
-            maxLength={30}
-            placeholder="Ingrese RATE 1"
-            value={rate1}
-            onChange={(e) => setRate1(e.target.value)}
-            disabled={isPlaying}
-            className={isPlaying ? "animate-[pulse_1s_ease-in-out_infinite] bg-quantum-primary/10 flex-1" : "flex-1"}
-          />
-          <Button
-            variant="outline"
-            size="icon"
-            disabled={isPlaying}
-            onMouseDown={() => handleInteractionStart(setIsGenerating1, setRate1)}
-            onTouchStart={(e) => {
-              e.preventDefault(); // Prevent default to avoid double triggers
-              handleInteractionStart(setIsGenerating1, setRate1);
-            }}
-            className={`min-w-10 h-10 ${isGenerating1 ? 'bg-quantum-primary/20' : ''} touch-manipulation`}
-            aria-label="Generar RATE 1 aleatorio"
-          >
-            <Square className="h-5 w-5" />
-          </Button>
-        </div>
-      </div>
+      {renderRateField('rate1', 'RATE 1', rate1, setRate1, 1, isGenerating1, setIsGenerating1, 'animate-[pulse_1s_ease-in-out_infinite]')}
+      {renderRateField('rate2', 'RATE 2', rate2, setRate2, 2, isGenerating2, setIsGenerating2, 'animate-[pulse_1.2s_ease-in-out_infinite]')}
+      {renderRateField('rate3', 'RATE 3', rate3, setRate3, 3, isGenerating3, setIsGenerating3, 'animate-[pulse_1.4s_ease-in-out_infinite]')}
       
-      <div className="flex flex-col">
-        <Label htmlFor="rate2" className="mb-1">RATE 2</Label>
-        <div className="flex gap-2">
-          <Input
-            id="rate2"
-            type="text"
-            maxLength={30}
-            placeholder="Ingrese RATE 2"
-            value={rate2}
-            onChange={(e) => setRate2(e.target.value)}
-            disabled={isPlaying}
-            className={isPlaying ? "animate-[pulse_1.2s_ease-in-out_infinite] bg-quantum-primary/10 flex-1" : "flex-1"}
-          />
-          <Button
-            variant="outline"
-            size="icon"
-            disabled={isPlaying}
-            onMouseDown={() => handleInteractionStart(setIsGenerating2, setRate2)}
-            onTouchStart={(e) => {
-              e.preventDefault();
-              handleInteractionStart(setIsGenerating2, setRate2);
-            }}
-            className={`min-w-10 h-10 ${isGenerating2 ? 'bg-quantum-primary/20' : ''} touch-manipulation`}
-            aria-label="Generar RATE 2 aleatorio"
-          >
-            <Square className="h-5 w-5" />
-          </Button>
-        </div>
-      </div>
-      
-      <div className="flex flex-col">
-        <Label htmlFor="rate3" className="mb-1">RATE 3</Label>
-        <div className="flex gap-2">
-          <Input
-            id="rate3"
-            type="text"
-            maxLength={30}
-            placeholder="Ingrese RATE 3"
-            value={rate3}
-            onChange={(e) => setRate3(e.target.value)}
-            disabled={isPlaying}
-            className={isPlaying ? "animate-[pulse_1.4s_ease-in-out_infinite] bg-quantum-primary/10 flex-1" : "flex-1"}
-          />
-          <Button
-            variant="outline"
-            size="icon"
-            disabled={isPlaying}
-            onMouseDown={() => handleInteractionStart(setIsGenerating3, setRate3)}
-            onTouchStart={(e) => {
-              e.preventDefault();
-              handleInteractionStart(setIsGenerating3, setRate3);
-            }}
-            className={`min-w-10 h-10 ${isGenerating3 ? 'bg-quantum-primary/20' : ''} touch-manipulation`}
-            aria-label="Generar RATE 3 aleatorio"
-          >
-            <Square className="h-5 w-5" />
-          </Button>
-        </div>
-      </div>
+      <RateDial
+        open={dialOpen}
+        onClose={handleDialClose}
+        initialValue={getCurrentRateAsNumber()}
+      />
     </div>
   );
 };
