@@ -48,6 +48,12 @@ interface CustomManifestLeftPanelProps {
   setRate2: (rate: string) => void;
   rate3: string;
   setRate3: (rate: string) => void;
+  rate4?: string;
+  setRate4?: (rate: string) => void;
+  rate5?: string;
+  setRate5?: (rate: string) => void;
+  rate6?: string;
+  setRate6?: (rate: string) => void;
   indefiniteTime?: boolean;
   setIndefiniteTime?: (value: boolean) => void;
   timeRemaining?: number | null;
