@@ -143,7 +143,7 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
             {presets.map((p) => (
               <button
                 key={p.id}
-                className={`w-full text-left px-4 py-2 rounded-md hover:bg-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary ${selectedPreset === p.id ? 'bg-secondary text-secondary-foreground' : 'bg-transparent'}`}
+                className={`w-full text-left px-2 sm:px-4 py-2 rounded-md hover:bg-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary ${selectedPreset === p.id ? 'bg-secondary text-secondary-foreground' : 'bg-transparent'}`}
                 onClick={() => onSelectPreset(p)}
               >
                 {getPresetName(p)} ({p.frequency} Hz)
