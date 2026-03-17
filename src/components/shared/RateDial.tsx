@@ -158,8 +158,7 @@ const RateDial: React.FC<RateDialProps> = ({ open, onClose, initialValue = 0 }) 
   // Background arc
   const bgArcEnd = polarToCartesian(CENTER, CENTER, RADIUS, END_ANGLE);
   const bgArcPath = `M ${arcStart.x} ${arcStart.y} A ${RADIUS} ${RADIUS} 0 1 1 ${bgArcEnd.x} ${bgArcEnd.y}`;
-
-  const rateValue = Math.round(value * 10);
+  const rateValue = Math.round(value);
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(null); }}>
