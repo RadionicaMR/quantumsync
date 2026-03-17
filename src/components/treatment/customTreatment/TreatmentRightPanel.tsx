@@ -184,7 +184,7 @@ const TreatmentRightPanel = ({
         <div className="mt-4">
           <SettingsToggles 
             intensity={intensity}
-            setIntensity={(val) => {}}
+            setIntensity={setIntensity}
             isPlaying={isPlaying}
           />
         </div>
