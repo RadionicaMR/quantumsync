@@ -118,6 +118,12 @@ export const ManifestControls = ({
         setRate2={setRate2}
         rate3={rate3}
         setRate3={setRate3}
+        rate4={rate4}
+        setRate4={setRate4}
+        rate5={rate5}
+        setRate5={setRate5}
+        rate6={rate6}
+        setRate6={setRate6}
         isPlaying={isManifestActive}
       />
       
