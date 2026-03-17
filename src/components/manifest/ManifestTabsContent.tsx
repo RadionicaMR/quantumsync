@@ -48,9 +48,15 @@ interface ManifestTabsContentProps {
   rate1: string;
   rate2: string;
   rate3: string;
+  rate4?: string;
+  rate5?: string;
+  rate6?: string;
   setRate1: (value: string) => void;
   setRate2: (value: string) => void;
   setRate3: (value: string) => void;
+  setRate4?: (value: string) => void;
+  setRate5?: (value: string) => void;
+  setRate6?: (value: string) => void;
   receptorName?: string;
   setReceptorName?: (value: string) => void;
   indefiniteTime?: boolean;
