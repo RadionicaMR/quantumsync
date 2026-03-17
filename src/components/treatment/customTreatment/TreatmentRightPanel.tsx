@@ -5,6 +5,7 @@ import TreatmentActions from "../TreatmentActions";
 import SettingsToggles from "../SettingsToggles";
 import ImageUploader from "../image-uploader/ImageUploader";
 import AudioSubliminalControls from "@/components/AudioSubliminalControls";
+import RateInputs from "../RateInputs";
 
 interface TreatmentRightPanelProps {
   isPlaying: boolean;
