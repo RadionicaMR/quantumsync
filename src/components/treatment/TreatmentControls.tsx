@@ -19,10 +19,6 @@ interface TreatmentControlsProps {
   setDuration: (value: number[]) => void;
   intensity: number[];
   setIntensity: (value: number[]) => void;
-  useHeadphones: boolean;
-  setUseHeadphones: (value: boolean) => void;
-  visualFeedback: boolean;
-  setVisualFeedback: (value: boolean) => void;
   isPlaying: boolean;
   timeRemaining: number;
   startTreatment: () => void;
