@@ -10,10 +10,6 @@ interface TreatmentVisualizerSectionProps {
   formatTime: (time: number | null) => string;
   startTreatment: () => void;
   stopTreatment: () => void;
-  visualFeedback: boolean;
-  setVisualFeedback: (value: boolean) => void;
-  useHeadphones: boolean;
-  setUseHeadphones: (value: boolean) => void;
   radionicImage: string | null;
   receptorImage: string | null;
   radionicImages: string[];
@@ -22,6 +18,7 @@ interface TreatmentVisualizerSectionProps {
   hypnoticEffect: boolean;
   frequency: number[];
   intensity: number[];
+  setIntensity: (value: number[]) => void;
   rate1: string;
   rate2: string;
   rate3: string;
