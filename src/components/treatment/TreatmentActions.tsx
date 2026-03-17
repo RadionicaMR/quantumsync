@@ -79,10 +79,10 @@ const TreatmentActions = ({
   const getBackgroundLabel = () => language === 'en' ? 'Background treatment' : 'Tratamiento en segundo plano';
   
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-4">
       {isPlaying ? (
         <>
-          <div className="text-quantum-primary font-medium flex items-center">
+          <div className="text-quantum-primary font-medium flex items-center text-center sm:text-left">
             {backgroundModeActive ? (
               <>
                 <Smartphone className="w-4 h-4 mr-2 text-orange-500" />
@@ -104,7 +104,7 @@ const TreatmentActions = ({
         </>
       ) : (
         <>
-          <div className="text-muted-foreground">
+          <div className="text-muted-foreground text-center sm:text-left">
             {getReadyMessage()}
           </div>
           <QuantumButton 
