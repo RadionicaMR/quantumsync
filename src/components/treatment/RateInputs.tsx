@@ -99,7 +99,7 @@ const RateInputs = ({
               <Input
                 id={`rate${rate.id}`}
                 type="text"
-                maxLength={3}
+                maxLength={50}
                 placeholder={`R${rate.id}`}
                 value={rate.value}
                 onChange={(e) => rate.setter(e.target.value)}

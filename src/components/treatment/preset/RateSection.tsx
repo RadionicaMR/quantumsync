@@ -89,7 +89,7 @@ const RateSection: React.FC<RateSectionProps> = ({
                 onChange={(e) => rate.setter(e.target.value)}
                 placeholder={`R${rate.id}`}
                 className="font-mono flex-1 text-sm px-2"
-                maxLength={3}
+                maxLength={50}
                 disabled={disabled}
               />
               <div className="flex flex-col">
