@@ -45,6 +45,7 @@ const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
   hypnoticEffect,
   frequency,
   intensity,
+  setIntensity,
   rate1,
   rate2,
   rate3,
