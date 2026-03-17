@@ -15,6 +15,9 @@ interface TreatmentVisualizerProps {
   rate1: string;
   rate2: string;
   rate3: string;
+  rate4?: string;
+  rate5?: string;
+  rate6?: string;
   hypnoticSpeed?: number[];
   receptorName?: string;
   intention?: string;
