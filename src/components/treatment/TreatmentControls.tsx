@@ -132,7 +132,7 @@ const TreatmentControls = ({
             
             <TreatmentFeedbackVisual
               isPlaying={isPlaying}
-              visualFeedback={visualFeedback}
+              visualFeedback={true}
               frequency={frequency}
               intensity={intensity}
             />
