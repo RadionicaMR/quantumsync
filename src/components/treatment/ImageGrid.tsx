@@ -26,18 +26,6 @@ const ImageGrid = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
       <ImageUploader
-        title="Imagen del EMISOR"
-        subtitle="Subir Imagen del Emisor"
-        image={radionicImage}
-        setImage={setRadionicImage}
-        images={radionicImages}
-        setImages={setRadionicImages}
-        isPlaying={isPlaying}
-        maxImages={7}
-        category="radionic"
-      />
-      
-      <ImageUploader
         title="RECEPTOR"
         subtitle="Subir Imagen del Receptor"
         image={receptorImage}
@@ -47,6 +35,18 @@ const ImageGrid = ({
         isPlaying={isPlaying}
         maxImages={7}
         category="receptor"
+      />
+      
+      <ImageUploader
+        title="Imagen del EMISOR"
+        subtitle="Subir Imagen del Emisor"
+        image={radionicImage}
+        setImage={setRadionicImage}
+        images={radionicImages}
+        setImages={setRadionicImages}
+        isPlaying={isPlaying}
+        maxImages={7}
+        category="radionic"
       />
     </div>
   );

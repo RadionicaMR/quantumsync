@@ -95,20 +95,6 @@ const TreatmentRightPanel = ({
         
         <div className="mb-6">
           <ImageUploader
-            title="Imagen del EMISOR"
-            subtitle="Patrones de tratamiento"
-            image={radionicImage}
-            setImage={setRadionicImage}
-            images={radionicImages}
-            setImages={setRadionicImages}
-            isPlaying={isPlaying}
-            maxImages={7}
-            category="radionic"
-          />
-        </div>
-        
-        <div>
-          <ImageUploader
             title="Imagen del RECEPTOR"
             subtitle="Sujeto del tratamiento"
             image={receptorImage}
@@ -118,6 +104,20 @@ const TreatmentRightPanel = ({
             isPlaying={isPlaying}
             maxImages={7}
             category="receptor"
+          />
+        </div>
+        
+        <div>
+          <ImageUploader
+            title="Imagen del EMISOR"
+            subtitle="Patrones de tratamiento"
+            image={radionicImage}
+            setImage={setRadionicImage}
+            images={radionicImages}
+            setImages={setRadionicImages}
+            isPlaying={isPlaying}
+            maxImages={7}
+            category="radionic"
           />
         </div>
       </Card>
