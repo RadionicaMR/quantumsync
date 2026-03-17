@@ -48,9 +48,15 @@ interface PresetManifestProps {
   rate1: string;
   rate2: string;
   rate3: string;
+  rate4?: string;
+  rate5?: string;
+  rate6?: string;
   setRate1: (value: string) => void;
   setRate2: (value: string) => void;
   setRate3: (value: string) => void;
+  setRate4?: (value: string) => void;
+  setRate5?: (value: string) => void;
+  setRate6?: (value: string) => void;
   receptorName?: string;
   setReceptorName?: (value: string) => void;
   indefiniteTime?: boolean;
@@ -99,9 +105,15 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
   rate1,
   rate2,
   rate3,
+  rate4 = '',
+  rate5 = '',
+  rate6 = '',
   setRate1,
   setRate2,
   setRate3,
+  setRate4 = () => {},
+  setRate5 = () => {},
+  setRate6 = () => {},
   receptorName = "",
   setReceptorName = () => {},
   indefiniteTime = false,

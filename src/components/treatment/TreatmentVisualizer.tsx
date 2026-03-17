@@ -15,6 +15,9 @@ interface TreatmentVisualizerProps {
   rate1: string;
   rate2: string;
   rate3: string;
+  rate4?: string;
+  rate5?: string;
+  rate6?: string;
   hypnoticSpeed?: number[];
   receptorName?: string;
   intention?: string;
@@ -34,6 +37,9 @@ const TreatmentVisualizer = ({
   rate1,
   rate2,
   rate3,
+  rate4 = '',
+  rate5 = '',
+  rate6 = '',
   hypnoticSpeed = [10],
   receptorName = '',
   intention = '',
@@ -266,48 +272,27 @@ const TreatmentVisualizer = ({
       
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-40">
         <div className="relative w-full h-full max-w-[90%] max-h-[90%]">
-          {rate1 && (
-            <div className="absolute text-blue-400 font-mono bg-black/60 px-3 py-2 rounded text-sm md:text-base shadow-lg border border-blue-500/30" 
+          {[
+            { val: rate1, left: '10%', top: '15%' },
+            { val: rate2, left: '55%', top: '15%' },
+            { val: rate3, left: '10%', top: '45%' },
+            { val: rate4, left: '55%', top: '45%' },
+            { val: rate5, left: '10%', top: '75%' },
+            { val: rate6, left: '55%', top: '75%' },
+          ].map((r, i) => r.val ? (
+            <div key={i} className="absolute text-blue-400 font-mono bg-black/60 px-2 py-1 rounded text-xs md:text-sm shadow-lg border border-blue-500/30" 
                 style={{ 
-                  left: '20%',
-                  top: '20%',
-                  maxWidth: '80%',
+                  left: r.left,
+                  top: r.top,
+                  maxWidth: '45%',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
                   textShadow: '0 0 5px rgba(59, 130, 246, 0.7)'
                 }}>
-              {rate1}
+              {r.val}
             </div>
-          )}
-          {rate2 && (
-            <div className="absolute text-blue-400 font-mono bg-black/60 px-3 py-2 rounded text-sm md:text-base shadow-lg border border-blue-500/30"
-                style={{ 
-                  left: '50%',
-                  top: '40%',
-                  maxWidth: '80%',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  textShadow: '0 0 5px rgba(59, 130, 246, 0.7)'
-                }}>
-              {rate2}
-            </div>
-          )}
-          {rate3 && (
-            <div className="absolute text-blue-400 font-mono bg-black/60 px-3 py-2 rounded text-sm md:text-base shadow-lg border border-blue-500/30"
-                style={{ 
-                  left: '30%',
-                  top: '60%',
-                  maxWidth: '80%',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  textShadow: '0 0 5px rgba(59, 130, 246, 0.7)'
-                }}>
-              {rate3}
-            </div>
-          )}
+          ) : null)}
         </div>
       </div>
     </div>

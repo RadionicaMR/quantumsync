@@ -156,9 +156,15 @@ const Manifest = () => {
                  rate1={manifest.rate1}
                  rate2={manifest.rate2}
                  rate3={manifest.rate3}
+                 rate4={manifest.rate4}
+                 rate5={manifest.rate5}
+                 rate6={manifest.rate6}
                  setRate1={manifest.setRate1}
                  setRate2={manifest.setRate2}
                  setRate3={manifest.setRate3}
+                 setRate4={manifest.setRate4}
+                 setRate5={manifest.setRate5}
+                 setRate6={manifest.setRate6}
                  receptorName={manifest.receptorName}
                  setReceptorName={manifest.setReceptorName}
                  indefiniteTime={manifest.indefiniteTime}

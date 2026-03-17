@@ -48,6 +48,12 @@ interface CustomManifestLeftPanelProps {
   setRate2: (rate: string) => void;
   rate3: string;
   setRate3: (rate: string) => void;
+  rate4?: string;
+  setRate4?: (rate: string) => void;
+  rate5?: string;
+  setRate5?: (rate: string) => void;
+  rate6?: string;
+  setRate6?: (rate: string) => void;
   indefiniteTime?: boolean;
   setIndefiniteTime?: (value: boolean) => void;
   timeRemaining?: number | null;
@@ -96,6 +102,12 @@ const CustomManifestLeftPanel = memo(({
   setRate2,
   rate3,
   setRate3,
+  rate4 = '',
+  setRate4 = () => {},
+  rate5 = '',
+  setRate5 = () => {},
+  rate6 = '',
+  setRate6 = () => {},
   indefiniteTime = false,
   setIndefiniteTime = () => {},
   timeRemaining = null,
@@ -150,6 +162,12 @@ const CustomManifestLeftPanel = memo(({
           setRate2={setRate2}
           rate3={rate3}
           setRate3={setRate3}
+          rate4={rate4}
+          setRate4={setRate4}
+          rate5={rate5}
+          setRate5={setRate5}
+          rate6={rate6}
+          setRate6={setRate6}
           isManifestActive={isManifestActive}
           timeRemaining={timeRemaining}
           hideActionButtons={true} // Ocultar los botones de acción

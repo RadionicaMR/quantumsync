@@ -14,26 +14,41 @@ interface RateSectionProps {
   setRate2: (value: string) => void;
   rate3: string;
   setRate3: (value: string) => void;
+  rate4?: string;
+  setRate4?: (value: string) => void;
+  rate5?: string;
+  setRate5?: (value: string) => void;
+  rate6?: string;
+  setRate6?: (value: string) => void;
   isPlaying?: boolean;
   isDisabled?: boolean;
 }
 
 const RateSection: React.FC<RateSectionProps> = ({
-  rate1,
-  setRate1,
-  rate2,
-  setRate2,
-  rate3,
-  setRate3,
+  rate1, setRate1,
+  rate2, setRate2,
+  rate3, setRate3,
+  rate4 = '', setRate4 = () => {},
+  rate5 = '', setRate5 = () => {},
+  rate6 = '', setRate6 = () => {},
   isPlaying = false,
   isDisabled = false,
 }) => {
   const { t, language } = useLanguage();
   const disabled = isDisabled || isPlaying;
   const [dialOpen, setDialOpen] = useState(false);
-  const [activeRate, setActiveRate] = useState<1 | 2 | 3>(1);
+  const [activeRate, setActiveRate] = useState<number>(1);
 
-  const openDial = (rateNum: 1 | 2 | 3) => {
+  const rates = [
+    { id: 1, value: rate1, setter: setRate1 },
+    { id: 2, value: rate2, setter: setRate2 },
+    { id: 3, value: rate3, setter: setRate3 },
+    { id: 4, value: rate4, setter: setRate4 },
+    { id: 5, value: rate5, setter: setRate5 },
+    { id: 6, value: rate6, setter: setRate6 },
+  ];
+
+  const openDial = (rateNum: number) => {
     if (disabled) return;
     setActiveRate(rateNum);
     setDialOpen(true);
@@ -42,14 +57,14 @@ const RateSection: React.FC<RateSectionProps> = ({
   const handleDialClose = (value: number | null) => {
     setDialOpen(false);
     if (value === null) return;
-    const setter = activeRate === 1 ? setRate1 : activeRate === 2 ? setRate2 : setRate3;
-    setter(value.toString());
+    const rate = rates.find(r => r.id === activeRate);
+    if (rate) rate.setter(value.toString());
   };
 
   const getCurrentRateAsNumber = (): number => {
-    const raw = activeRate === 1 ? rate1 : activeRate === 2 ? rate2 : rate3;
-    const n = parseInt(raw, 10);
-    return isNaN(n) ? 0 : Math.min(Math.round(n / 10), 100);
+    const rate = rates.find(r => r.id === activeRate);
+    const n = parseInt(rate?.value || '0', 10);
+    return isNaN(n) ? 0 : Math.min(n, 100);
   };
 
   return (
@@ -58,62 +73,31 @@ const RateSection: React.FC<RateSectionProps> = ({
         <h3 className="text-xl font-semibold">{t('rate.title')} (RATES)</h3>
         <p className="text-sm text-muted-foreground mt-1">
           {language === 'en' 
-            ? 'Enter numeric values or words for the RATES'
-            : 'Ingrese valores numéricos o palabras para los RATES'}
+            ? 'Enter numeric values or words for the RATES (0-100)'
+            : 'Ingrese valores numéricos o palabras para los RATES (0-100)'}
         </p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <Label htmlFor="rate1">RATE 1</Label>
-          <div className="flex gap-2">
-            <Input
-              id="rate1"
-              value={rate1}
-              onChange={(e) => setRate1(e.target.value)}
-              placeholder={language === 'en' ? 'E.g.: 23-45-67' : 'Ej: 23-45-67'}
-              className="font-mono flex-1"
-              disabled={disabled}
-            />
-            <Button variant="outline" size="icon" disabled={disabled} onClick={() => openDial(1)} className="min-w-10 h-10">
-              <Disc className="h-4 w-4" />
-            </Button>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        {rates.map((rate) => (
+          <div key={rate.id}>
+            <Label htmlFor={`rate${rate.id}`} className="text-xs">RATE {rate.id}</Label>
+            <div className="flex gap-1">
+              <Input
+                id={`rate${rate.id}`}
+                value={rate.value}
+                onChange={(e) => rate.setter(e.target.value)}
+                placeholder={`R${rate.id}`}
+                className="font-mono flex-1 text-sm px-2"
+                maxLength={3}
+                disabled={disabled}
+              />
+              <Button variant="outline" size="icon" disabled={disabled} onClick={() => openDial(rate.id)} className="min-w-8 h-9">
+                <Disc className="h-3 w-3" />
+              </Button>
+            </div>
           </div>
-        </div>
-        
-        <div>
-          <Label htmlFor="rate2">RATE 2</Label>
-          <div className="flex gap-2">
-            <Input
-              id="rate2"
-              value={rate2}
-              onChange={(e) => setRate2(e.target.value)}
-              placeholder={language === 'en' ? 'E.g.: 98-76-54' : 'Ej: 98-76-54'}
-              className="font-mono flex-1"
-              disabled={disabled}
-            />
-            <Button variant="outline" size="icon" disabled={disabled} onClick={() => openDial(2)} className="min-w-10 h-10">
-              <Disc className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-        
-        <div>
-          <Label htmlFor="rate3">RATE 3</Label>
-          <div className="flex gap-2">
-            <Input
-              id="rate3"
-              value={rate3}
-              onChange={(e) => setRate3(e.target.value)}
-              placeholder={language === 'en' ? 'E.g.: Energy' : 'Ej: Energía'}
-              className="font-mono flex-1"
-              disabled={disabled}
-            />
-            <Button variant="outline" size="icon" disabled={disabled} onClick={() => openDial(3)} className="min-w-10 h-10">
-              <Disc className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+        ))}
       </div>
 
       <RateDial

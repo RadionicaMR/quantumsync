@@ -25,6 +25,9 @@ interface TreatmentVisualizerSectionProps {
   rate1: string;
   rate2: string;
   rate3: string;
+  rate4?: string;
+  rate5?: string;
+  rate6?: string;
   hypnoticSpeed?: number[];
   receptorName?: string;
   backgroundModeActive?: boolean;
@@ -52,6 +55,9 @@ const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
   rate1,
   rate2,
   rate3,
+  rate4 = '',
+  rate5 = '',
+  rate6 = '',
   hypnoticSpeed = [10],
   receptorName = "",
   backgroundModeActive = false,
@@ -78,6 +84,9 @@ const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
           rate1={rate1}
           rate2={rate2}
           rate3={rate3}
+          rate4={rate4}
+          rate5={rate5}
+          rate6={rate6}
           hypnoticSpeed={hypnoticSpeed}
           receptorName={receptorName}
           intention={intention}

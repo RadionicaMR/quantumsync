@@ -42,6 +42,12 @@ interface PresetTreatmentLayoutProps {
   setRate2: (rate: string) => void;
   rate3: string;
   setRate3: (rate: string) => void;
+  rate4?: string;
+  setRate4?: (rate: string) => void;
+  rate5?: string;
+  setRate5?: (rate: string) => void;
+  rate6?: string;
+  setRate6?: (rate: string) => void;
   hypnoticSpeed: number[];
   setHypnoticSpeed: (speed: number[]) => void;
   receptorName: string;
@@ -105,6 +111,12 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
   setRate2,
   rate3,
   setRate3,
+  rate4 = '',
+  setRate4 = () => {},
+  rate5 = '',
+  setRate5 = () => {},
+  rate6 = '',
+  setRate6 = () => {},
   hypnoticSpeed,
   setHypnoticSpeed,
   receptorName,
@@ -186,6 +198,12 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
           setRate2={setRate2}
           rate3={rate3}
           setRate3={setRate3}
+          rate4={rate4}
+          setRate4={setRate4}
+          rate5={rate5}
+          setRate5={setRate5}
+          rate6={rate6}
+          setRate6={setRate6}
           isPlaying={isPlaying}
         />
         
@@ -224,6 +242,9 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
           rate1={rate1}
           rate2={rate2}
           rate3={rate3}
+          rate4={rate4}
+          rate5={rate5}
+          rate6={rate6}
           hypnoticSpeed={hypnoticSpeed}
           receptorName={receptorName}
           backgroundModeActive={backgroundModeActive}

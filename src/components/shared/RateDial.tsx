@@ -101,8 +101,8 @@ const RateDial: React.FC<RateDialProps> = ({ open, onClose, initialValue = 0 }) 
   const handlePointerUp = useCallback(() => {
     if (!isDragging) return;
     setIsDragging(false);
-    // Close and send value: dial shows 0-100, rate input gets value * 10
-    onClose(Math.round(value * 10));
+    // Close and send value directly as 0-100
+    onClose(Math.round(value));
   }, [isDragging, value, onClose]);
 
   // Generate tick marks
@@ -158,8 +158,7 @@ const RateDial: React.FC<RateDialProps> = ({ open, onClose, initialValue = 0 }) 
   // Background arc
   const bgArcEnd = polarToCartesian(CENTER, CENTER, RADIUS, END_ANGLE);
   const bgArcPath = `M ${arcStart.x} ${arcStart.y} A ${RADIUS} ${RADIUS} 0 1 1 ${bgArcEnd.x} ${bgArcEnd.y}`;
-
-  const rateValue = Math.round(value * 10);
+  const rateValue = Math.round(value);
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(null); }}>

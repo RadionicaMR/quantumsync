@@ -48,9 +48,15 @@ interface ManifestTabsContentProps {
   rate1: string;
   rate2: string;
   rate3: string;
+  rate4?: string;
+  rate5?: string;
+  rate6?: string;
   setRate1: (value: string) => void;
   setRate2: (value: string) => void;
   setRate3: (value: string) => void;
+  setRate4?: (value: string) => void;
+  setRate5?: (value: string) => void;
+  setRate6?: (value: string) => void;
   receptorName?: string;
   setReceptorName?: (value: string) => void;
   indefiniteTime?: boolean;
@@ -100,9 +106,15 @@ const ManifestTabsContent: React.FC<ManifestTabsContentProps> = ({
   rate1,
   rate2,
   rate3,
+  rate4 = '',
+  rate5 = '',
+  rate6 = '',
   setRate1,
   setRate2,
   setRate3,
+  setRate4 = () => {},
+  setRate5 = () => {},
+  setRate6 = () => {},
   receptorName = "",
   setReceptorName = () => {},
   indefiniteTime = false,
@@ -153,9 +165,15 @@ const ManifestTabsContent: React.FC<ManifestTabsContentProps> = ({
           rate1={rate1}
           rate2={rate2}
           rate3={rate3}
+          rate4={rate4}
+          rate5={rate5}
+          rate6={rate6}
           setRate1={setRate1}
           setRate2={setRate2}
           setRate3={setRate3}
+          setRate4={setRate4}
+          setRate5={setRate5}
+          setRate6={setRate6}
           receptorName={receptorName}
           setReceptorName={setReceptorName}
           indefiniteTime={indefiniteTime}
@@ -189,6 +207,12 @@ const ManifestTabsContent: React.FC<ManifestTabsContentProps> = ({
           setRate2={setRate2}
           rate3={rate3}
           setRate3={setRate3}
+          rate4={rate4}
+          setRate4={setRate4}
+          rate5={rate5}
+          setRate5={setRate5}
+          rate6={rate6}
+          setRate6={setRate6}
           isManifestActive={isManifestActive}
           timeRemaining={timeRemaining}
           startManifestation={startManifestation}

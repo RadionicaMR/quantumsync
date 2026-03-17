@@ -208,6 +208,12 @@ const Manifestation = () => {
                 setRate2={treatment.setRate2}
                 rate3={treatment.rate3}
                 setRate3={treatment.setRate3}
+                rate4={treatment.rate4}
+                setRate4={treatment.setRate4}
+                rate5={treatment.rate5}
+                setRate5={treatment.setRate5}
+                rate6={treatment.rate6}
+                setRate6={treatment.setRate6}
                 hypnoticSpeed={treatment.hypnoticSpeed}
                 setHypnoticSpeed={treatment.setHypnoticSpeed}
                 receptorName={treatment.receptorName}
@@ -248,6 +254,12 @@ const Manifestation = () => {
                     setRate2={treatment.setRate2}
                     rate3={treatment.rate3}
                     setRate3={treatment.setRate3}
+                    rate4={treatment.rate4}
+                    setRate4={treatment.setRate4}
+                    rate5={treatment.rate5}
+                    setRate5={treatment.setRate5}
+                    rate6={treatment.rate6}
+                    setRate6={treatment.setRate6}
                     radionicImage={treatment.radionicImage}
                     setRadionicImage={treatment.setRadionicImage}
                     radionicImages={treatment.radionicImages}
