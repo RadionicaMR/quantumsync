@@ -85,8 +85,8 @@ const ImageUploader = ({
         <h3 className="font-semibold">{title}</h3>
       </div>
       
-      <div className="p-4">
-        <div className="flex space-x-2 mb-4">
+      <div className="p-2 sm:p-4">
+        <div className="flex flex-wrap gap-2 mb-4">
           <button
             className={`px-3 py-1 rounded-full text-sm ${activeTab === 'single' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
             onClick={() => setActiveTab('single')}

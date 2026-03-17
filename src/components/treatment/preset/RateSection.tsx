@@ -78,7 +78,7 @@ const RateSection: React.FC<RateSectionProps> = ({
         </p>
       </div>
       
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {rates.map((rate) => (
           <div key={rate.id}>
             <Label htmlFor={`rate${rate.id}`} className="text-xs">RATE {rate.id}</Label>
