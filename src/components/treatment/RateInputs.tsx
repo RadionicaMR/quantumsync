@@ -106,16 +106,19 @@ const RateInputs = ({
                 disabled={isPlaying}
                 className={`${isPlaying ? `${pulses[idx]} bg-quantum-primary/10` : ''} flex-1 text-sm px-2`}
               />
-              <Button
-                variant="outline"
-                size="icon"
-                disabled={isPlaying}
-                onClick={() => openDial(rate.id)}
-                className="min-w-8 h-9 touch-manipulation"
-                aria-label={`Abrir dial para RATE ${rate.id}`}
-              >
-                <Disc className="h-4 w-4" />
-              </Button>
+              <div className="flex flex-col">
+                <Label className="mb-1 text-xs">DIAL</Label>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  disabled={isPlaying}
+                  onClick={() => openDial(rate.id)}
+                  className="min-w-8 h-9 touch-manipulation"
+                  aria-label={`Abrir dial para RATE ${rate.id}`}
+                >
+                  <Disc className="h-4 w-4" />
+                </Button>
+              </div>
               <Button
                 variant="outline"
                 size="icon"
