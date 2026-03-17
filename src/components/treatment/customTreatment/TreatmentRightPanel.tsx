@@ -25,7 +25,6 @@ interface TreatmentRightPanelProps {
   currentImage: 'radionic' | 'receptor' | 'mix';
   hypnoticEffect: boolean;
   frequency: number[];
-  intensity: number[];
   rate1: string;
   rate2: string;
   rate3: string;
