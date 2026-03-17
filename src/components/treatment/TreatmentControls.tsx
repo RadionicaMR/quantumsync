@@ -19,10 +19,6 @@ interface TreatmentControlsProps {
   setDuration: (value: number[]) => void;
   intensity: number[];
   setIntensity: (value: number[]) => void;
-  useHeadphones: boolean;
-  setUseHeadphones: (value: boolean) => void;
-  visualFeedback: boolean;
-  setVisualFeedback: (value: boolean) => void;
   isPlaying: boolean;
   timeRemaining: number;
   startTreatment: () => void;
@@ -51,10 +47,6 @@ const TreatmentControls = ({
   setDuration,
   intensity,
   setIntensity,
-  useHeadphones,
-  setUseHeadphones,
-  visualFeedback, 
-  setVisualFeedback,
   isPlaying,
   timeRemaining,
   startTreatment,
@@ -107,10 +99,8 @@ const TreatmentControls = ({
             />
             
             <SettingsToggles
-              useHeadphones={useHeadphones}
-              setUseHeadphones={setUseHeadphones}
-              visualFeedback={visualFeedback}
-              setVisualFeedback={setVisualFeedback}
+              intensity={intensity}
+              setIntensity={setIntensity}
               isPlaying={isPlaying}
             />
           </div>
@@ -142,7 +132,7 @@ const TreatmentControls = ({
             
             <TreatmentFeedbackVisual
               isPlaying={isPlaying}
-              visualFeedback={visualFeedback}
+              visualFeedback={true}
               frequency={frequency}
               intensity={intensity}
             />

@@ -17,10 +17,6 @@ interface PresetTreatmentLayoutProps {
   setDuration: (duration: number[]) => void;
   intensity: number[];
   setIntensity: (intensity: number[]) => void;
-  useHeadphones: boolean;
-  setUseHeadphones: (useHeadphones: boolean) => void;
-  visualFeedback: boolean;
-  setVisualFeedback: (visualFeedback: boolean) => void;
   timeRemaining: number | null;
   formatTime: (time: number | null) => string;
   onSelectPreset: (preset: TreatmentPreset) => void;
@@ -86,10 +82,6 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
   setDuration,
   intensity,
   setIntensity,
-  useHeadphones,
-  setUseHeadphones,
-  visualFeedback,
-  setVisualFeedback,
   timeRemaining,
   formatTime,
   onSelectPreset,
@@ -227,10 +219,6 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
           formatTime={formatTime}
           startTreatment={startTreatment}
           stopTreatment={stopTreatment}
-          visualFeedback={visualFeedback}
-          setVisualFeedback={setVisualFeedback}
-          useHeadphones={useHeadphones}
-          setUseHeadphones={setUseHeadphones}
           radionicImage={radionicImage}
           receptorImage={receptorImage}
           radionicImages={radionicImages}
@@ -239,6 +227,7 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
           hypnoticEffect={hypnoticEffect}
           frequency={frequency}
           intensity={intensity}
+          setIntensity={setIntensity}
           rate1={rate1}
           rate2={rate2}
           rate3={rate3}

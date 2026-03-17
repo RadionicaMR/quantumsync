@@ -12,10 +12,8 @@ interface TreatmentRightPanelProps {
   formatTime: (time: number | null) => string;
   startTreatment: () => void;
   stopTreatment: () => void;
-  visualFeedback: boolean;
-  setVisualFeedback: (value: boolean) => void;
-  useHeadphones: boolean;
-  setUseHeadphones: (value: boolean) => void;
+  intensity: number[];
+  setIntensity: (value: number[]) => void;
   radionicImage: string | null;
   setRadionicImage: (image: string | null) => void;
   radionicImages: string[];
@@ -27,7 +25,6 @@ interface TreatmentRightPanelProps {
   currentImage: 'radionic' | 'receptor' | 'mix';
   hypnoticEffect: boolean;
   frequency: number[];
-  intensity: number[];
   rate1: string;
   rate2: string;
   rate3: string;
@@ -56,10 +53,8 @@ const TreatmentRightPanel = ({
   formatTime,
   startTreatment,
   stopTreatment,
-  visualFeedback,
-  setVisualFeedback,
-  useHeadphones,
-  setUseHeadphones,
+  intensity,
+  setIntensity,
   radionicImage,
   setRadionicImage,
   radionicImages,
@@ -71,7 +66,6 @@ const TreatmentRightPanel = ({
   currentImage,
   hypnoticEffect,
   frequency,
-  intensity,
   rate1,
   rate2,
   rate3,
@@ -153,7 +147,7 @@ const TreatmentRightPanel = ({
         
         <TreatmentVisualizer 
           isPlaying={isPlaying}
-          visualFeedback={visualFeedback}
+          visualFeedback={true}
           radionicImage={radionicImage}
           receptorImage={receptorImage}
           radionicImages={radionicImages}
@@ -189,10 +183,8 @@ const TreatmentRightPanel = ({
         
         <div className="mt-4">
           <SettingsToggles 
-            useHeadphones={useHeadphones}
-            setUseHeadphones={setUseHeadphones}
-            visualFeedback={visualFeedback}
-            setVisualFeedback={setVisualFeedback}
+            intensity={intensity}
+            setIntensity={setIntensity}
             isPlaying={isPlaying}
           />
         </div>

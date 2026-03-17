@@ -200,10 +200,6 @@ const Treat = () => {
                 setDuration={treatment.setDuration}
                 intensity={treatment.intensity}
                 setIntensity={treatment.setIntensity}
-                useHeadphones={treatment.useHeadphones}
-                setUseHeadphones={treatment.setUseHeadphones}
-                visualFeedback={treatment.visualFeedback}
-                setVisualFeedback={treatment.setVisualFeedback}
                 timeRemaining={treatment.timeRemaining}
                 formatTime={treatment.formatTime}
                 onSelectPreset={treatment.selectPreset}
@@ -286,10 +282,6 @@ const Treat = () => {
                     setReceptorImages={treatment.setReceptorImages}
                     hypnoticSpeed={treatment.hypnoticSpeed}
                     setHypnoticSpeed={treatment.setHypnoticSpeed}
-                    useHeadphones={treatment.useHeadphones}
-                    setUseHeadphones={treatment.setUseHeadphones}
-                    visualFeedback={treatment.visualFeedback}
-                    setVisualFeedback={treatment.setVisualFeedback}
                     isPlaying={treatment.isPlaying}
                     timeRemaining={treatment.timeRemaining}
                     formatTime={treatment.formatTime}

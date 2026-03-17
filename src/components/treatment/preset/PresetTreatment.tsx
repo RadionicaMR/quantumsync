@@ -14,10 +14,6 @@ interface PresetTreatmentProps {
   setDuration: (duration: number[]) => void;
   intensity: number[];
   setIntensity: (intensity: number[]) => void;
-  useHeadphones: boolean;
-  setUseHeadphones: (useHeadphones: boolean) => void;
-  visualFeedback: boolean;
-  setVisualFeedback: (visualFeedback: boolean) => void;
   timeRemaining: number | null;
   formatTime: (time: number | null) => string;
   onSelectPreset: (preset: TreatmentPreset) => void;
@@ -73,10 +69,6 @@ const PresetTreatment: React.FC<PresetTreatmentProps> = ({
   setDuration,
   intensity,
   setIntensity,
-  useHeadphones,
-  setUseHeadphones,
-  visualFeedback,
-  setVisualFeedback,
   timeRemaining,
   formatTime,
   onSelectPreset,
@@ -133,10 +125,6 @@ const PresetTreatment: React.FC<PresetTreatmentProps> = ({
         setDuration={setDuration}
         intensity={intensity}
         setIntensity={setIntensity}
-        useHeadphones={useHeadphones}
-        setUseHeadphones={setUseHeadphones}
-        visualFeedback={visualFeedback}
-        setVisualFeedback={setVisualFeedback}
         timeRemaining={timeRemaining}
         formatTime={formatTime}
         onSelectPreset={onSelectPreset}

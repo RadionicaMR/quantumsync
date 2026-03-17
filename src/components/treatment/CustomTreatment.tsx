@@ -32,10 +32,6 @@ interface CustomTreatmentProps {
   setReceptorImages: (images: string[]) => void;
   hypnoticSpeed: number[];
   setHypnoticSpeed: (speed: number[]) => void;
-  useHeadphones: boolean;
-  setUseHeadphones: (useHeadphones: boolean) => void;
-  visualFeedback: boolean;
-  setVisualFeedback: (visualFeedback: boolean) => void;
   isPlaying: boolean;
   timeRemaining: number | null;
   formatTime: (time: number | null) => string;
@@ -88,10 +84,6 @@ const CustomTreatment: React.FC<CustomTreatmentProps> = ({
   setReceptorImages,
   hypnoticSpeed,
   setHypnoticSpeed,
-  useHeadphones,
-  setUseHeadphones,
-  visualFeedback,
-  setVisualFeedback,
   isPlaying,
   timeRemaining,
   formatTime,
@@ -148,10 +140,8 @@ const CustomTreatment: React.FC<CustomTreatmentProps> = ({
         formatTime={formatTime}
         startTreatment={startTreatment}
         stopTreatment={stopTreatment}
-        visualFeedback={visualFeedback}
-        setVisualFeedback={setVisualFeedback}
-        useHeadphones={useHeadphones}
-        setUseHeadphones={setUseHeadphones}
+        intensity={intensity}
+        setIntensity={setIntensity}
         radionicImage={radionicImage}
         setRadionicImage={setRadionicImage}
         radionicImages={radionicImages}
@@ -163,7 +153,6 @@ const CustomTreatment: React.FC<CustomTreatmentProps> = ({
         currentImage={currentImage}
         hypnoticEffect={hypnoticEffect}
         frequency={frequency}
-        intensity={intensity}
         rate1={rate1}
         rate2={rate2}
         rate3={rate3}

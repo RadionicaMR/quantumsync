@@ -10,10 +10,6 @@ interface TreatmentVisualizerSectionProps {
   formatTime: (time: number | null) => string;
   startTreatment: () => void;
   stopTreatment: () => void;
-  visualFeedback: boolean;
-  setVisualFeedback: (value: boolean) => void;
-  useHeadphones: boolean;
-  setUseHeadphones: (value: boolean) => void;
   radionicImage: string | null;
   receptorImage: string | null;
   radionicImages: string[];
@@ -22,6 +18,7 @@ interface TreatmentVisualizerSectionProps {
   hypnoticEffect: boolean;
   frequency: number[];
   intensity: number[];
+  setIntensity: (value: number[]) => void;
   rate1: string;
   rate2: string;
   rate3: string;
@@ -40,10 +37,6 @@ const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
   formatTime,
   startTreatment,
   stopTreatment,
-  visualFeedback,
-  setVisualFeedback,
-  useHeadphones,
-  setUseHeadphones,
   radionicImage,
   receptorImage,
   radionicImages,
@@ -52,6 +45,7 @@ const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
   hypnoticEffect,
   frequency,
   intensity,
+  setIntensity,
   rate1,
   rate2,
   rate3,
@@ -72,7 +66,7 @@ const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
         
         <TreatmentVisualizer 
           isPlaying={isPlaying}
-          visualFeedback={visualFeedback}
+          visualFeedback={true}
           radionicImage={radionicImage}
           receptorImage={receptorImage}
           radionicImages={radionicImages}
@@ -107,10 +101,8 @@ const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
         
         <div className="mt-4">
           <SettingsToggles 
-            useHeadphones={useHeadphones}
-            setUseHeadphones={setUseHeadphones}
-            visualFeedback={visualFeedback}
-            setVisualFeedback={setVisualFeedback}
+            intensity={intensity}
+            setIntensity={setIntensity}
             isPlaying={isPlaying}
           />
         </div>
