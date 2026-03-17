@@ -149,7 +149,7 @@ const TreatmentRightPanel = ({
         
         <TreatmentVisualizer 
           isPlaying={isPlaying}
-          visualFeedback={visualFeedback}
+          visualFeedback={true}
           radionicImage={radionicImage}
           receptorImage={receptorImage}
           radionicImages={radionicImages}
