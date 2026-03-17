@@ -161,7 +161,6 @@ const CustomTreatment: React.FC<CustomTreatmentProps> = ({
         currentImage={currentImage}
         hypnoticEffect={hypnoticEffect}
         frequency={frequency}
-        intensity={intensity}
         rate1={rate1}
         rate2={rate2}
         rate3={rate3}
