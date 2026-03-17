@@ -32,10 +32,6 @@ interface CustomTreatmentProps {
   setReceptorImages: (images: string[]) => void;
   hypnoticSpeed: number[];
   setHypnoticSpeed: (speed: number[]) => void;
-  useHeadphones: boolean;
-  setUseHeadphones: (useHeadphones: boolean) => void;
-  visualFeedback: boolean;
-  setVisualFeedback: (visualFeedback: boolean) => void;
   isPlaying: boolean;
   timeRemaining: number | null;
   formatTime: (time: number | null) => string;
