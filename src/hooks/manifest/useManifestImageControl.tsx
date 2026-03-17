@@ -6,7 +6,7 @@ export const useManifestImageControl = (
   isManifestActive: boolean,
   visualSpeed: number[]
 ) => {
-  const manifestIntervalRef = useRef<NodeJS.Timeout | number | null>(null);
+  const manifestIntervalRef = useRef<ReturnType<typeof setInterval> | number | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(performance.now());
   const isActiveRef = useRef<boolean>(false);
@@ -15,7 +15,7 @@ export const useManifestImageControl = (
 
   const cleanupAnimations = useCallback(() => {
     if (manifestIntervalRef.current) {
-      clearInterval(manifestIntervalRef.current as NodeJS.Timeout);
+      clearInterval(manifestIntervalRef.current as number);
       manifestIntervalRef.current = null;
     }
     if (animationFrameRef.current) {

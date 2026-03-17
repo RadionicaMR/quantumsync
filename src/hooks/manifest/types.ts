@@ -25,9 +25,9 @@ export interface ManifestState {
 }
 
 export interface ManifestTimers {
-  hypnoticTimerRef: RefObject<NodeJS.Timeout | null>;
-  exposureTimerRef: RefObject<NodeJS.Timeout | null>;
-  countdownTimerRef: RefObject<NodeJS.Timeout | null>;
+  hypnoticTimerRef: RefObject<ReturnType<typeof setTimeout> | null>;
+  exposureTimerRef: RefObject<ReturnType<typeof setTimeout> | null>;
+  countdownTimerRef: RefObject<ReturnType<typeof setTimeout> | null>;
 }
 
 export interface ManifestAudio {

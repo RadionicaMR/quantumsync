@@ -1,56 +1,96 @@
 
+# Plan de Reparación Definitiva para Safari/iOS
 
-## Plan: Dial Rotatorio para RATES + Fix de errores TypeScript
+## Problema Real
 
-### 1. Crear componente `RateDial` (nuevo archivo)
+Cada revisión anterior corrigió bugs parcialmente pero dejó otros sin detectar. La causa raíz es siempre la misma: **saturación del hilo principal de Safari** por `console.log` en callbacks que se ejecutan 60 veces por segundo, y problemas menores de tipos incorrectos.
 
-**`src/components/shared/RateDial.tsx`** - Un dial circular grande en estilo negro/plateado:
-- Dial SVG circular con rango 0-100, marcas de graduación y números
-- Colores: fondo negro, arco/borde plateado, indicador brillante
-- Se abre como Dialog/popup cuando el usuario hace clic en el input de rate
-- Interacción PC: mousedown en el dial, arrastrar girando, mouseup cierra y confirma valor
-- Interacción móvil/tablet: touchstart, touchmove girando, touchend cierra y confirma
-- El valor se calcula por el ángulo del punto de contacto respecto al centro del dial
-- Ejemplo: si el dial marca 8.3, el rate muestra "83" (valor x10, sin decimal)
-- Al soltar, el popup se cierra automáticamente y el valor aparece en el input correspondiente
+## Bugs Encontrados
 
-Mecánica del dial:
-- Arco de 270° (de 135° a 405°), con 0 abajo-izquierda y 100 abajo-derecha
-- Se calcula el ángulo del cursor/dedo respecto al centro del SVG
-- Se mapea ese ángulo a un valor 0.0-100.0
-- El valor mostrado en el rate input = `Math.round(valor * 10)` → rango 0-1000
+### Bug 1 -- CRITICO: console.log a 60fps en useChakraProgress.ts
+El archivo `src/hooks/balance/useChakraProgress.ts` tiene `console.log` en la función `updateProgress` (linea 31) que se llama desde `requestAnimationFrame` a 60fps. Esto satura completamente el hilo principal de Safari y causa que la armonización de chakras se congele.
 
-### 2. Integrar el dial en `RateInputs.tsx` (Tratamiento Custom)
+Lineas afectadas:
+- Linea 16-17: log en useEffect de cambio de chakra (menor)
+- Linea 28-29: log en updateProgress -- SE LLAMA A 60FPS
+- Linea 39-40: log en resetProgress (menor)
+- Linea 48-49: log en setCurrentChakraWithReset (menor)
 
-- Agregar estado `dialOpen` y `activeRateField` para saber cuál rate se está editando
-- Al hacer clic/focus en cualquier input de rate, abrir el Dialog con el RateDial
-- Al soltar el dial, cerrar el Dialog y setear el valor en el rate correspondiente
-- Mantener el botón de generación aleatoria existente (Square icon)
+Solucion: Eliminar TODOS los console.log de este archivo.
 
-### 3. Integrar el dial en `RateSection.tsx` (Tratamiento Preset / Manifestación)
+### Bug 2 -- MEDIO: Tipos NodeJS.Timeout en useChakraTimers.ts
+El archivo `src/hooks/balance/useChakraTimers.ts` usa `NodeJS.Timeout` (lineas 7 y 10) en vez de `number`. En Safari, `setTimeout` devuelve `number`. Ademas usa `clearInterval`/`clearTimeout`/`setTimeout` sin el prefijo `window.`, lo que puede generar ambiguedad.
 
-- Misma lógica: al hacer clic en el input, abrir el dial popup
-- Al soltar, cerrar y escribir el valor
+Solucion: Cambiar tipos a `number | null` y usar `window.setTimeout`/`window.clearTimeout` consistentemente.
 
-### 4. Fix errores TypeScript `NodeJS.Timeout`
+### Bug 3 -- MENOR: Tipo NodeJS.Timeout en useTreatmentImages.tsx
+El archivo `src/hooks/treatment/useTreatmentImages.tsx` linea 16 usa `number | NodeJS.Timeout` para `hypnoticTimerRef`. Debe ser solo `number`.
 
-Reemplazar `NodeJS.Timeout` por `ReturnType<typeof setTimeout>` en los 5 archivos afectados:
-- `src/hooks/manifest/types.ts`
-- `src/hooks/manifest/useManifestTimers.ts`
-- `src/hooks/manifest/useManifestImageControl.tsx`
-- `src/components/treatment/TreatmentVisualizer.tsx`
-- `src/components/manifest/visualizer/StaticOverlayCircles.tsx`
+Solucion: Cambiar a `number | null` y usar `window.setInterval`.
 
-### Resumen de archivos a crear/editar
+### Bug 4 -- MEDIO: console.log residuales en hooks de transicion
+Archivos `useChakraTransition.ts` y `useChakraSequence.ts` todavia tienen algunos `console.log` en rutas de transicion que, si bien no son a 60fps, generan ruido innecesario en Safari durante transiciones rapidas.
 
-| Archivo | Acción |
-|---------|--------|
-| `src/components/shared/RateDial.tsx` | Crear - componente dial rotatorio |
-| `src/components/treatment/RateInputs.tsx` | Editar - integrar dial popup |
-| `src/components/treatment/preset/RateSection.tsx` | Editar - integrar dial popup |
-| `src/hooks/manifest/types.ts` | Editar - fix NodeJS.Timeout |
-| `src/hooks/manifest/useManifestTimers.ts` | Editar - fix NodeJS.Timeout |
-| `src/hooks/manifest/useManifestImageControl.tsx` | Editar - fix NodeJS.Timeout |
-| `src/components/treatment/TreatmentVisualizer.tsx` | Editar - fix NodeJS.Timeout |
-| `src/components/manifest/visualizer/StaticOverlayCircles.tsx` | Editar - fix NodeJS.Timeout |
+## Archivos a Modificar
 
+1. **src/hooks/balance/useChakraProgress.ts** -- Eliminar todos los console.log
+2. **src/hooks/balance/useChakraTimers.ts** -- Corregir tipos y usar window.setTimeout/clearTimeout
+3. **src/hooks/useTreatmentImages.tsx** -- Corregir tipo de timer ref
+
+## Detalles Tecnicos
+
+### useChakraProgress.ts
+```typescript
+// ANTES (Bug - se ejecuta a 60fps):
+const updateProgress = useCallback((newProgress: number) => {
+  if (newProgress === 100) {
+    isTransitioningToNextChakra.current = true;
+    console.log(`useChakraProgress: Setting progress to ${newProgress}...`);
+  } else {
+    console.log(`useChakraProgress: Setting progress to ${newProgress}`);
+  }
+  setProgress(newProgress);
+  ...
+}, []);
+
+// DESPUES:
+const updateProgress = useCallback((newProgress: number) => {
+  if (newProgress === 100) {
+    isTransitioningToNextChakra.current = true;
+  }
+  setProgress(newProgress);
+  progressUpdatedTimeRef.current = Date.now();
+}, []);
+```
+
+### useChakraTimers.ts
+```typescript
+// ANTES:
+const chakraTimerRef = useRef<NodeJS.Timeout | null>(null);
+const completionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+// ...
+clearInterval(progressIntervalRef.current);
+clearTimeout(chakraTimerRef.current);
+
+// DESPUES:
+const chakraTimerRef = useRef<number | null>(null);
+const completionTimeoutRef = useRef<number | null>(null);
+// ...
+window.clearInterval(progressIntervalRef.current);
+window.clearTimeout(chakraTimerRef.current);
+```
+
+### useTreatmentImages.tsx
+```typescript
+// ANTES:
+const hypnoticTimerRef = useRef<number | NodeJS.Timeout | null>(null);
+clearInterval(hypnoticTimerRef.current as NodeJS.Timeout);
+
+// DESPUES:
+const hypnoticTimerRef = useRef<number | null>(null);
+window.clearInterval(hypnoticTimerRef.current!);
+```
+
+## Por que esto no se detecto antes
+
+El patron se repite: cada revision se enfocaba en los archivos ya conocidos como problematicos, pero no se auditaban los archivos "de soporte" como `useChakraProgress.ts` que son llamados indirectamente. El `updateProgress` se pasa como callback a `startProgressTimer` que lo llama desde `requestAnimationFrame` -- es la misma cadena que ya se limpió en otros archivos pero este eslabón quedó sin revisar.
