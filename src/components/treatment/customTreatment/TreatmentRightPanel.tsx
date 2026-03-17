@@ -66,7 +66,6 @@ const TreatmentRightPanel = ({
   currentImage,
   hypnoticEffect,
   frequency,
-  intensity,
   rate1,
   rate2,
   rate3,
