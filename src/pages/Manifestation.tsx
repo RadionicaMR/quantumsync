@@ -266,10 +266,6 @@ const Manifestation = () => {
                     setReceptorImages={treatment.setReceptorImages}
                     hypnoticSpeed={treatment.hypnoticSpeed}
                     setHypnoticSpeed={treatment.setHypnoticSpeed}
-                    useHeadphones={treatment.useHeadphones}
-                    setUseHeadphones={treatment.setUseHeadphones}
-                    visualFeedback={treatment.visualFeedback}
-                    setVisualFeedback={treatment.setVisualFeedback}
                     isPlaying={treatment.isPlaying}
                     timeRemaining={treatment.timeRemaining}
                     formatTime={treatment.formatTime}
