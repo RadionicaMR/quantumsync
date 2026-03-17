@@ -14,10 +14,6 @@ interface PresetTreatmentProps {
   setDuration: (duration: number[]) => void;
   intensity: number[];
   setIntensity: (intensity: number[]) => void;
-  useHeadphones: boolean;
-  setUseHeadphones: (useHeadphones: boolean) => void;
-  visualFeedback: boolean;
-  setVisualFeedback: (visualFeedback: boolean) => void;
   timeRemaining: number | null;
   formatTime: (time: number | null) => string;
   onSelectPreset: (preset: TreatmentPreset) => void;
