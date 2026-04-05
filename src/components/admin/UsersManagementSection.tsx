@@ -126,7 +126,7 @@ const UsersManagementSection = () => {
             <TableBody>
               {users.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground">
+                  <TableCell colSpan={7} className="text-center text-muted-foreground">
                     No hay usuarios registrados
                   </TableCell>
                 </TableRow>
