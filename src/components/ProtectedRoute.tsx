@@ -2,27 +2,21 @@
 import { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { useTrialStatus } from '@/hooks/useTrialStatus';
 import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
   children: ReactNode;
   requireAdmin?: boolean;
+  requirePaid?: boolean; // For manifestation - requires paid access
 }
 
-const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ children, requireAdmin = false, requirePaid = false }: ProtectedRouteProps) => {
   const { user, loading, isAuthenticated } = useAuth();
+  const { isLoading: trialLoading, hasPaid, isTrialActive, isTrialExpired } = useTrialStatus();
   const location = useLocation();
 
-  console.log('[ProtectedRoute] state', {
-    loading,
-    isAuthenticated,
-    user,
-    requireAdmin,
-    path: location.pathname,
-  });
-
-  if (loading) {
-    // Mostramos un spinner más atractivo mientras se verifica la autenticación
+  if (loading || trialLoading) {
     return (
       <div className="flex items-center justify-center h-screen w-full bg-black">
         <div className="text-center">
@@ -34,16 +28,28 @@ const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps)
   }
 
   if (!isAuthenticated) {
-    // Redirigir al login si no está autenticado
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   if (requireAdmin && !user?.isAdmin) {
-    // Redirigir al inicio si se requiere ser admin y el usuario no lo es
     return <Navigate to="/" replace />;
   }
 
-  // Si está autenticado y cumple con los requisitos, mostrar el contenido protegido
+  // Admin users bypass all trial restrictions
+  if (user?.isAdmin) {
+    return <>{children}</>;
+  }
+
+  // Trial expired and not paid → redirect to trial expired page
+  if (isTrialExpired) {
+    return <Navigate to="/trial-expired" replace />;
+  }
+
+  // Manifestation requires paid access (not available during trial)
+  if (requirePaid && !hasPaid) {
+    return <Navigate to="/purchase" replace />;
+  }
+
   return <>{children}</>;
 };
 
