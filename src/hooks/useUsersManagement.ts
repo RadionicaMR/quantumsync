@@ -23,7 +23,7 @@ export const useUsersManagement = () => {
       // Get all profiles
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
-        .select('id, email, full_name, created_at')
+        .select('id, email, full_name, created_at, has_paid, trial_start_date')
         .order('created_at', { ascending: false });
 
       if (profilesError) throw profilesError;
