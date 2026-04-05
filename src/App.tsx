@@ -113,7 +113,7 @@ const App = () => {
                   } />
                   {/* Nueva ruta para la página de manifestación */}
                   <Route path="/manifestation" element={
-                    <ProtectedRoute>
+                    <ProtectedRoute requirePaid={true}>
                       <Manifestation />
                     </ProtectedRoute>
                   } />
