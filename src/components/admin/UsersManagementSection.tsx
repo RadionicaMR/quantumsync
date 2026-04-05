@@ -20,6 +20,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { Trash2, KeyRound, Loader2, Pencil, Save, X } from 'lucide-react';
 import { useUsersManagement } from '@/hooks/useUsersManagement';
 import { toast } from '@/hooks/use-toast';
