@@ -117,6 +117,8 @@ const UsersManagementSection = () => {
                 <TableHead>Email</TableHead>
                 <TableHead>Nombre</TableHead>
                 <TableHead>Rol</TableHead>
+                <TableHead>Pagado</TableHead>
+                <TableHead>Trial</TableHead>
                 <TableHead>Fecha de Registro</TableHead>
                 <TableHead className="text-right">Acciones</TableHead>
               </TableRow>
