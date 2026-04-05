@@ -143,6 +143,35 @@ export const useUsersManagement = () => {
     }
   };
 
+  const togglePaymentStatus = async (userId: string, currentStatus: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ has_paid: !currentStatus })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      toast({
+        title: !currentStatus ? "Acceso concedido" : "Acceso revocado",
+        description: !currentStatus 
+          ? "El usuario ahora tiene acceso completo" 
+          : "El usuario ha vuelto al modo de prueba"
+      });
+
+      await loadUsers();
+      return { success: true };
+    } catch (error: any) {
+      console.error('Error toggling payment status:', error);
+      toast({
+        title: "Error",
+        description: error.message || "No se pudo cambiar el estado de pago",
+        variant: "destructive"
+      });
+      return { success: false, error };
+    }
+  };
+
   useEffect(() => {
     loadUsers();
   }, []);
@@ -153,6 +182,7 @@ export const useUsersManagement = () => {
     reloadUsers: loadUsers,
     resetPassword,
     deleteUser,
-    updateUserName
+    updateUserName,
+    togglePaymentStatus
   };
 };
