@@ -77,6 +77,7 @@ const Layout = ({ children }: LayoutProps) => {
       <div className="absolute inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/40 via-transparent to-transparent opacity-70"></div>
       
       <Navbar />
+      <TrialCountdownBanner />
       <AffiliateReferralBanner />
       <main className={mainClasses}>
         {children}

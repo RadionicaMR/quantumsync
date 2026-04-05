@@ -22,6 +22,8 @@ import AddUserAdmin from "./pages/AddUserAdmin";
 import BalanceChakras from "./pages/BalanceChakras";
 import Auth from "./pages/Auth";
 import SessionHistory from "./pages/SessionHistory";
+import TrialExpired from "./pages/TrialExpired";
+import Access from "./pages/Access";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import { SessionProvider } from "./context/SessionContext";
