@@ -46,7 +46,9 @@ export const useUsersManagement = () => {
         email: profile.email || '',
         full_name: profile.full_name || '',
         created_at: profile.created_at,
-        role: rolesMap.get(profile.id) || 'user'
+        role: rolesMap.get(profile.id) || 'user',
+        has_paid: profile.has_paid ?? false,
+        trial_start_date: profile.trial_start_date || null,
       })) as AppUser[];
 
       setUsers(formattedUsers);
