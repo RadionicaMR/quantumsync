@@ -169,6 +169,26 @@ const UsersManagementSection = () => {
                       </Badge>
                     </TableCell>
                     <TableCell>
+                      <Switch
+                        checked={user.has_paid}
+                        onCheckedChange={() => togglePaymentStatus(user.id, user.has_paid)}
+                        disabled={isUpdating}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {(() => {
+                        if (user.has_paid) return <Badge variant="default">Pagado</Badge>;
+                        if (!user.trial_start_date) return <Badge variant="secondary">Sin trial</Badge>;
+                        const trialEnd = new Date(new Date(user.trial_start_date).getTime() + 7 * 24 * 60 * 60 * 1000);
+                        const now = new Date();
+                        if (now < trialEnd) {
+                          const days = Math.ceil((trialEnd.getTime() - now.getTime()) / (24 * 60 * 60 * 1000));
+                          return <Badge variant="outline" className="text-green-500 border-green-500">{days}d restantes</Badge>;
+                        }
+                        return <Badge variant="destructive">Expirado</Badge>;
+                      })()}
+                    </TableCell>
+                    <TableCell>
                       {new Date(user.created_at).toLocaleDateString('es-AR')}
                     </TableCell>
                     <TableCell className="text-right">
