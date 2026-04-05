@@ -10,8 +10,8 @@ const CTAButton = () => {
   const { trackCtaClick } = useAnalytics();
   
   const handleClick = () => {
-    trackCtaClick('inicia_ahora');
-    navigate('/purchase');
+    trackCtaClick('prueba_gratis');
+    navigate('/register2974AHXW12');
   };
   
   return (
