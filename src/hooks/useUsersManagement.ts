@@ -8,6 +8,8 @@ export interface AppUser {
   full_name: string;
   created_at: string;
   role: 'admin' | 'user';
+  has_paid: boolean;
+  trial_start_date: string | null;
 }
 
 export const useUsersManagement = () => {
@@ -21,7 +23,7 @@ export const useUsersManagement = () => {
       // Get all profiles
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
-        .select('id, email, full_name, created_at')
+        .select('id, email, full_name, created_at, has_paid, trial_start_date')
         .order('created_at', { ascending: false });
 
       if (profilesError) throw profilesError;
@@ -44,7 +46,9 @@ export const useUsersManagement = () => {
         email: profile.email || '',
         full_name: profile.full_name || '',
         created_at: profile.created_at,
-        role: rolesMap.get(profile.id) || 'user'
+        role: rolesMap.get(profile.id) || 'user',
+        has_paid: profile.has_paid ?? false,
+        trial_start_date: profile.trial_start_date || null,
       })) as AppUser[];
 
       setUsers(formattedUsers);
@@ -139,6 +143,35 @@ export const useUsersManagement = () => {
     }
   };
 
+  const togglePaymentStatus = async (userId: string, currentStatus: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ has_paid: !currentStatus })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      toast({
+        title: !currentStatus ? "Acceso concedido" : "Acceso revocado",
+        description: !currentStatus 
+          ? "El usuario ahora tiene acceso completo" 
+          : "El usuario ha vuelto al modo de prueba"
+      });
+
+      await loadUsers();
+      return { success: true };
+    } catch (error: any) {
+      console.error('Error toggling payment status:', error);
+      toast({
+        title: "Error",
+        description: error.message || "No se pudo cambiar el estado de pago",
+        variant: "destructive"
+      });
+      return { success: false, error };
+    }
+  };
+
   useEffect(() => {
     loadUsers();
   }, []);
@@ -149,6 +182,7 @@ export const useUsersManagement = () => {
     reloadUsers: loadUsers,
     resetPassword,
     deleteUser,
-    updateUserName
+    updateUserName,
+    togglePaymentStatus
   };
 };

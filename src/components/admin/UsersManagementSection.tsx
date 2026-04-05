@@ -20,13 +20,14 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { Trash2, KeyRound, Loader2, Pencil, Save, X } from 'lucide-react';
 import { useUsersManagement } from '@/hooks/useUsersManagement';
 import { toast } from '@/hooks/use-toast';
 import CreateUserDialog from './CreateUserDialog';
 
 const UsersManagementSection = () => {
-  const { users, loading, reloadUsers, resetPassword, deleteUser, updateUserName } = useUsersManagement();
+  const { users, loading, reloadUsers, resetPassword, deleteUser, updateUserName, togglePaymentStatus } = useUsersManagement();
   const [passwordDialog, setPasswordDialog] = useState<{ open: boolean; userId: string; userEmail: string }>({
     open: false,
     userId: '',
@@ -116,6 +117,8 @@ const UsersManagementSection = () => {
                 <TableHead>Email</TableHead>
                 <TableHead>Nombre</TableHead>
                 <TableHead>Rol</TableHead>
+                <TableHead>Pagado</TableHead>
+                <TableHead>Trial</TableHead>
                 <TableHead>Fecha de Registro</TableHead>
                 <TableHead className="text-right">Acciones</TableHead>
               </TableRow>
@@ -123,7 +126,7 @@ const UsersManagementSection = () => {
             <TableBody>
               {users.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground">
+                  <TableCell colSpan={7} className="text-center text-muted-foreground">
                     No hay usuarios registrados
                   </TableCell>
                 </TableRow>
@@ -164,6 +167,26 @@ const UsersManagementSection = () => {
                       <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
                         {user.role === 'admin' ? 'Administrador' : 'Usuario'}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Switch
+                        checked={user.has_paid}
+                        onCheckedChange={() => togglePaymentStatus(user.id, user.has_paid)}
+                        disabled={isUpdating}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {(() => {
+                        if (user.has_paid) return <Badge variant="default">Pagado</Badge>;
+                        if (!user.trial_start_date) return <Badge variant="secondary">Sin trial</Badge>;
+                        const trialEnd = new Date(new Date(user.trial_start_date).getTime() + 7 * 24 * 60 * 60 * 1000);
+                        const now = new Date();
+                        if (now < trialEnd) {
+                          const days = Math.ceil((trialEnd.getTime() - now.getTime()) / (24 * 60 * 60 * 1000));
+                          return <Badge variant="outline" className="text-green-500 border-green-500">{days}d restantes</Badge>;
+                        }
+                        return <Badge variant="destructive">Expirado</Badge>;
+                      })()}
                     </TableCell>
                     <TableCell>
                       {new Date(user.created_at).toLocaleDateString('es-AR')}

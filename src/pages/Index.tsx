@@ -13,6 +13,7 @@ import PricingSection from '@/components/home/PricingSection';
 import AffiliateSection from '@/components/home/AffiliateSection';
 import FinalClosingSection from '@/components/home/FinalClosingSection';
 import CTAButton from '@/components/home/CTAButton';
+import FreeTrialPopup from '@/components/trial/FreeTrialPopup';
 import { useAnalytics } from '@/hooks/useAnalytics';
 
 const Index = () => {
@@ -68,6 +69,9 @@ const Index = () => {
 
       {/* 13. Final Closing Section */}
       <FinalClosingSection />
+
+      {/* Free Trial Popup - appears after 30 seconds */}
+      <FreeTrialPopup />
     </Layout>
   );
 };

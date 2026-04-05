@@ -3,6 +3,7 @@ import { ReactNode, useEffect, useMemo } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import AffiliateReferralBanner from './AffiliateReferralBanner';
+import TrialCountdownBanner from './trial/TrialCountdownBanner';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LayoutProps {
@@ -76,6 +77,7 @@ const Layout = ({ children }: LayoutProps) => {
       <div className="absolute inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/40 via-transparent to-transparent opacity-70"></div>
       
       <Navbar />
+      <TrialCountdownBanner />
       <AffiliateReferralBanner />
       <main className={mainClasses}>
         {children}

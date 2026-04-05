@@ -22,6 +22,8 @@ import AddUserAdmin from "./pages/AddUserAdmin";
 import BalanceChakras from "./pages/BalanceChakras";
 import Auth from "./pages/Auth";
 import SessionHistory from "./pages/SessionHistory";
+import TrialExpired from "./pages/TrialExpired";
+import Access from "./pages/Access";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import { SessionProvider } from "./context/SessionContext";
@@ -65,6 +67,8 @@ const App = () => {
                   <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/login" element={<Login />} />
+                  <Route path="/access" element={<Access />} />
+                  <Route path="/trial-expired" element={<TrialExpired />} />
                   <Route path="/register2974AHXW12" element={<Register />} />
                   <Route path="/purchase" element={<Purchase />} />
                   <Route path="/affiliate" element={<AffiliateProgram />} />
@@ -109,7 +113,7 @@ const App = () => {
                   } />
                   {/* Nueva ruta para la página de manifestación */}
                   <Route path="/manifestation" element={
-                    <ProtectedRoute>
+                    <ProtectedRoute requirePaid={true}>
                       <Manifestation />
                     </ProtectedRoute>
                   } />

@@ -10,8 +10,8 @@ const CTAButton = () => {
   const { trackCtaClick } = useAnalytics();
   
   const handleClick = () => {
-    trackCtaClick('inicia_ahora');
-    navigate('/purchase');
+    trackCtaClick('prueba_gratis');
+    navigate('/register2974AHXW12');
   };
   
   return (
@@ -29,7 +29,7 @@ const CTAButton = () => {
             onClick={handleClick}
             className="bg-gradient-to-r from-purple-600 via-purple-500 to-blue-500 hover:from-purple-700 hover:via-purple-600 hover:to-blue-600 text-white text-lg px-12 py-6 h-auto rounded-full shadow-[0_0_30px_rgba(168,85,247,0.4)] hover:shadow-[0_0_50px_rgba(168,85,247,0.6)] transition-all duration-300 font-semibold"
           >
-            {t('home.startNow')}
+            🎉 ¡PRUEBA GRATIS 7 DÍAS!
           </Button>
         </motion.div>
       </div>
