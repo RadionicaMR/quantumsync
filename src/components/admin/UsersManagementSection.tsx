@@ -27,7 +27,7 @@ import { toast } from '@/hooks/use-toast';
 import CreateUserDialog from './CreateUserDialog';
 
 const UsersManagementSection = () => {
-  const { users, loading, reloadUsers, resetPassword, deleteUser, updateUserName } = useUsersManagement();
+  const { users, loading, reloadUsers, resetPassword, deleteUser, updateUserName, togglePaymentStatus } = useUsersManagement();
   const [passwordDialog, setPasswordDialog] = useState<{ open: boolean; userId: string; userEmail: string }>({
     open: false,
     userId: '',
