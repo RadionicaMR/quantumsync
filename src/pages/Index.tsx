@@ -69,6 +69,9 @@ const Index = () => {
 
       {/* 13. Final Closing Section */}
       <FinalClosingSection />
+
+      {/* Free Trial Popup - appears after 30 seconds */}
+      <FreeTrialPopup />
     </Layout>
   );
 };
