@@ -3,6 +3,7 @@ import { ReactNode, useEffect, useMemo } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import AffiliateReferralBanner from './AffiliateReferralBanner';
+import TrialCountdownBanner from './trial/TrialCountdownBanner';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LayoutProps {
