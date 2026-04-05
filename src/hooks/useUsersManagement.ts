@@ -8,6 +8,8 @@ export interface AppUser {
   full_name: string;
   created_at: string;
   role: 'admin' | 'user';
+  has_paid: boolean;
+  trial_start_date: string | null;
 }
 
 export const useUsersManagement = () => {
