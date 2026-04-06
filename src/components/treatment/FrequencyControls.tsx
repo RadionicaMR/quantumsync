@@ -119,7 +119,7 @@ const FrequencyControls = ({
               value={duration[0]}
               onChange={(e) => {
                 const value = parseInt(e.target.value);
-                if (!isNaN(value) && value >= 1 && value <= 180) {
+                if (!isNaN(value) && value >= 1 && value <= 480) {
                   setDuration([value]);
                 }
               }}
