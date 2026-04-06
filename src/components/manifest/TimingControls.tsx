@@ -38,7 +38,7 @@ const TimingControls: React.FC<TimingControlsProps> = ({
           value={exposureTime}
           onValueChange={(value) => setExposureTime(value)}
           min={1}
-          max={180}
+          max={480}
           step={1}
           disabled={isDisabled || indefiniteTime}
         />
