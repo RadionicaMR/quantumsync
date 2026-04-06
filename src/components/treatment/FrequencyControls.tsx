@@ -134,7 +134,7 @@ const FrequencyControls = ({
         <Slider
           defaultValue={duration}
           min={1}
-          max={180}
+          max={480}
           step={1}
           value={duration}
           onValueChange={(value) => setDuration(value)}

@@ -44,7 +44,7 @@ const TimingControls: React.FC<TimingControlsProps> = ({
         />
         <div className="flex justify-between text-xs text-muted-foreground">
           <span>1 min</span>
-          <span>180 min</span>
+          <span>480 min (8h)</span>
         </div>
         
         <div className="flex items-center justify-between pt-2 pb-1">
