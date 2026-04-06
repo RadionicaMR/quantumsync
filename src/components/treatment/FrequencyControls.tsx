@@ -119,14 +119,14 @@ const FrequencyControls = ({
               value={duration[0]}
               onChange={(e) => {
                 const value = parseInt(e.target.value);
-                if (!isNaN(value) && value >= 1 && value <= 180) {
+                if (!isNaN(value) && value >= 1 && value <= 480) {
                   setDuration([value]);
                 }
               }}
               disabled={isPlaying}
               className="w-24 ml-2"
               min={1}
-              max={180}
+              max={480}
             />
             <span className="ml-2 text-sm text-muted-foreground">min</span>
           </div>
@@ -134,7 +134,7 @@ const FrequencyControls = ({
         <Slider
           defaultValue={duration}
           min={1}
-          max={180}
+          max={480}
           step={1}
           value={duration}
           onValueChange={(value) => setDuration(value)}
