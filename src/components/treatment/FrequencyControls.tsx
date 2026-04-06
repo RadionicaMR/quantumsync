@@ -126,7 +126,7 @@ const FrequencyControls = ({
               disabled={isPlaying}
               className="w-24 ml-2"
               min={1}
-              max={180}
+              max={480}
             />
             <span className="ml-2 text-sm text-muted-foreground">min</span>
           </div>
