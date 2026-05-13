@@ -38,6 +38,12 @@ interface TreatmentRightPanelProps {
   setRate5?: (value: string) => void;
   rate6?: string;
   setRate6?: (value: string) => void;
+  rate7?: string;
+  setRate7?: (value: string) => void;
+  rate8?: string;
+  setRate8?: (value: string) => void;
+  rate9?: string;
+  setRate9?: (value: string) => void;
   hypnoticSpeed?: number[];
   receptorName?: string;
   audioFile: File | null;
