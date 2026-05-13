@@ -4,7 +4,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Square, Disc } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
 import RateDial from '@/components/shared/RateDial';
 
 interface RateInputsProps {
@@ -20,6 +19,12 @@ interface RateInputsProps {
   setRate5?: (value: string) => void;
   rate6?: string;
   setRate6?: (value: string) => void;
+  rate7?: string;
+  setRate7?: (value: string) => void;
+  rate8?: string;
+  setRate8?: (value: string) => void;
+  rate9?: string;
+  setRate9?: (value: string) => void;
   isPlaying: boolean;
 }
 
@@ -30,6 +35,9 @@ const RateInputs = ({
   rate4 = '', setRate4 = () => {},
   rate5 = '', setRate5 = () => {},
   rate6 = '', setRate6 = () => {},
+  rate7 = '', setRate7 = () => {},
+  rate8 = '', setRate8 = () => {},
+  rate9 = '', setRate9 = () => {},
   isPlaying,
 }: RateInputsProps) => {
   const [generatingStates, setGeneratingStates] = useState<Record<number, boolean>>({});
@@ -43,6 +51,9 @@ const RateInputs = ({
     { id: 4, value: rate4, setter: setRate4 },
     { id: 5, value: rate5, setter: setRate5 },
     { id: 6, value: rate6, setter: setRate6 },
+    { id: 7, value: rate7, setter: setRate7 },
+    { id: 8, value: rate8, setter: setRate8 },
+    { id: 9, value: rate9, setter: setRate9 },
   ];
   
   const generateRandomNumber = () => {
@@ -87,15 +98,19 @@ const RateInputs = ({
     return isNaN(n) ? 0 : Math.min(n, 100);
   };
 
-  const pulses = ['animate-[pulse_1s_ease-in-out_infinite]', 'animate-[pulse_1.2s_ease-in-out_infinite]', 'animate-[pulse_1.4s_ease-in-out_infinite]', 'animate-[pulse_1s_ease-in-out_infinite]', 'animate-[pulse_1.2s_ease-in-out_infinite]', 'animate-[pulse_1.4s_ease-in-out_infinite]'];
+  const pulseFor = (idx: number) => {
+    const pulses = ['animate-[pulse_1s_ease-in-out_infinite]', 'animate-[pulse_1.2s_ease-in-out_infinite]', 'animate-[pulse_1.4s_ease-in-out_infinite]'];
+    return pulses[idx % pulses.length];
+  };
 
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         {rates.map((rate, idx) => (
-          <div key={rate.id} className="flex flex-col">
-            <Label htmlFor={`rate${rate.id}`} className="mb-1 text-xs">RATE {rate.id}</Label>
-            <div className="flex gap-1">
+          <div key={rate.id} className="flex items-end gap-1">
+            {/* Input column */}
+            <div className="flex-1 flex flex-col min-w-0">
+              <Label htmlFor={`rate${rate.id}`} className="mb-1 text-xs">RATE {rate.id}</Label>
               <Input
                 id={`rate${rate.id}`}
                 type="text"
@@ -104,21 +119,28 @@ const RateInputs = ({
                 value={rate.value}
                 onChange={(e) => rate.setter(e.target.value)}
                 disabled={isPlaying}
-                className={`${isPlaying ? `${pulses[idx]} bg-quantum-primary/10` : ''} flex-1 text-sm px-2`}
+                className={`${isPlaying ? `${pulseFor(idx)} bg-quantum-primary/10` : ''} h-9 text-sm px-2 w-full`}
               />
-              <div className="flex flex-col">
-                <Label className="mb-1 text-xs">DIAL</Label>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  disabled={isPlaying}
-                  onClick={() => openDial(rate.id)}
-                  className="min-w-8 h-9 touch-manipulation"
-                  aria-label={`Abrir dial para RATE ${rate.id}`}
-                >
-                  <Disc className="h-4 w-4" />
-                </Button>
-              </div>
+            </div>
+
+            {/* Dial column */}
+            <div className="flex flex-col items-center">
+              <Label className="mb-1 text-xs">DIAL</Label>
+              <Button
+                variant="outline"
+                size="icon"
+                disabled={isPlaying}
+                onClick={() => openDial(rate.id)}
+                className="min-w-8 h-9 touch-manipulation"
+                aria-label={`Abrir dial para RATE ${rate.id}`}
+              >
+                <Disc className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Random column */}
+            <div className="flex flex-col items-center">
+              <Label className="mb-1 text-xs opacity-0 select-none" aria-hidden>·</Label>
               <Button
                 variant="outline"
                 size="icon"
