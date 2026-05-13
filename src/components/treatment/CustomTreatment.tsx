@@ -22,6 +22,12 @@ interface CustomTreatmentProps {
   setRate5?: (rate: string) => void;
   rate6?: string;
   setRate6?: (rate: string) => void;
+  rate7?: string;
+  setRate7?: (rate: string) => void;
+  rate8?: string;
+  setRate8?: (rate: string) => void;
+  rate9?: string;
+  setRate9?: (rate: string) => void;
   radionicImage: string | null;
   setRadionicImage: (image: string | null) => void;
   radionicImages: string[];
