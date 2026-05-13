@@ -157,6 +157,9 @@ const TreatmentRightPanel = ({
           rate4={rate4} setRate4={setRate4}
           rate5={rate5} setRate5={setRate5}
           rate6={rate6} setRate6={setRate6}
+          rate7={rate7} setRate7={setRate7}
+          rate8={rate8} setRate8={setRate8}
+          rate9={rate9} setRate9={setRate9}
           isPlaying={isPlaying}
         />
       </Card>
