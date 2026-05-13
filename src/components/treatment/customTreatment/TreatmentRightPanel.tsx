@@ -38,6 +38,12 @@ interface TreatmentRightPanelProps {
   setRate5?: (value: string) => void;
   rate6?: string;
   setRate6?: (value: string) => void;
+  rate7?: string;
+  setRate7?: (value: string) => void;
+  rate8?: string;
+  setRate8?: (value: string) => void;
+  rate9?: string;
+  setRate9?: (value: string) => void;
   hypnoticSpeed?: number[];
   receptorName?: string;
   audioFile: File | null;
@@ -85,6 +91,12 @@ const TreatmentRightPanel = ({
   setRate5 = () => {},
   rate6 = '',
   setRate6 = () => {},
+  rate7 = '',
+  setRate7 = () => {},
+  rate8 = '',
+  setRate8 = () => {},
+  rate9 = '',
+  setRate9 = () => {},
   hypnoticSpeed = [10],
   receptorName = "",
   audioFile,
@@ -145,6 +157,9 @@ const TreatmentRightPanel = ({
           rate4={rate4} setRate4={setRate4}
           rate5={rate5} setRate5={setRate5}
           rate6={rate6} setRate6={setRate6}
+          rate7={rate7} setRate7={setRate7}
+          rate8={rate8} setRate8={setRate8}
+          rate9={rate9} setRate9={setRate9}
           isPlaying={isPlaying}
         />
       </Card>

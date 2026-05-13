@@ -22,6 +22,12 @@ interface CustomTreatmentProps {
   setRate5?: (rate: string) => void;
   rate6?: string;
   setRate6?: (rate: string) => void;
+  rate7?: string;
+  setRate7?: (rate: string) => void;
+  rate8?: string;
+  setRate8?: (rate: string) => void;
+  rate9?: string;
+  setRate9?: (rate: string) => void;
   radionicImage: string | null;
   setRadionicImage: (image: string | null) => void;
   radionicImages: string[];
@@ -74,6 +80,12 @@ const CustomTreatment: React.FC<CustomTreatmentProps> = ({
   setRate5 = () => {},
   rate6 = '',
   setRate6 = () => {},
+  rate7 = '',
+  setRate7 = () => {},
+  rate8 = '',
+  setRate8 = () => {},
+  rate9 = '',
+  setRate9 = () => {},
   radionicImage,
   setRadionicImage,
   radionicImages,
@@ -153,6 +165,12 @@ const CustomTreatment: React.FC<CustomTreatmentProps> = ({
         setRate5={setRate5}
         rate6={rate6}
         setRate6={setRate6}
+        rate7={rate7}
+        setRate7={setRate7}
+        rate8={rate8}
+        setRate8={setRate8}
+        rate9={rate9}
+        setRate9={setRate9}
         hypnoticSpeed={hypnoticSpeed}
         receptorName={receptorName}
         audioFile={audioFile}
