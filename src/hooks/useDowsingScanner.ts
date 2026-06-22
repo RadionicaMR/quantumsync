@@ -24,13 +24,13 @@ export const useDowsingScanner = () => {
   const progressBarRef = useRef<HTMLDivElement>(null);
   
   const [chakras, setChakras] = useState<Chakra[]>([
-    { name: 'Corona', color: '#A675F5', position: 'top', state: null, yPosition: 10 },
-    { name: 'Tercer Ojo', color: '#5E5DF0', position: 'forehead', state: null, yPosition: 20 },
-    { name: 'Garganta', color: '#3498DB', position: 'throat', state: null, yPosition: 30 },
-    { name: 'Corazón', color: '#2ECC71', position: 'chest', state: null, yPosition: 42 },
-    { name: 'Plexo Solar', color: '#F1C40F', position: 'solarPlexus', state: null, yPosition: 55 },
-    { name: 'Sacro', color: '#E67E22', position: 'sacral', state: null, yPosition: 68 },
-    { name: 'Raíz', color: '#E74C3C', position: 'root', state: null, yPosition: 82 }
+    { name: 'Corona', color: '#A675F5', position: 'top', state: null, yPosition: 21 },
+    { name: 'Tercer Ojo', color: '#5E5DF0', position: 'forehead', state: null, yPosition: 27 },
+    { name: 'Garganta', color: '#3498DB', position: 'throat', state: null, yPosition: 33 },
+    { name: 'Corazón', color: '#2ECC71', position: 'chest', state: null, yPosition: 41 },
+    { name: 'Plexo Solar', color: '#F1C40F', position: 'solarPlexus', state: null, yPosition: 50 },
+    { name: 'Sacro', color: '#E67E22', position: 'sacral', state: null, yPosition: 57 },
+    { name: 'Raíz', color: '#E74C3C', position: 'root', state: null, yPosition: 63 }
   ]);
 
   const startScan = () => {
