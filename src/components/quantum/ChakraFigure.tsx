@@ -21,9 +21,9 @@ const ChakraFigure = ({ currentChakra }: ChakraFigureProps) => {
           className="h-full object-contain"
           style={{
             WebkitMaskImage:
-              'radial-gradient(ellipse at center, black 55%, transparent 92%)',
+              'radial-gradient(ellipse 60% 70% at center, black 30%, transparent 100%)',
             maskImage:
-              'radial-gradient(ellipse at center, black 55%, transparent 92%)',
+              'radial-gradient(ellipse 60% 70% at center, black 30%, transparent 100%)',
           }}
         />
       </div>

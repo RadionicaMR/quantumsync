@@ -19,15 +19,21 @@ const DowsingScannerVisualization: React.FC<DowsingScannerVisualizationProps> = 
 }) => {
   return (
     <div className="relative w-full mx-auto mb-8 h-96 flex">
-      {/* Container with blurred edges */}
-      <div className="absolute left-0 w-3/4 h-full rounded-xl bg-black/5 backdrop-blur-[2px]" />
-      
-      {/* Human figure container - clear, no blur */}
+      {/* Soft glow backdrop to blend with page */}
+      <div className="absolute left-0 w-3/4 h-full bg-quantum-primary/10 blur-3xl rounded-full" />
+
+      {/* Human figure with feathered edges */}
       <div className="absolute left-0 w-3/4 h-full flex items-center justify-center">
-        <img 
+        <img
           src="/lovable-uploads/398a244d-cfb8-44ba-9036-e14561fe19d0.png"
           alt="Chakra visualization"
           className="h-full object-contain"
+          style={{
+            WebkitMaskImage:
+              'radial-gradient(ellipse 60% 70% at center, black 30%, transparent 100%)',
+            maskImage:
+              'radial-gradient(ellipse 60% 70% at center, black 30%, transparent 100%)',
+          }}
         />
       </div>
       
