@@ -20,13 +20,13 @@ export const CHAKRA_COLORS = {
 } as const;
 
 export const CHAKRA_POSITIONS = {
-  'Corona': 21,
-  'Tercer Ojo': 27,
-  'Garganta': 33,
-  'Corazón': 41,
-  'Plexo Solar': 50,
-  'Sacro': 57,
-  'Raíz': 63
+  'Corona': 10,
+  'Tercer Ojo': 20,
+  'Garganta': 30,
+  'Corazón': 42,
+  'Plexo Solar': 55,
+  'Sacro': 68,
+  'Raíz': 82
 } as const;
 
 export const CHAKRA_ORDER = [
