@@ -30,9 +30,10 @@ import {
 
 interface Session {
   id: string;
+  patient_id: string;
   session_type: string;
   created_at: string;
-  patient: {
+  patient?: {
     name: string;
   };
   session_data: any;
@@ -65,15 +66,13 @@ const SessionHistory = () => {
       .from('sessions')
       .select(`
         id,
+        patient_id,
         session_type,
         created_at,
-        session_data,
-        patient:patients(name)
+        session_data
       `)
       .eq('therapist_id', user.email)
       .order('created_at', { ascending: false });
-
-    setLoading(false);
 
     if (error) {
       console.error('Error loading sessions:', error);
@@ -82,10 +81,37 @@ const SessionHistory = () => {
         description: 'No se pudieron cargar las sesiones',
         variant: 'destructive',
       });
+      setLoading(false);
       return;
     }
 
-    setSessions(data || []);
+    const loadedSessions = data || [];
+    const patientIds = [...new Set(loadedSessions.map((session) => session.patient_id).filter(Boolean))];
+
+    if (patientIds.length === 0) {
+      setSessions(loadedSessions as Session[]);
+      setLoading(false);
+      return;
+    }
+
+    const { data: patientsData, error: patientsError } = await supabase
+      .from('patients')
+      .select('id, name')
+      .in('id', patientIds)
+      .eq('therapist_id', user.email);
+
+    if (patientsError) {
+      console.error('Error loading session patients:', patientsError);
+    }
+
+    const patientsById = new Map((patientsData || []).map((patient) => [patient.id, patient.name]));
+    setSessions(
+      loadedSessions.map((session) => ({
+        ...session,
+        patient: { name: patientsById.get(session.patient_id) || 'Sin nombre' },
+      })) as Session[]
+    );
+    setLoading(false);
   };
 
   const getSessionTypeLabel = (type: string) => {
