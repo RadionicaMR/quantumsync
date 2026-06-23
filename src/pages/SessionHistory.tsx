@@ -36,7 +36,7 @@ interface Session {
   patient?: {
     name: string;
   };
-  session_data: any;
+  session_data?: any;
 }
 
 const SessionHistory = () => {
@@ -68,8 +68,7 @@ const SessionHistory = () => {
         id,
         patient_id,
         session_type,
-        created_at,
-        session_data
+        created_at
       `)
       .eq('therapist_id', user.email)
       .order('created_at', { ascending: false });
@@ -144,9 +143,29 @@ const SessionHistory = () => {
     }
   };
 
-  const handleRepeatSession = (session: Session) => {
-    const sessionData = session.session_data;
+  const handleRepeatSession = async (session: Session) => {
+    let sessionData = session.session_data;
     const patientName = session.patient?.name || '';
+
+    if (!sessionData) {
+      const { data, error } = await supabase
+        .from('sessions')
+        .select('session_data')
+        .eq('id', session.id)
+        .maybeSingle();
+
+      if (error || !data?.session_data) {
+        console.error('Error loading session details:', error);
+        toast({
+          title: 'Error',
+          description: 'No se pudieron cargar los datos de la sesión',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      sessionData = data.session_data;
+    }
 
     switch (session.session_type) {
       case 'treatment':
@@ -294,7 +313,7 @@ const SessionHistory = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleRepeatSession(session)}
+                          onClick={() => void handleRepeatSession(session)}
                           title="Repetir sesión"
                         >
                           <Repeat className="h-4 w-4" />
