@@ -30,12 +30,13 @@ import {
 
 interface Session {
   id: string;
+  patient_id: string;
   session_type: string;
   created_at: string;
-  patient: {
+  patient?: {
     name: string;
   };
-  session_data: any;
+  session_data?: any;
 }
 
 const SessionHistory = () => {
@@ -65,15 +66,12 @@ const SessionHistory = () => {
       .from('sessions')
       .select(`
         id,
+        patient_id,
         session_type,
-        created_at,
-        session_data,
-        patient:patients(name)
+        created_at
       `)
       .eq('therapist_id', user.email)
       .order('created_at', { ascending: false });
-
-    setLoading(false);
 
     if (error) {
       console.error('Error loading sessions:', error);
@@ -82,10 +80,37 @@ const SessionHistory = () => {
         description: 'No se pudieron cargar las sesiones',
         variant: 'destructive',
       });
+      setLoading(false);
       return;
     }
 
-    setSessions(data || []);
+    const loadedSessions = data || [];
+    const patientIds = [...new Set(loadedSessions.map((session) => session.patient_id).filter(Boolean))];
+
+    if (patientIds.length === 0) {
+      setSessions(loadedSessions as Session[]);
+      setLoading(false);
+      return;
+    }
+
+    const { data: patientsData, error: patientsError } = await supabase
+      .from('patients')
+      .select('id, name')
+      .in('id', patientIds)
+      .eq('therapist_id', user.email);
+
+    if (patientsError) {
+      console.error('Error loading session patients:', patientsError);
+    }
+
+    const patientsById = new Map((patientsData || []).map((patient) => [patient.id, patient.name]));
+    setSessions(
+      loadedSessions.map((session) => ({
+        ...session,
+        patient: { name: patientsById.get(session.patient_id) || 'Sin nombre' },
+      })) as Session[]
+    );
+    setLoading(false);
   };
 
   const getSessionTypeLabel = (type: string) => {
@@ -118,9 +143,29 @@ const SessionHistory = () => {
     }
   };
 
-  const handleRepeatSession = (session: Session) => {
-    const sessionData = session.session_data;
+  const handleRepeatSession = async (session: Session) => {
+    let sessionData = session.session_data;
     const patientName = session.patient?.name || '';
+
+    if (!sessionData) {
+      const { data, error } = await supabase
+        .from('sessions')
+        .select('session_data')
+        .eq('id', session.id)
+        .maybeSingle();
+
+      if (error || !data?.session_data) {
+        console.error('Error loading session details:', error);
+        toast({
+          title: 'Error',
+          description: 'No se pudieron cargar los datos de la sesión',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      sessionData = data.session_data;
+    }
 
     switch (session.session_type) {
       case 'treatment':
@@ -261,14 +306,15 @@ const SessionHistory = () => {
                       </Badge>
                     </TableCell>
                     <TableCell className="max-w-xs truncate">
-                      {JSON.stringify(session.session_data)}
+                      {getSessionTypeLabel(session.session_type)} registrado el{' '}
+                      {format(new Date(session.created_at), 'PP', { locale: es })}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleRepeatSession(session)}
+                          onClick={() => void handleRepeatSession(session)}
                           title="Repetir sesión"
                         >
                           <Repeat className="h-4 w-4" />
