@@ -306,7 +306,8 @@ const SessionHistory = () => {
                       </Badge>
                     </TableCell>
                     <TableCell className="max-w-xs truncate">
-                      {JSON.stringify(session.session_data)}
+                      {getSessionTypeLabel(session.session_type)} registrado el{' '}
+                      {format(new Date(session.created_at), 'PP', { locale: es })}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
