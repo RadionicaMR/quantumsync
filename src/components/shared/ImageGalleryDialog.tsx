@@ -80,9 +80,13 @@ const ImageGalleryDialog = ({
 
         <div className="space-y-4 flex-1 overflow-hidden flex flex-col">
           <Tabs value={selectedCategory} onValueChange={(val) => setSelectedCategory(val as GalleryCategory)}>
-            <TabsList className="grid grid-cols-5 w-full">
+            <TabsList className="flex flex-wrap h-auto w-full gap-1 p-1">
               {categories.map(cat => (
-                <TabsTrigger key={cat.value} value={cat.value}>
+                <TabsTrigger
+                  key={cat.value}
+                  value={cat.value}
+                  className="flex-1 min-w-[80px] text-xs sm:text-sm px-2 py-1.5 whitespace-nowrap"
+                >
                   {cat.label}
                 </TabsTrigger>
               ))}
