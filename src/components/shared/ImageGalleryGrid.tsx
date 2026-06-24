@@ -54,7 +54,9 @@ const ImageGalleryGrid = ({
             <img
               src={image.url}
               alt={image.name}
-              className="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+              className="w-full h-full object-cover bg-muted"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.style.display = 'none';
