@@ -84,6 +84,7 @@ const Layout = ({ children }: LayoutProps) => {
         {children}
       </main>
       <Footer />
+      <TrialSupportPopup />
     </div>
   );
 };
