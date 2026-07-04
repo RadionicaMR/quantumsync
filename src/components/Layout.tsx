@@ -4,6 +4,7 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 import AffiliateReferralBanner from './AffiliateReferralBanner';
 import TrialCountdownBanner from './trial/TrialCountdownBanner';
+import TrialSupportPopup from './trial/TrialSupportPopup';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LayoutProps {
