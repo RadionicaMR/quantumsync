@@ -6,6 +6,7 @@ export interface AppUser {
   id: string;
   email: string;
   full_name: string;
+  whatsapp_phone: string | null;
   created_at: string;
   role: 'admin' | 'user';
   has_paid: boolean;
@@ -23,7 +24,7 @@ export const useUsersManagement = () => {
       // Get all profiles
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
-        .select('id, email, full_name, created_at, has_paid, trial_start_date')
+        .select('id, email, full_name, whatsapp_phone, created_at, has_paid, trial_start_date')
         .order('created_at', { ascending: false });
 
       if (profilesError) throw profilesError;
@@ -45,6 +46,7 @@ export const useUsersManagement = () => {
         id: profile.id,
         email: profile.email || '',
         full_name: profile.full_name || '',
+        whatsapp_phone: profile.whatsapp_phone || null,
         created_at: profile.created_at,
         role: rolesMap.get(profile.id) || 'user',
         has_paid: profile.has_paid ?? false,
@@ -117,6 +119,33 @@ export const useUsersManagement = () => {
     }
   };
 
+  const updateUserWhatsapp = async (userId: string, newPhone: string) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ whatsapp_phone: newPhone || null })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      toast({
+        title: "WhatsApp actualizado",
+        description: "El número de WhatsApp ha sido actualizado correctamente"
+      });
+
+      await loadUsers();
+      return { success: true };
+    } catch (error: any) {
+      console.error('Error updating whatsapp:', error);
+      toast({
+        title: "Error",
+        description: error.message || "No se pudo actualizar el WhatsApp",
+        variant: "destructive"
+      });
+      return { success: false, error };
+    }
+  };
+
   const deleteUser = async (userId: string) => {
     try {
       const { data, error } = await supabase.functions.invoke('admin-delete-user', {
@@ -183,6 +212,7 @@ export const useUsersManagement = () => {
     resetPassword,
     deleteUser,
     updateUserName,
+    updateUserWhatsapp,
     togglePaymentStatus
   };
 };
