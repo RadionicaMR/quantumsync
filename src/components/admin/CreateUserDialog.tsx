@@ -19,7 +19,8 @@ import { z } from 'zod';
 const createUserSchema = z.object({
   email: z.string().email('Email inválido').min(1, 'Email requerido'),
   password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
-  fullName: z.string().min(1, 'Nombre requerido').max(100, 'Nombre muy largo')
+  fullName: z.string().min(1, 'Nombre requerido').max(100, 'Nombre muy largo'),
+  whatsapp: z.string().regex(/^\+\d{8,17}$/, 'WhatsApp inválido. Ej: +542945581188')
 });
 
 interface CreateUserDialogProps {
@@ -32,7 +33,8 @@ const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    fullName: ''
+    fullName: '',
+    whatsapp: '+54'
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -49,7 +51,8 @@ const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
         body: {
           email: validated.email,
           password: validated.password,
-          fullName: validated.fullName
+          fullName: validated.fullName,
+          whatsappPhone: validated.whatsapp
         }
       });
 
@@ -65,7 +68,7 @@ const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
       });
 
       setOpen(false);
-      setFormData({ email: '', password: '', fullName: '' });
+      setFormData({ email: '', password: '', fullName: '', whatsapp: '+54' });
       onUserCreated();
     } catch (error: any) {
       console.error('Error creating user:', error);
@@ -134,6 +137,20 @@ const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
             )}
           </div>
           <div className="space-y-2">
+            <Label htmlFor="whatsapp">WhatsApp (con código de país)</Label>
+            <Input
+              id="whatsapp"
+              type="tel"
+              placeholder="+542945581188"
+              value={formData.whatsapp}
+              onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value.replace(/[^\d+]/g, '') })}
+              disabled={isCreating}
+            />
+            {errors.whatsapp && (
+              <p className="text-sm text-destructive">{errors.whatsapp}</p>
+            )}
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="password">Contraseña</Label>
             <Input
               id="password"
@@ -153,7 +170,7 @@ const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
             variant="outline"
             onClick={() => {
               setOpen(false);
-              setFormData({ email: '', password: '', fullName: '' });
+              setFormData({ email: '', password: '', fullName: '', whatsapp: '+54' });
               setErrors({});
             }}
             disabled={isCreating}

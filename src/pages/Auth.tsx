@@ -9,11 +9,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { z } from 'zod';
+import WhatsAppPhoneInput, { DEFAULT_COUNTRY_CODE } from '@/components/shared/WhatsAppPhoneInput';
 
 const signupSchema = z.object({
   email: z.string().email('Email inválido'),
   password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
   fullName: z.string().min(1, 'El nombre es requerido'),
+  whatsapp: z.string().regex(/^\+\d{8,17}$/, 'WhatsApp inválido. Ej: +542945581188'),
 });
 
 const Auth = () => {
@@ -21,6 +23,8 @@ const Auth = () => {
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
   const [signupFullName, setSignupFullName] = useState('');
+  const [signupCountryCode, setSignupCountryCode] = useState(DEFAULT_COUNTRY_CODE);
+  const [signupWhatsapp, setSignupWhatsapp] = useState('');
   const [loading, setLoading] = useState(false);
   const [showRecovery, setShowRecovery] = useState(false);
 
@@ -45,11 +49,14 @@ const Auth = () => {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    const fullWhatsapp = `${signupCountryCode}${signupWhatsapp.replace(/\D/g, '')}`;
+
     try {
       signupSchema.parse({
         email: signupEmail,
         password: signupPassword,
         fullName: signupFullName,
+        whatsapp: fullWhatsapp,
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -70,6 +77,7 @@ const Auth = () => {
       options: {
         data: {
           full_name: signupFullName,
+          whatsapp_phone: fullWhatsapp,
         },
         emailRedirectTo: `${window.location.origin}/`,
       },
@@ -95,6 +103,7 @@ const Auth = () => {
     setSignupEmail('');
     setSignupPassword('');
     setSignupFullName('');
+    setSignupWhatsapp('');
   };
 
   return (
@@ -137,6 +146,17 @@ const Auth = () => {
                   onChange={(e) => setSignupEmail(e.target.value)}
                   placeholder="tu@email.com"
                   required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="signup-whatsapp">WhatsApp</Label>
+                <WhatsAppPhoneInput
+                  id="signup-whatsapp"
+                  countryCode={signupCountryCode}
+                  onCountryCodeChange={setSignupCountryCode}
+                  phone={signupWhatsapp}
+                  onPhoneChange={setSignupWhatsapp}
                 />
               </div>
 

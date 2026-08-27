@@ -21,13 +21,13 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { Trash2, KeyRound, Loader2, Pencil, Save, X } from 'lucide-react';
+import { Trash2, KeyRound, Loader2, Pencil, Save, X, MessageCircle } from 'lucide-react';
 import { useUsersManagement } from '@/hooks/useUsersManagement';
 import { toast } from '@/hooks/use-toast';
 import CreateUserDialog from './CreateUserDialog';
 
 const UsersManagementSection = () => {
-  const { users, loading, reloadUsers, resetPassword, deleteUser, updateUserName, togglePaymentStatus } = useUsersManagement();
+  const { users, loading, reloadUsers, resetPassword, deleteUser, updateUserName, updateUserWhatsapp, togglePaymentStatus } = useUsersManagement();
   const [passwordDialog, setPasswordDialog] = useState<{ open: boolean; userId: string; userEmail: string }>({
     open: false,
     userId: '',
@@ -37,6 +37,8 @@ const UsersManagementSection = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [editingNameId, setEditingNameId] = useState<string | null>(null);
   const [editNameValue, setEditNameValue] = useState('');
+  const [editingPhoneId, setEditingPhoneId] = useState<string | null>(null);
+  const [editPhoneValue, setEditPhoneValue] = useState('');
 
   const handleResetPassword = async () => {
     if (!newPassword || newPassword.length < 6) {
@@ -89,6 +91,28 @@ const UsersManagementSection = () => {
     }
   };
 
+  const startEditPhone = (userId: string, currentPhone: string | null) => {
+    setEditingPhoneId(userId);
+    setEditPhoneValue(currentPhone || '+');
+  };
+
+  const cancelEditPhone = () => {
+    setEditingPhoneId(null);
+    setEditPhoneValue('');
+  };
+
+  const saveEditPhone = async (userId: string) => {
+    const cleaned = editPhoneValue.trim().replace(/[^\d+]/g, '');
+    if (cleaned && !/^\+\d{8,17}$/.test(cleaned)) {
+      toast({ title: "Error", description: "Formato inválido. Ej: +542945581188", variant: "destructive" });
+      return;
+    }
+    setIsUpdating(true);
+    const result = await updateUserWhatsapp(userId, cleaned);
+    setIsUpdating(false);
+    if (result.success) cancelEditPhone();
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-10">
@@ -116,6 +140,7 @@ const UsersManagementSection = () => {
               <TableRow>
                 <TableHead>Email</TableHead>
                 <TableHead>Nombre</TableHead>
+                <TableHead>WhatsApp</TableHead>
                 <TableHead>Rol</TableHead>
                 <TableHead>Pagado</TableHead>
                 <TableHead>Trial</TableHead>
@@ -126,7 +151,7 @@ const UsersManagementSection = () => {
             <TableBody>
               {users.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground">
+                  <TableCell colSpan={8} className="text-center text-muted-foreground">
                     No hay usuarios registrados
                   </TableCell>
                 </TableRow>
@@ -158,6 +183,48 @@ const UsersManagementSection = () => {
                         <div className="flex items-center gap-2">
                           <span>{user.full_name || '-'}</span>
                           <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground" onClick={() => startEditName(user.id, user.full_name || '')}>
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {editingPhoneId === user.id ? (
+                        <div className="flex items-center gap-2">
+                          <Input
+                            value={editPhoneValue}
+                            onChange={(e) => setEditPhoneValue(e.target.value)}
+                            className="h-8 max-w-[160px]"
+                            placeholder="+542945581188"
+                            disabled={isUpdating}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') saveEditPhone(user.id);
+                              if (e.key === 'Escape') cancelEditPhone();
+                            }}
+                          />
+                          <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-green-500" onClick={() => saveEditPhone(user.id)} disabled={isUpdating}>
+                            <Save className="h-4 w-4" />
+                          </Button>
+                          <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-red-500" onClick={cancelEditPhone} disabled={isUpdating}>
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          {user.whatsapp_phone ? (
+                            <a
+                              href={`https://wa.me/${user.whatsapp_phone.replace(/\D/g, '')}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1 text-green-500 hover:underline"
+                            >
+                              <MessageCircle className="h-3.5 w-3.5" />
+                              {user.whatsapp_phone}
+                            </a>
+                          ) : (
+                            <span className="text-muted-foreground">-</span>
+                          )}
+                          <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground" onClick={() => startEditPhone(user.id, user.whatsapp_phone)}>
                             <Pencil className="h-3.5 w-3.5" />
                           </Button>
                         </div>
