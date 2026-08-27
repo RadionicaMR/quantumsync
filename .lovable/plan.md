@@ -1,29 +1,41 @@
-## Diagnóstico
+# Captura de WhatsApp en el registro + seguimiento desde el panel
 
-Revisé la cuenta de **zntnocv@gmail.com** (Verónica Zenteno Cantú) en la base de datos:
+## Objetivo
+Que todo usuario nuevo deba ingresar su número de WhatsApp con código de país al crear la cuenta, y que ese dato quede visible (y clickeable) en tu base de clientes del panel de administración.
 
-| Campo | Valor |
+## Qué se construye
+
+### 1. Campo de WhatsApp en el registro
+- Nuevo campo obligatorio en el formulario de registro (`/register2974AHXW12`) y en la pestaña "Registrarse" de la pantalla de acceso.
+- Se compone de un selector de código de país (con bandera y prefijo: +54 Argentina, +52 México, +34 España, +57 Colombia, +56 Chile, +51 Perú, +1 EE.UU., etc., con Argentina por defecto) más el campo de número.
+- Validación: solo dígitos, entre 6 y 15 cifras; se guarda en formato internacional (ej. `+542945581188`).
+- Textos en español e inglés usando el sistema de traducción existente.
+
+### 2. Guardado del dato
+- Se agrega la columna `whatsapp_phone` a la tabla de perfiles.
+- El número viaja en los metadatos del registro y el proceso automático que crea el perfil lo guarda junto al nombre y el email.
+- Los usuarios ya existentes quedan con el campo vacío (se puede completar a mano desde el panel).
+
+### 3. Panel de administración (base de clientes)
+- Nueva columna **WhatsApp** en Gestión de Usuarios, entre Nombre y Rol.
+- El número se muestra como enlace directo a `wa.me`, que abre el chat con ese cliente desde tu WhatsApp.
+- Editable en línea (igual que el nombre), para completar o corregir números.
+- Si el usuario no tiene número, muestra "-" con opción de cargarlo.
+- El diálogo "Crear Usuario" del admin también incluye el campo de WhatsApp.
+
+## Detalles técnicos
+
+| Archivo / recurso | Cambio |
 |---|---|
-| Estado de cuenta | ✅ Activa (no baneada) |
-| Email confirmado | ✅ Sí (27/03/2026) |
-| `has_paid` | ✅ true → tiene acceso TOTAL, sin restricción de trial |
-| Rol | user |
-| Último inicio de sesión | **31/03/2026** (hace más de un mes) |
-| Logs de error de auth | Ninguno reciente a su nombre |
+| Migración de base de datos | `ALTER TABLE public.profiles ADD COLUMN whatsapp_phone text;` y actualización de `handle_new_user()` para leer `raw_user_meta_data->>'whatsapp_phone'` |
+| `src/components/shared/WhatsAppPhoneInput.tsx` | Nuevo: selector de país + input numérico, devuelve E.164 |
+| `src/pages/Register.tsx` | Agrega el campo, valida y lo pasa a `register()` |
+| `src/context/AuthContext.tsx` | `register()` acepta el teléfono y lo envía en `options.data` de `signUp` |
+| `src/pages/Auth.tsx` | Mismo campo en el formulario de alta |
+| `src/components/admin/CreateUserDialog.tsx` | Campo de WhatsApp en el alta manual |
+| `supabase/functions/admin-create-user/index.ts` | Recibe y guarda `whatsapp_phone` en el perfil |
+| `src/hooks/useUsersManagement.ts` | Trae `whatsapp_phone` y agrega `updateUserWhatsapp` |
+| `src/components/admin/UsersManagementSection.tsx` | Columna WhatsApp con enlace `wa.me` y edición en línea |
+| `src/context/LanguageContext.tsx` | Traducciones ES/EN de las nuevas etiquetas |
 
-**Conclusión**: Su cuenta y permisos están perfectos. No hay nada bloqueándola del lado de la app (trial, pagos, RLS, rol). El síntoma "no puede entrar al dashboard" es prácticamente seguro un problema de **login**: contraseña olvidada o mal recordada después de tanto tiempo sin entrar. Por eso ni siquiera aparece en los logs — nunca llega a autenticarse.
-
-## Plan de solución
-
-1. **Resetear la contraseña** de Verónica desde el panel de administración (`/admin` → Gestión de Usuarios → botón "Contraseña") a una temporal nueva, por ejemplo `Quantum2026!`.
-2. **Enviarle por WhatsApp/email** la nueva contraseña con instrucciones de cambiarla luego de entrar.
-3. Verificar en el panel que `Pagado` siga en ✅ (ya lo está) para confirmar que tendrá acceso completo a todas las secciones, incluida Manifestación.
-
-No requiere cambios de código ni migraciones — el sistema ya tiene todo lo necesario y la cuenta está sana.
-
-## Acción recomendada inmediata
-
-Si querés, en el siguiente mensaje **reseteo yo la contraseña** mediante la edge function de admin (la dejo en algo como `Quantum2026!`) y te confirmo que quedó lista para que se la pases. Decime "sí, reseteala" y procedo.
-
-### Alternativa
-Si en realidad el síntoma NO es "no puede iniciar sesión" sino otro (pantalla negra después de loguearse, redirección a /trial-expired, no ve panel admin, etc.), avisame el síntoma exacto y reviso el caso correspondiente, porque sus datos en BD están todos correctos.
+Las políticas de acceso actuales ya permiten que cada usuario vea/edite su propio perfil y que el administrador vea y edite todos, por lo que no hacen falta reglas nuevas.
