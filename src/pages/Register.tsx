@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 import { useLanguage } from '@/context/LanguageContext';
+import WhatsAppPhoneInput, { DEFAULT_COUNTRY_CODE, isValidWhatsappPhone } from '@/components/shared/WhatsAppPhoneInput';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -20,9 +21,12 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
+  const [countryCode, setCountryCode] = useState(DEFAULT_COUNTRY_CODE);
+  const [whatsapp, setWhatsapp] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [registered, setRegistered] = useState(false);
+
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
