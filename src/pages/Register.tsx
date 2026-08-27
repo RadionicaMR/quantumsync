@@ -54,10 +54,18 @@ const Register = () => {
       return;
     }
 
+    const fullWhatsapp = `${countryCode}${whatsapp.replace(/\D/g, '')}`;
+    if (!isValidWhatsappPhone(fullWhatsapp)) {
+      setError(t('auth.whatsappInvalid'));
+      setLoading(false);
+      return;
+    }
+
     try {
       console.log(`[FORM] Llamando a la función register del contexto`);
       // Usar la función de registro del contexto de autenticación
-      const success = await register(name.trim(), email.trim(), password);
+      const success = await register(name.trim(), email.trim(), password, fullWhatsapp);
+
       
       console.log(`[FORM] Resultado del registro: ${success}`);
       
