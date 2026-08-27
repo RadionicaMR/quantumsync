@@ -171,6 +171,18 @@ const Register = () => {
                   />
                 </div>
               </div>
+
+              <div className="space-y-1">
+                <WhatsAppPhoneInput
+                  countryCode={countryCode}
+                  onCountryCodeChange={setCountryCode}
+                  phone={whatsapp}
+                  onPhoneChange={setWhatsapp}
+                />
+                <p className="text-xs text-muted-foreground">{t('auth.whatsappHelp')}</p>
+              </div>
+              
+
               
               <div>
                 <div className="relative">
