@@ -438,6 +438,7 @@ export type Database = {
           id: string
           trial_start_date: string | null
           updated_at: string | null
+          whatsapp_phone: string | null
         }
         Insert: {
           created_at?: string | null
@@ -447,6 +448,7 @@ export type Database = {
           id: string
           trial_start_date?: string | null
           updated_at?: string | null
+          whatsapp_phone?: string | null
         }
         Update: {
           created_at?: string | null
@@ -456,6 +458,7 @@ export type Database = {
           id?: string
           trial_start_date?: string | null
           updated_at?: string | null
+          whatsapp_phone?: string | null
         }
         Relationships: []
       }
