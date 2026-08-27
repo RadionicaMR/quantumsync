@@ -14,7 +14,7 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
-  register: (name: string, email: string, password: string) => Promise<boolean>;
+  register: (name: string, email: string, password: string, whatsappPhone?: string) => Promise<boolean>;
   isAuthenticated: boolean;
 }
 
@@ -151,7 +151,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const register = async (name: string, email: string, password: string): Promise<boolean> => {
+  const register = async (name: string, email: string, password: string, whatsappPhone?: string): Promise<boolean> => {
     try {
       setLoading(true);
       console.log('[REGISTER] Starting registration process...');
@@ -164,7 +164,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         options: {
           emailRedirectTo: redirectUrl,
           data: {
-            full_name: name.trim()
+            full_name: name.trim(),
+            whatsapp_phone: whatsappPhone?.trim() || null
           }
         }
       });

@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
     }
 
     // Get the request body
-    const { email, password, fullName } = await req.json()
+    const { email, password, fullName, whatsappPhone } = await req.json()
 
     if (!email || !password) {
       throw new Error('Email and password are required')
@@ -64,7 +64,8 @@ Deno.serve(async (req) => {
       password,
       email_confirm: true,
       user_metadata: {
-        full_name: fullName || ''
+        full_name: fullName || '',
+        whatsapp_phone: whatsappPhone || null
       }
     })
 
@@ -82,6 +83,13 @@ Deno.serve(async (req) => {
       .eq('id', newUser.user.id)
       .single()
 
+    if (profileExists && whatsappPhone) {
+      await supabaseAdmin
+        .from('profiles')
+        .update({ whatsapp_phone: whatsappPhone })
+        .eq('id', newUser.user.id)
+    }
+
     if (!profileExists) {
       // Create profile if it doesn't exist
       await supabaseAdmin
@@ -89,7 +97,8 @@ Deno.serve(async (req) => {
         .insert({
           id: newUser.user.id,
           email: email,
-          full_name: fullName || ''
+          full_name: fullName || '',
+          whatsapp_phone: whatsappPhone || null
         })
     }
 

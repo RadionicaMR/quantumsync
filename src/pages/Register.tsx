@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 import { useLanguage } from '@/context/LanguageContext';
+import WhatsAppPhoneInput, { DEFAULT_COUNTRY_CODE, isValidWhatsappPhone } from '@/components/shared/WhatsAppPhoneInput';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -20,9 +21,12 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
+  const [countryCode, setCountryCode] = useState(DEFAULT_COUNTRY_CODE);
+  const [whatsapp, setWhatsapp] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [registered, setRegistered] = useState(false);
+
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,10 +54,18 @@ const Register = () => {
       return;
     }
 
+    const fullWhatsapp = `${countryCode}${whatsapp.replace(/\D/g, '')}`;
+    if (!isValidWhatsappPhone(fullWhatsapp)) {
+      setError(t('auth.whatsappInvalid'));
+      setLoading(false);
+      return;
+    }
+
     try {
       console.log(`[FORM] Llamando a la función register del contexto`);
       // Usar la función de registro del contexto de autenticación
-      const success = await register(name.trim(), email.trim(), password);
+      const success = await register(name.trim(), email.trim(), password, fullWhatsapp);
+
       
       console.log(`[FORM] Resultado del registro: ${success}`);
       
@@ -159,6 +171,18 @@ const Register = () => {
                   />
                 </div>
               </div>
+
+              <div className="space-y-1">
+                <WhatsAppPhoneInput
+                  countryCode={countryCode}
+                  onCountryCodeChange={setCountryCode}
+                  phone={whatsapp}
+                  onPhoneChange={setWhatsapp}
+                />
+                <p className="text-xs text-muted-foreground">{t('auth.whatsappHelp')}</p>
+              </div>
+              
+
               
               <div>
                 <div className="relative">
