@@ -6,6 +6,7 @@ import AffiliateReferralBanner from './AffiliateReferralBanner';
 import TrialCountdownBanner from './trial/TrialCountdownBanner';
 import TrialSupportPopup from './trial/TrialSupportPopup';
 import SubscriptionRenewalPopup from './trial/SubscriptionRenewalPopup';
+import WhatsAppCapturePopup from './profile/WhatsAppCapturePopup';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LayoutProps {
@@ -87,6 +88,7 @@ const Layout = ({ children }: LayoutProps) => {
       <Footer />
       <TrialSupportPopup />
       <SubscriptionRenewalPopup />
+      <WhatsAppCapturePopup />
 
     </div>
   );
