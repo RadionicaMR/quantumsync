@@ -137,15 +137,49 @@ const Treat = () => {
     };
   });
 
-  // Handle session recording when treatment stops (manually or by timer)
+  // Handle session recording when treatment stops (manually, by timer, or leaving the page)
   const prevPlayingRef = useRef(false);
+  const startedAtRef = useRef<number | null>(null);
+  const savedRef = useRef(false);
+  const patientIdRef = useRef<string | null>(null);
+  patientIdRef.current = currentPatientId;
+
+  const saveSession = (patientId: string) => {
+    if (savedRef.current) return;
+    savedRef.current = true;
+    const elapsed = startedAtRef.current
+      ? Math.round((Date.now() - startedAtRef.current) / 1000)
+      : 0;
+    const configured = (treatment.duration?.[0] || 0) * 60;
+    const status: 'completa' | 'incompleta' =
+      configured > 0 && elapsed < configured - 5 ? 'incompleta' : 'completa';
+    void recordSession(patientId, 'treatment', sessionDataRef.current, {
+      status,
+      actualDurationSeconds: elapsed,
+    });
+  };
+
   useEffect(() => {
+    if (!prevPlayingRef.current && treatment.isPlaying) {
+      startedAtRef.current = Date.now();
+      savedRef.current = false;
+    }
     if (prevPlayingRef.current && !treatment.isPlaying && currentPatientId) {
-      recordSession(currentPatientId, 'treatment', sessionDataRef.current);
+      saveSession(currentPatientId);
       setCurrentPatientId(null);
     }
     prevPlayingRef.current = treatment.isPlaying;
   }, [treatment.isPlaying, currentPatientId]);
+
+  // Save the session if the user navigates away while it is still running
+  useEffect(() => {
+    return () => {
+      if (prevPlayingRef.current && patientIdRef.current) {
+        saveSession(patientIdRef.current);
+        setCurrentPatientId(null);
+      }
+    };
+  }, []);
 
   // CRITICAL: Start treatment FIRST (synchronously in user gesture for Safari AudioContext),
   // then optionally show session recording dialog

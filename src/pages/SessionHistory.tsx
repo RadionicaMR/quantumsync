@@ -33,6 +33,8 @@ interface Session {
   patient_id: string;
   session_type: string;
   created_at: string;
+  status?: string | null;
+  actual_duration_seconds?: number | null;
   patient?: {
     name: string;
   };
@@ -68,7 +70,9 @@ const SessionHistory = () => {
         id,
         patient_id,
         session_type,
-        created_at
+        created_at,
+        status,
+        actual_duration_seconds
       `)
       .eq('therapist_id', user.email)
       .order('created_at', { ascending: false });
@@ -285,6 +289,7 @@ const SessionHistory = () => {
                   <TableHead>Fecha</TableHead>
                   <TableHead>Paciente</TableHead>
                   <TableHead>Tipo</TableHead>
+                  <TableHead>Estado</TableHead>
                   <TableHead>Detalles</TableHead>
                   <TableHead className="text-right">Acciones</TableHead>
                 </TableRow>
@@ -305,9 +310,17 @@ const SessionHistory = () => {
                         {getSessionTypeLabel(session.session_type)}
                       </Badge>
                     </TableCell>
+                    <TableCell>
+                      <Badge variant={session.status === 'incompleta' ? 'destructive' : 'default'}>
+                        {session.status === 'incompleta' ? 'Incompleta' : 'Completa'}
+                      </Badge>
+                    </TableCell>
                     <TableCell className="max-w-xs truncate">
                       {getSessionTypeLabel(session.session_type)} registrado el{' '}
                       {format(new Date(session.created_at), 'PP', { locale: es })}
+                      {typeof session.actual_duration_seconds === 'number' && session.actual_duration_seconds > 0
+                        ? ` · ${Math.max(1, Math.round(session.actual_duration_seconds / 60))} min`
+                        : ''}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
