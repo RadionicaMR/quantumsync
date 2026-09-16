@@ -144,6 +144,7 @@ const UsersManagementSection = () => {
                 <TableHead>Rol</TableHead>
                 <TableHead>Pagado</TableHead>
                 <TableHead>Trial</TableHead>
+                <TableHead>Suscripción</TableHead>
                 <TableHead>Fecha de Registro</TableHead>
                 <TableHead className="text-right">Acciones</TableHead>
               </TableRow>
@@ -151,7 +152,7 @@ const UsersManagementSection = () => {
             <TableBody>
               {users.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center text-muted-foreground">
+                  <TableCell colSpan={9} className="text-center text-muted-foreground">
                     No hay usuarios registrados
                   </TableCell>
                 </TableRow>

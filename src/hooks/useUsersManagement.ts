@@ -25,7 +25,7 @@ export const useUsersManagement = () => {
       // Get all profiles
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
-        .select('id, email, full_name, whatsapp_phone, created_at, has_paid, trial_start_date')
+        .select('id, email, full_name, whatsapp_phone, created_at, has_paid, trial_start_date, subscription_start_date')
         .order('created_at', { ascending: false });
 
       if (profilesError) throw profilesError;
@@ -52,6 +52,7 @@ export const useUsersManagement = () => {
         role: rolesMap.get(profile.id) || 'user',
         has_paid: profile.has_paid ?? false,
         trial_start_date: profile.trial_start_date || null,
+        subscription_start_date: profile.subscription_start_date || null,
       })) as AppUser[];
 
       setUsers(formattedUsers);
