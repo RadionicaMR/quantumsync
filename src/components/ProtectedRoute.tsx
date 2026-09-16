@@ -13,7 +13,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ children, requireAdmin = false, requirePaid = false }: ProtectedRouteProps) => {
   const { user, loading, isAuthenticated } = useAuth();
-  const { isLoading: trialLoading, hasPaid, isTrialActive, isTrialExpired } = useTrialStatus();
+  const { isLoading: trialLoading, hasPaid, isTrialActive, isTrialExpired, isSubscriptionExpired } = useTrialStatus();
   const location = useLocation();
 
   if (loading || trialLoading) {
@@ -38,6 +38,11 @@ const ProtectedRoute = ({ children, requireAdmin = false, requirePaid = false }:
   // Admin users bypass all trial restrictions
   if (user?.isAdmin) {
     return <>{children}</>;
+  }
+
+  // Suscripción anual vencida (día 366+) → pantalla de renovación
+  if (hasPaid && isSubscriptionExpired) {
+    return <Navigate to="/subscription-expired" replace />;
   }
 
   // Trial expired and not paid → redirect to trial expired page
