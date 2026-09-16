@@ -29,6 +29,7 @@ interface TreatmentVisualizerSectionProps {
   receptorName?: string;
   backgroundModeActive?: boolean;
   intention?: string;
+  hideActions?: boolean;
 }
 
 const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
@@ -55,7 +56,8 @@ const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
   hypnoticSpeed = [10],
   receptorName = "",
   backgroundModeActive = false,
-  intention = ""
+  intention = "",
+  hideActions = false,
 }) => {
   const { t } = useLanguage();
   
@@ -87,26 +89,28 @@ const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
         />
       </Card>
       
-      <Card className={`bg-card/90 dark:bg-black/40 p-6 rounded-lg ${isPlaying ? 'border-2 border-quantum-primary/60 bg-quantum-primary/5' : ''}`}>
-        <TreatmentActions 
-          isPlaying={isPlaying}
-          timeRemaining={timeRemaining}
-          formatTime={formatTime}
-          startTreatment={startTreatment}
-          stopTreatment={stopTreatment}
-          backgroundModeActive={backgroundModeActive}
-          receptorName={receptorName}
-          intention={intention}
-        />
-        
-        <div className="mt-4">
-          <SettingsToggles 
-            intensity={intensity}
-            setIntensity={setIntensity}
+      {!hideActions && (
+        <Card className={`bg-card/90 dark:bg-black/40 p-6 rounded-lg ${isPlaying ? 'border-2 border-quantum-primary/60 bg-quantum-primary/5' : ''}`}>
+          <TreatmentActions 
             isPlaying={isPlaying}
+            timeRemaining={timeRemaining}
+            formatTime={formatTime}
+            startTreatment={startTreatment}
+            stopTreatment={stopTreatment}
+            backgroundModeActive={backgroundModeActive}
+            receptorName={receptorName}
+            intention={intention}
           />
-        </div>
-      </Card>
+          
+          <div className="mt-4">
+            <SettingsToggles 
+              intensity={intensity}
+              setIntensity={setIntensity}
+              isPlaying={isPlaying}
+            />
+          </div>
+        </Card>
+      )}
     </div>
   );
 };

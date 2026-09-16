@@ -16,6 +16,7 @@ interface ImageUploaderProps {
   isPlaying: boolean;
   maxImages?: number;
   category?: 'radionic' | 'pattern' | 'receptor' | 'chakra' | 'all';
+  children?: React.ReactNode;
 }
 
 const ImageUploader = ({
@@ -27,7 +28,8 @@ const ImageUploader = ({
   setImages,
   isPlaying,
   maxImages = 7,
-  category = 'all'
+  category = 'all',
+  children,
 }: ImageUploaderProps) => {
   const [activeTab, setActiveTab] = useState<'single' | 'multiple' | 'gallery'>('multiple');
   const multipleFileInputRef = useRef<HTMLInputElement>(null);
@@ -86,6 +88,12 @@ const ImageUploader = ({
       </div>
       
       <div className="p-2 sm:p-4">
+        {children && (
+          <div className="mb-4">
+            {children}
+          </div>
+        )}
+
         <div className="flex flex-wrap gap-2 mb-4">
           <button
             className={`px-3 py-1 rounded-full text-sm ${activeTab === 'single' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
