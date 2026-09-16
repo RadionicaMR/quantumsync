@@ -23,6 +23,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Trash2, KeyRound, Loader2, Pencil, Save, X, MessageCircle } from 'lucide-react';
 import { useUsersManagement } from '@/hooks/useUsersManagement';
+import { getSubscriptionInfo } from '@/utils/subscription';
 import { toast } from '@/hooks/use-toast';
 import CreateUserDialog from './CreateUserDialog';
 
