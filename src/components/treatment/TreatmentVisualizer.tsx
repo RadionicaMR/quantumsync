@@ -235,12 +235,6 @@ const TreatmentVisualizer = ({
         </div>
       )}
       
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
-        <div className={`w-12 h-12 ${displayAlternate ? 'bg-quantum-primary/60' : 'bg-quantum-primary/20'} rounded-full transition-colors duration-50`}></div>
-        <div className={`w-24 h-24 ${displayAlternate ? 'bg-quantum-primary/40' : 'bg-quantum-primary/15'} rounded-full transition-colors duration-50`}></div>
-        <div className={`w-36 h-36 ${displayAlternate ? 'bg-quantum-primary/20' : 'bg-quantum-primary/10'} rounded-full transition-colors duration-50`}></div>
-      </div>
-
       {hasIntention && isPlaying && (
         <div 
           className="absolute z-[100] pointer-events-none"
