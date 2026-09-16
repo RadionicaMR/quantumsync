@@ -10,10 +10,12 @@ const THRESHOLDS = [5, 20, 30];
 
 const SubscriptionRenewalPopup = () => {
   const { isLoading, hasPaid, subscriptionDaysRemaining, isSubscriptionExpired } = useTrialStatus();
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [days, setDays] = useState<number | null>(null);
 
   useEffect(() => {
+    if (user?.isAdmin) return;
     if (isLoading || !hasPaid || isSubscriptionExpired) return;
     if (subscriptionDaysRemaining === null) return;
 

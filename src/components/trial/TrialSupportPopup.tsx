@@ -12,9 +12,11 @@ const WHATSAPP_MESSAGE = encodeURIComponent(
 
 const TrialSupportPopup = () => {
   const { isTrialActive, daysRemaining, hasPaid, isLoading } = useTrialStatus();
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
+    if (user?.isAdmin) return;
     if (isLoading || hasPaid || !isTrialActive) return;
     // Trial de 7 días: día 5 => 2 días restantes, día 6 => 1 día restante
     if (daysRemaining !== 1 && daysRemaining !== 2) return;
