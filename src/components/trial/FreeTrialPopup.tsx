@@ -32,7 +32,7 @@ const FreeTrialPopup = () => {
       <DialogContent className="sm:max-w-md bg-gradient-to-br from-[#0a0118] via-[#1a0b2e] to-[#0f0520] border-purple-500/30 text-white">
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold bg-gradient-to-r from-purple-300 via-blue-300 to-purple-200 bg-clip-text text-transparent">
-            🎉 ¡Prueba GRATIS durante 7 días!
+            🎉 ¡Prueba GRATIS durante 3 días!
           </DialogTitle>
           <DialogDescription className="text-center text-purple-200/80">
             Accede a todas las funciones de QuantumSync sin compromiso
@@ -46,7 +46,7 @@ const FreeTrialPopup = () => {
           </div>
           <div className="flex items-center gap-3 text-purple-200">
             <Clock className="h-5 w-5 text-blue-400 shrink-0" />
-            <span>7 días de acceso completo</span>
+            <span>3 días de acceso completo</span>
           </div>
           <div className="flex items-center gap-3 text-purple-200">
             <Zap className="h-5 w-5 text-yellow-400 shrink-0" />
@@ -63,7 +63,7 @@ const FreeTrialPopup = () => {
             onClick={handleRegister}
             className="w-full bg-gradient-to-r from-purple-600 via-purple-500 to-blue-500 hover:from-purple-700 hover:via-purple-600 hover:to-blue-600 text-white text-lg py-6 h-auto rounded-full shadow-[0_0_30px_rgba(168,85,247,0.4)] font-semibold"
           >
-            ¡PROBAR GRATIS 7 DÍAS!
+            ¡PROBAR GRATIS 3 DÍAS!
           </Button>
           <button
             onClick={() => setIsOpen(false)}

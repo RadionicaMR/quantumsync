@@ -18,8 +18,8 @@ const TrialSupportPopup = () => {
   useEffect(() => {
     if (user?.isAdmin) return;
     if (isLoading || hasPaid || !isTrialActive) return;
-    // Trial de 7 días: día 5 => 2 días restantes, día 6 => 1 día restante
-    if (daysRemaining !== 1 && daysRemaining !== 2) return;
+    // Trial de 3 días: aviso el último día (1 día restante)
+    if (daysRemaining !== 1) return;
 
     const storageKey = `trialSupportPopupShown_day${daysRemaining}`;
     if (localStorage.getItem(storageKey)) return;
