@@ -6,7 +6,7 @@ import { CheckCircle2, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from '@/hooks/use-toast';
-import WhatsAppPhoneInput, { DEFAULT_COUNTRY_CODE, isValidWhatsappPhone } from '@/components/shared/WhatsAppPhoneInput';
+import WhatsAppPhoneInput, { DEFAULT_COUNTRY_CODE } from '@/components/shared/WhatsAppPhoneInput';
 
 const WhatsAppCapturePopup = () => {
   const { user, isAuthenticated } = useAuth();
@@ -18,7 +18,7 @@ const WhatsAppCapturePopup = () => {
 
   useEffect(() => {
     let cancelled = false;
-    if (!isAuthenticated || !user?.userId) return;
+    if (!isAuthenticated || !user?.userId || user?.isAdmin) return;
 
     const check = async () => {
       const { data, error } = await supabase
@@ -42,20 +42,23 @@ const WhatsAppCapturePopup = () => {
   }, [isAuthenticated, user?.userId]);
 
   const handleSave = async () => {
-    const fullNumber = `${countryCode}${phone}`;
-    if (!isValidWhatsappPhone(fullNumber)) {
+    const digits = `${countryCode}${phone}`.replace(/\D/g, '');
+    if (digits.length < 8 || digits.length > 17) {
       setError('Ingresá un número válido (solo dígitos, sin 0 ni 15).');
       return;
     }
+    const fullNumber = `+${digits}`;
     setError('');
     setIsSaving(true);
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .update({ whatsapp_phone: fullNumber })
-        .eq('id', user!.userId);
+        .eq('id', user!.userId)
+        .select('id');
 
       if (error) throw error;
+      if (!data || data.length === 0) throw new Error('No se encontró tu perfil para actualizar.');
 
       toast({
         title: '¡Gracias!',
@@ -101,7 +104,10 @@ const WhatsAppCapturePopup = () => {
             countryCode={countryCode}
             onCountryCodeChange={setCountryCode}
             phone={phone}
-            onPhoneChange={setPhone}
+            onPhoneChange={(v) => {
+              setPhone(v);
+              if (error) setError('');
+            }}
             disabled={isSaving}
           />
           {error && <p className="text-sm text-red-400">{error}</p>}
