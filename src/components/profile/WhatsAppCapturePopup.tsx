@@ -76,8 +76,7 @@ const WhatsAppCapturePopup = () => {
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
       <DialogContent
-        hideCloseButton
-        className="sm:max-w-md bg-gradient-to-br from-[#0a0118] via-[#1a0b2e] to-[#0f0520] border-purple-500/30 text-white"
+        className="sm:max-w-md bg-gradient-to-br from-[#0a0118] via-[#1a0b2e] to-[#0f0520] border-purple-500/30 text-white [&>button]:hidden"
         onInteractOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
