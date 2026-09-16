@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { useAdminData } from '@/hooks/useAdminData';
 import { useNavigate } from 'react-router-dom';
-import { Users, DollarSign, TrendingUp, LogOut, ShoppingCart, BarChart3, Image, UserCog, Eye, Activity } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, LogOut, ShoppingCart, BarChart3, Image, UserCog, Eye, Activity, ClipboardList } from 'lucide-react';
 import AffiliatesManagementTab from './AffiliatesManagementTab';
 import AffiliateStatsTab from './AffiliateStatsTab';
 import SalesManagementTab from './SalesManagementTab';
@@ -12,6 +12,7 @@ import ImageGalleryManagement from './ImageGalleryManagement';
 import UsersManagementSection from './UsersManagementSection';
 import VisitorAnalyticsTab from './VisitorAnalyticsTab';
 import UsageAnalyticsTab from './UsageAnalyticsTab';
+import ClientTrackingTab from './ClientTrackingTab';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -100,12 +101,16 @@ const AdminDashboard = () => {
         transition={{ duration: 0.3, delay: 0.2 }}
       >
         <Tabs defaultValue="sales" className="w-full">
-          <TabsList className="grid w-full grid-cols-7 mb-8">
+          <TabsList className="grid w-full grid-cols-4 md:grid-cols-8 mb-8">
             <TabsTrigger value="sales">Ventas</TabsTrigger>
             <TabsTrigger value="affiliates">Afiliados</TabsTrigger>
             <TabsTrigger value="users">
               <UserCog className="w-4 h-4 mr-2" />
               Usuarios
+            </TabsTrigger>
+            <TabsTrigger value="tracking">
+              <ClipboardList className="w-4 h-4 mr-2" />
+              Seguimiento
             </TabsTrigger>
             <TabsTrigger value="affiliate-stats">Estadísticas</TabsTrigger>
             <TabsTrigger value="analytics">
@@ -139,6 +144,11 @@ const AdminDashboard = () => {
           <TabsContent value="users">
             <UsersManagementSection />
           </TabsContent>
+
+          <TabsContent value="tracking">
+            <ClientTrackingTab />
+          </TabsContent>
+          
           
           <TabsContent value="affiliate-stats">
             <AffiliateStatsTab
