@@ -134,6 +134,9 @@ const Treat = () => {
       receptorImages: treatment.receptorImages,
       visualFeedback: treatment.visualFeedback,
       hypnoticSpeed: treatment.hypnoticSpeed,
+      subliminalText: (() => {
+        try { return localStorage.getItem('quantumsync-subliminal-text') || ''; } catch { return ''; }
+      })(),
     };
   });
 
