@@ -33,6 +33,8 @@ interface Session {
   patient_id: string;
   session_type: string;
   created_at: string;
+  status?: string | null;
+  actual_duration_seconds?: number | null;
   patient?: {
     name: string;
   };
