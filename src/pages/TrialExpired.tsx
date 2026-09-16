@@ -28,7 +28,7 @@ const TrialExpired = () => {
               </h1>
               
               <p className="text-muted-foreground">
-                Los 7 días de prueba gratuita han terminado. Para continuar usando QuantumSync y acceder a todas las funciones, incluyendo la Manifestación Cuántica, adquiere tu membresía.
+                Los 3 días de prueba gratuita han terminado. Para continuar usando QuantumSync y acceder a todas las funciones, incluyendo la Manifestación Cuántica, adquiere tu membresía.
               </p>
 
               <div className="bg-purple-500/10 rounded-lg p-4 border border-purple-500/20">

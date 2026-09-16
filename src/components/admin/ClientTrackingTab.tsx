@@ -33,7 +33,7 @@ interface SessionAgg {
   lastSession: string | null;
 }
 
-const TRIAL_DAYS = 7;
+import { TRIAL_DAYS } from '@/hooks/useTrialStatus';
 
 const ClientTrackingTab = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
