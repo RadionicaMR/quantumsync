@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 
 export const SUBSCRIPTION_DAYS = 365;
+export const TRIAL_DAYS = 3;
 
 interface TrialStatus {
   isLoading: boolean;
