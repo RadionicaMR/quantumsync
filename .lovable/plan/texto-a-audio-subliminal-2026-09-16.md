@@ -11,7 +11,8 @@ Agregar, dentro del bloque AUDIO SUBLIMINAL (Tratamiento y Manifestación), un c
 5. Al iniciar el tratamiento o la manifestación, esa voz se reproduce en bucle debajo de la frecuencia.
 
 Notas:
-- El texto se guarda mientras estás en la página; si lo cambiás hay que volver a generar.
+
+- El texto se guarda mientras estás en la página; si lo cambiás hay que volver a generar. Debe quedar guardado junto la sesion.
 - Textos largos se dividen automáticamente en partes y se unen en un solo audio.
 - La generación puede tardar unos segundos; se muestra un indicador mientras tanto.
 
