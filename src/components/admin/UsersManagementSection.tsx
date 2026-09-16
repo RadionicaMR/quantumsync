@@ -257,6 +257,23 @@ const UsersManagementSection = () => {
                       })()}
                     </TableCell>
                     <TableCell>
+                      {(() => {
+                        const sub = getSubscriptionInfo(user.has_paid, user.subscription_start_date);
+                        if (!sub) return <span className="text-muted-foreground">—</span>;
+                        const color = sub.expired
+                          ? 'text-red-500'
+                          : sub.daysRemaining <= 30
+                          ? 'text-amber-500'
+                          : 'text-green-500';
+                        return (
+                          <div className="whitespace-nowrap">
+                            <p className={`text-sm font-medium ${color}`}>{sub.label}</p>
+                            <p className="text-xs text-muted-foreground">{sub.sublabel}</p>
+                          </div>
+                        );
+                      })()}
+                    </TableCell>
+                    <TableCell>
                       {new Date(user.created_at).toLocaleDateString('es-AR')}
                     </TableCell>
                     <TableCell className="text-right">
