@@ -2,10 +2,12 @@ import React from 'react';
 import { TreatmentPreset } from '@/hooks/treatment/useTreatmentCore';
 import TreatmentVisualizerSection from './TreatmentVisualizerSection';
 import ImageUploaderSection from './ImageUploaderSection';
-import ReceptorSection from './ReceptorSection';
 import AudioSubliminalSection from './AudioSubliminalSection';
 import RateSection from './RateSection';
 import { useLanguage } from '@/context/LanguageContext';
+import { Card } from '@/components/ui/card';
+import TreatmentActions from '../TreatmentActions';
+import SettingsToggles from '../SettingsToggles';
 
 interface PresetTreatmentLayoutProps {
   presets: TreatmentPreset[];
@@ -162,6 +164,41 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
             {t('preset.intensity')}: {intensity[0]}%
           </p>
         </div>
+
+        <AudioSubliminalSection 
+          audioFile={audioFile}
+          setAudioFile={setAudioFile}
+          audioVolume={audioVolume}
+          setAudioVolume={setAudioVolume}
+          audioSubliminalPlaying={audioSubliminalPlaying}
+          playSubliminalAudio={playSubliminalAudio}
+          stopSubliminalAudio={stopSubliminalAudio}
+          isPlaying={isPlaying}
+          audioLoop={audioLoop}
+          setAudioLoop={setAudioLoop}
+          clearAudio={clearAudio}
+        />
+
+        <Card className={`bg-card/90 dark:bg-black/40 p-4 sm:p-6 rounded-lg ${isPlaying ? 'border-2 border-quantum-primary/60 bg-quantum-primary/5' : ''}`}>
+          <SettingsToggles 
+            intensity={intensity}
+            setIntensity={setIntensity}
+            isPlaying={isPlaying}
+          />
+
+          <div className="mt-5 pt-5 border-t border-border">
+            <TreatmentActions 
+              isPlaying={isPlaying}
+              timeRemaining={timeRemaining}
+              formatTime={formatTime}
+              startTreatment={startTreatment}
+              stopTreatment={stopTreatment}
+              backgroundModeActive={backgroundModeActive}
+              receptorName={receptorName}
+              intention={intention}
+            />
+          </div>
+        </Card>
       </div>
       
       <div className="lg:col-span-2 space-y-6">
@@ -175,12 +212,8 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
           setReceptorImage={setReceptorImage}
           receptorImages={receptorImages}
           setReceptorImages={setReceptorImages}
-        />
-        
-        <ReceptorSection 
           receptorName={receptorName}
           setReceptorName={setReceptorName}
-          isPlaying={isPlaying}
         />
         
         <RateSection
@@ -199,20 +232,6 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
           isPlaying={isPlaying}
         />
         
-        <AudioSubliminalSection 
-          audioFile={audioFile}
-          setAudioFile={setAudioFile}
-          audioVolume={audioVolume}
-          setAudioVolume={setAudioVolume}
-          audioSubliminalPlaying={audioSubliminalPlaying}
-          playSubliminalAudio={playSubliminalAudio}
-          stopSubliminalAudio={stopSubliminalAudio}
-          isPlaying={isPlaying}
-          audioLoop={audioLoop}
-          setAudioLoop={setAudioLoop}
-          clearAudio={clearAudio}
-        />
-
         <TreatmentVisualizerSection 
           isPlaying={isPlaying}
           timeRemaining={timeRemaining}
@@ -238,6 +257,7 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
           receptorName={receptorName}
           backgroundModeActive={backgroundModeActive}
           intention={intention}
+          hideActions
         />
       </div>
     </div>

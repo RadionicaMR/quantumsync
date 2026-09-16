@@ -1,5 +1,6 @@
 import ImageUploader from '../image-uploader/ImageUploader';
 import { useLanguage } from '@/context/LanguageContext';
+import ReceptorNameInput from '@/components/treatment/ReceptorNameInput';
 
 interface ImageUploaderSectionProps {
   isPlaying: boolean;
@@ -44,7 +45,15 @@ const ImageUploaderSection = ({
         setImages={setReceptorImages}
         isPlaying={disabled}
         category="receptor"
-      />
+      >
+        {receptorName !== undefined && setReceptorName && (
+          <ReceptorNameInput
+            receptorName={receptorName}
+            setReceptorName={setReceptorName}
+            isPlaying={disabled}
+          />
+        )}
+      </ImageUploader>
       
       <ImageUploader
         title={t('image.radionicGraphic')}
