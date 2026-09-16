@@ -2,7 +2,6 @@ import React from 'react';
 import { TreatmentPreset } from '@/hooks/treatment/useTreatmentCore';
 import TreatmentVisualizerSection from './TreatmentVisualizerSection';
 import ImageUploaderSection from './ImageUploaderSection';
-import ReceptorSection from './ReceptorSection';
 import AudioSubliminalSection from './AudioSubliminalSection';
 import RateSection from './RateSection';
 import { useLanguage } from '@/context/LanguageContext';
