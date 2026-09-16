@@ -70,7 +70,9 @@ const SessionHistory = () => {
         id,
         patient_id,
         session_type,
-        created_at
+        created_at,
+        status,
+        actual_duration_seconds
       `)
       .eq('therapist_id', user.email)
       .order('created_at', { ascending: false });
