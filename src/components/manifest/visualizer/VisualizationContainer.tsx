@@ -57,12 +57,6 @@ const VisualizationContainer: React.FC<VisualizationContainerProps> = ({
         noAnimation={true}
       />
 
-      {/* Static overlay circles - using enhanced visual speed */}
-      <StaticOverlayCircles 
-        isVisible={isActive} 
-        visualSpeed={visualSpeed}
-      />
-      
       {/* Intention overlay - always show when there's an intention */}
       <IntentionOverlay 
         intention={intention} 
