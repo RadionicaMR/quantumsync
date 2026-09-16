@@ -11,6 +11,7 @@ export interface AppUser {
   role: 'admin' | 'user';
   has_paid: boolean;
   trial_start_date: string | null;
+  subscription_start_date: string | null;
 }
 
 export const useUsersManagement = () => {
@@ -176,7 +177,11 @@ export const useUsersManagement = () => {
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ has_paid: !currentStatus })
+        .update({
+          has_paid: !currentStatus,
+          // Al activar el pago se reinician los 365 días; al desactivarlo se limpia
+          subscription_start_date: !currentStatus ? new Date().toISOString() : null,
+        })
         .eq('id', userId);
 
       if (error) throw error;

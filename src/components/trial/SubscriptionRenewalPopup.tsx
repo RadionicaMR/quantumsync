@@ -5,7 +5,7 @@ import { MessageCircle } from 'lucide-react';
 import { useTrialStatus } from '@/hooks/useTrialStatus';
 
 const WHATSAPP_NUMBER = '542945581188';
-const THRESHOLDS = [30, 20, 5];
+const THRESHOLDS = [5, 20, 30];
 
 const SubscriptionRenewalPopup = () => {
   const { isLoading, hasPaid, subscriptionDaysRemaining, isSubscriptionExpired } = useTrialStatus();
@@ -16,8 +16,8 @@ const SubscriptionRenewalPopup = () => {
     if (isLoading || !hasPaid || isSubscriptionExpired) return;
     if (subscriptionDaysRemaining === null) return;
 
-    // Umbral más cercano ya alcanzado (30, 20 o 5 días restantes)
-    const threshold = THRESHOLDS.find((t) => subscriptionDaysRemaining <= t && subscriptionDaysRemaining > (THRESHOLDS.find((x) => x < t) ?? 0));
+    // Umbral alcanzado: 5, 20 o 30 días restantes
+    const threshold = THRESHOLDS.find((t) => subscriptionDaysRemaining <= t);
     if (!threshold) return;
 
     const storageKey = `quantumsync-renewal-notice-${threshold}`;
