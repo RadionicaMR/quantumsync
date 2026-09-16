@@ -3,7 +3,7 @@ import React from 'react';
 import PatternLayer from './PatternLayer';
 import ReceptorLayer from './ReceptorLayer';
 import IntentionOverlay from './IntentionOverlay';
-import StaticOverlayCircles from './StaticOverlayCircles';
+
 
 interface VisualizationContainerProps {
   showPatternImage: boolean;
