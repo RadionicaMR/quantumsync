@@ -18,7 +18,7 @@ const WhatsAppCapturePopup = () => {
 
   useEffect(() => {
     let cancelled = false;
-    if (!isAuthenticated || !user?.userId) return;
+    if (!isAuthenticated || !user?.userId || user?.isAdmin) return;
 
     const check = async () => {
       const { data, error } = await supabase
@@ -42,20 +42,23 @@ const WhatsAppCapturePopup = () => {
   }, [isAuthenticated, user?.userId]);
 
   const handleSave = async () => {
-    const fullNumber = `${countryCode}${phone}`;
-    if (!isValidWhatsappPhone(fullNumber)) {
+    const digits = `${countryCode}${phone}`.replace(/\D/g, '');
+    if (digits.length < 8 || digits.length > 17) {
       setError('Ingresá un número válido (solo dígitos, sin 0 ni 15).');
       return;
     }
+    const fullNumber = `+${digits}`;
     setError('');
     setIsSaving(true);
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .update({ whatsapp_phone: fullNumber })
-        .eq('id', user!.userId);
+        .eq('id', user!.userId)
+        .select('id');
 
       if (error) throw error;
+      if (!data || data.length === 0) throw new Error('No se encontró tu perfil para actualizar.');
 
       toast({
         title: '¡Gracias!',
