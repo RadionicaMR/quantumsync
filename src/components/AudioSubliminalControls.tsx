@@ -6,6 +6,7 @@ import AudioRecorderButton from "./audio/AudioRecorderButton";
 import AudioFileInfo from "./audio/AudioFileInfo";
 import AudioPlaybackControls from "./audio/AudioPlaybackControls";
 import AudioPreview from "./audio/AudioPreview";
+import SubliminalTextToSpeech from "./audio/SubliminalTextToSpeech";
 import { toast } from "sonner";
 interface AudioSubliminalControlsProps {
   audioFile: File | null;
@@ -223,6 +224,11 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
           setAudioLoop={setAudioLoop}
         />
       </div>
+
+      <SubliminalTextToSpeech
+        setAudioFile={setAudioFile}
+        isDisabled={isDisabled || isPlaying || isRecording}
+      />
 
       <AudioPreview audioURL={audioURL} />
 
