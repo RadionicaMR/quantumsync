@@ -464,30 +464,36 @@ export type Database = {
       }
       sessions: {
         Row: {
+          actual_duration_seconds: number | null
           created_at: string | null
           id: string
           notes: string | null
           patient_id: string
           session_data: Json
           session_type: Database["public"]["Enums"]["session_type"]
+          status: string
           therapist_id: string
         }
         Insert: {
+          actual_duration_seconds?: number | null
           created_at?: string | null
           id?: string
           notes?: string | null
           patient_id: string
           session_data?: Json
           session_type: Database["public"]["Enums"]["session_type"]
+          status?: string
           therapist_id: string
         }
         Update: {
+          actual_duration_seconds?: number | null
           created_at?: string | null
           id?: string
           notes?: string | null
           patient_id?: string
           session_data?: Json
           session_type?: Database["public"]["Enums"]["session_type"]
+          status?: string
           therapist_id?: string
         }
         Relationships: [
