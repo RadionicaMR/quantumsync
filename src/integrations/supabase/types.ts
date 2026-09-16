@@ -436,6 +436,7 @@ export type Database = {
           full_name: string | null
           has_paid: boolean | null
           id: string
+          subscription_start_date: string | null
           trial_start_date: string | null
           updated_at: string | null
           whatsapp_phone: string | null
@@ -446,6 +447,7 @@ export type Database = {
           full_name?: string | null
           has_paid?: boolean | null
           id: string
+          subscription_start_date?: string | null
           trial_start_date?: string | null
           updated_at?: string | null
           whatsapp_phone?: string | null
@@ -456,6 +458,7 @@ export type Database = {
           full_name?: string | null
           has_paid?: boolean | null
           id?: string
+          subscription_start_date?: string | null
           trial_start_date?: string | null
           updated_at?: string | null
           whatsapp_phone?: string | null

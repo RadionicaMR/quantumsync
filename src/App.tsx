@@ -23,6 +23,7 @@ import BalanceChakras from "./pages/BalanceChakras";
 import Auth from "./pages/Auth";
 import SessionHistory from "./pages/SessionHistory";
 import TrialExpired from "./pages/TrialExpired";
+import SubscriptionExpired from "./pages/SubscriptionExpired";
 import Access from "./pages/Access";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
@@ -69,6 +70,7 @@ const App = () => {
                   <Route path="/login" element={<Login />} />
                   <Route path="/access" element={<Access />} />
                   <Route path="/trial-expired" element={<TrialExpired />} />
+                  <Route path="/subscription-expired" element={<SubscriptionExpired />} />
                   <Route path="/register2974AHXW12" element={<Register />} />
                   <Route path="/purchase" element={<Purchase />} />
                   <Route path="/affiliate" element={<AffiliateProgram />} />

@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/table';
 import { MessageCircle, Search, Loader2, RefreshCw, CheckCircle2, Clock, XCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { getSubscriptionInfo } from '@/utils/subscription';
 
 interface Profile {
   id: string;
@@ -22,6 +23,7 @@ interface Profile {
   trial_start_date: string | null;
   has_paid: boolean | null;
   created_at: string | null;
+  subscription_start_date: string | null;
 }
 
 interface SessionAgg {
@@ -45,7 +47,7 @@ const ClientTrackingTab = () => {
       const [profilesRes, sessionsRes] = await Promise.all([
         supabase
           .from('profiles')
-          .select('id, full_name, email, whatsapp_phone, trial_start_date, has_paid, created_at')
+          .select('id, full_name, email, whatsapp_phone, trial_start_date, has_paid, created_at, subscription_start_date')
           .order('created_at', { ascending: false }),
         supabase
           .from('sessions')
@@ -143,6 +145,7 @@ const ClientTrackingTab = () => {
               <TableHead>Cliente</TableHead>
               <TableHead>WhatsApp</TableHead>
               <TableHead>Estado de Prueba</TableHead>
+              <TableHead>Suscripción</TableHead>
               <TableHead className="text-center">Sesiones</TableHead>
               <TableHead className="text-center">Completas</TableHead>
               <TableHead className="text-center">Incompletas</TableHead>
@@ -184,6 +187,23 @@ const ClientTrackingTab = () => {
                       {trial.label}
                     </Badge>
                   </TableCell>
+                  <TableCell>
+                    {(() => {
+                      const sub = getSubscriptionInfo(p.has_paid, p.subscription_start_date);
+                      if (!sub) return <span className="text-muted-foreground text-sm">—</span>;
+                      const color = sub.expired
+                        ? 'text-red-500'
+                        : sub.daysRemaining <= 30
+                        ? 'text-amber-500'
+                        : 'text-green-500';
+                      return (
+                        <div className="whitespace-nowrap">
+                          <p className={`text-sm font-medium ${color}`}>{sub.label}</p>
+                          <p className="text-xs text-muted-foreground">{sub.sublabel}</p>
+                        </div>
+                      );
+                    })()}
+                  </TableCell>
                   <TableCell className="text-center font-semibold">{sessions.total}</TableCell>
                   <TableCell className="text-center text-green-500">{sessions.completas}</TableCell>
                   <TableCell className="text-center text-orange-500">{sessions.incompletas}</TableCell>
@@ -203,7 +223,7 @@ const ClientTrackingTab = () => {
             })}
             {filtered.length === 0 && (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                   No se encontraron clientes.
                 </TableCell>
               </TableRow>

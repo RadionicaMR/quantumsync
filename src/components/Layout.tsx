@@ -5,6 +5,7 @@ import Footer from './Footer';
 import AffiliateReferralBanner from './AffiliateReferralBanner';
 import TrialCountdownBanner from './trial/TrialCountdownBanner';
 import TrialSupportPopup from './trial/TrialSupportPopup';
+import SubscriptionRenewalPopup from './trial/SubscriptionRenewalPopup';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LayoutProps {
@@ -85,6 +86,8 @@ const Layout = ({ children }: LayoutProps) => {
       </main>
       <Footer />
       <TrialSupportPopup />
+      <SubscriptionRenewalPopup />
+
     </div>
   );
 };

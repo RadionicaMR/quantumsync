@@ -23,6 +23,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Trash2, KeyRound, Loader2, Pencil, Save, X, MessageCircle } from 'lucide-react';
 import { useUsersManagement } from '@/hooks/useUsersManagement';
+import { getSubscriptionInfo } from '@/utils/subscription';
 import { toast } from '@/hooks/use-toast';
 import CreateUserDialog from './CreateUserDialog';
 
@@ -144,6 +145,7 @@ const UsersManagementSection = () => {
                 <TableHead>Rol</TableHead>
                 <TableHead>Pagado</TableHead>
                 <TableHead>Trial</TableHead>
+                <TableHead>Suscripción</TableHead>
                 <TableHead>Fecha de Registro</TableHead>
                 <TableHead className="text-right">Acciones</TableHead>
               </TableRow>
@@ -151,7 +153,7 @@ const UsersManagementSection = () => {
             <TableBody>
               {users.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center text-muted-foreground">
+                  <TableCell colSpan={9} className="text-center text-muted-foreground">
                     No hay usuarios registrados
                   </TableCell>
                 </TableRow>
@@ -253,6 +255,23 @@ const UsersManagementSection = () => {
                           return <Badge variant="outline" className="text-green-500 border-green-500">{days}d restantes</Badge>;
                         }
                         return <Badge variant="destructive">Expirado</Badge>;
+                      })()}
+                    </TableCell>
+                    <TableCell>
+                      {(() => {
+                        const sub = getSubscriptionInfo(user.has_paid, user.subscription_start_date);
+                        if (!sub) return <span className="text-muted-foreground">—</span>;
+                        const color = sub.expired
+                          ? 'text-red-500'
+                          : sub.daysRemaining <= 30
+                          ? 'text-amber-500'
+                          : 'text-green-500';
+                        return (
+                          <div className="whitespace-nowrap">
+                            <p className={`text-sm font-medium ${color}`}>{sub.label}</p>
+                            <p className="text-xs text-muted-foreground">{sub.sublabel}</p>
+                          </div>
+                        );
                       })()}
                     </TableCell>
                     <TableCell>

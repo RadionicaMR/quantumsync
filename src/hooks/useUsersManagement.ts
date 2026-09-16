@@ -11,6 +11,7 @@ export interface AppUser {
   role: 'admin' | 'user';
   has_paid: boolean;
   trial_start_date: string | null;
+  subscription_start_date: string | null;
 }
 
 export const useUsersManagement = () => {
@@ -24,7 +25,7 @@ export const useUsersManagement = () => {
       // Get all profiles
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
-        .select('id, email, full_name, whatsapp_phone, created_at, has_paid, trial_start_date')
+        .select('id, email, full_name, whatsapp_phone, created_at, has_paid, trial_start_date, subscription_start_date')
         .order('created_at', { ascending: false });
 
       if (profilesError) throw profilesError;
@@ -51,6 +52,7 @@ export const useUsersManagement = () => {
         role: rolesMap.get(profile.id) || 'user',
         has_paid: profile.has_paid ?? false,
         trial_start_date: profile.trial_start_date || null,
+        subscription_start_date: profile.subscription_start_date || null,
       })) as AppUser[];
 
       setUsers(formattedUsers);
@@ -176,7 +178,11 @@ export const useUsersManagement = () => {
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ has_paid: !currentStatus })
+        .update({
+          has_paid: !currentStatus,
+          // Al activar el pago se reinician los 365 días; al desactivarlo se limpia
+          subscription_start_date: !currentStatus ? new Date().toISOString() : null,
+        })
         .eq('id', userId);
 
       if (error) throw error;

@@ -1,6 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
+
+export const SUBSCRIPTION_DAYS = 365;
 
 interface TrialStatus {
   isLoading: boolean;
@@ -11,12 +13,18 @@ interface TrialStatus {
   hoursRemaining: number;
   minutesRemaining: number;
   trialStartDate: Date | null;
+  // Suscripción anual (solo para usuarios pagados)
+  subscriptionStartDate: Date | null;
+  subscriptionDayNumber: number | null;
+  subscriptionDaysRemaining: number | null;
+  isSubscriptionExpired: boolean;
 }
 
 export const useTrialStatus = (): TrialStatus => {
   const { user, isAuthenticated } = useAuth();
   const [hasPaid, setHasPaid] = useState(false);
   const [trialStartDate, setTrialStartDate] = useState<Date | null>(null);
+  const [subscriptionStartDate, setSubscriptionStartDate] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [now, setNow] = useState(new Date());
 
@@ -36,7 +44,7 @@ export const useTrialStatus = (): TrialStatus => {
       try {
         const { data, error } = await supabase
           .from('profiles')
-          .select('trial_start_date, has_paid')
+          .select('trial_start_date, has_paid, subscription_start_date')
           .eq('id', user.userId)
           .single();
 
@@ -48,6 +56,7 @@ export const useTrialStatus = (): TrialStatus => {
 
         setHasPaid(data?.has_paid ?? false);
         setTrialStartDate(data?.trial_start_date ? new Date(data.trial_start_date) : null);
+        setSubscriptionStartDate(data?.subscription_start_date ? new Date(data.subscription_start_date) : null);
       } catch (err) {
         console.error('[TRIAL] Exception:', err);
       } finally {
@@ -69,6 +78,18 @@ export const useTrialStatus = (): TrialStatus => {
   const hoursRemaining = Math.floor((totalMinutesRemaining % (24 * 60)) / 60);
   const minutesRemaining = totalMinutesRemaining % 60;
 
+  // Suscripción anual
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  const subscriptionElapsedDays =
+    hasPaid && subscriptionStartDate
+      ? Math.floor((now.getTime() - subscriptionStartDate.getTime()) / DAY_MS)
+      : null;
+  const subscriptionDayNumber = subscriptionElapsedDays !== null ? subscriptionElapsedDays + 1 : null;
+  const subscriptionDaysRemaining =
+    subscriptionElapsedDays !== null ? SUBSCRIPTION_DAYS - subscriptionElapsedDays : null;
+  const isSubscriptionExpired =
+    subscriptionDaysRemaining !== null && subscriptionDaysRemaining <= 0;
+
   return {
     isLoading,
     hasPaid,
@@ -78,5 +99,9 @@ export const useTrialStatus = (): TrialStatus => {
     hoursRemaining,
     minutesRemaining,
     trialStartDate,
+    subscriptionStartDate,
+    subscriptionDayNumber,
+    subscriptionDaysRemaining,
+    isSubscriptionExpired,
   };
 };
