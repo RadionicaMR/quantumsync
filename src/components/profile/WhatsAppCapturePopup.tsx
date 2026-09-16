@@ -6,7 +6,7 @@ import { CheckCircle2, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from '@/hooks/use-toast';
-import WhatsAppPhoneInput, { DEFAULT_COUNTRY_CODE, isValidWhatsappPhone } from '@/components/shared/WhatsAppPhoneInput';
+import WhatsAppPhoneInput, { DEFAULT_COUNTRY_CODE } from '@/components/shared/WhatsAppPhoneInput';
 
 const WhatsAppCapturePopup = () => {
   const { user, isAuthenticated } = useAuth();
@@ -104,7 +104,10 @@ const WhatsAppCapturePopup = () => {
             countryCode={countryCode}
             onCountryCodeChange={setCountryCode}
             phone={phone}
-            onPhoneChange={setPhone}
+            onPhoneChange={(v) => {
+              setPhone(v);
+              if (error) setError('');
+            }}
             disabled={isSaving}
           />
           {error && <p className="text-sm text-red-400">{error}</p>}

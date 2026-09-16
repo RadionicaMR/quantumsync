@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { MessageCircle } from 'lucide-react';
 import { useTrialStatus } from '@/hooks/useTrialStatus';
+import { useAuth } from '@/context/AuthContext';
 
 const WHATSAPP_NUMBER = '542945581188';
 const WHATSAPP_MESSAGE = encodeURIComponent(
