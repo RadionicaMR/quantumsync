@@ -66,27 +66,29 @@ const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
       <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg">
         <h3 className="text-xl font-semibold mb-4">{t('settings.treatmentVisualization')}</h3>
         
-        <TreatmentVisualizer 
-          isPlaying={isPlaying}
-          visualFeedback={true}
-          radionicImage={radionicImage}
-          receptorImage={receptorImage}
-          radionicImages={radionicImages}
-          receptorImages={receptorImages}
-          currentImage={currentImage}
-          hypnoticEffect={hypnoticEffect}
-          frequency={frequency}
-          intensity={intensity}
-          rate1={rate1}
-          rate2={rate2}
-          rate3={rate3}
-          rate4={rate4}
-          rate5={rate5}
-          rate6={rate6}
-          hypnoticSpeed={hypnoticSpeed}
-          receptorName={receptorName}
-          intention={intention}
-        />
+        <div className="w-full md:w-1/2 mx-auto">
+          <TreatmentVisualizer 
+            isPlaying={isPlaying}
+            visualFeedback={true}
+            radionicImage={radionicImage}
+            receptorImage={receptorImage}
+            radionicImages={radionicImages}
+            receptorImages={receptorImages}
+            currentImage={currentImage}
+            hypnoticEffect={hypnoticEffect}
+            frequency={frequency}
+            intensity={intensity}
+            rate1={rate1}
+            rate2={rate2}
+            rate3={rate3}
+            rate4={rate4}
+            rate5={rate5}
+            rate6={rate6}
+            hypnoticSpeed={hypnoticSpeed}
+            receptorName={receptorName}
+            intention={intention}
+          />
+        </div>
       </Card>
       
       {!hideActions && (
