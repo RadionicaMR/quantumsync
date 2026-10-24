@@ -35,8 +35,9 @@ const ProtectedRoute = ({ children, requireAdmin = false, requirePaid = false }:
     return <Navigate to="/" replace />;
   }
 
-  // Admin users bypass all trial restrictions
-  if (user?.isAdmin) {
+  // Admin users (and the owner account) bypass all trial/subscription restrictions
+  const isOwner = user?.email?.toLowerCase() === 'mauriramosgs@gmail.com';
+  if (user?.isAdmin || isOwner) {
     return <>{children}</>;
   }
 
