@@ -1,6 +1,7 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { ManifestAudio } from './types';
+import { startKeepAlive, stopKeepAlive } from '@/utils/backgroundKeepAlive';
 
 export const useManifestAudio = (): ManifestAudio & {
   backgroundModeActive: boolean;
@@ -62,8 +63,10 @@ export const useManifestAudio = (): ManifestAudio & {
   const handleVisibilityChange = useCallback(() => {
     if (document.hidden && isPlayingRef.current) {
       setBackgroundModeActive(true);
-    } else if (!document.hidden && bgActiveRef.current) {
-      setBackgroundModeActive(false);
+    } else if (!document.hidden) {
+      if (bgActiveRef.current) setBackgroundModeActive(false);
+      const ctx = audioContextRef.current;
+      if (isPlayingRef.current && ctx && ctx.state !== 'running') ctx.resume().catch(() => {});
     }
   }, []);
 
@@ -78,6 +81,7 @@ export const useManifestAudio = (): ManifestAudio & {
   const startAudio = (frequency: number) => {
     try {
       currentFrequencyRef.current = frequency;
+      if (!isPlayingRef.current) startKeepAlive();
       isPlayingRef.current = true;
       
       // Clean up previous audio resources synchronously (Safari needs this in user gesture)
@@ -145,6 +149,7 @@ export const useManifestAudio = (): ManifestAudio & {
   };
 
   const stopAudio = () => {
+    if (isPlayingRef.current) stopKeepAlive();
     isPlayingRef.current = false;
     stopAudioMonitor();
     
