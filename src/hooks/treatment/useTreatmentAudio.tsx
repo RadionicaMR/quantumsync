@@ -4,6 +4,7 @@ import { useAudioContext } from './useAudioContext';
 import { useOscillators } from './useOscillators';
 import { useTimer } from './useTimer';
 import { useBackgroundMode } from './useBackgroundMode';
+import { startKeepAlive, stopKeepAlive } from '@/utils/backgroundKeepAlive';
 
 export const useTreatmentAudio = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -176,6 +177,7 @@ export const useTreatmentAudio = () => {
       const audioContext = new AudioContextClass();
       audioContextRef.current = audioContext;
       isAudioInitializedRef.current = true;
+      startKeepAlive();
       
       console.log("AudioContext created synchronously, state:", audioContext.state);
       
@@ -255,6 +257,7 @@ export const useTreatmentAudio = () => {
   // Stop the audio treatment - FULLY SYNCHRONOUS for Safari compatibility
   const stopAudio = () => {
     console.log("=== STOPPING TREATMENT ===");
+    if (treatmentActiveRef.current) stopKeepAlive();
     
     // Set stopping flag to prevent concurrent operations
     isStoppingRef.current = true;
@@ -278,8 +281,18 @@ export const useTreatmentAudio = () => {
 
   // Cleanup on unmount - always stop everything regardless of state
   useEffect(() => {
+    // When the tab becomes visible again, wake the audio if the browser paused it
+    const onVisible = () => {
+      if (!document.hidden && treatmentActiveRef.current) {
+        const ctx = audioContextRef.current;
+        if (ctx && ctx.state !== 'running') ctx.resume().catch(() => {});
+      }
+    };
+    document.addEventListener('visibilitychange', onVisible);
     return () => {
+      document.removeEventListener('visibilitychange', onVisible);
       stopAudioMonitor();
+      if (treatmentActiveRef.current) stopKeepAlive();
       // CRITICAL FIX: Always cleanup on unmount - don't check isPlaying (stale closure)
       treatmentActiveRef.current = false;
       cleanupAudioResources();
