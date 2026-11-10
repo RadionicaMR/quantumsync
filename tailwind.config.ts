@@ -82,6 +82,10 @@ export default {
 					softblue: '#D3E4FD',
 					softgray: '#F1F0FB',
 					vividpurple: '#8B5CF6',
+				},
+				whatsapp: {
+					DEFAULT: '#25D366',
+					dark: '#128C7E',
 				}
 			},
 			borderRadius: {

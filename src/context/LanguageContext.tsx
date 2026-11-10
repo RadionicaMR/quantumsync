@@ -218,6 +218,7 @@ const translations: Record<Language, Record<string, string>> = {
     'home.heroDescMiddle': 'que amplifica el poder de tus terapias energéticas mediante frecuencias en Hertz, conectando',
     'home.heroScienceConsciousness': 'ciencia y conciencia',
     'home.startNow': 'INICIA AHORA',
+    'home.contactUs': 'Contactanos!',
 
     // Home Page - Problem Section
     'home.problemTitle1': 'Tu energía sana.',
@@ -552,6 +553,7 @@ const translations: Record<Language, Record<string, string>> = {
     'home.heroDescMiddle': 'technology that amplifies the power of your energy therapies through Hertz frequencies, connecting',
     'home.heroScienceConsciousness': 'science and consciousness',
     'home.startNow': 'START NOW',
+    'home.contactUs': 'Contact us!',
 
     // Home Page - Problem Section
     'home.problemTitle1': 'Your energy heals.',

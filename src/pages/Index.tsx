@@ -14,6 +14,7 @@ import AffiliateSection from '@/components/home/AffiliateSection';
 import FinalClosingSection from '@/components/home/FinalClosingSection';
 import CTAButton from '@/components/home/CTAButton';
 import FreeTrialPopup from '@/components/trial/FreeTrialPopup';
+import WhatsAppContactBubble from '@/components/home/WhatsAppContactBubble';
 import { useAnalytics } from '@/hooks/useAnalytics';
 
 const Index = () => {
@@ -72,6 +73,9 @@ const Index = () => {
 
       {/* Free Trial Popup - appears after 30 seconds */}
       <FreeTrialPopup />
+
+      {/* Floating WhatsApp button - always visible, bottom right */}
+      <WhatsAppContactBubble />
     </Layout>
   );
 };
