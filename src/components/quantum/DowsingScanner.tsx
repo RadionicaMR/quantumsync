@@ -48,6 +48,11 @@ const DowsingScanner = () => {
             className="bg-quantum-dark/30 border-quantum-primary/30"
             disabled={scanning}
           />
+          <CompactPersonPhotoUploader
+            photo={personPhoto}
+            onChange={setPersonPhoto}
+            disabled={scanning}
+          />
         </div>
 
         <DowsingScannerVisualization
