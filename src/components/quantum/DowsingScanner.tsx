@@ -7,8 +7,10 @@ import { Label } from "@/components/ui/label";
 import { useDowsingScanner } from '@/hooks/useDowsingScanner';
 import DowsingScannerVisualization from './DowsingScannerVisualization';
 import DowsingScannerControls from './DowsingScannerControls';
+import CompactPersonPhotoUploader from './CompactPersonPhotoUploader';
 
 const DowsingScanner = () => {
+  const [personPhoto, setPersonPhoto] = useState<string | null>(null);
   const {
     personName,
     setPersonName,
