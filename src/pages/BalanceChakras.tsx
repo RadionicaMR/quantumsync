@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import ChakraFigure from '@/components/quantum/ChakraFigure';
 import BalanceChakrasHeader from '@/components/balance/BalanceChakrasHeader';
 import PersonNameInput from '@/components/balance/PersonNameInput';
+import CompactPersonPhotoUploader from '@/components/quantum/CompactPersonPhotoUploader';
 import BalanceOptions from '@/components/balance/BalanceOptions';
 import ChakraResults from '@/components/balance/ChakraResults';
 import DurationControl from '@/components/balance/DurationControl';
@@ -21,6 +22,7 @@ import { useUsageTracking } from '@/hooks/useUsageTracking';
 
 interface LocationState {
   personName?: string;
+  personPhoto?: string | null;
   chakraStates?: Array<{
     name: string;
     state: string | null;
@@ -33,6 +35,9 @@ const BalanceChakras = () => {
   const { recordSession } = useSessionRecording();
   const { currentPatientId, setCurrentPatientId } = useSession();
   const [showSessionDialog, setShowSessionDialog] = useState(false);
+  const [personPhoto, setPersonPhoto] = useState<string | null>(
+    state.personPhoto || (location.state as any)?.sessionData?.personPhoto || null
+  );
   const { trackSessionStart, trackSessionEnd } = useUsageTracking();
   const chakraStartTimeRef = useRef<Date | null>(null);
   
@@ -125,6 +130,14 @@ const BalanceChakras = () => {
               setPersonName={setPersonName}
               isPlaying={isPlaying}
             />
+            <div className="mb-6">
+              <CompactPersonPhotoUploader
+                photo={personPhoto}
+                onChange={setPersonPhoto}
+                disabled={isPlaying}
+                showPreview
+              />
+            </div>
             
             <BalanceOptions 
               balanceOption={balanceOption}

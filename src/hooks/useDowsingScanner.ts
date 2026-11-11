@@ -72,10 +72,11 @@ export const useDowsingScanner = () => {
     }
   };
 
-  const navigateToBalance = () => {
+  const navigateToBalance = (personPhoto?: string | null) => {
     navigate('/balance-chakras', { 
       state: { 
         personName,
+        personPhoto: personPhoto || null,
         chakraStates: chakras.map(c => ({ name: c.name, state: c.state }))
       } 
     });
