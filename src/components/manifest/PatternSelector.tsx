@@ -31,11 +31,11 @@ const PatternSelector = ({
   return (
     <Card className="quantum-card p-6 lg:col-span-1">
       <h3 className="text-base font-semibold mb-1.5">Selecciona un Patrón Radiónico</h3>
-      <div className="space-y-2">
+      <div className="space-y-1">
         {patterns.map((pattern) => (
           <button
             key={pattern.id}
-            className={`w-full p-3 rounded-xl text-left transition-all ${
+            className={`w-full px-2 py-1 rounded-md text-left text-xs leading-tight transition-all ${
               selectedPattern === pattern.id 
                 ? 'bg-quantum-primary text-white' 
                 : 'bg-muted hover:bg-muted/80'
@@ -44,7 +44,7 @@ const PatternSelector = ({
             disabled={isManifestActive}
           >
             <div className="font-medium">{pattern.name}</div>
-            <div className={`text-sm ${selectedPattern === pattern.id ? 'text-white/80' : 'text-muted-foreground'}`}>
+            <div className={`text-[11px] ${selectedPattern === pattern.id ? 'text-white/80' : 'text-muted-foreground'}`}>
               {pattern.description}
             </div>
           </button>
