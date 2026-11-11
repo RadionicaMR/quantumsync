@@ -205,6 +205,7 @@ const Treat = () => {
   
   return (
     <Layout>
+      <div className="app-compact">
       <HeroSection
         title={t('treat.title')}
         subtitle={t('treat.subtitle')}
@@ -362,6 +363,7 @@ const Treat = () => {
       </section>
 
       <CallToAction />
+      </div>
     </Layout>
   );
 };
