@@ -106,7 +106,7 @@ const SubliminalTextToSpeech: React.FC<SubliminalTextToSpeechProps> = ({
         <span className="text-[11px] text-muted-foreground">
           {text.length}/{MAX_CHARS} caracteres
         </span>
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap [&_button]:h-8 [&_button]:px-2.5 [&_button]:text-xs [&_svg]:h-3.5 [&_svg]:w-3.5">
           <Select value={voice} onValueChange={setVoice} disabled={isDisabled || isGenerating}>
             <SelectTrigger className="h-8 w-[170px] text-xs">
               <SelectValue placeholder="Voz" />
