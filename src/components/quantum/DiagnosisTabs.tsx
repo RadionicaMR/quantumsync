@@ -88,8 +88,8 @@ const DiagnosisTabs: React.FC<DiagnosisTabsProps> = ({ isMobile }) => {
         </TabsList>
         
         <TabsContent value="pendulum" className="w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
-            <Card className="quantum-card shadow-lg shadow-quantum-primary/5 p-4 md:p-6 lg:col-span-1">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+            <Card className="quantum-card shadow-lg shadow-quantum-primary/5 p-4 md:p-6 md:col-span-1">
               <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 holographic-gradient">Selecciona Área a Diagnosticar</h3>
               
               <AreaSelection 
@@ -126,7 +126,7 @@ const DiagnosisTabs: React.FC<DiagnosisTabsProps> = ({ isMobile }) => {
               />
             </Card>
             
-            <div className="lg:col-span-2" id="pendulum-component">
+            <div className="md:col-span-2" id="pendulum-component">
               {mentalQuestionMode ? (
                 <Card className="quantum-card shadow-lg shadow-quantum-primary/5 p-4 md:p-6 h-full">
                   <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 holographic-gradient">Respuesta a tu Pregunta Mental</h3>
