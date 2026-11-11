@@ -35,6 +35,9 @@ const BalanceChakras = () => {
   const { recordSession } = useSessionRecording();
   const { currentPatientId, setCurrentPatientId } = useSession();
   const [showSessionDialog, setShowSessionDialog] = useState(false);
+  const [personPhoto, setPersonPhoto] = useState<string | null>(
+    state.personPhoto || (location.state as any)?.sessionData?.personPhoto || null
+  );
   const { trackSessionStart, trackSessionEnd } = useUsageTracking();
   const chakraStartTimeRef = useRef<Date | null>(null);
   
@@ -127,6 +130,14 @@ const BalanceChakras = () => {
               setPersonName={setPersonName}
               isPlaying={isPlaying}
             />
+            <div className="mb-6">
+              <CompactPersonPhotoUploader
+                photo={personPhoto}
+                onChange={setPersonPhoto}
+                disabled={isPlaying}
+                showPreview
+              />
+            </div>
             
             <BalanceOptions 
               balanceOption={balanceOption}
