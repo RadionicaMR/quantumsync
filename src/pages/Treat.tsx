@@ -7,7 +7,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CustomTreatment from '@/components/treatment/CustomTreatment';
 import CollapsibleHowItWorks from '@/components/common/CollapsibleHowItWorks';
 import HowItWorks from '@/components/treatment/HowItWorks';
-import CallToAction from '@/components/treatment/CallToAction';
 import PresetTreatment from '@/components/treatment/preset/PresetTreatment';
 import { treatmentPresets } from '@/data/treatmentPresets';
 import { useTreatment } from '@/hooks/useTreatment';
@@ -362,7 +361,6 @@ const Treat = () => {
         </div>
       </section>
 
-      <CallToAction />
       </div>
     </Layout>
   );

@@ -5,7 +5,6 @@ import HeroSection from '@/components/HeroSection';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CustomTreatment from '@/components/treatment/CustomTreatment';
-import CallToAction from '@/components/treatment/CallToAction';
 import PresetTreatment from '@/components/treatment/preset/PresetTreatment';
 import { treatmentPresets } from '@/data/treatmentPresets';
 import { useTreatment } from '@/hooks/useTreatment';
@@ -340,7 +339,6 @@ const Manifestation = () => {
         </div>
       </section>
 
-      <CallToAction />
       </div>
     </Layout>
   );

@@ -138,7 +138,7 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
   
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div className="lg:col-span-1 space-y-6">
+      <div className="contents lg:block lg:col-span-1 lg:space-y-6">
         <div className="bg-card/90 dark:bg-black/40 p-3 sm:p-6 rounded-lg">
           <h3 className="text-base font-semibold mb-1.5">{t('preset.selectPreset')}</h3>
           <div className="space-y-0.5">
@@ -179,7 +179,7 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
           clearAudio={clearAudio}
         />
 
-        <Card className={`bg-card/90 dark:bg-black/40 p-4 sm:p-6 rounded-lg ${isPlaying ? 'border-2 border-quantum-primary/60 bg-quantum-primary/5' : ''}`}>
+        <Card className={`order-last lg:order-none bg-card/90 dark:bg-black/40 p-4 sm:p-6 rounded-lg ${isPlaying ? 'border-2 border-quantum-primary/60 bg-quantum-primary/5' : ''}`}>
           <SettingsToggles 
             intensity={intensity}
             setIntensity={setIntensity}
