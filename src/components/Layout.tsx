@@ -2,6 +2,7 @@
 import { ReactNode, useEffect, useMemo } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import { useAuth } from '@/context/AuthContext';
 import AffiliateReferralBanner from './AffiliateReferralBanner';
 import TrialCountdownBanner from './trial/TrialCountdownBanner';
 import TrialSupportPopup from './trial/TrialSupportPopup';
@@ -17,6 +18,7 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   const { isMobile, isIOS, isSafari } = useIsMobile();
   const { pathname } = useLocation();
+  const { user } = useAuth();
   const isLanding = pathname === '/';
   
   // Aplicar optimizaciones específicas para Safari/iOS
@@ -88,7 +90,7 @@ const Layout = ({ children }: LayoutProps) => {
       <main className={mainClasses}>
         {children}
       </main>
-      <Footer />
+      {!user && <Footer />}
       <TrialSupportPopup />
       <SubscriptionRenewalPopup />
       <WhatsAppCapturePopup />
