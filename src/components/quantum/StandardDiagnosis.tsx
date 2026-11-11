@@ -41,6 +41,7 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
   const { recordSession } = useSessionRecording();
   const { currentPatientId, setCurrentPatientId } = useSession();
   const [showSessionDialog, setShowSessionDialog] = useState(false);
+  const [personPhoto, setPersonPhoto] = useState<string | null>(null);
   
   
   const {
@@ -101,6 +102,12 @@ const StandardDiagnosis: React.FC<StandardDiagnosisProps> = ({
   return (
     <>
       <PersonNameInput personName={personName} setPersonName={setPersonName} />
+      <CompactPersonPhotoUploader
+        photo={personPhoto}
+        onChange={setPersonPhoto}
+        disabled={isPendulumSwinging || processingCamera}
+        showPreview
+      />
       
       {selectedArea && (
         <div className="text-lg mb-6">

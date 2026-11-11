@@ -25,7 +25,8 @@ const CompactPersonPhotoUploader = ({ photo, onChange, disabled = false, showPre
   };
 
   return (
-    <div className="mt-2 flex items-center gap-2 rounded-md border border-dashed border-quantum-primary/30 bg-quantum-dark/20 p-2 text-left">
+    <div className="mt-2 w-full max-w-xs">
+      <div className="flex items-center gap-2 rounded-md border border-dashed border-quantum-primary/30 bg-quantum-dark/20 p-2 text-left">
       {photo ? (
         <img
           src={photo}
@@ -76,6 +77,14 @@ const CompactPersonPhotoUploader = ({ photo, onChange, disabled = false, showPre
         onChange={handleFileChange}
         disabled={disabled}
       />
+      </div>
+      {showPreview && photo && (
+        <img
+          src={photo}
+          alt={t('diagnosis.personPhoto')}
+          className="mt-2 h-28 w-full rounded-md border border-quantum-primary/20 bg-quantum-dark/20 object-contain"
+        />
+      )}
     </div>
   );
 };
