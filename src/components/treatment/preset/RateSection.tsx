@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Disc } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
-import RateDial from '@/components/shared/RateDial';
+import RatesDropdown from '@/components/shared/RatesDropdown';
 
 interface RateSectionProps {
   rate1: string;
@@ -80,8 +80,8 @@ const RateSection: React.FC<RateSectionProps> = ({
   };
 
   return (
-    <Card className="p-6 quantum-card">
-      <div className="mb-4">
+    <Card className="p-3 quantum-card">
+      <div className="mb-2">
         <h3 className="text-xl font-semibold">{t('rate.title')} (RATES)</h3>
         <p className="text-sm text-muted-foreground mt-1">
           {language === 'en' 
@@ -90,36 +90,7 @@ const RateSection: React.FC<RateSectionProps> = ({
         </p>
       </div>
       
-      <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 ${rates.length > 6 ? 'lg:grid-cols-3' : 'lg:grid-cols-6'}`}>
-        {rates.map((rate) => (
-          <div key={rate.id}>
-            <Label htmlFor={`rate${rate.id}`} className="text-xs">RATE {rate.id}</Label>
-            <div className="flex gap-1">
-              <Input
-                id={`rate${rate.id}`}
-                value={rate.value}
-                onChange={(e) => rate.setter(e.target.value)}
-                placeholder={`R${rate.id}`}
-                className="font-mono flex-1 text-sm px-2"
-                maxLength={50}
-                disabled={disabled}
-              />
-              <div className="flex flex-col">
-                <Label className="text-xs">DIAL</Label>
-                <Button variant="outline" size="icon" disabled={disabled} onClick={() => openDial(rate.id)} className="min-w-8 h-9">
-                  <Disc className="h-3 w-3" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <RateDial
-        open={dialOpen}
-        onClose={handleDialClose}
-        initialValue={getCurrentRateAsNumber()}
-      />
+      <RatesDropdown rates={rates} disabled={disabled} />
     </Card>
   );
 };
