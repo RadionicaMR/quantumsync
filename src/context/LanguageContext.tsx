@@ -135,6 +135,10 @@ const translations: Record<Language, Record<string, string>> = {
     // Diagnosis Page
     'diagnosis.title': 'Diagnóstico Cuántico',
     'diagnosis.subtitle': 'Analiza el estado energético mediante técnicas de radiestesia cuántica',
+    'diagnosis.personPhoto': 'Fotografía de la persona',
+    'diagnosis.uploadPhoto': 'Subir foto',
+    'diagnosis.changePhoto': 'Cambiar foto',
+    'diagnosis.removePhoto': 'Quitar foto',
 
     // Common
     'common.loading': 'Cargando...',
@@ -471,6 +475,10 @@ const translations: Record<Language, Record<string, string>> = {
     // Diagnosis Page
     'diagnosis.title': 'Quantum Diagnosis',
     'diagnosis.subtitle': 'Analyze energetic state using quantum dowsing techniques',
+    'diagnosis.personPhoto': "Person's photo",
+    'diagnosis.uploadPhoto': 'Upload photo',
+    'diagnosis.changePhoto': 'Change photo',
+    'diagnosis.removePhoto': 'Remove photo',
 
     // Common
     'common.loading': 'Loading...',

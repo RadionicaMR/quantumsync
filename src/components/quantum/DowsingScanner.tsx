@@ -1,4 +1,5 @@
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Input } from "@/components/ui/input";
@@ -6,8 +7,10 @@ import { Label } from "@/components/ui/label";
 import { useDowsingScanner } from '@/hooks/useDowsingScanner';
 import DowsingScannerVisualization from './DowsingScannerVisualization';
 import DowsingScannerControls from './DowsingScannerControls';
+import CompactPersonPhotoUploader from './CompactPersonPhotoUploader';
 
 const DowsingScanner = () => {
+  const [personPhoto, setPersonPhoto] = useState<string | null>(null);
   const {
     personName,
     setPersonName,
@@ -43,6 +46,11 @@ const DowsingScanner = () => {
             placeholder="Ingresa el nombre"
             maxLength={100}
             className="bg-quantum-dark/30 border-quantum-primary/30"
+            disabled={scanning}
+          />
+          <CompactPersonPhotoUploader
+            photo={personPhoto}
+            onChange={setPersonPhoto}
             disabled={scanning}
           />
         </div>
