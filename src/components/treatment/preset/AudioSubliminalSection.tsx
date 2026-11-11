@@ -36,7 +36,7 @@ const AudioSubliminalSection = ({
   
   return (
     <Card className="p-6 quantum-card">
-      <h3 className="text-xl font-semibold mb-4">Audio Subliminal (opcional)</h3>
+      <h3 className="text-base font-semibold mb-1.5">Audio Subliminal (opcional)</h3>
       <AudioSubliminalControls
         audioFile={audioFile}
         setAudioFile={setAudioFile}

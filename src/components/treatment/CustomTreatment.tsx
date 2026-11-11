@@ -131,7 +131,7 @@ const CustomTreatment: React.FC<CustomTreatmentProps> = ({
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div className="lg:col-span-1 space-y-6">
         <div className="bg-card/90 dark:bg-black/40 p-6 rounded-lg">
-          <h3 className="text-xl font-semibold mb-4">{t('preset.frequencySettings')}</h3>
+          <h3 className="text-base font-semibold mb-1.5">{t('preset.frequencySettings')}</h3>
           <FrequencyControls
             frequency={frequency}
             setFrequency={setFrequency}

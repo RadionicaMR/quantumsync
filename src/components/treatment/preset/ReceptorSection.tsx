@@ -24,7 +24,7 @@ const ReceptorSection: React.FC<ReceptorSectionProps> = ({
   
   return (
     <Card className="p-6 quantum-card">
-      <h3 className="text-xl font-semibold mb-4">{t('receptor.title')}</h3>
+      <h3 className="text-base font-semibold mb-1.5">{t('receptor.title')}</h3>
       <ReceptorNameInput
         receptorName={receptorName}
         setReceptorName={setReceptorName}

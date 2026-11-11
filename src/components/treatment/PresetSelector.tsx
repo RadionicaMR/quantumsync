@@ -25,7 +25,7 @@ const PresetSelector = ({
 }: PresetSelectorProps) => {
   return (
     <Card className="quantum-card p-6">
-      <h3 className="text-xl font-semibold mb-4">Seleccionar Tratamiento</h3>
+      <h3 className="text-base font-semibold mb-1.5">Seleccionar Tratamiento</h3>
       <div className="space-y-2">
         {presets.map((preset) => (
           <button

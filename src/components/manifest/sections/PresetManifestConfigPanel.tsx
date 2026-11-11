@@ -92,7 +92,7 @@ const PresetManifestConfigPanel: React.FC<PresetManifestConfigPanelProps> = ({
   return (
     <div className="lg:col-span-1">
       <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-md">
-        <h3 className="text-xl font-semibold mb-4">Configuración</h3>
+        <h3 className="text-base font-semibold mb-1.5">Configuración</h3>
 
         {/* Add the new ManifestationBox at the top */}
         <div className="mt-2 mb-6">
