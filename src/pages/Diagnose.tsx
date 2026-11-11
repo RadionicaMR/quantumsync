@@ -12,6 +12,7 @@ const Diagnose = () => {
 
   return (
     <Layout>
+      <div className="app-compact">
       <DiagnosisHeader />
       
       {/* Sección de Cómo Funciona justo debajo del título */}
@@ -22,6 +23,7 @@ const Diagnose = () => {
       </section>
 
       <DiagnosisFooter />
+      </div>
     </Layout>
   );
 };

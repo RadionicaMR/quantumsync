@@ -183,3 +183,40 @@
     opacity: 0;
   }
 }
+
+/* Compact "app-like" density for working screens (Treat, Manifestation, Diagnose) */
+@layer utilities {
+  .app-compact { font-size: 0.875rem; line-height: 1.35; }
+  .app-compact .text-4xl { font-size: 1.5rem; line-height: 1.9rem; }
+  .app-compact .text-3xl { font-size: 1.3rem; line-height: 1.7rem; }
+  .app-compact .text-2xl { font-size: 1.125rem; line-height: 1.5rem; }
+  .app-compact .text-xl { font-size: 1rem; line-height: 1.35rem; }
+  .app-compact .text-lg { font-size: 0.9375rem; line-height: 1.3rem; }
+  .app-compact .text-base { font-size: 0.875rem; line-height: 1.25rem; }
+  .app-compact .text-sm { font-size: 0.8125rem; line-height: 1.15rem; }
+  .app-compact .text-xs { font-size: 0.72rem; line-height: 1rem; }
+
+  .app-compact .p-8, .app-compact .p-6 { padding: 0.75rem; }
+  .app-compact .p-4 { padding: 0.625rem; }
+  .app-compact .p-3 { padding: 0.5rem; }
+  .app-compact .px-6 { padding-left: 0.75rem; padding-right: 0.75rem; }
+  .app-compact .py-6, .app-compact .py-8 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+  .app-compact .pt-6, .app-compact .pt-4 { padding-top: 0.5rem; }
+  .app-compact .pb-6, .app-compact .pb-4 { padding-bottom: 0.5rem; }
+
+  .app-compact .mb-8, .app-compact .mb-6 { margin-bottom: 0.5rem; }
+  .app-compact .mb-4 { margin-bottom: 0.375rem; }
+  .app-compact .mt-8, .app-compact .mt-6 { margin-top: 0.5rem; }
+  .app-compact .mt-4 { margin-top: 0.375rem; }
+
+  .app-compact .gap-8, .app-compact .gap-6 { gap: 0.5rem; }
+  .app-compact .gap-4 { gap: 0.4rem; }
+  .app-compact .space-y-8 > :not([hidden]) ~ :not([hidden]),
+  .app-compact .space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.5rem; }
+  .app-compact .space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.4rem; }
+  .app-compact .space-y-3 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.3rem; }
+
+  .app-compact .h-12 { height: 2.5rem; }
+  .app-compact .h-11 { height: 2.25rem; }
+  .app-compact .h-10 { height: 2.125rem; }
+}

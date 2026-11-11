@@ -174,6 +174,7 @@ const Manifestation = () => {
   
   return (
     <Layout>
+      <div className="app-compact">
       <HeroSection
         title={t('manifest.title')}
         subtitle={t('manifest.subtitle')}
@@ -340,6 +341,7 @@ const Manifestation = () => {
       </section>
 
       <CallToAction />
+      </div>
     </Layout>
   );
 };
