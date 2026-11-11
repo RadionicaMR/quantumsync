@@ -7,9 +7,10 @@ interface CompactPersonPhotoUploaderProps {
   photo: string | null;
   onChange: (photo: string | null) => void;
   disabled?: boolean;
+  showPreview?: boolean;
 }
 
-const CompactPersonPhotoUploader = ({ photo, onChange, disabled = false }: CompactPersonPhotoUploaderProps) => {
+const CompactPersonPhotoUploader = ({ photo, onChange, disabled = false, showPreview = false }: CompactPersonPhotoUploaderProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { t } = useLanguage();
 

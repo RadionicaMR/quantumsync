@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import VibraCheckVisual from './VibraCheckVisual';
 import DiagnosisResult from './DiagnosisResult';
 import PersonNameInput from './PersonNameInput';
+import CompactPersonPhotoUploader from './CompactPersonPhotoUploader';
 import DiagnosisStandby from './DiagnosisStandby';
 import { useDiagnosis } from '@/hooks/diagnosis/useDiagnosis';
 import { RecentDiagnosisResult } from '@/hooks/useDiagnosisCache';
