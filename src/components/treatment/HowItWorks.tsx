@@ -5,17 +5,17 @@ const HowItWorks = () => {
   const { t } = useLanguage();
   
   return (
-    <section className="py-12 px-4 bg-quantum-gradient-soft">
+    <section className="py-4 px-4 rounded-lg bg-quantum-gradient-soft">
       <div className="container mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">{t('howItWorks.title')}</h2>
+        <div className="text-center mb-4">
+          <h2 className="text-xl font-bold mb-2">{t('howItWorks.title')}</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             {t('howItWorks.subtitle')}
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <Card className="quantum-card p-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <Card className="quantum-card p-4">
             <div className="w-12 h-12 rounded-full bg-quantum-gradient-soft text-quantum-primary flex items-center justify-center mb-4 mx-auto">
               1
             </div>
@@ -25,7 +25,7 @@ const HowItWorks = () => {
             </p>
           </Card>
           
-          <Card className="quantum-card p-6">
+          <Card className="quantum-card p-4">
             <div className="w-12 h-12 rounded-full bg-quantum-gradient-soft text-quantum-primary flex items-center justify-center mb-4 mx-auto">
               2
             </div>
@@ -35,7 +35,7 @@ const HowItWorks = () => {
             </p>
           </Card>
           
-          <Card className="quantum-card p-6">
+          <Card className="quantum-card p-4">
             <div className="w-12 h-12 rounded-full bg-quantum-gradient-soft text-quantum-primary flex items-center justify-center mb-4 mx-auto">
               3
             </div>

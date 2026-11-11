@@ -180,7 +180,7 @@ const Manifestation = () => {
       />
 
       {/* Main section with manifestation box prominently displayed */}
-      <section className="py-4 px-1 sm:px-4">
+      <section className="py-2 px-1 sm:px-4">
         <div className="container mx-auto">
           <ManifestationBoxAdapter 
             intention={treatment.intention || ""}
@@ -195,10 +195,10 @@ const Manifestation = () => {
         </div>
       </section>
 
-      <section className="py-6 px-1 sm:px-4">
+      <section className="py-2 px-1 sm:px-4">
         <div className="container mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-3">
               <TabsTrigger value="presets" className="flex flex-col">
                 <span>{t('manifest.presetsTab')}</span>
                 <span>{t('manifest.presetsTabSub')}</span>

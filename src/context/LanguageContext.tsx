@@ -38,6 +38,7 @@ const translations: Record<Language, Record<string, string>> = {
     'treat.importingFrom': 'Importando datos del diagnóstico de',
     
     // How It Works
+    'common.howItWorksToggle': '¿Cómo funciona?',
     'howItWorks.title': 'Cómo Funciona el Tratamiento con Frecuencias',
     'howItWorks.subtitle': 'QuantumSync utiliza principios de resonancia y entrenamiento para ayudar a equilibrar tu campo energético.',
     'howItWorks.step1Title': 'Emisión de Frecuencia',
@@ -373,6 +374,7 @@ const translations: Record<Language, Record<string, string>> = {
     'treat.importingFrom': 'Importing diagnosis data from',
 
     // How It Works
+    'common.howItWorksToggle': 'How does it work?',
     'howItWorks.title': 'How Frequency Treatment Works',
     'howItWorks.subtitle': 'QuantumSync uses principles of resonance and entrainment to help balance your energy field.',
     'howItWorks.step1Title': 'Frequency Emission',
