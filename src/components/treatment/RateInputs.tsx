@@ -1,3 +1,4 @@
+import RatesDropdown from '@/components/shared/RatesDropdown';
 
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
@@ -103,70 +104,7 @@ const RateInputs = ({
     return pulses[idx % pulses.length];
   };
 
-  return (
-    <div className="space-y-3">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-        {rates.map((rate, idx) => (
-          <div key={rate.id} className="flex items-end gap-1">
-            {/* Input column */}
-            <div className="flex-1 flex flex-col min-w-0">
-              <Label htmlFor={`rate${rate.id}`} className="mb-1 text-xs">RATE {rate.id}</Label>
-              <Input
-                id={`rate${rate.id}`}
-                type="text"
-                maxLength={50}
-                placeholder={`R${rate.id}`}
-                value={rate.value}
-                onChange={(e) => rate.setter(e.target.value)}
-                disabled={isPlaying}
-                className={`${isPlaying ? `${pulseFor(idx)} bg-quantum-primary/10` : ''} h-9 text-sm px-2 w-full`}
-              />
-            </div>
-
-            {/* Dial column */}
-            <div className="flex flex-col items-center">
-              <Label className="mb-1 text-xs">DIAL</Label>
-              <Button
-                variant="outline"
-                size="icon"
-                disabled={isPlaying}
-                onClick={() => openDial(rate.id)}
-                className="min-w-8 h-9 touch-manipulation"
-                aria-label={`Abrir dial para RATE ${rate.id}`}
-              >
-                <Disc className="h-4 w-4" />
-              </Button>
-            </div>
-
-            {/* Random column */}
-            <div className="flex flex-col items-center">
-              <Label className="mb-1 text-xs opacity-0 select-none" aria-hidden>·</Label>
-              <Button
-                variant="outline"
-                size="icon"
-                disabled={isPlaying}
-                onMouseDown={() => handleInteractionStart(rate.id, rate.setter)}
-                onTouchStart={(e) => {
-                  e.preventDefault();
-                  handleInteractionStart(rate.id, rate.setter);
-                }}
-                className={`min-w-8 h-9 ${generatingStates[rate.id] ? 'bg-quantum-primary/20' : ''} touch-manipulation`}
-                aria-label={`Generar RATE ${rate.id} aleatorio`}
-              >
-                <Square className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
-      
-      <RateDial
-        open={dialOpen}
-        onClose={handleDialClose}
-        initialValue={getCurrentRateAsNumber()}
-      />
-    </div>
-  );
+  return <RatesDropdown rates={rates} disabled={isPlaying} />;
 };
 
 export default RateInputs;
