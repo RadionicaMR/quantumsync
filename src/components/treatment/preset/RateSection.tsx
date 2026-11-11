@@ -20,6 +20,12 @@ interface RateSectionProps {
   setRate5?: (value: string) => void;
   rate6?: string;
   setRate6?: (value: string) => void;
+  rate7?: string;
+  setRate7?: (value: string) => void;
+  rate8?: string;
+  setRate8?: (value: string) => void;
+  rate9?: string;
+  setRate9?: (value: string) => void;
   isPlaying?: boolean;
   isDisabled?: boolean;
 }
@@ -31,6 +37,9 @@ const RateSection: React.FC<RateSectionProps> = ({
   rate4 = '', setRate4 = () => {},
   rate5 = '', setRate5 = () => {},
   rate6 = '', setRate6 = () => {},
+  rate7, setRate7 = () => {},
+  rate8, setRate8 = () => {},
+  rate9, setRate9 = () => {},
   isPlaying = false,
   isDisabled = false,
 }) => {
@@ -46,6 +55,9 @@ const RateSection: React.FC<RateSectionProps> = ({
     { id: 4, value: rate4, setter: setRate4 },
     { id: 5, value: rate5, setter: setRate5 },
     { id: 6, value: rate6, setter: setRate6 },
+    ...(rate7 !== undefined ? [{ id: 7, value: rate7, setter: setRate7 }] : []),
+    ...(rate8 !== undefined ? [{ id: 8, value: rate8, setter: setRate8 }] : []),
+    ...(rate9 !== undefined ? [{ id: 9, value: rate9, setter: setRate9 }] : []),
   ];
 
   const openDial = (rateNum: number) => {
@@ -78,7 +90,7 @@ const RateSection: React.FC<RateSectionProps> = ({
         </p>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 ${rates.length > 6 ? 'lg:grid-cols-3' : 'lg:grid-cols-6'}`}>
         {rates.map((rate) => (
           <div key={rate.id}>
             <Label htmlFor={`rate${rate.id}`} className="text-xs">RATE {rate.id}</Label>
