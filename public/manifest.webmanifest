@@ -2,7 +2,7 @@
   "name": "QuantumSync",
   "short_name": "QuantumSync",
   "description": "Plataforma de tratamiento y manifestación con frecuencias cuánticas",
-  "start_url": "/",
+  "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

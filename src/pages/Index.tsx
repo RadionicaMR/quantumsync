@@ -16,6 +16,8 @@ import CTAButton from '@/components/home/CTAButton';
 import FreeTrialPopup from '@/components/trial/FreeTrialPopup';
 import WhatsAppContactBubble from '@/components/home/WhatsAppContactBubble';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 
 const Index = () => {
   const { trackPageVisit } = useAnalytics();
@@ -23,6 +25,17 @@ const Index = () => {
   useEffect(() => {
     trackPageVisit();
   }, [trackPageVisit]);
+
+  const { user, loading } = useAuth();
+  const isInstalledApp =
+    typeof window !== 'undefined' &&
+    (window.matchMedia?.('(display-mode: standalone)').matches ||
+      (window.navigator as any).standalone === true ||
+      new URLSearchParams(window.location.search).get('source') === 'pwa');
+
+  if (isInstalledApp && !loading && user) {
+    return <Navigate to="/treat" replace />;
+  }
 
   return (
     <Layout>
