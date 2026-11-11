@@ -140,12 +140,12 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div className="lg:col-span-1 space-y-6">
         <div className="bg-card/90 dark:bg-black/40 p-3 sm:p-6 rounded-lg">
-          <h3 className="text-xl font-semibold mb-4">{t('preset.selectPreset')}</h3>
-          <div className="space-y-2">
+          <h3 className="text-base font-semibold mb-1.5">{t('preset.selectPreset')}</h3>
+          <div className="space-y-0.5">
             {presets.map((p) => (
               <button
                 key={p.id}
-                className={`w-full text-left px-2 sm:px-4 py-2 rounded-md hover:bg-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary ${selectedPreset === p.id ? 'bg-secondary text-secondary-foreground' : 'bg-transparent'}`}
+                className={`w-full text-left text-xs leading-tight px-2 py-1 rounded-md hover:bg-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary ${selectedPreset === p.id ? 'bg-secondary text-secondary-foreground' : 'bg-transparent'}`}
                 onClick={() => onSelectPreset(p)}
               >
                 {getPresetName(p)} ({p.frequency} Hz)

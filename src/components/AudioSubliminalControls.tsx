@@ -198,7 +198,7 @@ const AudioSubliminalControls: React.FC<AudioSubliminalControlsProps> = ({
     <div className="space-y-2 border border-zinc-200 p-3 rounded-xl mt-2 bg-muted/20">
       <Label className="mb-1 block font-semibold">Audio Subliminal (opcional)</Label>
 
-      <div className="flex gap-3 items-center flex-wrap">
+      <div className="flex gap-2 items-center flex-wrap [&_button]:h-8 [&_button]:px-2.5 [&_button]:text-xs [&_label]:text-xs [&_svg]:h-3.5 [&_svg]:w-3.5">
         <AudioFileSelector
           isDisabled={isDisabled}
           isPlaying={isPlaying}
