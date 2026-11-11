@@ -64,7 +64,7 @@ const TreatmentVisualizerSection: React.FC<TreatmentVisualizerSectionProps> = ({
   return (
     <div className="space-y-6">
       <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg">
-        <h3 className="text-xl font-semibold mb-4">{t('settings.treatmentVisualization')}</h3>
+        <h3 className="text-base font-semibold mb-1.5">{t('settings.treatmentVisualization')}</h3>
         
         <div className="w-full md:w-1/2 mx-auto">
           <TreatmentVisualizer 

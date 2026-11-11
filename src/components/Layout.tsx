@@ -8,6 +8,7 @@ import TrialSupportPopup from './trial/TrialSupportPopup';
 import SubscriptionRenewalPopup from './trial/SubscriptionRenewalPopup';
 import WhatsAppCapturePopup from './profile/WhatsAppCapturePopup';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLocation } from 'react-router-dom';
 
 interface LayoutProps {
   children: ReactNode;
@@ -15,6 +16,8 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   const { isMobile, isIOS, isSafari } = useIsMobile();
+  const { pathname } = useLocation();
+  const isLanding = pathname === '/';
   
   // Aplicar optimizaciones específicas para Safari/iOS
   useEffect(() => {
@@ -66,10 +69,10 @@ const Layout = ({ children }: LayoutProps) => {
   
   // Usar useMemo para el contenido principal
   const mainClasses = useMemo(() => {
-    return `flex-grow w-full pt-16 pb-8 md:pt-20 md:pb-16 relative z-10 
+    return `flex-grow w-full pt-16 pb-8 md:pt-20 md:pb-16 relative z-10 ${isLanding ? '' : 'app-compact'} 
     ${isIOS ? 'ios-content-padding' : ''} 
     ${isSafari ? 'safari-momentum-scroll' : ''}`;
-  }, [isIOS, isSafari]);
+  }, [isIOS, isSafari, isLanding]);
   
   return (
     <div className={layoutClasses}>

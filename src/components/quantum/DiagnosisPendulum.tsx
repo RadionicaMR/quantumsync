@@ -29,7 +29,7 @@ const DiagnosisPendulum: React.FC<DiagnosisPendulumProps> = ({
 
   return (
     <Card className="quantum-card p-6 h-full">
-      <h3 className="text-xl font-semibold mb-4">
+      <h3 className="text-base font-semibold mb-1.5">
         {mentalQuestionMode ? "Respuesta a tu Pregunta Mental" : "Diagnóstico Energético"}
       </h3>
       

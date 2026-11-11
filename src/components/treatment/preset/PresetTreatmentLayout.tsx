@@ -155,7 +155,7 @@ const PresetTreatmentLayout: React.FC<PresetTreatmentLayoutProps> = ({
         </div>
 
         <div className="bg-card/90 dark:bg-black/40 p-6 rounded-lg">
-          <h3 className="text-xl font-semibold mb-4">{t('preset.frequencySettings')}</h3>
+          <h3 className="text-base font-semibold mb-1.5">{t('preset.frequencySettings')}</h3>
           <p className="text-muted-foreground">
             {t('preset.frequency')}: {frequency[0]} Hz
             <br />

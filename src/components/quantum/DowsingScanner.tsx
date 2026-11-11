@@ -30,7 +30,7 @@ const DowsingScanner = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h3 className="text-xl font-semibold mb-4">Escáner Completo de Campo Energético</h3>
+        <h3 className="text-base font-semibold mb-1.5">Escáner Completo de Campo Energético</h3>
         
         <div className="mb-6">
           <Label htmlFor="personName" className="block text-left mb-2">

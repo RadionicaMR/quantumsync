@@ -70,7 +70,7 @@ const TreatmentControls = ({
   if (!selectedPreset) {
     return (
       <Card className="quantum-card p-6 h-full">
-        <h3 className="text-xl font-semibold mb-4">Control de Tratamiento</h3>
+        <h3 className="text-base font-semibold mb-1.5">Control de Tratamiento</h3>
         <TreatmentEmptyState />
       </Card>
     );
@@ -81,7 +81,7 @@ const TreatmentControls = ({
       {/* Left panel - Treatment controls */}
       <div className="lg:col-span-1">
         <Card className="quantum-card p-6 h-full">
-          <h3 className="text-xl font-semibold mb-4">Control de Tratamiento</h3>
+          <h3 className="text-base font-semibold mb-1.5">Control de Tratamiento</h3>
           
           <div className="space-y-6">
             <TreatmentDescription selectedPresetData={selectedPresetData} />
@@ -112,7 +112,7 @@ const TreatmentControls = ({
         <div className="space-y-6">
           {/* Images module - now on top of the right side */}
           <Card className="quantum-card p-6">
-            <h3 className="text-xl font-semibold mb-4">Imágenes del Tratamiento</h3>
+            <h3 className="text-base font-semibold mb-1.5">Imágenes del Tratamiento</h3>
             <ImageGrid
               radionicImage={radionicImage}
               setRadionicImage={setRadionicImage}
@@ -128,7 +128,7 @@ const TreatmentControls = ({
           
           {/* Visualizer and actions */}
           <Card className="quantum-card p-6">
-            <h3 className="text-xl font-semibold mb-4">Visualizador</h3>
+            <h3 className="text-base font-semibold mb-1.5">Visualizador</h3>
             
             <TreatmentFeedbackVisual
               isPlaying={isPlaying}

@@ -270,7 +270,7 @@ const Manifestation = () => {
             <TabsContent value="custom" className="w-full">
               <Card className="quantum-card p-6">
                 <div className="">
-                  <h3 className="text-xl font-semibold mb-4">{t('manifest.customTitle')}</h3>
+                  <h3 className="text-base font-semibold mb-1.5">{t('manifest.customTitle')}</h3>
                   <p className="text-muted-foreground mb-8">
                     {t('manifest.customDesc')}
                   </p>

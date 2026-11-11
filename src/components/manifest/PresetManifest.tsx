@@ -172,7 +172,7 @@ const PresetManifest: React.FC<PresetManifestProps> = ({
       <div className="lg:col-span-2 space-y-6">
         {/* Image Uploader Section */}
         <Card className="bg-card/90 dark:bg-black/40 p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold mb-4">Imágenes de Manifestación</h3>
+          <h3 className="text-base font-semibold mb-1.5">Imágenes de Manifestación</h3>
           <ImageUploaderSection 
             isPlaying={isManifestActive}
             radionicImage={patternImage}
