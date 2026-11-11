@@ -12,7 +12,7 @@ const PersonNameInput = ({ personName, setPersonName, isPlaying }: PersonNameInp
   const { t } = useLanguage();
   
   return (
-    <div className="mb-6">
+    <div className="mb-1">
       <Label htmlFor="personName" className="block mb-2">
         {t('chakras.personNameLabel')}
       </Label>

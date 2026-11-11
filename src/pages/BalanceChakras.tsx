@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import ChakraFigure from '@/components/quantum/ChakraFigure';
 import BalanceChakrasHeader from '@/components/balance/BalanceChakrasHeader';
 import PersonNameInput from '@/components/balance/PersonNameInput';
+import CompactPersonPhotoUploader from '@/components/quantum/CompactPersonPhotoUploader';
 import BalanceOptions from '@/components/balance/BalanceOptions';
 import ChakraResults from '@/components/balance/ChakraResults';
 import DurationControl from '@/components/balance/DurationControl';
@@ -21,6 +22,7 @@ import { useUsageTracking } from '@/hooks/useUsageTracking';
 
 interface LocationState {
   personName?: string;
+  personPhoto?: string | null;
   chakraStates?: Array<{
     name: string;
     state: string | null;

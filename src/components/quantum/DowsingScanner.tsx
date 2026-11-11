@@ -69,7 +69,7 @@ const DowsingScanner = () => {
           progress={progress}
           startScan={startScan}
           stopScan={stopScan}
-          navigateToBalance={navigateToBalance}
+          navigateToBalance={() => navigateToBalance(personPhoto)}
         />
       </motion.div>
     </Card>
