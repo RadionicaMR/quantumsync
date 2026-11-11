@@ -1,6 +1,5 @@
 
 import QuantumButton from '@/components/QuantumButton';
-import InfoSection from '@/components/quantum/InfoSection';
 import { useNavigate } from 'react-router-dom';
 
 const DiagnosisFooter = () => {
@@ -8,9 +7,8 @@ const DiagnosisFooter = () => {
   
   return (
     <>
-      <InfoSection />
 
-      <section className="py-8 md:py-12 px-4 bg-gradient-to-b from-background to-quantum-dark/40">
+      <section className="py-4 md:py-6 px-4 bg-gradient-to-b from-background to-quantum-dark/40">
         <div className="container mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4 holographic-gradient">¿Listo para Profundizar?</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-6 md:mb-8">

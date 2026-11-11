@@ -5,6 +5,7 @@ import HeroSection from '@/components/HeroSection';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CustomTreatment from '@/components/treatment/CustomTreatment';
+import CollapsibleHowItWorks from '@/components/common/CollapsibleHowItWorks';
 import HowItWorks from '@/components/treatment/HowItWorks';
 import CallToAction from '@/components/treatment/CallToAction';
 import PresetTreatment from '@/components/treatment/preset/PresetTreatment';
@@ -209,12 +210,12 @@ const Treat = () => {
         subtitle={t('treat.subtitle')}
       />
 
-      <HowItWorks />
+      <CollapsibleHowItWorks><HowItWorks /></CollapsibleHowItWorks>
 
-      <section className="py-12 px-1 sm:px-4">
+      <section className="py-3 px-1 sm:px-4">
         <div className="container mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-3">
               <TabsTrigger value="presets" className="flex flex-col">
                 <span>{t('treat.presetsTab')}</span>
                 <span>{t('treat.presetsTabSub')}</span>

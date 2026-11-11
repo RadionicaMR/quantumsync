@@ -4,6 +4,7 @@ import { useIsMobileOnly } from '@/hooks/use-mobile';
 import DiagnosisHeader from '@/components/quantum/DiagnosisHeader';
 import DiagnosisTabs from '@/components/quantum/DiagnosisTabs';
 import DiagnosisFooter from '@/components/quantum/DiagnosisFooter';
+import CollapsibleHowItWorks from '@/components/common/CollapsibleHowItWorks';
 import InfoSection from '@/components/quantum/InfoSection';
 
 const Diagnose = () => {
@@ -14,7 +15,7 @@ const Diagnose = () => {
       <DiagnosisHeader />
       
       {/* Sección de Cómo Funciona justo debajo del título */}
-      <InfoSection />
+      <CollapsibleHowItWorks><InfoSection /></CollapsibleHowItWorks>
 
       <section className="py-4 md:py-6 px-4 bg-gradient-to-b from-quantum-dark/70 to-background">
         <DiagnosisTabs isMobile={isMobile} />

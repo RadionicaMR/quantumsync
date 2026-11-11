@@ -61,7 +61,7 @@ const HeroSection = ({
   };
 
   return (
-    <div className={`relative w-full overflow-hidden py-6 md:py-10 px-4 bg-quantum-dark/90 ${className}`}>
+    <div className={`relative w-full overflow-hidden py-3 md:py-4 px-4 bg-quantum-dark/90 ${className}`}>
       {/* Fondo galáctico */}
       <GalacticBackground />
       

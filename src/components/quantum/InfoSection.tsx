@@ -58,22 +58,22 @@ const InfoSection = () => {
   };
 
   return (
-    <section className="py-12 px-4 bg-quantum-gradient-soft">
+    <section className="py-4 px-4 rounded-lg bg-quantum-gradient-soft">
       <div className="container mx-auto">
         <motion.div 
-          className="text-center mb-12"
+          className="text-center mb-4"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-3xl font-bold mb-4">Cómo Funciona</h2>
+          <h2 className="text-xl font-bold mb-2">Cómo Funciona</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             {getSubtitle()}
           </p>
         </motion.div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {infoCards.map((card, index) => (
             <motion.div 
               key={card.step}
