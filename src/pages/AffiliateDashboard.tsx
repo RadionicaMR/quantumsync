@@ -264,7 +264,7 @@ const AffiliateDashboard = () => {
           </TabsContent>
 
           <TabsContent value="profile">
-            <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:items-start">
               <div>
                 <h3 className="text-lg font-semibold mb-2">Información de la Cuenta</h3>
                 <Card className="p-6">
