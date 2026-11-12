@@ -181,13 +181,15 @@ const AffiliateDashboard = () => {
         </div>
 
         <Tabs defaultValue="links" className="space-y-4">
-          <TabsList>
+          <TabsList className="flex-wrap h-auto">
             <TabsTrigger value="links">Mis Enlaces</TabsTrigger>
             <TabsTrigger value="sales">Ventas</TabsTrigger>
             <TabsTrigger value="profile">Perfil</TabsTrigger>
+            <TabsTrigger value="promo">Materiales de Promoción</TabsTrigger>
           </TabsList>
 
           <TabsContent value="links">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:items-start">
             <Card className="p-6">
               <h2 className="text-xl font-bold mb-4">Enlaces de Afiliado</h2>
               
@@ -223,9 +225,11 @@ const AffiliateDashboard = () => {
                 </div>
               </div>
             </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="sales">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:items-start">
             <Card className="p-6">
               <h2 className="text-xl font-bold mb-4">Historial de Ventas</h2>
               
@@ -261,6 +265,7 @@ const AffiliateDashboard = () => {
                 </p>
               )}
             </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="profile">
@@ -298,6 +303,38 @@ const AffiliateDashboard = () => {
                   onSuccess={loadAffiliateData}
                 />
               </div>
+            </div>
+          </TabsContent>
+          <TabsContent value="promo">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:items-start">
+              <Card className="p-6">
+                <h2 className="text-xl font-bold mb-1">Materiales de Promoción</h2>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Textos listos para compartir en WhatsApp, Instagram o Facebook. Ya incluyen tu link.
+                </p>
+                <div className="space-y-4">
+                  {[
+                    `✨ Descubrí QuantumSync: tratamientos de frecuencias, manifestación y diagnóstico de chakras desde tu celular. Probalo gratis 3 días 👉 ${window.location.origin}?ref=${affiliate.affiliate_code}`,
+                    `🔮 ¿Querés armonizar tu energía y potenciar tus intenciones? QuantumSync es la herramienta de radiónica cuántica que estaba buscando. Conocela acá: ${window.location.origin}?ref=${affiliate.affiliate_code}`,
+                    `🎧 Frecuencias terapéuticas, audio subliminal y equilibrio de chakras en una sola app. Accedé a QuantumSync: ${window.location.origin}/purchase?ref=${affiliate.affiliate_code}`,
+                  ].map((text, i) => (
+                    <div key={i} className="border rounded-lg p-3">
+                      <p className="text-sm whitespace-pre-line">{text}</p>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="mt-2"
+                        onClick={() => {
+                          navigator.clipboard.writeText(text);
+                          toast({ title: 'Texto copiado' });
+                        }}
+                      >
+                        <Copy className="h-4 w-4 mr-1" /> Copiar texto
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </Card>
             </div>
           </TabsContent>
         </Tabs>
