@@ -34,7 +34,7 @@ interface SessionAgg {
 }
 
 import { TRIAL_DAYS } from '@/hooks/useTrialStatus';
-import { getRemarketingStage, buildRemarketingMessage, STAGE_LABELS, type RemarketingStage } from '@/utils/remarketing';
+import { getRemarketingStage, buildClientWhatsAppUrl, STAGE_LABELS, type RemarketingStage } from '@/utils/remarketing';
 
 const STAGE_FILTERS: RemarketingStage[] = ['two_days', 'one_day', 'expired', 'recontact'];
 
@@ -190,7 +190,7 @@ const ClientTrackingTab = () => {
                   <TableCell>
                     {waNumber ? (
                       <a
-                        href={`https://wa.me/${waNumber}?text=${encodeURIComponent(buildRemarketingMessage(getRemarketingStage(p.trial_start_date, p.has_paid), p.full_name))}`}
+                        href={buildClientWhatsAppUrl(p)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 text-green-500 hover:text-green-400 hover:underline"

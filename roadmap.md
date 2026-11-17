@@ -2,3 +2,5 @@
 - [x] Make Users the first and default administrator tab.
 - [ ] Verify administrator tab in the signed-in UI: the requesting account is redirected away from /admin by the existing access check.
 - [x] Unify the administrator trial countdown with the access expiry calculation and test the three-day boundary.
+- [x] Restore the agreed WhatsApp follow-ups and verify all four generated client links and promotional prices with tests.
+- [ ] Verify WhatsApp links in signed-in Seguimiento: the requesting account is redirected from /admin to the homepage by existing access checks.
