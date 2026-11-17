@@ -21,11 +21,11 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { Trash2, KeyRound, Loader2, Pencil, Save, X, MessageCircle } from 'lucide-react';
+import { Trash2, KeyRound, Loader2, Pencil, Save, X, MessageCircle, Copy } from 'lucide-react';
 import { useUsersManagement } from '@/hooks/useUsersManagement';
 import { getSubscriptionInfo } from '@/utils/subscription';
 import { getTrialEndDate } from '@/utils/trial';
-import { buildClientWhatsAppUrl } from '@/utils/remarketing';
+import { buildClientWhatsAppUrl, buildClientWhatsAppMessage, isDesktopBrowser } from '@/utils/remarketing';
 import { toast } from '@/hooks/use-toast';
 import CreateUserDialog from './CreateUserDialog';
 
@@ -217,7 +217,7 @@ const UsersManagementSection = () => {
                         <div className="flex items-center gap-2">
                           {user.whatsapp_phone ? (
                             <a
-                              href={user.has_paid ? `https://wa.me/${user.whatsapp_phone.replace(/\D/g, '')}` : buildClientWhatsAppUrl(user)}
+                              href={user.has_paid ? `https://wa.me/${user.whatsapp_phone.replace(/\D/g, '')}` : buildClientWhatsAppUrl(user, new Date(), isDesktopBrowser())}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center gap-1 text-green-500 hover:underline"
@@ -227,6 +227,11 @@ const UsersManagementSection = () => {
                             </a>
                           ) : (
                             <span className="text-muted-foreground">-</span>
+                          )}
+                          {!user.has_paid && (
+                            <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground" title="Copiar mensaje" onClick={() => { navigator.clipboard.writeText(buildClientWhatsAppMessage(user)); toast({ title: 'Mensaje copiado' }); }}>
+                              <Copy className="h-3.5 w-3.5" />
+                            </Button>
                           )}
                           <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground" onClick={() => startEditPhone(user.id, user.whatsapp_phone)}>
                             <Pencil className="h-3.5 w-3.5" />

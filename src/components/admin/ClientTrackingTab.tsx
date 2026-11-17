@@ -11,8 +11,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { MessageCircle, Search, Loader2, RefreshCw, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import { MessageCircle, Copy, Search, Loader2, RefreshCw, CheckCircle2, Clock, XCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 import { getSubscriptionInfo } from '@/utils/subscription';
 
 interface Profile {
@@ -34,7 +35,7 @@ interface SessionAgg {
 }
 
 import { TRIAL_DAYS } from '@/hooks/useTrialStatus';
-import { getClientRemarketingStage, buildClientWhatsAppUrl, STAGE_LABELS, type RemarketingStage } from '@/utils/remarketing';
+import { getClientRemarketingStage, buildClientWhatsAppUrl, buildClientWhatsAppMessage, isDesktopBrowser, STAGE_LABELS, type RemarketingStage } from '@/utils/remarketing';
 
 const STAGE_FILTERS: RemarketingStage[] = ['two_days', 'one_day', 'expired', 'recontact'];
 
@@ -190,7 +191,7 @@ const ClientTrackingTab = () => {
                   <TableCell>
                     {waNumber ? (
                       <a
-                        href={buildClientWhatsAppUrl(p)}
+                        href={buildClientWhatsAppUrl(p, new Date(), isDesktopBrowser())}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 text-green-500 hover:text-green-400 hover:underline"
@@ -200,6 +201,11 @@ const ClientTrackingTab = () => {
                       </a>
                     ) : (
                       <span className="text-muted-foreground text-sm">Sin número</span>
+                    )}
+                    {waNumber && !p.has_paid && (
+                      <Button size="sm" variant="ghost" className="h-7 w-7 p-0 ml-1 text-muted-foreground hover:text-foreground" title="Copiar mensaje" onClick={() => { navigator.clipboard.writeText(buildClientWhatsAppMessage(p)); toast({ title: 'Mensaje copiado' }); }}>
+                        <Copy className="h-3.5 w-3.5" />
+                      </Button>
                     )}
                   </TableCell>
                   <TableCell>

@@ -44,3 +44,11 @@ test('filters and messages share the client stage including legacy dates', () =>
   expect(getClientRemarketingStage({ ...client, trial_start_date: null }, at(300))).toBe('recontact');
   expect(getClientRemarketingStage({ ...client, has_paid: true }, at(300))).toBe(null);
 });
+
+test('desktop link opens WhatsApp Web with the full multi-line message', () => {
+  const c = { whatsapp_phone: '+54 9 11 1234', full_name: 'Ana Paz', trial_start_date: null, created_at: null, has_paid: false };
+  const url = new URL(buildClientWhatsAppUrl(c, new Date(), true));
+  expect(url.host).toBe('web.whatsapp.com');
+  expect(url.searchParams.get('phone')).toBe('54911' + '1234');
+  expect(url.searchParams.get('text')).toContain('$97 USD');
+});

@@ -66,8 +66,19 @@ export function getClientRemarketingStage(client: RemarketingClient, now: Date =
 }
 
 /** Every unpaid client gets a follow-up, including the first 24 hours of trial. */
-export function buildClientWhatsAppUrl(client: RemarketingClient, now: Date = new Date()): string {
-  const stage = getClientRemarketingStage(client, now);
-  const message = buildRemarketingMessage(stage, client.full_name);
-  return `https://wa.me/${(client.whatsapp_phone || '').replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
+export function buildClientWhatsAppMessage(client: RemarketingClient, now: Date = new Date()): string {
+  return buildRemarketingMessage(getClientRemarketingStage(client, now), client.full_name);
+}
+
+/** WhatsApp Desktop drops everything after the first line break, so desktop browsers open WhatsApp Web instead. */
+export function isDesktopBrowser(): boolean {
+  return typeof navigator !== 'undefined' && !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+}
+
+export function buildClientWhatsAppUrl(client: RemarketingClient, now: Date = new Date(), desktop = false): string {
+  const phone = (client.whatsapp_phone || '').replace(/\D/g, '');
+  const text = encodeURIComponent(buildClientWhatsAppMessage(client, now));
+  return desktop
+    ? `https://web.whatsapp.com/send?phone=${phone}&text=${text}`
+    : `https://wa.me/${phone}?text=${text}`;
 }
