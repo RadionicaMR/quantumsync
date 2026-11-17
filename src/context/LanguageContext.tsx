@@ -12,6 +12,14 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 const translations: Record<Language, Record<string, string>> = {
   es: {
+    'admin.usersTab': 'Usuarios',
+    'session.selectPatient': 'Selecciona un paciente',
+    'session.noPatients': 'No hay pacientes disponibles',
+    'session.removePatient': 'Borrar del listado',
+    'session.removeConfirmation': '¿Borrar a {name} del listado de pacientes?',
+    'session.keepHistory': 'Las sesiones anteriores se conservarán en el historial.',
+    'session.removeError': 'No se pudo quitar el paciente. Inténtalo nuevamente.',
+    'session.removed': 'Paciente quitado del listado',
     // Navbar
     'nav.diagnosis': 'Diagnóstico',
     'nav.balanceChakras': 'Equilibrar Chakras',
@@ -352,6 +360,14 @@ const translations: Record<Language, Record<string, string>> = {
     'home.closingTagline2': 'Frecuencia para la vida.',
   },
   en: {
+    'admin.usersTab': 'Users',
+    'session.selectPatient': 'Select a patient',
+    'session.noPatients': 'No patients available',
+    'session.removePatient': 'Remove from list',
+    'session.removeConfirmation': 'Remove {name} from the patient list?',
+    'session.keepHistory': 'Previous sessions will remain in your history.',
+    'session.removeError': 'Could not remove the patient. Please try again.',
+    'session.removed': 'Patient removed from list',
     // Navbar
     'nav.diagnosis': 'Diagnosis',
     'nav.balanceChakras': 'Balance Chakras',

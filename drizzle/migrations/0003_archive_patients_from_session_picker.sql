@@ -1,0 +1,2 @@
+ALTER TABLE public.patients ADD COLUMN IF NOT EXISTS archived boolean NOT NULL DEFAULT false;
+COMMENT ON COLUMN public.patients.archived IS 'Hides patients from new-session selection while preserving existing session history';

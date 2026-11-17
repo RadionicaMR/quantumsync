@@ -1,0 +1,3 @@
+- [x] Allow removing unused patients from session selection while retaining history; created and removed a test patient through the signed-in UI.
+- [x] Make Users the first and default administrator tab.
+- [ ] Verify administrator tab in the signed-in UI: the requesting account is redirected away from /admin by the existing access check.

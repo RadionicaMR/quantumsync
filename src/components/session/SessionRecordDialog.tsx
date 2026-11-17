@@ -12,13 +12,10 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { ChevronDown, Trash2 } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
+import { archivePatient } from './patientArchive';
 
 interface SessionRecordDialogProps {
   open: boolean;
@@ -39,6 +36,10 @@ export const SessionRecordDialog = ({
   sessionType,
 }: SessionRecordDialogProps) => {
   const { user, isAuthenticated } = useAuth();
+  const { t } = useLanguage();
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [patientToRemove, setPatientToRemove] = useState<Patient | null>(null);
+  const [removing, setRemoving] = useState(false);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<string>('');
   const [newPatientName, setNewPatientName] = useState('');
@@ -58,6 +59,7 @@ export const SessionRecordDialog = ({
       .from('patients')
       .select('id, name')
       .eq('therapist_id', user.email)
+      .eq('archived', false)
       .order('name');
 
     if (error) {
@@ -125,6 +127,21 @@ export const SessionRecordDialog = ({
     });
   };
 
+  const handleRemovePatient = async () => {
+    if (!patientToRemove || !user?.email || removing) return;
+    setRemoving(true);
+    const { error } = await archivePatient(patientToRemove.id, user.email);
+    setRemoving(false);
+    if (error) {
+      toast({ title: t('session.removeError'), variant: 'destructive' });
+      return;
+    }
+    setPatients(current => current.filter(patient => patient.id !== patientToRemove.id));
+    if (selectedPatient === patientToRemove.id) setSelectedPatient('');
+    setPatientToRemove(null);
+    toast({ title: t('session.removed') });
+  };
+
   const handleConfirm = () => {
     if (selectedPatient) {
       onConfirm(selectedPatient);
@@ -169,22 +186,40 @@ export const SessionRecordDialog = ({
             <>
               <div className="space-y-2">
                 <Label>Seleccionar Paciente</Label>
-                <Select value={selectedPatient} onValueChange={setSelectedPatient}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona un paciente" />
-                  </SelectTrigger>
-                  <SelectContent>
+                <Popover open={pickerOpen} onOpenChange={setPickerOpen}>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-between" aria-label={t('session.selectPatient')}>
+                      <span className="truncate">{patients.find(patient => patient.id === selectedPatient)?.name || t('session.selectPatient')}</span>
+                      <ChevronDown className="h-4 w-4 shrink-0" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent align="start" className="z-[60] w-[var(--radix-popover-trigger-width)] p-1 max-h-64 overflow-y-auto">
                     {patients.length === 0 ? (
-                      <SelectItem disabled value="__none__">No hay pacientes disponibles</SelectItem>
+                      <p className="p-2 text-sm text-muted-foreground">{t('session.noPatients')}</p>
                     ) : (
                       patients.map((patient) => (
-                        <SelectItem key={patient.id} value={patient.id}>
-                          {patient.name}
-                        </SelectItem>
+                        <div key={patient.id} className="flex items-center gap-1">
+                          <Button variant="ghost" className="flex-1 min-w-0 justify-start" onClick={() => { setSelectedPatient(patient.id); setPickerOpen(false); }}>
+                            <span className="truncate">{patient.name}</span>
+                          </Button>
+                          <Button variant="ghost" size="icon" className="shrink-0 text-destructive" aria-label={`${t('session.removePatient')}: ${patient.name}`} title={t('session.removePatient')} onClick={() => { setPatientToRemove(patient); setPickerOpen(false); }}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       ))
                     )}
-                  </SelectContent>
-                </Select>
+                  </PopoverContent>
+                </Popover>
+                {patientToRemove && (
+                  <div className="space-y-2 border-t pt-2">
+                    <p className="text-sm">{t('session.removeConfirmation').replace('{name}', patientToRemove.name)}</p>
+                    <p className="text-xs text-muted-foreground">{t('session.keepHistory')}</p>
+                    <div className="flex gap-2">
+                      <Button variant="destructive" size="sm" onClick={handleRemovePatient} disabled={removing}>{t('common.delete')}</Button>
+                      <Button variant="outline" size="sm" onClick={() => setPatientToRemove(null)} disabled={removing}>{t('common.cancel')}</Button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <Button
@@ -235,7 +270,7 @@ export const SessionRecordDialog = ({
           <div className="flex gap-2">
             <Button
               onClick={handleConfirm}
-              disabled={!selectedPatient}
+              disabled={!selectedPatient || removing || !!patientToRemove}
               className="flex-1"
             >
               Registrar Sesión

@@ -1,0 +1,1 @@
+- Remove patients from the session picker by archiving them, not deleting them, to preserve historical sessions and patient references.

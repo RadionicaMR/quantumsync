@@ -13,8 +13,10 @@ import UsersManagementSection from './UsersManagementSection';
 import VisitorAnalyticsTab from './VisitorAnalyticsTab';
 import UsageAnalyticsTab from './UsageAnalyticsTab';
 import ClientTrackingTab from './ClientTrackingTab';
+import { useLanguage } from '@/context/LanguageContext';
 
 const AdminDashboard = () => {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const { adminData, affiliates, sales, loading, reloadData } = useAdminData();
 
@@ -100,14 +102,14 @@ const AdminDashboard = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3, delay: 0.2 }}
       >
-        <Tabs defaultValue="sales" className="w-full">
+        <Tabs defaultValue="users" className="w-full">
           <TabsList className="grid w-full grid-cols-4 md:grid-cols-8 mb-8">
-            <TabsTrigger value="sales">Ventas</TabsTrigger>
-            <TabsTrigger value="affiliates">Afiliados</TabsTrigger>
             <TabsTrigger value="users">
               <UserCog className="w-4 h-4 mr-2" />
-              Usuarios
+              {t('admin.usersTab')}
             </TabsTrigger>
+            <TabsTrigger value="sales">Ventas</TabsTrigger>
+            <TabsTrigger value="affiliates">Afiliados</TabsTrigger>
             <TabsTrigger value="tracking">
               <ClipboardList className="w-4 h-4 mr-2" />
               Seguimiento

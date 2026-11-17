@@ -371,6 +371,7 @@ export type Database = {
       }
       patients: {
         Row: {
+          archived: boolean
           created_at: string | null
           id: string
           name: string
@@ -379,6 +380,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          archived?: boolean
           created_at?: string | null
           id?: string
           name: string
@@ -387,6 +389,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          archived?: boolean
           created_at?: string | null
           id?: string
           name?: string
