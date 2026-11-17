@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
+import { getTrialEndDate } from '@/utils/trial';
+export { TRIAL_DAYS } from '@/utils/trial';
 
 export const SUBSCRIPTION_DAYS = 365;
-export const TRIAL_DAYS = 3;
 
 interface TrialStatus {
   isLoading: boolean;
@@ -68,7 +69,7 @@ export const useTrialStatus = (): TrialStatus => {
     fetchTrialData();
   }, [isAuthenticated, user?.userId]);
 
-  const trialEndDate = trialStartDate ? new Date(trialStartDate.getTime() + TRIAL_DAYS * 24 * 60 * 60 * 1000) : null;
+  const trialEndDate = trialStartDate ? getTrialEndDate(trialStartDate) : null;
   const msRemaining = trialEndDate ? trialEndDate.getTime() - now.getTime() : 0;
 
   const isTrialActive = !hasPaid && trialStartDate !== null && msRemaining > 0;

@@ -1,1 +1,2 @@
 - Remove patients from the session picker by archiving them, not deleting them, to preserve historical sessions and patient references.
+- Use the shared trial utility for access expiry and administrator countdowns so both follow the same duration.

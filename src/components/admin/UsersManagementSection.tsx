@@ -24,6 +24,7 @@ import { Switch } from '@/components/ui/switch';
 import { Trash2, KeyRound, Loader2, Pencil, Save, X, MessageCircle } from 'lucide-react';
 import { useUsersManagement } from '@/hooks/useUsersManagement';
 import { getSubscriptionInfo } from '@/utils/subscription';
+import { getTrialEndDate } from '@/utils/trial';
 import { toast } from '@/hooks/use-toast';
 import CreateUserDialog from './CreateUserDialog';
 
@@ -248,7 +249,7 @@ const UsersManagementSection = () => {
                       {(() => {
                         if (user.has_paid) return <Badge variant="default">Pagado</Badge>;
                         if (!user.trial_start_date) return <Badge variant="secondary">Sin trial</Badge>;
-                        const trialEnd = new Date(new Date(user.trial_start_date).getTime() + 7 * 24 * 60 * 60 * 1000);
+                        const trialEnd = getTrialEndDate(new Date(user.trial_start_date));
                         const now = new Date();
                         if (now < trialEnd) {
                           const days = Math.ceil((trialEnd.getTime() - now.getTime()) / (24 * 60 * 60 * 1000));
