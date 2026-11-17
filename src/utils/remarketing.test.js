@@ -1,5 +1,5 @@
 import { expect, test } from 'bun:test';
-import { getRemarketingStage, buildRemarketingMessage, buildClientWhatsAppUrl, PROMO_PRICE, REGULAR_PRICE } from './remarketing';
+import { getRemarketingStage, getClientRemarketingStage, buildRemarketingMessage, buildClientWhatsAppUrl, PROMO_PRICE, REGULAR_PRICE } from './remarketing';
 
 const start = '2026-11-10T12:00:00Z';
 const at = (h) => new Date(new Date(start).getTime() + h * 3600000);
@@ -37,4 +37,10 @@ test('WhatsApp link encodes the selected stage end to end', () => {
 test('first-day and legacy unpaid clients do not fall back to a generic greeting', () => {
   expect(new URL(buildClientWhatsAppUrl(client, at(10))).searchParams.get('text')).toBe(buildRemarketingMessage('two_days', client.full_name));
   expect(new URL(buildClientWhatsAppUrl({ ...client, trial_start_date: null }, at(300))).searchParams.get('text')).toBe(buildRemarketingMessage('recontact', client.full_name));
+});
+
+test('filters and messages share the client stage including legacy dates', () => {
+  expect(getClientRemarketingStage(client, at(10))).toBe('two_days');
+  expect(getClientRemarketingStage({ ...client, trial_start_date: null }, at(300))).toBe('recontact');
+  expect(getClientRemarketingStage({ ...client, has_paid: true }, at(300))).toBe(null);
 });

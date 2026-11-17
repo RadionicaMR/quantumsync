@@ -34,7 +34,7 @@ interface SessionAgg {
 }
 
 import { TRIAL_DAYS } from '@/hooks/useTrialStatus';
-import { getRemarketingStage, buildClientWhatsAppUrl, STAGE_LABELS, type RemarketingStage } from '@/utils/remarketing';
+import { getClientRemarketingStage, buildClientWhatsAppUrl, STAGE_LABELS, type RemarketingStage } from '@/utils/remarketing';
 
 const STAGE_FILTERS: RemarketingStage[] = ['two_days', 'one_day', 'expired', 'recontact'];
 
@@ -102,7 +102,7 @@ const ClientTrackingTab = () => {
     const q = search.trim().toLowerCase();
     const byStage = stageFilter === 'all'
       ? profiles
-      : profiles.filter((p) => getRemarketingStage(p.trial_start_date, p.has_paid) === stageFilter);
+      : profiles.filter((p) => getClientRemarketingStage(p) === stageFilter);
     if (!q) return byStage;
     return byStage.filter(
       (p) =>
@@ -150,7 +150,7 @@ const ClientTrackingTab = () => {
           Todos ({profiles.length})
         </Button>
         {STAGE_FILTERS.map((st) => {
-          const count = profiles.filter((p) => getRemarketingStage(p.trial_start_date, p.has_paid) === st).length;
+          const count = profiles.filter((p) => getClientRemarketingStage(p) === st).length;
           return (
             <Button key={st} size="sm" variant={stageFilter === st ? 'default' : 'outline'} onClick={() => setStageFilter(st)}>
               {STAGE_LABELS[st]} ({count})

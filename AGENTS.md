@@ -1,3 +1,3 @@
 - Remove patients from the session picker by archiving them, not deleting them, to preserve historical sessions and patient references.
 - Use the shared trial utility for access expiry and administrator countdowns so both follow the same duration.
-- Build Seguimiento WhatsApp links through the shared remarketing URL helper so stage selection and message encoding cannot diverge.
+- Use shared remarketing client-stage and URL helpers for unpaid-client contact links in Users and Seguimiento, including filters and counts, so messages cannot diverge.

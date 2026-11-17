@@ -25,6 +25,7 @@ import { Trash2, KeyRound, Loader2, Pencil, Save, X, MessageCircle } from 'lucid
 import { useUsersManagement } from '@/hooks/useUsersManagement';
 import { getSubscriptionInfo } from '@/utils/subscription';
 import { getTrialEndDate } from '@/utils/trial';
+import { buildClientWhatsAppUrl } from '@/utils/remarketing';
 import { toast } from '@/hooks/use-toast';
 import CreateUserDialog from './CreateUserDialog';
 
@@ -216,7 +217,7 @@ const UsersManagementSection = () => {
                         <div className="flex items-center gap-2">
                           {user.whatsapp_phone ? (
                             <a
-                              href={`https://wa.me/${user.whatsapp_phone.replace(/\D/g, '')}`}
+                              href={user.has_paid ? `https://wa.me/${user.whatsapp_phone.replace(/\D/g, '')}` : buildClientWhatsAppUrl(user)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center gap-1 text-green-500 hover:underline"

@@ -50,17 +50,24 @@ export function buildRemarketingMessage(stage: RemarketingStage | null, name: st
   }
 }
 
-/** Every unpaid client gets a follow-up, including the first 24 hours of trial. */
-export function buildClientWhatsAppUrl(client: {
+type RemarketingClient = {
   whatsapp_phone: string | null;
   full_name: string | null;
   trial_start_date: string | null;
   created_at: string | null;
   has_paid: boolean | null;
-}, now: Date = new Date()): string {
-  const stage = client.has_paid ? null : (
+};
+
+/** Use the same stage for filters, counts and outgoing messages. */
+export function getClientRemarketingStage(client: RemarketingClient, now: Date = new Date()): RemarketingStage | null {
+  return client.has_paid ? null : (
     getRemarketingStage(client.trial_start_date || client.created_at, false, now) || 'two_days'
   );
+}
+
+/** Every unpaid client gets a follow-up, including the first 24 hours of trial. */
+export function buildClientWhatsAppUrl(client: RemarketingClient, now: Date = new Date()): string {
+  const stage = getClientRemarketingStage(client, now);
   const message = buildRemarketingMessage(stage, client.full_name);
   return `https://wa.me/${(client.whatsapp_phone || '').replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
 }
