@@ -34,12 +34,16 @@ interface SessionAgg {
 }
 
 import { TRIAL_DAYS } from '@/hooks/useTrialStatus';
+import { getRemarketingStage, buildRemarketingMessage, STAGE_LABELS, type RemarketingStage } from '@/utils/remarketing';
+
+const STAGE_FILTERS: RemarketingStage[] = ['two_days', 'one_day', 'expired', 'recontact'];
 
 const ClientTrackingTab = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [sessionsByEmail, setSessionsByEmail] = useState<Record<string, SessionAgg>>({});
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [stageFilter, setStageFilter] = useState<RemarketingStage | 'all'>('all');
 
   const loadData = async () => {
     setLoading(true);
@@ -96,14 +100,17 @@ const ClientTrackingTab = () => {
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return profiles;
-    return profiles.filter(
+    const byStage = stageFilter === 'all'
+      ? profiles
+      : profiles.filter((p) => getRemarketingStage(p.trial_start_date, p.has_paid) === stageFilter);
+    if (!q) return byStage;
+    return byStage.filter(
       (p) =>
         (p.full_name || '').toLowerCase().includes(q) ||
         (p.email || '').toLowerCase().includes(q) ||
         (p.whatsapp_phone || '').toLowerCase().includes(q)
     );
-  }, [profiles, search]);
+  }, [profiles, search, stageFilter]);
 
   if (loading) {
     return (
@@ -138,6 +145,20 @@ const ClientTrackingTab = () => {
         </div>
       </div>
 
+      <div className="flex flex-wrap gap-2 mb-4">
+        <Button size="sm" variant={stageFilter === 'all' ? 'default' : 'outline'} onClick={() => setStageFilter('all')}>
+          Todos ({profiles.length})
+        </Button>
+        {STAGE_FILTERS.map((st) => {
+          const count = profiles.filter((p) => getRemarketingStage(p.trial_start_date, p.has_paid) === st).length;
+          return (
+            <Button key={st} size="sm" variant={stageFilter === st ? 'default' : 'outline'} onClick={() => setStageFilter(st)}>
+              {STAGE_LABELS[st]} ({count})
+            </Button>
+          );
+        })}
+      </div>
+
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
@@ -169,7 +190,7 @@ const ClientTrackingTab = () => {
                   <TableCell>
                     {waNumber ? (
                       <a
-                        href={`https://wa.me/${waNumber}?text=${encodeURIComponent(`Hola ${p.full_name || ''}, te escribo de QuantumSync.`)}`}
+                        href={`https://wa.me/${waNumber}?text=${encodeURIComponent(buildRemarketingMessage(getRemarketingStage(p.trial_start_date, p.has_paid), p.full_name))}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 text-green-500 hover:text-green-400 hover:underline"
