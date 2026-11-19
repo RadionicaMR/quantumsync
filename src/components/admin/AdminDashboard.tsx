@@ -3,7 +3,10 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { useAdminData } from '@/hooks/useAdminData';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { ADMIN_TABS, saveAdminReturn, readAdminReturn } from '@/utils/adminReturn';
 import { Users, DollarSign, TrendingUp, LogOut, ShoppingCart, BarChart3, Image, UserCog, Eye, Activity, ClipboardList } from 'lucide-react';
 import AffiliatesManagementTab from './AffiliatesManagementTab';
 import AffiliateStatsTab from './AffiliateStatsTab';
@@ -18,6 +21,18 @@ import { useLanguage } from '@/context/LanguageContext';
 const AdminDashboard = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [params, setParams] = useSearchParams();
+  const requestedTab = params.get('tab');
+  const savedTab = user ? readAdminReturn(localStorage, user.userId).tab : 'users';
+  const activeTab = ADMIN_TABS.some((tab) => tab === requestedTab) ? requestedTab || 'users' : savedTab;
+  const changeTab = (tab: string) => {
+    setParams((current) => { current.set('tab', tab); return current; }, { replace: true });
+    if (user) saveAdminReturn(localStorage, user.userId, { tab, returnPending: false, scrollY: 0 });
+  };
+  useEffect(() => {
+    if (user && activeTab !== 'tracking') saveAdminReturn(localStorage, user.userId, { returnPending: false });
+  }, [user?.userId, activeTab]);
   const { adminData, affiliates, sales, loading, reloadData } = useAdminData();
 
   const handleLogout = () => {
@@ -102,7 +117,7 @@ const AdminDashboard = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3, delay: 0.2 }}
       >
-        <Tabs defaultValue="users" className="w-full">
+        <Tabs value={activeTab} onValueChange={changeTab} className="w-full">
           <TabsList className="grid w-full grid-cols-4 md:grid-cols-8 mb-8">
             <TabsTrigger value="users">
               <UserCog className="w-4 h-4 mr-2" />

@@ -1,4 +1,6 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef, useLayoutEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { readAdminReturn, saveAdminReturn } from '@/utils/adminReturn';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -40,11 +42,55 @@ import { getClientRemarketingStage, buildClientWhatsAppUrl, buildClientWhatsAppM
 const STAGE_FILTERS: RemarketingStage[] = ['two_days', 'one_day', 'expired', 'recontact'];
 
 const ClientTrackingTab = () => {
+  const { user } = useAuth();
+  const initialState = useRef(user ? readAdminReturn(localStorage, user.userId) : null);
+  const restored = useRef(false);
+  const tableContainer = useRef<HTMLDivElement>(null);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [sessionsByEmail, setSessionsByEmail] = useState<Record<string, SessionAgg>>({});
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [stageFilter, setStageFilter] = useState<RemarketingStage | 'all'>('all');
+  const [search, setSearch] = useState(initialState.current?.search || '');
+  const [stageFilter, setStageFilter] = useState<RemarketingStage | 'all'>(initialState.current?.stageFilter || 'all');
+
+  const rememberPosition = (returnPending = false) => {
+    if (!user) return;
+    saveAdminReturn(localStorage, user.userId, {
+      tab: 'tracking', search, stageFilter,
+      scrollY: window.scrollY,
+      scrollX: tableContainer.current?.scrollLeft || 0,
+      returnPending,
+    });
+  };
+
+  useEffect(() => {
+    if (user) saveAdminReturn(localStorage, user.userId, { tab: 'tracking', search, stageFilter });
+  }, [user?.userId, search, stageFilter]);
+
+  useLayoutEffect(() => {
+    if (loading || restored.current) return;
+    restored.current = true;
+    const state = initialState.current;
+    if (state) {
+      window.scrollTo({ top: state.scrollY, behavior: 'instant' });
+      if (tableContainer.current) tableContainer.current.scrollLeft = state.scrollX;
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    const save = () => {
+      if (!restored.current || !user) return;
+      const pending = readAdminReturn(localStorage, user.userId).returnPending;
+      rememberPosition(pending);
+    };
+    window.addEventListener('scroll', save, { passive: true });
+    window.addEventListener('pagehide', save);
+    document.addEventListener('visibilitychange', save);
+    return () => {
+      window.removeEventListener('scroll', save);
+      window.removeEventListener('pagehide', save);
+      document.removeEventListener('visibilitychange', save);
+    };
+  }, [user?.userId, search, stageFilter]);
 
   const loadData = async () => {
     setLoading(true);
@@ -160,7 +206,9 @@ const ClientTrackingTab = () => {
         })}
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto" ref={tableContainer} onScroll={() => {
+        if (user) saveAdminReturn(localStorage, user.userId, { scrollX: tableContainer.current?.scrollLeft || 0 });
+      }}>
         <Table>
           <TableHeader>
             <TableRow>
@@ -194,6 +242,7 @@ const ClientTrackingTab = () => {
                         href={buildClientWhatsAppUrl(p, new Date(), isDesktopBrowser())}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() => rememberPosition(true)}
                         className="inline-flex items-center gap-1.5 text-green-500 hover:text-green-400 hover:underline"
                       >
                         <MessageCircle className="h-4 w-4" />

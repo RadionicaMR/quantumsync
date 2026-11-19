@@ -1,3 +1,5 @@
 - Remove patients from the session picker by archiving them, not deleting them, to preserve historical sessions and patient references.
 - Use the shared trial utility for access expiry and administrator countdowns so both follow the same duration.
 - Use shared remarketing client-stage and URL helpers for unpaid-client contact links in Users and Seguimiento, including filters and counts, so messages cannot diverge.
+- Keep administrator return state user-scoped, with validated tabs, filters, and scroll positions; installed-app launch may resume a pending WhatsApp return only after server-validated admin role hydration.
+- Protected routes must wait for role hydration before redirecting, so auth refreshes do not eject administrators while their role is loading.

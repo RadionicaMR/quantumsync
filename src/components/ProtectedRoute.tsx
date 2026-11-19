@@ -12,11 +12,11 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, requireAdmin = false, requirePaid = false }: ProtectedRouteProps) => {
-  const { user, loading, isAuthenticated } = useAuth();
+  const { user, loading, roleLoading, isAuthenticated } = useAuth();
   const { isLoading: trialLoading, hasPaid, isTrialActive, isTrialExpired, isSubscriptionExpired } = useTrialStatus();
   const location = useLocation();
 
-  if (loading || trialLoading) {
+  if (loading || roleLoading || trialLoading) {
     return (
       <div className="flex items-center justify-center h-screen w-full bg-black">
         <div className="text-center">

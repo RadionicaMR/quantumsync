@@ -1,7 +1,8 @@
 - [x] Allow removing unused patients from session selection while retaining history; created and removed a test patient through the signed-in UI.
 - [x] Make Users the first and default administrator tab.
-- [ ] Verify administrator tab in the signed-in UI: the requesting account is redirected away from /admin by the existing access check.
+- [x] Verify administrator tab in the signed-in UI; wait for role hydration to prevent premature access redirects.
 - [x] Unify the administrator trial countdown with the access expiry calculation and test the three-day boundary.
 - [x] Restore the agreed WhatsApp follow-ups and verify all four generated client links and promotional prices with tests.
 - [x] Audit WhatsApp entry points; unify unpaid-client links in Users and Seguimiento and their stage filters without changing paid contacts or client-to-administrator messages.
-- [ ] Verify WhatsApp links in signed-in Seguimiento: the requesting account is redirected from /admin to the homepage by existing access checks.
+- [x] Verify WhatsApp links in signed-in Seguimiento; opened a real client link with the external destination intercepted, without sending a message.
+- [x] Preserve administrator Seguimiento tab, filters, and position when returning from WhatsApp, including an installed-app relaunch; verified using the requesting administrator's session on mobile and desktop.

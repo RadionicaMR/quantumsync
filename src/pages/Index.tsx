@@ -18,6 +18,7 @@ import WhatsAppContactBubble from '@/components/home/WhatsAppContactBubble';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { getAdminResumePath } from '@/utils/adminReturn';
 
 const Index = () => {
   const { trackPageVisit } = useAnalytics();
@@ -26,15 +27,16 @@ const Index = () => {
     trackPageVisit();
   }, [trackPageVisit]);
 
-  const { user, loading } = useAuth();
+  const { user, loading, roleLoading } = useAuth();
   const isInstalledApp =
     typeof window !== 'undefined' &&
     (window.matchMedia?.('(display-mode: standalone)').matches ||
       (window.navigator as any).standalone === true ||
       new URLSearchParams(window.location.search).get('source') === 'pwa');
 
-  if (isInstalledApp && !loading && user) {
-    return <Navigate to="/treat" replace />;
+  if (isInstalledApp && !loading && !roleLoading && user) {
+    const resumePath = user.isAdmin ? getAdminResumePath(localStorage, user.userId) : null;
+    return <Navigate to={resumePath || '/treat'} replace />;
   }
 
   return (

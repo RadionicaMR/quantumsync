@@ -12,6 +12,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  roleLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   register: (name: string, email: string, password: string, whatsappPhone?: string) => Promise<boolean>;
@@ -23,6 +24,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [roleLoading, setRoleLoading] = useState(true);
 
   const fetchUserRole = async (userId: string): Promise<boolean> => {
     try {
@@ -43,6 +45,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const updateUserFromSession = (supabaseUser: SupabaseUser) => {
+    setRoleLoading(true);
     const baseUser: User = {
       email: supabaseUser.email || '',
       name: supabaseUser.user_metadata?.full_name || supabaseUser.email?.split('@')[0] || '',
@@ -77,7 +80,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       })
       .catch((error) => {
         console.error('[AUTH] Error fetching profile/role in background:', error);
-      });
+      })
+      .finally(() => setRoleLoading(false));
   };
 
   useEffect(() => {
@@ -89,6 +93,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         updateUserFromSession(session.user);
       } else {
         setUser(null);
+        setRoleLoading(false);
         localStorage.removeItem('user');
       }
       setLoading(false);
@@ -98,6 +103,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         updateUserFromSession(session.user);
+      } else {
+        setRoleLoading(false);
       }
       setLoading(false);
     });
@@ -221,6 +228,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     <AuthContext.Provider value={{ 
       user, 
       loading, 
+      roleLoading,
       login, 
       logout, 
       register,
@@ -238,6 +246,7 @@ export const useAuth = (): AuthContextType => {
     return {
       user: null,
       loading: false,
+      roleLoading: false,
       login: async () => false,
       logout: () => {},
       register: async () => false,
