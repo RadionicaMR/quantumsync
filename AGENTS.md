@@ -3,3 +3,4 @@
 - Use shared remarketing client-stage and URL helpers for unpaid-client contact links in Users and Seguimiento, including filters and counts, so messages cannot diverge.
 - Keep administrator return state user-scoped, with validated tabs, filters, and scroll positions; installed-app launch may resume a pending WhatsApp return only after server-validated admin role hydration.
 - Protected routes must wait for role hydration before redirecting, so auth refreshes do not eject administrators while their role is loading.
+- Sign-in pages own post-login navigation after role hydration; shared login forms must not schedule competing redirects that overwrite a pending administrator WhatsApp return.

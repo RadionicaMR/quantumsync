@@ -9,10 +9,11 @@ import { motion } from 'framer-motion';
 import { LogIn, Loader2, Lock } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { getAdminResumePath } from '@/utils/adminReturn';
 
 const Access = () => {
   const navigate = useNavigate();
-  const { login, isAuthenticated, user } = useAuth();
+  const { login, isAuthenticated, user, loading: authLoading, roleLoading } = useAuth();
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,10 +22,10 @@ const Access = () => {
 
   // If already authenticated and paid, redirect
   React.useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/diagnose', { replace: true });
+    if (isAuthenticated && user && !authLoading && !roleLoading) {
+      navigate(user.isAdmin ? getAdminResumePath(localStorage, user.userId) || '/diagnose' : '/diagnose', { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, user, authLoading, roleLoading, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +39,6 @@ const Access = () => {
           title: '¡Bienvenido de vuelta!',
           description: 'Acceso exitoso a QuantumSync',
         });
-        navigate('/diagnose', { replace: true });
       } else {
         setError('Credenciales incorrectas. Verifica tu email y contraseña.');
       }

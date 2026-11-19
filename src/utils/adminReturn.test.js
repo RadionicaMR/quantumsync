@@ -32,3 +32,11 @@ test('invalid stored destinations cannot become resume routes', () => {
   s.setItem('admin-return:admin-a', JSON.stringify({ tab: 'https://example.com', returnPending: true }));
   expect(getAdminResumePath(s, 'admin-a')).toBe(null);
 });
+
+test('Users WhatsApp return preserves the Users tab and its table position', () => {
+  const s = storage();
+  saveAdminReturn(s, 'admin-a', { tab: 'users', scrollY: 1600, scrollX: 300, returnPending: true });
+  expect(getAdminResumePath(s, 'admin-a')).toBe('/admin?tab=users');
+  expect(readAdminReturn(s, 'admin-a').scrollY).toBe(1600);
+  expect(readAdminReturn(s, 'admin-a').scrollX).toBe(300);
+});

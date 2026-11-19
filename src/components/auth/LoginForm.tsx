@@ -1,6 +1,5 @@
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AlertCircle, Mail, Lock, LogIn } from 'lucide-react';
@@ -13,9 +12,8 @@ interface LoginFormProps {
 }
 
 const LoginForm = ({ onToggleRecovery }: LoginFormProps) => {
-  const { login, user } = useAuth();
+  const { login } = useAuth();
   const { toast } = useToast();
-  const navigate = useNavigate();
   const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,7 +26,6 @@ const LoginForm = ({ onToggleRecovery }: LoginFormProps) => {
     setError('');
 
     try {
-      console.log(`Intentando iniciar sesión con: ${email} / ${password}`);
       const success = await login(email, password);
       
       if (success) {
@@ -37,11 +34,7 @@ const LoginForm = ({ onToggleRecovery }: LoginFormProps) => {
           description: t('auth.welcomeBack'),
         });
         
-        // Redirect explicitly after successful login
-        // Wait a bit for user state to update
-        setTimeout(() => {
-          navigate('/diagnose');
-        }, 100);
+        // The containing page redirects after the authenticated role is ready.
       } else {
         setError(t('auth.invalidCredentials'));
         toast({

@@ -28,9 +28,11 @@ import { getTrialEndDate } from '@/utils/trial';
 import { buildClientWhatsAppUrl, buildClientWhatsAppMessage, isDesktopBrowser } from '@/utils/remarketing';
 import { toast } from '@/hooks/use-toast';
 import CreateUserDialog from './CreateUserDialog';
+import { useAdminContactReturn } from '@/hooks/useAdminContactReturn';
 
 const UsersManagementSection = () => {
   const { users, loading, reloadUsers, resetPassword, deleteUser, updateUserName, updateUserWhatsapp, togglePaymentStatus } = useUsersManagement();
+  const { container, remember } = useAdminContactReturn('users', !loading);
   const [passwordDialog, setPasswordDialog] = useState<{ open: boolean; userId: string; userEmail: string }>({
     open: false,
     userId: '',
@@ -137,7 +139,7 @@ const UsersManagementSection = () => {
           <CreateUserDialog onUserCreated={reloadUsers} />
         </div>
 
-        <div className="rounded-md border">
+        <div className="rounded-md border" ref={container}>
           <Table>
             <TableHeader>
               <TableRow>
@@ -220,6 +222,7 @@ const UsersManagementSection = () => {
                               href={user.has_paid ? `https://wa.me/${user.whatsapp_phone.replace(/\D/g, '')}` : buildClientWhatsAppUrl(user, new Date(), isDesktopBrowser())}
                               target="_blank"
                               rel="noopener noreferrer"
+                              onClick={() => remember()}
                               className="flex items-center gap-1 text-green-500 hover:underline"
                             >
                               <MessageCircle className="h-3.5 w-3.5" />

@@ -6,18 +6,19 @@ import { useAuth } from '@/context/AuthContext';
 import LoginForm from '@/components/auth/LoginForm';
 import PasswordRecoveryForm from '@/components/auth/PasswordRecoveryForm';
 import AuthCard from '@/components/auth/AuthCard';
+import { getAdminResumePath } from '@/utils/adminReturn';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, loading, roleLoading } = useAuth();
   const [showRecovery, setShowRecovery] = useState(false);
 
   // Redirigir si ya está autenticado
   React.useEffect(() => {
-    if (isAuthenticated) {
-      navigate(user?.isAdmin ? '/admin' : '/diagnose', { replace: true });
+    if (isAuthenticated && user && !loading && !roleLoading) {
+      navigate(user.isAdmin ? getAdminResumePath(localStorage, user.userId) || '/admin' : '/diagnose', { replace: true });
     }
-  }, [isAuthenticated, user?.isAdmin, navigate]);
+  }, [isAuthenticated, user, loading, roleLoading, navigate]);
 
   const toggleRecoveryMode = () => {
     setShowRecovery(!showRecovery);

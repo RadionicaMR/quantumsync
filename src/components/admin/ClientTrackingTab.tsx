@@ -57,7 +57,7 @@ const ClientTrackingTab = () => {
     saveAdminReturn(localStorage, user.userId, {
       tab: 'tracking', search, stageFilter,
       scrollY: window.scrollY,
-      scrollX: tableContainer.current?.scrollLeft || 0,
+      scrollX: tableContainer.current?.querySelector('div.overflow-auto')?.scrollLeft || 0,
       returnPending,
     });
   };
@@ -72,7 +72,8 @@ const ClientTrackingTab = () => {
     const state = initialState.current;
     if (state) {
       window.scrollTo({ top: state.scrollY, behavior: 'instant' });
-      if (tableContainer.current) tableContainer.current.scrollLeft = state.scrollX;
+      const table = tableContainer.current?.querySelector('div.overflow-auto');
+      if (table) table.scrollLeft = state.scrollX;
     }
   }, [loading]);
 
@@ -206,8 +207,8 @@ const ClientTrackingTab = () => {
         })}
       </div>
 
-      <div className="overflow-x-auto" ref={tableContainer} onScroll={() => {
-        if (user) saveAdminReturn(localStorage, user.userId, { scrollX: tableContainer.current?.scrollLeft || 0 });
+      <div className="overflow-x-auto" ref={tableContainer} onScrollCapture={() => {
+        if (user) saveAdminReturn(localStorage, user.userId, { scrollX: tableContainer.current?.querySelector('div.overflow-auto')?.scrollLeft || 0 });
       }}>
         <Table>
           <TableHeader>

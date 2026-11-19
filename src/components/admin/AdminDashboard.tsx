@@ -24,15 +24,13 @@ const AdminDashboard = () => {
   const { user } = useAuth();
   const [params, setParams] = useSearchParams();
   const requestedTab = params.get('tab');
-  const savedTab = user ? readAdminReturn(localStorage, user.userId).tab : 'users';
+  const savedState = user ? readAdminReturn(localStorage, user.userId) : null;
+  const savedTab = savedState?.returnPending ? savedState.tab : 'users';
   const activeTab = ADMIN_TABS.some((tab) => tab === requestedTab) ? requestedTab || 'users' : savedTab;
   const changeTab = (tab: string) => {
     setParams((current) => { current.set('tab', tab); return current; }, { replace: true });
     if (user) saveAdminReturn(localStorage, user.userId, { tab, returnPending: false, scrollY: 0 });
   };
-  useEffect(() => {
-    if (user && activeTab !== 'tracking') saveAdminReturn(localStorage, user.userId, { returnPending: false });
-  }, [user?.userId, activeTab]);
   const { adminData, affiliates, sales, loading, reloadData } = useAdminData();
 
   const handleLogout = () => {

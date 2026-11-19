@@ -10,6 +10,8 @@ import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { z } from 'zod';
 import WhatsAppPhoneInput, { DEFAULT_COUNTRY_CODE } from '@/components/shared/WhatsAppPhoneInput';
+import { useAuth } from '@/context/AuthContext';
+import { getAdminResumePath } from '@/utils/adminReturn';
 
 const signupSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -20,6 +22,7 @@ const signupSchema = z.object({
 
 const Auth = () => {
   const navigate = useNavigate();
+  const { user, loading: authLoading, roleLoading } = useAuth();
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
   const [signupFullName, setSignupFullName] = useState('');
@@ -29,22 +32,10 @@ const Auth = () => {
   const [showRecovery, setShowRecovery] = useState(false);
 
   useEffect(() => {
-    // Check if user is already logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        navigate('/');
-      }
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        navigate('/');
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+    if (user && !authLoading && !roleLoading) {
+      navigate(user.isAdmin ? getAdminResumePath(localStorage, user.userId) || '/' : '/', { replace: true });
+    }
+  }, [user, authLoading, roleLoading, navigate]);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
