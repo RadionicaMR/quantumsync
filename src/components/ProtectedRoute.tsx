@@ -1,5 +1,5 @@
 
-import { ReactNode } from 'react';
+import { ReactNode, useRef } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useTrialStatus } from '@/hooks/useTrialStatus';
@@ -15,8 +15,17 @@ const ProtectedRoute = ({ children, requireAdmin = false, requirePaid = false }:
   const { user, loading, roleLoading, isAuthenticated } = useAuth();
   const { isLoading: trialLoading, hasPaid, isTrialActive, isTrialExpired, isSubscriptionExpired } = useTrialStatus();
   const location = useLocation();
+  // Once the page has been shown, never swap it for the spinner on background
+  // re-checks (e.g. session refresh when returning to the tab). Unmounting the
+  // page would stop any running treatment/manifestation.
+  const shownRef = useRef(false);
+  const busy = loading || roleLoading || trialLoading;
 
-  if (loading || roleLoading || trialLoading) {
+  if (busy && shownRef.current && isAuthenticated) {
+    return <>{children}</>;
+  }
+
+  if (busy) {
     return (
       <div className="flex items-center justify-center h-screen w-full bg-black">
         <div className="text-center">
@@ -38,6 +47,7 @@ const ProtectedRoute = ({ children, requireAdmin = false, requirePaid = false }:
   // Admin users (and the owner account) bypass all trial/subscription restrictions
   const isOwner = user?.email?.toLowerCase() === 'mauriramosgs@gmail.com';
   if (user?.isAdmin || isOwner) {
+    shownRef.current = true;
     return <>{children}</>;
   }
 
@@ -56,6 +66,7 @@ const ProtectedRoute = ({ children, requireAdmin = false, requirePaid = false }:
     return <Navigate to="/purchase" replace />;
   }
 
+  shownRef.current = true;
   return <>{children}</>;
 };
 
